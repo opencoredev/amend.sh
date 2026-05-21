@@ -1,0 +1,52 @@
+---
+title: Amend.sh Docs
+description: Build a source-linked product update loop from feedback to shipped customer communication.
+---
+
+Amend connects four things teams usually keep apart: customer asks, source evidence, roadmap state,
+and shipped updates. These docs are written for the person wiring the loop, not for a generic
+marketing tour.
+
+## Start with the loop
+
+<Cards>
+  <Card title="Quickstart" href="/docs/quickstart">
+    Prove one complete update path: request, source event, review, publish.
+  </Card>
+  <Card title="Source trace" href="/docs/source-trace">
+    Understand the evidence model behind every roadmap and changelog move.
+  </Card>
+  <Card title="Integration" href="/docs/integration">
+    Wire the portal, SDK, REST API, identity mapping, and domain strategy.
+  </Card>
+  <Card title="Self-hosting" href="/docs/self-hosting">
+    Keep the same workflow while bringing your own stack, keys, and docs route.
+  </Card>
+  <Card title="Launch" href="/docs/launch">
+    Check provider credentials, DNS, Convex, email, billing, and final gates.
+  </Card>
+</Cards>
+
+## The operating model
+
+| Stage    | What Amend needs                                | What it produces                      |
+| -------- | ----------------------------------------------- | ------------------------------------- |
+| Intake   | Feedback, accounts, roadmap notes, support asks | Normalized requests with identities   |
+| Evidence | GitHub PRs, releases, issues, labels, commits   | Source-linked records and confidence  |
+| Review   | Workspace rules, owner edits, approval state    | Draft roadmap, changelog, and replies |
+| Publish  | Portal settings, notification preferences       | Public updates and targeted messages  |
+
+## What to configure first
+
+1. Connect the workspace to a local Convex deployment.
+2. Set `VITE_DOCS_URL` so app links point at the right docs root.
+3. Open the dashboard setup view and confirm the portal, SDK, and API snippets use environment URLs.
+4. Create one feedback record tied to a user or account.
+5. Link that request to source work and review the generated public story.
+
+## What to avoid
+
+- Do not hardcode local ports in SDK snippets, portal links, or docs links.
+- Do not publish customer updates without a source trace.
+- Do not treat local portless URLs as proof of production deployment.
+- Do not put provider secrets in the client bundle.

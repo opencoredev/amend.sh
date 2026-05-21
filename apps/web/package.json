@@ -1,0 +1,50 @@
+{
+  "name": "web",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "check-types": "tsc --noEmit",
+    "serve": "vite preview",
+    "dev": "portless amend vite dev"
+  },
+  "dependencies": {
+    "@amend/backend": "workspace:*",
+    "@amend/env": "workspace:*",
+    "@amend/sdk": "workspace:*",
+    "@amend/ui": "workspace:*",
+    "@convex-dev/better-auth": "catalog:",
+    "@convex-dev/react-query": "^0.1.0",
+    "@tailwindcss/vite": "^4.2.2",
+    "@tanstack/react-form": "^1.28.0",
+    "@tanstack/react-query": "^5.99.0",
+    "@tanstack/react-router": "^1.168.22",
+    "@tanstack/react-router-ssr-query": "^1.166.11",
+    "@tanstack/react-start": "^1.167.41",
+    "better-auth": "catalog:",
+    "convex": "catalog:",
+    "dotenv": "catalog:",
+    "gsap": "^3.15.0",
+    "lucide-react": "^1.8.0",
+    "next-themes": "catalog:",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
+    "react-grab": "^0.1.33",
+    "sileo": "^0.1.5",
+    "tailwindcss": "^4.2.2",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@amend/config": "workspace:*",
+    "@tanstack/react-router-devtools": "^1.166.13",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/react": "^16.3.2",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "catalog:",
+    "@vitejs/plugin-react": "^6.0.1",
+    "jsdom": "^29.0.2",
+    "typescript": "catalog:",
+    "vite": "^8.0.8",
+    "web-vitals": "^5.2.0"
+  }
+}

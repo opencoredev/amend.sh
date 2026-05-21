@@ -1,0 +1,170 @@
+@import "@amend/ui/globals.css";
+@import "sileo/styles.css";
+
+:root {
+  --font-montserrat: "Montserrat", sans-serif;
+  --amend-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --amend-ease-fast: cubic-bezier(0.2, 0, 0, 1);
+  --amend-state-dur: 180ms;
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    scroll-behavior: smooth;
+    scroll-padding-top: 5rem;
+    text-rendering: geometricprecision;
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+
+  p,
+  li {
+    text-wrap: pretty;
+  }
+
+  button,
+  a {
+    transition-property:
+      background-color, border-color, color, box-shadow, scale, transform, opacity;
+    transition-duration: 180ms;
+    transition-timing-function: var(--amend-ease);
+  }
+
+  button:active,
+  a:active {
+    scale: 0.96;
+  }
+}
+
+.amend-hero {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+.amend-hero > [aria-hidden="true"] {
+  mask-image: linear-gradient(to bottom, transparent 0%, black 12%, black 88%, transparent 100%);
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    black 12%,
+    black 88%,
+    transparent 100%
+  );
+}
+
+.amend-hero-copy {
+  animation: amend-hero-in 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+.amend-hero-actions {
+  animation: amend-hero-in 0.6s ease-out 0.35s both;
+}
+
+.amend-marquee-viewport {
+  contain: paint;
+  mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+}
+
+.amend-marquee-track {
+  animation: amend-marquee 28s linear infinite;
+}
+
+.amend-marquee-row:nth-child(2) .amend-marquee-track {
+  animation-direction: reverse;
+  animation-duration: 34s;
+}
+
+.amend-marquee-row:hover .amend-marquee-track {
+  animation-play-state: paused;
+}
+
+@media (max-width: 1023px) {
+  .amend-hero-mark {
+    display: none;
+  }
+}
+
+@media (max-width: 639px) {
+  .amend-deferred-section > div {
+    padding-top: 4.5rem;
+    padding-bottom: 4.5rem;
+  }
+
+  .amend-display {
+    overflow-wrap: anywhere;
+  }
+
+  section:not(.amend-hero) .amend-display {
+    font-size: clamp(2rem, 9vw, 2.65rem);
+    line-height: 1.08;
+  }
+
+  .amend-marquee-row {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .amend-marquee-viewport {
+    height: auto;
+    width: 100%;
+    mask-image: none;
+    -webkit-mask-image: none;
+  }
+
+  .amend-marquee-track {
+    position: static;
+    width: 100%;
+    flex-wrap: wrap;
+    animation: none;
+    transform: none !important;
+  }
+
+  [data-amend-chip-duplicate="true"] {
+    display: none;
+  }
+}
+
+@keyframes amend-hero-in {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes amend-marquee {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  100% {
+    transform: translate3d(-33.333%, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    scroll-behavior: auto !important;
+    transition-duration: 1ms !important;
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+  }
+
+  .amend-hero-copy,
+  .amend-hero-actions,
+  .amend-marquee-track {
+    animation: none;
+  }
+}

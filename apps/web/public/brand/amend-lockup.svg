@@ -1,0 +1,13 @@
+<svg fill="none" viewBox="0 0 216 64" xmlns="http://www.w3.org/2000/svg">
+  <title>Amend.sh wordmark</title>
+  <g color="currentColor">
+    <path d="M22 16H42M48 22V31H39M25 33H16V42" stroke="currentColor" stroke-linecap="square" stroke-width="4" opacity=".55"/>
+    <rect x="8" y="8" width="16" height="16" rx="2" fill="currentColor"/>
+    <rect x="40" y="8" width="16" height="16" rx="2" stroke="currentColor" stroke-width="4"/>
+    <rect x="24" y="24" width="16" height="16" rx="2" fill="currentColor" opacity=".8"/>
+    <rect x="8" y="40" width="16" height="16" rx="2" stroke="currentColor" stroke-width="4"/>
+  </g>
+  <text x="76" y="39" fill="currentColor" font-family="Geist Mono, SFMono-Regular, Menlo, monospace" font-size="24" font-weight="700" letter-spacing="3">AMEND</text>
+  <rect x="162" y="35" width="4" height="4" fill="currentColor"/>
+  <text x="173" y="39" fill="currentColor" font-family="Geist Mono, SFMono-Regular, Menlo, monospace" font-size="24" font-weight="700" letter-spacing="3">SH</text>
+</svg>

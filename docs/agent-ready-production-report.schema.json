@@ -1,0 +1,205 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://docs.amend.sh/schemas/agent-ready-production-report.schema.json",
+  "title": "Amend Agent-Ready Production Report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["$schema", "blockers", "checkedAt", "ok", "steps"],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "const": "https://docs.amend.sh/schemas/agent-ready-production-report.schema.json"
+    },
+    "blockers": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "checkedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "ok": {
+      "type": "boolean"
+    },
+    "steps": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["built", "live", "readinessStrict", "status"],
+      "properties": {
+        "built": { "$ref": "#/$defs/summaryStep" },
+        "live": { "$ref": "#/$defs/liveStep" },
+        "readinessStrict": { "$ref": "#/$defs/summaryStep" },
+        "status": { "$ref": "#/$defs/statusStep" }
+      }
+    }
+  },
+  "$defs": {
+    "check": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "ok"],
+      "properties": {
+        "detail": { "type": "string" },
+        "name": { "type": "string", "minLength": 1 },
+        "ok": { "type": "boolean" }
+      }
+    },
+    "dnsHost": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["delegated", "host", "records", "registered"],
+      "properties": {
+        "delegated": { "type": "boolean" },
+        "host": { "type": "string", "minLength": 1 },
+        "records": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "registered": { "type": "boolean" }
+      }
+    },
+    "liveReport": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "$schema",
+        "blockers",
+        "checkedAt",
+        "checks",
+        "ok",
+        "origins",
+        "passed",
+        "total"
+      ],
+      "properties": {
+        "$schema": {
+          "type": "string",
+          "const": "https://docs.amend.sh/schemas/agent-ready-live-report.schema.json"
+        },
+        "blockers": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "checkedAt": { "type": "string", "format": "date-time" },
+        "checks": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/check" }
+        },
+        "ok": { "type": "boolean" },
+        "origins": { "$ref": "#/$defs/origins" },
+        "passed": { "type": "integer", "minimum": 0 },
+        "total": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "origins": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["docs", "web"],
+      "properties": {
+        "docs": { "type": "string", "format": "uri" },
+        "web": { "type": "string", "format": "uri" }
+      }
+    },
+    "productionEnv": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["missing", "passed", "total"],
+      "properties": {
+        "missing": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "passed": { "type": "integer", "minimum": 0 },
+        "total": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "statusReport": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "$schema",
+        "blockers",
+        "checkedAt",
+        "dns",
+        "nextGates",
+        "ok",
+        "origins",
+        "productionEnv"
+      ],
+      "properties": {
+        "$schema": {
+          "type": "string",
+          "const": "https://docs.amend.sh/schemas/agent-ready-status-report.schema.json"
+        },
+        "blockers": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "checkedAt": { "type": "string", "format": "date-time" },
+        "dns": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["docs", "web"],
+          "properties": {
+            "docs": { "$ref": "#/$defs/dnsHost" },
+            "web": { "$ref": "#/$defs/dnsHost" }
+          }
+        },
+        "nextGates": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "prefixItems": [
+            { "type": "string", "const": "bun run agent-ready:production" },
+            { "type": "string", "const": "bun run agent-ready:final-gate" }
+          ],
+          "items": false
+        },
+        "ok": { "type": "boolean" },
+        "origins": { "$ref": "#/$defs/origins" },
+        "productionEnv": { "$ref": "#/$defs/productionEnv" }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["passed", "total"],
+      "properties": {
+        "passed": { "type": "integer", "minimum": 0 },
+        "total": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "summaryStep": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["exitCode", "ok"],
+      "properties": {
+        "exitCode": { "type": "integer", "minimum": 0 },
+        "ok": { "type": "boolean" },
+        "summary": { "$ref": "#/$defs/summary" }
+      }
+    },
+    "liveStep": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["exitCode", "ok", "report"],
+      "properties": {
+        "exitCode": { "type": "integer", "minimum": 0 },
+        "ok": { "type": "boolean" },
+        "report": { "$ref": "#/$defs/liveReport" },
+        "summary": { "$ref": "#/$defs/summary" }
+      }
+    },
+    "statusStep": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["exitCode", "ok", "report"],
+      "properties": {
+        "exitCode": { "type": "integer", "minimum": 0 },
+        "ok": { "type": "boolean" },
+        "report": { "$ref": "#/$defs/statusReport" },
+        "summary": { "$ref": "#/$defs/summary" }
+      }
+    }
+  }
+}

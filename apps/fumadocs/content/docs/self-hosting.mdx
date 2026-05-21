@@ -1,0 +1,76 @@
+---
+title: Self-Hosting
+description: Run Amend with your own deployment, provider keys, and docs URL.
+---
+
+Self-hosting keeps the same product loop while moving ownership of runtime, secrets, model policy,
+and DNS to your infrastructure.
+
+## Deployment pieces
+
+| Piece          | Responsibility                                               |
+| -------------- | ------------------------------------------------------------ |
+| Web app        | Dashboard, portal routes, embed demo, auth surfaces          |
+| Fumadocs app   | Documentation, launch guidance, integration reference        |
+| Convex backend | Data model, HTTP actions, auth integration, automation state |
+| Providers      | GitHub, email, billing, AI model, custom domains             |
+
+You can deploy docs as a subpath, a subdomain, or a separate instance. Keep the app link portable
+with `VITE_DOCS_URL`.
+
+## Local shape
+
+Local development uses portless names:
+
+```txt
+http://amend.localhost:1355
+http://docs.amend.localhost:1355/docs
+```
+
+The web app should point at the docs app through:
+
+```bash
+VITE_DOCS_URL=http://docs.amend.localhost:1355/docs
+```
+
+## Production shape
+
+Choose one docs route before shipping public links:
+
+| Pattern            | `VITE_DOCS_URL`                       |
+| ------------------ | ------------------------------------- |
+| Same app proxy     | `/docs`                               |
+| Docs subdomain     | `https://docs.amend.sh/docs`          |
+| Separate docs host | `https://amend-docs.example.com/docs` |
+
+If the route changes later, update the environment variable and redeploy the web app. Product code
+should not need edits.
+
+## Provider keys
+
+Production should configure these outside the client bundle:
+
+- `BETTER_AUTH_SECRET`
+- `GITHUB_WEBHOOK_SECRET`
+- GitHub App ID, slug, client ID, client secret, and private key
+- `AMEND_API_TOKEN`
+- `OPENAI_API_KEY` and `OPENAI_MODEL`
+- `RESEND_API_KEY` and `EMAIL_FROM`
+- `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET`
+
+## Readiness
+
+Run local readiness during setup:
+
+```bash
+bun run readiness
+```
+
+Run strict readiness only with production secrets available:
+
+```bash
+bun run readiness:strict
+```
+
+Local green checks mean the repo wiring works. They do not prove DNS, webhook delivery, auth
+callbacks, billing webhooks, or email sending in production.

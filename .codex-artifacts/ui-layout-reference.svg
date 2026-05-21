@@ -1,0 +1,79 @@
+<svg fill="none" viewBox="0 0 1800 1080" xmlns="http://www.w3.org/2000/svg">
+  <title>Amend.sh UI layout reference</title>
+  <rect fill="#0f0f11" height="1080" width="1800"/>
+  <text fill="#ffffff" font-family="Montserrat, Arial, sans-serif" font-size="42" font-weight="700" x="80" y="86">Amend.sh UI reference</text>
+  <text fill="#b8b8bd" font-family="IBM Plex Mono, monospace" font-size="18" letter-spacing="3" x="80" y="125">CALM SOURCE-LINKED OPERATIONS / EXACT SHADCN THEME</text>
+
+  <g transform="translate(80 180)">
+    <rect fill="oklch(0.9940 0 0)" height="350" rx="18" width="520"/>
+    <rect fill="oklch(0.6217 0.2589 305.3090)" height="44" width="130" x="350" y="32"/>
+    <text fill="#ffffff" font-family="Montserrat, Arial, sans-serif" font-size="15" font-weight="600" x="376" y="59">Open</text>
+    <text fill="#000000" font-family="Montserrat, Arial, sans-serif" font-size="54" font-weight="700" x="34" y="118">Landing</text>
+    <text fill="#000000" font-family="Lora, Georgia, serif" font-size="38" font-weight="600" x="34" y="166">GitHub ships → customers know</text>
+    <rect fill="oklch(0.9702 0 0)" height="116" width="452" x="34" y="204"/>
+    <path d="M64 262H456" stroke="oklch(0.9300 0.0094 286.2156)" stroke-width="2"/>
+    <circle cx="82" cy="262" fill="oklch(0.6217 0.2589 305.3090)" r="9"/>
+    <circle cx="250" cy="262" fill="oklch(0.7336 0.1758 50.5517)" r="9"/>
+    <circle cx="438" cy="262" fill="oklch(0.7459 0.1483 156.4499)" r="9"/>
+    <text fill="oklch(0.4386 0 0)" font-family="IBM Plex Mono, monospace" font-size="14" x="34" y="342">SIGNAL / SOURCE / UPDATE CONSOLE</text>
+  </g>
+
+  <g transform="translate(640 180)">
+    <rect fill="oklch(0.9940 0 0)" height="350" rx="18" width="520"/>
+    <rect fill="oklch(0.9777 0.0051 247.8763)" height="350" width="96"/>
+    <path d="M96 0V350M0 78H520M410 78V350" stroke="oklch(0.9300 0.0094 286.2156)" stroke-width="2"/>
+    <text fill="#000000" font-family="Montserrat, Arial, sans-serif" font-size="44" font-weight="700" x="126" y="58">Dashboard</text>
+    <rect fill="oklch(0.9702 0 0)" height="36" width="264" x="126" y="108"/>
+    <g stroke="oklch(0.9300 0.0094 286.2156)" stroke-width="2">
+      <rect height="42" width="264" x="126" y="172"/>
+      <rect height="42" width="264" x="126" y="226"/>
+      <rect height="42" width="264" x="126" y="280"/>
+      <rect height="56" width="74" x="422" y="106"/>
+      <rect height="56" width="74" x="422" y="178"/>
+      <rect height="56" width="74" x="422" y="250"/>
+    </g>
+    <text fill="oklch(0.4386 0 0)" font-family="IBM Plex Mono, monospace" font-size="14" x="126" y="342">SIDEBAR / QUEUE / INSPECTOR</text>
+  </g>
+
+  <g transform="translate(1200 180)">
+    <rect fill="oklch(0.9940 0 0)" height="350" rx="18" width="520"/>
+    <text fill="#000000" font-family="Lora, Georgia, serif" font-size="48" font-weight="600" x="34" y="80">Portal</text>
+    <text fill="oklch(0.4386 0 0)" font-family="Montserrat, Arial, sans-serif" font-size="20" x="34" y="122">Public changelog, roadmap, and source links.</text>
+    <rect fill="oklch(0.9702 0 0)" height="126" width="452" x="34" y="164"/>
+    <path d="M290 164V290" stroke="oklch(0.9300 0.0094 286.2156)" stroke-width="2"/>
+    <circle cx="318" cy="204" fill="oklch(0.6217 0.2589 305.3090)" r="8"/>
+    <circle cx="318" cy="250" fill="oklch(0.7336 0.1758 50.5517)" r="8"/>
+    <text fill="oklch(0.4386 0 0)" font-family="IBM Plex Mono, monospace" font-size="14" x="34" y="342">SHIPPED / NEXT / REQUESTED</text>
+  </g>
+
+  <g transform="translate(80 600)">
+    <rect fill="oklch(0.9940 0 0)" height="330" rx="18" width="380"/>
+    <text fill="#000000" font-family="Montserrat, Arial, sans-serif" font-size="40" font-weight="700" x="34" y="70">Auth</text>
+    <rect fill="oklch(0.9702 0 0)" height="42" width="312" x="34" y="118"/>
+    <rect fill="oklch(0.9702 0 0)" height="42" width="312" x="34" y="176"/>
+    <rect fill="oklch(0.6217 0.2589 305.3090)" height="46" width="312" x="34" y="242"/>
+    <text fill="#ffffff" font-family="Montserrat, Arial, sans-serif" font-size="16" font-weight="600" x="158" y="271">Sign in</text>
+  </g>
+
+  <g transform="translate(520 600)">
+    <rect fill="oklch(0.9940 0 0)" height="330" rx="18" width="520"/>
+    <text fill="#000000" font-family="Montserrat, Arial, sans-serif" font-size="40" font-weight="700" x="34" y="70">Setup / connections</text>
+    <g stroke="oklch(0.9300 0.0094 286.2156)" stroke-width="2">
+      <rect height="66" width="210" x="34" y="118"/>
+      <rect height="66" width="210" x="276" y="118"/>
+      <rect height="66" width="210" x="34" y="212"/>
+      <rect height="66" width="210" x="276" y="212"/>
+    </g>
+    <text fill="oklch(0.4386 0 0)" font-family="IBM Plex Mono, monospace" font-size="14" x="34" y="306">GITHUB / AI / EMAIL / BILLING / DOMAINS / API</text>
+  </g>
+
+  <g transform="translate(1100 600)">
+    <rect fill="oklch(0.9940 0 0)" height="330" rx="18" width="620"/>
+    <text fill="#000000" font-family="Montserrat, Arial, sans-serif" font-size="40" font-weight="700" x="34" y="70">Embed side panel</text>
+    <rect fill="#ffffff" height="238" width="270" x="316" y="52"/>
+    <path d="M316 106H586M316 176H586M316 238H586" stroke="oklch(0.9300 0.0094 286.2156)" stroke-width="2"/>
+    <rect fill="oklch(0.6217 0.2589 305.3090)" height="40" width="160" x="34" y="132"/>
+    <text fill="#ffffff" font-family="Montserrat, Arial, sans-serif" font-size="16" font-weight="600" x="60" y="157">Open panel</text>
+    <text fill="oklch(0.4386 0 0)" font-family="IBM Plex Mono, monospace" font-size="14" x="34" y="306">TASTEFUL IN-APP SIDE PANEL, NOT POPUP</text>
+  </g>
+</svg>

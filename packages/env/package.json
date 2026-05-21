@@ -1,0 +1,18 @@
+{
+  "name": "@amend/env",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./web": "./src/web.ts"
+  },
+  "dependencies": {
+    "@t3-oss/env-core": "^0.13.1",
+    "dotenv": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@amend/config": "workspace:*",
+    "typescript": "catalog:"
+  }
+}

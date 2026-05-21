@@ -1,0 +1,74 @@
+---
+title: Quickstart
+description: Prove one source-linked update loop in local development.
+---
+
+The first useful Amend setup is small: one workspace, one customer request, one source event, one
+reviewed public update. Do that before adding every integration.
+
+## 1. Run the local stack
+
+Use the monorepo dev command when you want the web app, docs, and backend together:
+
+```bash
+bun run dev
+```
+
+Expected local routes:
+
+| Surface             | URL                                     |
+| ------------------- | --------------------------------------- |
+| Web app             | `http://amend.localhost:1355`           |
+| Docs                | `http://docs.amend.localhost:1355/docs` |
+| Convex client       | `http://127.0.0.1:3210`                 |
+| Convex HTTP actions | `http://127.0.0.1:3211`                 |
+
+The app should read those values from env files. If a link only works on your machine because a port
+is hardcoded in source, fix the env value instead.
+
+## 2. Open setup
+
+Start from the dashboard setup view. It should show the local portal URL, SDK install shape, API
+base URL, production needs, and launch gates. Treat this view as the checklist for a working
+workspace.
+
+## 3. Create one request
+
+A useful request has enough identity and context to close the loop later:
+
+```ts
+await amend.submitRequest({
+  workspaceSlug: "amend-labs",
+  title: "Notify me when export audit logs ship",
+  body: "Our compliance team needs a changelog entry tied to the PR.",
+  userId: "user_123",
+  accountId: "acct_enterprise",
+});
+```
+
+## 4. Link source evidence
+
+Connect the request to a GitHub issue, pull request, release, or commit. The trace should answer:
+
+- who asked for the change
+- what source work shipped
+- why the update is ready
+- who should be notified
+
+## 5. Review before publishing
+
+Amend can draft changelog copy, roadmap status, and customer notifications. Review those drafts
+before they become public. The first launch should be reviewable by default, then automation can be
+added by rule once the team trusts the evidence.
+
+## 6. Verify the loop
+
+Run the checks that match your current state:
+
+```bash
+bun run readiness
+bun run --cwd apps/web check-types
+bun run --cwd apps/fumadocs check-types
+```
+
+Use `bun run smoke` only while the dev stack is already running.

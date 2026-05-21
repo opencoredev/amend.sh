@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://amend.sh/sitemap.xml

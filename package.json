@@ -1,0 +1,74 @@
+{
+  "name": "amend",
+  "private": true,
+  "license": "MIT",
+  "workspaces": {
+    "packages": [
+      "apps/*",
+      "packages/*"
+    ],
+    "catalog": {
+      "dotenv": "^17.2.2",
+      "zod": "^4.1.13",
+      "typescript": "^6",
+      "next-themes": "^0.4.6",
+      "convex": "^1.33.1",
+      "better-auth": "1.6.9",
+      "@convex-dev/better-auth": "^0.12.1",
+      "@types/react-dom": "^19.2.3"
+    }
+  },
+  "type": "module",
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build && bun scripts/build-size.ts",
+    "check-types": "turbo check-types",
+    "lint": "oxlint .",
+    "format": "oxfmt .",
+    "format:check": "oxfmt --check .",
+    "test": "bun test",
+    "smoke": "bun scripts/smoke.ts",
+    "agent-ready": "bun test scripts/agent-ready.test.ts && bun run readiness",
+    "agent-ready:built": "bun scripts/agent-ready-built.ts",
+    "agent-ready:live": "bun scripts/agent-ready-live.ts",
+    "agent-ready:live:json": "bun scripts/agent-ready-live.ts --json",
+    "agent-ready:live:validate-report": "bun scripts/agent-ready-live-report-validate.ts",
+    "agent-ready:status": "bun scripts/agent-ready-status.ts",
+    "agent-ready:status:json": "bun scripts/agent-ready-status.ts --json",
+    "agent-ready:status:validate-report": "bun scripts/agent-ready-status-report-validate.ts",
+    "agent-ready:production": "bun run readiness:strict && bun run agent-ready:built && bun run agent-ready:live",
+    "agent-ready:production:json": "bun scripts/agent-ready-production.ts --json",
+    "agent-ready:refresh-report": "bun scripts/agent-ready-refresh-report.ts",
+    "agent-ready:final-gate": "bun scripts/agent-ready-final-gate.ts",
+    "agent-ready:completion-audit": "bun scripts/agent-ready-completion-audit.ts",
+    "agent-ready:completion-audit:json": "bun scripts/agent-ready-completion-audit.ts --json",
+    "agent-ready:completion-audit:validate-report": "bun scripts/agent-ready-completion-audit-report-validate.ts",
+    "agent-ready:sync-audit": "bun scripts/agent-ready-sync-audit.ts",
+    "agent-ready:sync-audit:check": "bun scripts/agent-ready-sync-audit.ts --check",
+    "agent-ready:audit:check": "bun run agent-ready:production:validate-report agent-ready-production-report.json && bun run agent-ready:live:validate-report agent-ready-live-report.json && bun run agent-ready:status:validate-report agent-ready-status.json && bun run agent-ready:completion-audit:validate-report agent-ready-completion-audit-report.json && bun run agent-ready:sync-audit:check agent-ready-production-report.json",
+    "agent-ready:production:validate-report": "bun scripts/agent-ready-production-report-validate.ts",
+    "build:size": "bun scripts/build-size.ts",
+    "readiness": "bun scripts/readiness.ts",
+    "readiness:strict": "bun scripts/readiness.ts --strict",
+    "dev:web": "turbo -F web dev",
+    "dev:docs": "turbo -F fumadocs dev",
+    "dev:server": "turbo -F @amend/backend dev",
+    "dev:setup": "turbo -F @amend/backend dev:setup",
+    "check": "bun run lint && bun run format:check && bun run check-types && bun run test",
+    "fix": "oxlint --fix . && oxfmt ."
+  },
+  "dependencies": {
+    "@amend/env": "workspace:*",
+    "dotenv": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@amend/config": "workspace:*",
+    "@types/node": "^24.3.0",
+    "oxfmt": "^0.46.0",
+    "oxlint": "^1.61.0",
+    "turbo": "^2.8.12",
+    "typescript": "catalog:"
+  },
+  "packageManager": "bun@1.3.5"
+}

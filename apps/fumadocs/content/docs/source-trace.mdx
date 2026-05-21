@@ -1,0 +1,55 @@
+---
+title: Source Trace
+description: The evidence chain that keeps requests, source work, releases, and updates connected.
+---
+
+Source trace is the reason Amend exists. It stops public product communication from drifting away
+from the work that actually shipped.
+
+## Trace shape
+
+Every update should be able to show a compact chain:
+
+```txt
+customer request -> source work -> review decision -> public update -> notification audience
+```
+
+That chain can be shown to operators in the dashboard and collapsed into a cleaner story for
+customers in the portal.
+
+## Inputs
+
+| Input              | Why it matters                                     |
+| ------------------ | -------------------------------------------------- |
+| Feedback           | Captures the customer ask and who should hear back |
+| Account identity   | Helps prioritize impact and target notifications   |
+| GitHub issue or PR | Provides source evidence and status                |
+| Release or commit  | Proves the work shipped                            |
+| Workspace rules    | Decides whether to draft, hold, or require review  |
+| Prior updates      | Prevents duplicate or contradictory announcements  |
+
+## Confidence levels
+
+Use different behavior based on evidence quality:
+
+| Confidence | Example                                            | Suggested action                      |
+| ---------- | -------------------------------------------------- | ------------------------------------- |
+| Strong     | Feedback links directly to a merged PR and release | Draft update and queue notification   |
+| Medium     | Feedback matches an issue label or milestone       | Draft for review with source caveat   |
+| Weak       | Similar wording but no source relation             | Suggest investigation, do not publish |
+
+## Review before publish
+
+The reviewer should see the public copy beside the source chain. That makes it easy to rewrite tone,
+hold the update, merge duplicate asks, or mark the suggestion as not relevant.
+
+## Public output
+
+Customers do not need to see every commit or internal decision. They need a clear answer:
+
+- what changed
+- why it matters to their request
+- whether action is required
+- where the roadmap or changelog item now lives
+
+Keep the trace visible to the team, and keep the portal readable for customers.

@@ -1,0 +1,25 @@
+{
+  "name": "@amend/backend",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "scripts": {
+    "dev": "convex dev",
+    "dev:setup": "convex dev --once --tail-logs disable",
+    "check-types": "tsc -p convex/tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@convex-dev/better-auth": "catalog:",
+    "@convex-dev/rate-limiter": "^0.3.2",
+    "better-auth": "catalog:",
+    "convex": "catalog:",
+    "dotenv": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@amend/config": "workspace:*",
+    "@types/node": "^24.3.0",
+    "typescript": "catalog:"
+  }
+}

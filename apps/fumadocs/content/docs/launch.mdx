@@ -1,0 +1,77 @@
+---
+title: Launch
+description: Production launch checklist for provider setup, DNS, deployment, and readiness gates.
+---
+
+Launch is the point where local wiring becomes public infrastructure. Keep this page boring and
+strict: it exists to prevent "works locally" from becoming a production surprise.
+
+## Preflight
+
+Run these before touching production:
+
+```bash
+bun run readiness
+bun run --cwd apps/web check-types
+bun run --cwd apps/fumadocs check-types
+```
+
+If the dev stack is already running, add the smoke gate:
+
+```bash
+bun run smoke
+```
+
+## Provider inputs
+
+Collect these before strict readiness:
+
+| Provider | Needed values                                                       |
+| -------- | ------------------------------------------------------------------- |
+| GitHub   | App ID, slug, client ID, client secret, private key, webhook secret |
+| AI       | API key, model name, provider policy                                |
+| Email    | Resend key, verified sender, sending domain                         |
+| Billing  | Stripe secret key, webhook secret, product and price IDs            |
+| Hosting  | Web app URL, docs URL, Convex deployment, DNS records               |
+
+## Convex environment
+
+Set production server-side values in the backend environment. Keep client-exposed values limited to
+`VITE_` variables.
+
+```bash
+bunx convex env set SITE_URL https://amend.sh
+bunx convex env set BETTER_AUTH_SECRET "<generated-secret>"
+bunx convex env set GITHUB_WEBHOOK_SECRET "<webhook-secret>"
+bunx convex env set AMEND_API_TOKEN "<owner-token>"
+```
+
+## Domains
+
+Use the dedicated docs host for this launch:
+
+| Surface | Example                                |
+| ------- | -------------------------------------- |
+| Web app | `https://amend.sh`                     |
+| Docs    | `https://docs.amend.sh/docs`           |
+| Portal  | `https://amend.sh/portal/acme`         |
+| API     | Convex site URL or a routed API domain |
+
+Set `VITE_DOCS_URL` to the final docs root so every landing, footer, setup, and dashboard link goes
+to the same place.
+
+## Final gate
+
+Before announcing:
+
+- sign in from the deployed web app
+- open docs from the deployed landing page
+- confirm `amend.sh` and `docs.amend.sh` resolve through A/AAAA or CNAME DNS records
+- send a signed GitHub webhook to production
+- submit feedback through the portal
+- publish a changelog entry from reviewed source evidence
+- send one real email to a test recipient
+- confirm Stripe webhook delivery
+- rerun `bun run readiness:strict`
+- rerun `bun run agent-ready:built`
+- rerun `bun run agent-ready:live`

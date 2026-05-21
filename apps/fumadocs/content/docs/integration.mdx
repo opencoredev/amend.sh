@@ -1,0 +1,98 @@
+---
+title: Integration
+description: Connect Amend to your portal, SDK, REST API, and customer identity data.
+---
+
+Integrate Amend from the outside in: public portal first, SDK or widget next, server-side REST writes
+after that. This keeps the customer-facing path real while the automation layer matures.
+
+## Portal setup
+
+Start with one workspace portal. Confirm these settings before inviting users:
+
+| Setting              | Use                                               |
+| -------------------- | ------------------------------------------------- |
+| `workspaceSlug`      | Stable public route for the portal                |
+| Roadmap visibility   | Decides which roadmap items customers can inspect |
+| Changelog visibility | Decides which shipped updates are public          |
+| Feedback mode        | Open, authenticated, or closed intake             |
+| Custom copy          | Explains what customers should submit             |
+
+Local portal URLs can live under the web app. Production can use a custom domain or path once DNS is
+ready.
+
+## SDK install
+
+Use the SDK when your product needs an update panel, request launcher, or user-specific shipped
+updates.
+
+```ts
+import { Amend } from "@amend/sdk";
+
+const amend = new Amend({
+  apiBaseUrl: process.env.AMEND_API_BASE_URL,
+  workspaceSlug: "amend-labs",
+});
+```
+
+Pass identity with stable IDs from your app, not display names:
+
+```ts
+await amend.identifyAccount({
+  accountId: "acct_123",
+  name: "Northwind",
+  plan: "enterprise",
+});
+
+await amend.identifyUser({
+  userId: "user_456",
+  accountId: "acct_123",
+  email: "maya@example.com",
+});
+```
+
+## REST API
+
+Use server-side REST calls for writes that should not happen in the browser:
+
+| Endpoint family | Use                                |
+| --------------- | ---------------------------------- |
+| Feedback        | Import customer asks and votes     |
+| Roadmap         | Create or update roadmap records   |
+| Changelog       | Publish manual or reviewed entries |
+| Notifications   | Manage delivery preferences        |
+| Integrations    | Record provider connection state   |
+| Portal settings | Control public visibility and copy |
+
+Protect owner-level mutations with `AMEND_API_TOKEN` when configured.
+
+## Identity mapping
+
+Identity is what makes "you asked, we shipped" possible. Send both user and account identifiers
+whenever you can.
+
+| Identifier    | Good source                              |
+| ------------- | ---------------------------------------- |
+| `userId`      | Your app database user ID                |
+| `accountId`   | Workspace, org, company, or tenant ID    |
+| `email`       | Notification delivery and support lookup |
+| `externalUrl` | CRM, admin, or support profile           |
+
+## Docs and domain links
+
+The web app should not assume docs live at the same origin in every environment. Set `VITE_DOCS_URL`
+to the public docs root:
+
+```bash
+# local
+VITE_DOCS_URL=http://docs.amend.localhost:1355/docs
+
+# optional same-site proxy for self-hosted installs
+VITE_DOCS_URL=/docs
+
+# Amend.sh launch docs host
+VITE_DOCS_URL=https://docs.amend.sh/docs
+```
+
+After this, product links can point to `source-trace`, `integration`, `self-hosting`, and `launch`
+without knowing where the docs app is deployed.

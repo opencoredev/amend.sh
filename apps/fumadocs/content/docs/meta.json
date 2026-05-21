@@ -1,0 +1,4 @@
+{
+  "title": "Amend.sh Docs",
+  "pages": ["index", "quickstart", "source-trace", "integration", "self-hosting", "launch"]
+}

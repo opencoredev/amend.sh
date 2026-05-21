@@ -1,0 +1,24 @@
+import { createFileRoute, redirect } from "@tanstack/react-router";
+
+import DashboardAuthShell from "@/components/dashboard-auth-shell";
+import { noIndexMeta } from "@/lib/seo";
+
+export const Route = createFileRoute("/sign-up")({
+  head: () => ({
+    meta: [{ title: "Sign up - Amend.sh" }, ...noIndexMeta],
+  }),
+  beforeLoad: ({ context }) => {
+    if (context.isAuthenticated) {
+      throw redirect({
+        params: { view: "agent" },
+        search: {},
+        to: "/dashboard/$view",
+      });
+    }
+  },
+  component: SignUpRoute,
+});
+
+function SignUpRoute() {
+  return <DashboardAuthShell showSignIn={false} />;
+}

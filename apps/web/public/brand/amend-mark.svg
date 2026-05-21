@@ -1,0 +1,8 @@
+<svg fill="none" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <title>Amend.sh mark</title>
+  <path d="M22 16H42M48 22V31H39M25 33H16V42" stroke="currentColor" stroke-linecap="square" stroke-width="4" opacity=".55"/>
+  <rect x="8" y="8" width="16" height="16" rx="2" fill="currentColor"/>
+  <rect x="40" y="8" width="16" height="16" rx="2" stroke="currentColor" stroke-width="4"/>
+  <rect x="24" y="24" width="16" height="16" rx="2" fill="currentColor" opacity=".8"/>
+  <rect x="8" y="40" width="16" height="16" rx="2" stroke="currentColor" stroke-width="4"/>
+</svg>

@@ -1,0 +1,33 @@
+# Amend.sh
+
+> Amend.sh connects customer feedback to GitHub issues, pull requests, releases, roadmaps, changelogs, and customer updates.
+
+## Primary Resources
+
+- [Product overview](https://amend.sh/): What Amend.sh does, who it is for, core workflow, and pricing.
+- [Brand guidelines](https://amend.sh/brand): Official Amend.sh logo, wordmark, and brand usage notes.
+- [Embed demo](https://amend.sh/embed-demo): Runnable example of the Amend side-panel embed and hosted portal.
+- [Public portal example](https://amend.sh/portal/amend-labs): Public changelog, roadmap, and feedback portal example.
+
+## Documentation
+
+- [Docs landing](https://docs.amend.sh): Public docs landing page for Amend.sh.
+- [Docs index](https://docs.amend.sh/docs): Documentation index for Amend.sh.
+- [Quickstart](https://docs.amend.sh/docs/quickstart): Prove a source-linked product update loop in local development.
+- [Source trace](https://docs.amend.sh/docs/source-trace): How feedback, source work, releases, and customer updates stay connected.
+- [Integration](https://docs.amend.sh/docs/integration): SDK, REST API, portal, GitHub, identity, and event integration surfaces.
+- [Self-hosting](https://docs.amend.sh/docs/self-hosting): Run Amend with your own deployment and provider keys.
+- [Launch](https://docs.amend.sh/docs/launch): Production launch checklist and readiness gates.
+
+## Machine-readable Contracts
+
+- [Agent-ready production report JSON Schema](https://docs.amend.sh/schemas/agent-ready-production-report.schema.json): Schema for CI/deploy readiness reports.
+- [Agent-ready live report JSON Schema](https://docs.amend.sh/schemas/agent-ready-live-report.schema.json): Schema for live DNS, fetch, metadata, and AI crawler access reports.
+- [Agent-ready status report JSON Schema](https://docs.amend.sh/schemas/agent-ready-status-report.schema.json): Schema for no-secret preflight status artifacts.
+- [Agent-ready completion audit report JSON Schema](https://docs.amend.sh/schemas/agent-ready-completion-audit-report.schema.json): Schema for prompt-to-artifact completion audit reports.
+
+## Notes For Agents
+
+- Public marketing and docs pages are intended to be crawled and summarized.
+- Authenticated dashboard pages and API/auth routes are not useful citation targets.
+- `llms.txt` is a navigation aid, not a guarantee of AI search inclusion.
