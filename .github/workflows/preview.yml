@@ -48,6 +48,11 @@ jobs:
             --preview-run amend:seedDemoData \
             --cmd-url-env-var-name VITE_CONVEX_URL \
             --cmd 'cd ../.. && bun scripts/vercel-preview-build.ts'
+          bun --cwd packages/backend convex deploy \
+            --preview-name "$CONVEX_PREVIEW_NAME" \
+            --typecheck disable \
+            --codegen disable
+          bun scripts/assert-convex-preview-http.ts
 
       - name: Deploy Vercel preview
         run: |
