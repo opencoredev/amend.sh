@@ -1,0 +1,81 @@
+name: Preview
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+
+concurrency:
+  group: preview-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  deploy-preview:
+    name: Deploy preview
+    if: github.event.action != 'closed'
+    runs-on: depot-ubuntu-24.04
+    permissions:
+      contents: read
+      pull-requests: read
+    env:
+      CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_PREVIEW_DEPLOY_KEY }}
+      CONVEX_PREVIEW_NAME: pr-${{ github.event.pull_request.number }}
+      AMEND_AUTH_ALLOWED_EMAILS: ${{ secrets.AMEND_PREVIEW_ALLOWED_EMAILS }}
+      AMEND_PREVIEW_AUTH_ENABLED: "true"
+      AMEND_PREVIEW_SEEDING_ENABLED: "true"
+      VITE_AMEND_PREVIEW_AUTH: "true"
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.5
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Typecheck
+        run: bun run check-types
+
+      - name: Deploy Convex preview and build web
+        run: |
+          bun --cwd packages/backend convex deploy \
+            --preview-create "$CONVEX_PREVIEW_NAME" \
+            --preview-run amend:seedDemoData \
+            --cmd-url-env-var-name VITE_CONVEX_URL \
+            --cmd 'cd ../.. && bun scripts/vercel-preview-build.ts'
+
+      - name: Deploy Vercel preview
+        run: |
+          DEPLOYMENT_URL="$(bunx vercel deploy --prebuilt --yes --scope opencoredev --token "$VERCEL_TOKEN" | tail -n 1)"
+          echo "Vercel preview: $DEPLOYMENT_URL"
+          bun --cwd packages/backend convex env set SITE_URL "$DEPLOYMENT_URL"
+
+  cleanup-preview:
+    name: Cleanup preview
+    if: github.event.action == 'closed'
+    runs-on: depot-ubuntu-24.04
+    permissions:
+      contents: read
+    env:
+      CONVEX_MANAGEMENT_TOKEN: ${{ secrets.CONVEX_MANAGEMENT_TOKEN }}
+      CONVEX_PROJECT_ID: ${{ secrets.CONVEX_PROJECT_ID }}
+      CONVEX_PREVIEW_NAME: pr-${{ github.event.pull_request.number }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.5
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Delete Convex preview
+        run: bun scripts/delete-convex-preview.ts

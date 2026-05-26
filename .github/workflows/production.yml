@@ -1,0 +1,48 @@
+name: Production
+
+on:
+  push:
+    branches: [main]
+
+concurrency:
+  group: production
+  cancel-in-progress: false
+
+jobs:
+  deploy-production:
+    name: Deploy production
+    runs-on: depot-ubuntu-24.04
+    permissions:
+      contents: read
+    env:
+      CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_PROD_DEPLOY_KEY }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VITE_CONVEX_URL: https://benevolent-yak-945.convex.cloud
+      VITE_CONVEX_SITE_URL: https://benevolent-yak-945.convex.site
+      VITE_DOCS_URL: https://amend.sh/docs
+      VITE_AMEND_PREVIEW_AUTH: "false"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.5
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Typecheck
+        run: bun run check-types
+
+      - name: Deploy Convex production
+        run: bun --cwd packages/backend convex deploy
+
+      - name: Build web
+        run: bun scripts/vercel-preview-build.ts
+
+      - name: Deploy Vercel production
+        run: bunx vercel deploy --prebuilt --prod --yes --scope opencoredev --token "$VERCEL_TOKEN"

@@ -1,6 +1,7 @@
 import { FieldGroup } from "@amend/ui/components/field";
 import { useForm } from "@tanstack/react-form";
 import { Link, useNavigate, useSearch } from "@tanstack/react-router";
+import { useMutation } from "convex/react";
 import { lazy, Suspense, useState } from "react";
 import z from "zod";
 
@@ -10,6 +11,10 @@ import {
   AuthSubmitButton,
   AuthTextField,
 } from "@/components/auth-form-primitives";
+import {
+  joinSeededDemoWorkspaceMutation,
+  localDemoWorkspaceSlug,
+} from "@/components/dev-demo-sign-in-model";
 import { parsePortalRedirectTo } from "@/lib/auth-redirects";
 import { authErrorMessage } from "@/lib/auth-errors";
 import { authClient } from "@/lib/auth-client";
@@ -22,6 +27,8 @@ const DevDemoSignInButton = import.meta.env.DEV
     }))
   : null;
 
+const previewAuthEnabled = import.meta.env.VITE_AMEND_PREVIEW_AUTH === "true";
+
 export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp?: () => void }) {
   const [formError, setFormError] = useState("");
   const navigate = useNavigate({
@@ -29,6 +36,7 @@ export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp?: ()
   });
   const search = useSearch({ from: "/sign-in" }) as { redirectTo?: string };
   const portalRedirect = parsePortalRedirectTo(search.redirectTo);
+  const joinSeededDemoWorkspace = useMutation(joinSeededDemoWorkspaceMutation);
 
   function navigateToDashboardAfterSignIn(workspace = demoWorkspaceSlug) {
     navigate({
@@ -51,6 +59,38 @@ export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp?: ()
     navigateToDashboardAfterSignIn();
   }
 
+  async function createPreviewAccount(value: { email: string; password: string }) {
+    return await new Promise<{ message?: string; ok: boolean }>((resolve) => {
+      void authClient.signUp.email(
+        {
+          email: value.email,
+          password: value.password,
+          name: previewNameFromEmail(value.email),
+        },
+        {
+          onSuccess: () => resolve({ ok: true }),
+          onError: (error) =>
+            resolve({
+              ok: false,
+              message: authErrorMessage(error, "This preview is private."),
+            }),
+        },
+      );
+    });
+  }
+
+  async function joinPreviewWorkspace(email: string) {
+    if (!previewAuthEnabled) {
+      return;
+    }
+
+    await joinSeededDemoWorkspace({
+      email,
+      name: previewNameFromEmail(email),
+      workspaceSlug: localDemoWorkspaceSlug,
+    });
+  }
+
   const form = useForm({
     defaultValues: {
       email: "",
@@ -64,11 +104,22 @@ export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp?: ()
           password: value.password,
         },
         {
-          onSuccess: () => {
+          onSuccess: async () => {
+            await joinPreviewWorkspace(value.email);
             navigateAfterEmailSignIn();
             toast.success("Sign in successful");
           },
-          onError: (error) => {
+          onError: async (error) => {
+            if (previewAuthEnabled) {
+              const signUpResult = await createPreviewAccount(value);
+              if (signUpResult.ok) {
+                await joinPreviewWorkspace(value.email);
+                navigateAfterEmailSignIn();
+                toast.success("Preview account ready");
+                return;
+              }
+            }
+
             const message = authErrorMessage(
               error,
               "Sign in failed because the email or password was not accepted. Check both fields and try again.",
@@ -94,7 +145,11 @@ export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp?: ()
     <div className="w-full">
       <AuthFormHeader
         title="Sign in to Amend"
-        description="Enter your email and password to open your workspace."
+        description={
+          previewAuthEnabled
+            ? "This preview is private. Use an allowlisted email to open the seeded workspace."
+            : "Enter your email and password to open your workspace."
+        }
         action={
           <>
             No account?{" "}
@@ -185,4 +240,12 @@ export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp?: ()
       </form>
     </div>
   );
+}
+
+function previewNameFromEmail(email: string) {
+  const name = email
+    .split("@")[0]
+    ?.replace(/[._-]+/g, " ")
+    .trim();
+  return name || "Preview user";
 }

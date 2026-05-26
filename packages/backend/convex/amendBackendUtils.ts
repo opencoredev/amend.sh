@@ -2,6 +2,7 @@ import { DEMO_SLUG, planCatalog } from "./amendDemoData";
 
 declare const process: {
   env: {
+    AMEND_PREVIEW_SEEDING_ENABLED?: string;
     GITHUB_APP_SLUG?: string;
     SITE_URL?: string;
   };
@@ -35,8 +36,8 @@ export const seededDemoLocalOnlyMessage =
   "Seeded demo sign-in is only available for local development.";
 
 export function assertSeededDemoLocalAuthAllowed() {
-  if (!isLocalAuthSiteUrl()) {
-    throw new Error(seededDemoLocalOnlyMessage);
+  if (!isLocalAuthSiteUrl() && process.env.AMEND_PREVIEW_SEEDING_ENABLED !== "true") {
+    throw new Error(`${seededDemoLocalOnlyMessage} Preview seeding must be explicitly enabled.`);
   }
 }
 
