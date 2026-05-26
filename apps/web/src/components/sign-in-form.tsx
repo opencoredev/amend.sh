@@ -151,20 +151,26 @@ export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp?: ()
             : "Enter your email and password to open your workspace."
         }
         action={
-          <>
-            No account?{" "}
-            <Link
-              to="/sign-up"
-              onClick={(event) => {
-                if (!onSwitchToSignUp) return;
-                event.preventDefault();
-                onSwitchToSignUp();
-              }}
-              className="font-medium text-foreground underline-offset-4 hover:underline"
-            >
-              Sign up for a new account
-            </Link>
-          </>
+          previewAuthEnabled ? (
+            <>
+              No account?{" "}
+              <Link
+                to="/sign-up"
+                onClick={(event) => {
+                  if (!onSwitchToSignUp) return;
+                  event.preventDefault();
+                  onSwitchToSignUp();
+                }}
+                className="font-medium text-foreground underline-offset-4 hover:underline"
+              >
+                Sign up for a new account
+              </Link>
+            </>
+          ) : (
+            <>
+              No account? <span className="text-foreground">Production access is private.</span>
+            </>
+          )
         }
       />
 

@@ -21,7 +21,7 @@ export default function DashboardAuthShell({ showSignIn }: DashboardAuthShellPro
           <div className="w-full max-w-xs">{showSignIn ? <SignInForm /> : <SignUpForm />}</div>
         </div>
       </section>
-      <section className="relative hidden bg-white lg:block">
+      <section className="relative hidden overflow-hidden bg-[#0a0a0a] lg:block">
         <img
           src="/auth-cover.svg"
           alt=""
