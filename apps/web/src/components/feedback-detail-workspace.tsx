@@ -56,7 +56,7 @@ export function FeedbackDetailWorkspace({
                     key={tab}
                     type="button"
                     className={cn(
-                      "min-h-10 px-3 text-sm font-semibold capitalize text-muted-foreground transition-[background-color,color,scale] duration-200 hover:bg-muted/25 hover:text-foreground active:scale-[0.96]",
+                      "min-h-10 px-3 text-sm font-semibold capitalize text-muted-foreground transition-colors duration-150 ease-linear hover:bg-muted/25 hover:text-foreground active:opacity-75",
                       activeTab === tab && "bg-muted/30 text-foreground",
                     )}
                     onClick={() => setActiveTab(tab)}

@@ -29,32 +29,20 @@
 
   button,
   a {
-    transition-property:
-      background-color, border-color, color, box-shadow, scale, transform, opacity;
-    transition-duration: 180ms;
-    transition-timing-function: var(--amend-ease);
+    transition-property: background-color, border-color, color, box-shadow, opacity;
+    transition-duration: 150ms;
+    transition-timing-function: linear;
   }
 
   button:active,
   a:active {
-    scale: 0.96;
+    opacity: 0.75;
   }
 }
 
 .amend-hero {
   background: var(--background);
   color: var(--foreground);
-}
-
-.amend-hero > [aria-hidden="true"] {
-  mask-image: linear-gradient(to bottom, transparent 0%, black 12%, black 88%, transparent 100%);
-  -webkit-mask-image: linear-gradient(
-    to bottom,
-    transparent 0%,
-    black 12%,
-    black 88%,
-    transparent 100%
-  );
 }
 
 .amend-hero-copy {

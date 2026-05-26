@@ -8,12 +8,11 @@ export function FeaturesSection() {
           <div>
             <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Product</p>
             <h2 className="amend-display mt-5 max-w-xl text-4xl font-medium leading-tight sm:text-5xl">
-              Customer feedback should not die in Slack.
+              Feedback is the input. The loop is the product.
             </h2>
             <p className="mt-6 max-w-md text-sm leading-6 text-muted-foreground">
-              Amend keeps requests, roadmap items, GitHub work, and changelog entries in the same
-              record, so your team can answer the only question customers care about: did you ship
-              the thing I asked for?
+              Amend is not another voting board. It is product memory for teams that need to know
+              what users want, what the team is building, and who needs the update when it ships.
             </p>
           </div>
           <div className="divide-y border-y">

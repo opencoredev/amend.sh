@@ -1,12 +1,9 @@
-import { CircleDashed, MessageSquareText } from "lucide-react";
-
 import type { RoadmapStatus } from "@/components/amend-dashboard-types";
 import { statusMeta } from "@/components/amend-dashboard-status";
 import {
   SidebarFrame,
-  SidebarItem,
-  SidebarSection,
-  SidebarTitle,
+  SidebarPill,
+  SidebarPillGroup,
 } from "@/components/dashboard-module-sidebar-primitives";
 import type { ModuleSidebarProps } from "@/components/dashboard-module-sidebar-types";
 
@@ -17,35 +14,25 @@ export function FeedbackModuleSidebar({
 }: Pick<ModuleSidebarProps, "activeStatus" | "feedbackPosts" | "onStatusChange">) {
   return (
     <SidebarFrame>
-      <SidebarTitle title="Feedback" />
-      <SidebarSection title="Statuses">
-        <SidebarItem
+      <SidebarPillGroup>
+        <SidebarPill
           active={activeStatus === "all"}
-          icon={<CircleDashed />}
-          label="All feedback"
-          value={String(feedbackPosts.length)}
+          count={feedbackPosts.length}
           onClick={() => onStatusChange("all")}
-        />
+        >
+          All
+        </SidebarPill>
         {Object.entries(statusMeta).map(([status, meta]) => (
-          <SidebarItem
+          <SidebarPill
             key={status}
             active={activeStatus === status}
-            icon={meta.icon}
-            label={meta.label}
-            value={String(feedbackPosts.filter((post) => post.status === status).length)}
+            count={feedbackPosts.filter((post) => post.status === status).length}
             onClick={() => onStatusChange(status as RoadmapStatus)}
-          />
+          >
+            {meta.label}
+          </SidebarPill>
         ))}
-      </SidebarSection>
-      <SidebarSection title="Board">
-        <SidebarItem
-          active
-          icon={<MessageSquareText />}
-          label="Feedback"
-          value={String(feedbackPosts.length)}
-          onClick={() => onStatusChange("all")}
-        />
-      </SidebarSection>
+      </SidebarPillGroup>
     </SidebarFrame>
   );
 }

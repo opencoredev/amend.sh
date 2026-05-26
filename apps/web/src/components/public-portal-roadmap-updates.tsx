@@ -8,7 +8,7 @@ export function PortalRoadmapSection({ roadmap }: { roadmap: PortalRoadmap[] }) 
     <section id="roadmap" className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_260px]">
       <div className="rounded-lg border bg-card p-5">
         <div className="mb-4 flex items-center gap-2">
-          <Road className="size-5 text-muted-foreground" />
+          <Road className="size-5 text-primary" />
           <h2 className="text-xl font-semibold">Product roadmap</h2>
         </div>
         {roadmap.length === 0 ? (
@@ -23,7 +23,7 @@ export function PortalRoadmapSection({ roadmap }: { roadmap: PortalRoadmap[] }) 
               <article key={item.stableKey} className="py-4 first:pt-0 last:pb-0">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <h3 className="font-semibold">{item.title}</h3>
-                  <span className="rounded-full border bg-muted px-2.5 py-1 text-xs">
+                  <span className="rounded-full border border-primary/25 bg-primary/10 px-2.5 py-1 text-xs text-foreground">
                     {item.status}
                   </span>
                 </div>
@@ -44,7 +44,7 @@ export function PortalUpdatesSection({ changelog }: { changelog: PortalChangelog
   return (
     <section id="updates" className="rounded-lg border bg-card p-5">
       <div className="mb-4 flex items-center gap-2">
-        <Bell className="size-5 text-muted-foreground" />
+        <Bell className="size-5 text-primary" />
         <h2 className="text-xl font-semibold">Product updates</h2>
       </div>
       {changelog.length === 0 ? (
@@ -59,7 +59,7 @@ export function PortalUpdatesSection({ changelog }: { changelog: PortalChangelog
             <article key={item.stableKey} className="rounded-lg border bg-background p-4">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <h3 className="font-semibold">{item.title}</h3>
-                <span className="rounded-full border bg-muted px-2.5 py-1 text-xs">
+                <span className="rounded-full border border-primary/25 bg-primary/10 px-2.5 py-1 text-xs text-foreground">
                   {item.category}
                 </span>
               </div>

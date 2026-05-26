@@ -28,7 +28,7 @@ export function ChangelogEditorMain({
       <div className="mx-auto grid max-w-5xl gap-6">
         <button
           type="button"
-          className="grid min-h-36 place-items-center border border-border bg-card/60 text-sm font-semibold text-muted-foreground transition-[background-color,border-color,color,scale] duration-200 hover:border-foreground hover:bg-muted/20 hover:text-foreground active:scale-[0.995]"
+          className="grid min-h-36 place-items-center border border-border bg-card/60 text-sm font-semibold text-muted-foreground transition-colors duration-150 ease-linear hover:border-foreground hover:bg-muted/20 hover:text-foreground active:opacity-75"
         >
           <span className="inline-flex items-center gap-2 rounded-md border border-border bg-background px-3 py-2">
             <Globe className="size-4" />

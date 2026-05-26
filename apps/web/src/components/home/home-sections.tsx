@@ -17,7 +17,7 @@ export function MobileActionBar() {
             <a
               key={label}
               href={href}
-              className="flex h-9 items-center justify-center border border-border px-2 text-[0.72rem] font-semibold text-muted-foreground transition-[border-color,background-color,color,scale] duration-200 hover:border-foreground hover:bg-foreground hover:text-background active:scale-[0.96] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground"
+              className="flex h-9 items-center justify-center rounded-lg border border-border bg-card/40 px-2 text-[0.72rem] font-medium text-muted-foreground transition-[border-color,background-color,color,opacity] hover:border-foreground/35 hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground"
             >
               {label}
             </a>
@@ -25,9 +25,9 @@ export function MobileActionBar() {
         </nav>
         <Link
           to="/sign-up"
-          className="flex h-11 items-center justify-center border border-foreground bg-foreground px-4 text-sm font-semibold text-background transition-[background-color,color,scale] duration-200 hover:bg-transparent hover:text-foreground active:scale-[0.96] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground"
+          className="flex h-10 items-center justify-center rounded-lg border border-transparent bg-foreground px-4 text-[13px] font-medium text-background transition-[background-color,color,opacity] hover:bg-foreground/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground"
         >
-          Coming soon
+          Request access
         </Link>
       </div>
     </div>
@@ -40,14 +40,16 @@ export function FounderProofSection() {
       <div className="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8 lg:py-36">
         <div className="grid gap-10 lg:grid-cols-[0.92fr_1.08fr] lg:items-end">
           <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Founder led</p>
+            <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
+              What changes
+            </p>
             <h2 className="amend-display mt-5 max-w-4xl text-4xl font-medium leading-tight sm:text-5xl lg:text-6xl">
-              Keep every customer ask in view.
+              The same request stops showing up as a brand new problem.
             </h2>
           </div>
           <p className="max-w-xl text-sm leading-6 text-muted-foreground lg:justify-self-end">
-            Start with the requests coming in today. Add product, engineering, support, and sales
-            when they need the same customer record.
+            Amend connects the messy places users talk with the places your team ships. Less copy
+            paste. Fewer forgotten asks. Better follow-up when the work is done.
           </p>
         </div>
 
@@ -86,14 +88,15 @@ export function IntegrationSection() {
         <div className="grid gap-10 lg:grid-cols-[0.72fr_1.28fr]">
           <div>
             <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-              Channels and source work
+              Where Amend shows up
             </p>
             <h2 className="amend-display mt-5 max-w-xl text-4xl font-medium leading-tight sm:text-5xl">
-              Pull customer requests from the places your team already uses.
+              The same tool can play different roles.
             </h2>
             <p className="mt-6 max-w-md text-sm leading-6 text-muted-foreground">
-              Amend keeps the original message, the source channel, and the GitHub work together so
-              one request can become a roadmap call, a PR, and a customer update.
+              Discord might be your public community. Slack might be your team room. Both can be
+              places to listen, places to ask Amend questions, or places to post updates when you
+              allow it.
             </p>
           </div>
 
@@ -113,7 +116,7 @@ export function IntegrationSection() {
                         <span
                           key={`${label}-${item}-${index}`}
                           data-amend-chip-duplicate={index >= items.length ? "true" : undefined}
-                          className="shrink-0 border border-border px-3 py-2 text-xs text-foreground"
+                          className="shrink-0 rounded-md border border-border bg-card/40 px-3 py-2 text-xs text-foreground"
                         >
                           {item}
                         </span>
@@ -137,7 +140,7 @@ export function IntegrationSection() {
                     {scene.rows.map((row) => (
                       <div
                         key={row}
-                        className="border border-border px-3 py-2 text-xs leading-5 text-muted-foreground"
+                        className="rounded-md border border-border bg-background/60 px-3 py-2 text-xs leading-5 text-muted-foreground"
                       >
                         {row}
                       </div>
@@ -165,8 +168,8 @@ export function IntegrationSection() {
             </div>
 
             <p className="max-w-2xl text-sm leading-6 text-muted-foreground">
-              Start with the channels that already matter. Add more later without turning every
-              message into a task.
+              Start with GitHub, Linear, Discord, Slack, portal, widget, SDK, and email forwarding.
+              Add Intercom, Zendesk, Stripe, or HubSpot when the extra context is worth the setup.
             </p>
           </div>
         </div>

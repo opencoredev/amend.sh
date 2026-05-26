@@ -21,10 +21,17 @@ export type DashboardRoutePatch = Partial<{
   project: string;
   q: string;
   roadmap: RoadmapViewId;
+  replace: boolean;
   status: RoadmapStatus | "all";
   view: DashboardView;
   workspace: WorkspaceId;
 }>;
+
+const DEFAULT_BOARD_ID = "feedback";
+const DEFAULT_ROADMAP_ID = "main";
+const DEFAULT_STATUS = "all";
+const DEFAULT_WORKSPACE_ID = "workspace";
+const SEARCHABLE_VIEWS = new Set<DashboardView>(["posts", "roadmap", "changelog"]);
 
 export function useAmendDashboardRoute() {
   const params = useParams({ strict: false }) as { view?: string };
@@ -52,16 +59,58 @@ export function useAmendDashboardRoute() {
   const setRoute = useCallback(
     (next: DashboardRoutePatch) => {
       const nextView = next.view ?? activeView;
+      const nextProjectId = next.project ?? activeProjectId;
+      const nextQuery = next.q ?? searchQuery;
+      const nextBoardId = next.board ?? activeBoardId;
+      const nextRoadmapId = next.roadmap ?? activeRoadmapId;
+      const nextStatus = next.status ?? activeStatus;
+      const nextWorkspaceId = next.workspace ?? workspaceId;
+      const search: Partial<{
+        board: BoardId;
+        project: string;
+        q: string;
+        roadmap: RoadmapViewId;
+        status: RoadmapStatus | "all";
+        workspace: WorkspaceId;
+      }> = {};
+
+      if (nextProjectId && nextProjectId !== "new-project") {
+        search.project = nextProjectId;
+      }
+
+      if (nextWorkspaceId !== DEFAULT_WORKSPACE_ID) {
+        search.workspace = nextWorkspaceId;
+      }
+
+      if (SEARCHABLE_VIEWS.has(nextView) && nextQuery.trim()) {
+        search.q = nextQuery;
+      }
+
+      if (nextView === "posts") {
+        if (nextBoardId !== DEFAULT_BOARD_ID) {
+          search.board = nextBoardId;
+        }
+        if (nextStatus !== DEFAULT_STATUS) {
+          search.status = nextStatus;
+        }
+      }
+
+      if (nextView === "roadmap") {
+        if (nextRoadmapId !== DEFAULT_ROADMAP_ID) {
+          search.roadmap = nextRoadmapId;
+        }
+        if (nextStatus !== DEFAULT_STATUS) {
+          search.status = nextStatus;
+        }
+      }
+
+      const replace =
+        next.replace ?? (Object.keys(next).length === 1 && Object.hasOwn(next, "q"));
+
       void navigate({
         params: { view: nextView },
-        search: {
-          board: next.board ?? activeBoardId,
-          project: next.project ?? activeProjectId,
-          q: next.q ?? searchQuery,
-          roadmap: next.roadmap ?? activeRoadmapId,
-          status: next.status ?? activeStatus,
-          workspace: next.workspace ?? workspaceId,
-        },
+        replace,
+        search,
         to: "/dashboard/$view",
       });
     },

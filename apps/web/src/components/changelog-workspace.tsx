@@ -3,6 +3,7 @@ import { Megaphone } from "lucide-react";
 import { EmptyModule } from "@/components/amend-dashboard-shared";
 import type { DashboardChangelog } from "@/components/amend-dashboard-types";
 import { formatDate, formatState } from "@/components/amend-dashboard-utils";
+import { DashboardWorkspaceSurface } from "@/components/dashboard-workspace-surface";
 
 export function ChangelogWorkspace({
   entries,
@@ -12,16 +13,16 @@ export function ChangelogWorkspace({
   onOpen: (entry: DashboardChangelog) => void;
 }) {
   return (
-    <div className="t-panel-slide min-h-[calc(100svh-5.5rem)] bg-card/40" data-open="true">
-      <div className="divide-y divide-border border-b border-border">
+    <DashboardWorkspaceSurface>
+      <div className={entries.length > 0 ? "grid divide-y divide-white/[0.045]" : "grid min-h-[calc(100svh-8.5rem)] place-items-center"}>
         {entries.map((entry) => (
           <button
             key={entry.stableKey}
             type="button"
-            className="group grid w-full gap-4 px-4 py-5 text-left transition-[background-color] duration-150 hover:bg-muted/20 active:scale-[0.995] md:grid-cols-[18rem_minmax(0,1fr)_8rem] md:items-center md:px-6"
+            className="group grid w-full gap-5 px-5 py-5 text-left transition-colors duration-150 ease-linear hover:bg-foreground/[0.04] active:opacity-75 md:grid-cols-[18rem_minmax(0,1fr)_8rem] md:items-center md:px-6"
             onClick={() => onOpen(entry)}
           >
-            <div className="grid aspect-[16/9] place-items-center rounded-lg border border-border bg-muted/25 text-sm font-semibold text-muted-foreground">
+            <div className="grid aspect-[16/9] place-items-center rounded-xl bg-background/70 text-sm font-semibold text-muted-foreground ring-1 ring-white/[0.04]">
               No featured image
             </div>
             <div className="min-w-0">
@@ -30,27 +31,29 @@ export function ChangelogWorkspace({
                 {entry.summary}
               </p>
               <div className="mt-3 flex flex-wrap gap-2 text-xs text-muted-foreground">
-                <span className="rounded-md border border-border bg-muted/25 px-2 py-1">
+                <span className="rounded-lg bg-background/80 px-2.5 py-1 ring-1 ring-white/[0.04]">
                   {formatState(entry.category)}
                 </span>
-                <span className="rounded-md border border-border bg-muted/25 px-2 py-1">
+                <span className="rounded-lg bg-background/80 px-2.5 py-1 ring-1 ring-white/[0.04]">
                   {entry.publishedAt ? formatDate(entry.publishedAt) : formatDate(entry.updatedAt)}
                 </span>
               </div>
             </div>
-            <span className="h-fit w-fit rounded-full border border-border bg-muted/25 px-3 py-1 text-xs font-semibold text-muted-foreground md:justify-self-end">
+            <span className="h-fit w-fit rounded-lg bg-background/80 px-2.5 py-1 text-xs font-semibold text-muted-foreground ring-1 ring-white/[0.04] md:justify-self-end">
               {formatState(entry.status)}
             </span>
           </button>
         ))}
         {entries.length === 0 ? (
-          <EmptyModule
-            copy="Use this when a shipped update needs review, targeting, and subscriber delivery."
-            icon={<Megaphone />}
-            title="Publish the first reviewed update"
-          />
+          <div className="w-full">
+            <EmptyModule
+              copy="Use this when a shipped update needs review, targeting, and subscriber delivery."
+              icon={<Megaphone />}
+              title="Publish the first reviewed update"
+            />
+          </div>
         ) : null}
       </div>
-    </div>
+    </DashboardWorkspaceSurface>
   );
 }

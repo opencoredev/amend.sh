@@ -9,25 +9,29 @@
 }
 
 :root {
-  --background: oklch(0.994 0 0);
-  --foreground: oklch(0 0 0);
-  --card: oklch(0.994 0 0);
-  --card-foreground: oklch(0 0 0);
-  --popover: oklch(0.9911 0 0);
-  --popover-foreground: oklch(0 0 0);
+  --background: #fbfbfa;
+  --foreground: #111113;
+  --card: #ffffff;
+  --card-foreground: #111113;
+  --popover: #ffffff;
+  --popover-foreground: #111113;
   --primary: oklch(0 0 0);
   --primary-foreground: oklch(0.994 0 0);
   --secondary: oklch(0.229 0.0036 228.9614);
   --secondary-foreground: oklch(0.954 0.0063 255.4755);
-  --muted: oklch(0.9702 0 0);
-  --muted-foreground: oklch(0.4386 0 0);
-  --accent: oklch(0.9401 0 0);
+  --muted: #f1f1ef;
+  --muted-foreground: #66666d;
+  --accent: #eeeeeb;
   --accent-foreground: oklch(0 0 0);
   --destructive: oklch(0.629 0.1902 23.0704);
   --destructive-foreground: oklch(1 0 0);
-  --border: oklch(0.93 0.0094 286.2156);
-  --input: oklch(0.9401 0 0);
+  --border: #deded8;
+  --input: #e9e9e5;
   --ring: oklch(0 0 0);
+  --amend-warm: #f5c86b;
+  --amend-warm-foreground: #15110a;
+  --amend-success: #67e19f;
+  --amend-info: #34a6ff;
   --chart-1: oklch(0.7459 0.1483 156.4499);
   --chart-2: oklch(0.7336 0.1758 50.5517);
   --chart-3: oklch(0.629 0.1902 23.0704);
@@ -44,11 +48,13 @@
   --amend-font-mono:
     "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   --amend-font-display: var(--font-montserrat), Montserrat, sans-serif;
-  --font-sans: var(--font-montserrat), Montserrat, sans-serif;
+  --font-sans:
+    Geist, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    sans-serif;
   --font-serif: Lora, serif;
   --font-mono: IBM Plex Mono, monospace;
   --font-display: var(--font-montserrat), Montserrat, sans-serif;
-  --radius: 1.4rem;
+  --radius: 0.85rem;
   --shadow-x: 0;
   --shadow-y: 1px;
   --shadow-blur: 3px;
@@ -119,38 +125,42 @@
 }
 
 .dark {
-  --background: oklch(0.1221 0 0);
-  --foreground: oklch(0.9551 0 0);
-  --card: oklch(0.1822 0 0);
-  --card-foreground: oklch(0.9551 0 0);
-  --popover: oklch(0.2568 0.0076 274.6528);
-  --popover-foreground: oklch(0.9551 0 0);
+  --background: #0d0d0f;
+  --foreground: #f1f1f0;
+  --card: #111113;
+  --card-foreground: #f1f1f0;
+  --popover: #17171a;
+  --popover-foreground: #f1f1f0;
   --primary: oklch(0.9551 0 0);
   --primary-foreground: oklch(0.1221 0 0);
   --secondary: oklch(0.229 0.0036 228.9614);
   --secondary-foreground: oklch(0.9551 0 0);
-  --muted: oklch(0.294 0.013 272.9312);
-  --muted-foreground: oklch(0.7058 0 0);
-  --accent: oklch(0.2795 0.0368 260.031);
-  --accent-foreground: oklch(0.9551 0 0);
+  --muted: #17171a;
+  --muted-foreground: #a7a7af;
+  --accent: #1d1d21;
+  --accent-foreground: #f1f1f0;
   --destructive: oklch(0.7106 0.1661 22.2162);
   --destructive-foreground: oklch(1 0 0);
-  --border: oklch(0.2884 0.0023 247.9056);
-  --input: oklch(0.3289 0.0092 268.3843);
+  --border: #1f1f23;
+  --input: #232327;
   --ring: oklch(0.9551 0 0);
+  --amend-warm: #f5c86b;
+  --amend-warm-foreground: #15110a;
+  --amend-success: #67e19f;
+  --amend-info: #34a6ff;
   --chart-1: oklch(0.8003 0.1821 151.711);
   --chart-2: oklch(0.7336 0.1758 50.5517);
   --chart-3: oklch(0.8077 0.1035 19.5706);
   --chart-4: oklch(0.6691 0.1569 260.1063);
   --chart-5: oklch(0.7058 0 0);
-  --sidebar: oklch(0.2011 0.0039 286.0396);
-  --sidebar-foreground: oklch(0.9551 0 0);
+  --sidebar: #0d0d0f;
+  --sidebar-foreground: #f1f1f0;
   --sidebar-primary: oklch(0.9551 0 0);
   --sidebar-primary-foreground: oklch(0.1221 0 0);
-  --sidebar-accent: oklch(0.294 0.013 272.9312);
-  --sidebar-accent-foreground: oklch(0.9551 0 0);
-  --sidebar-border: oklch(0.3289 0.0092 268.3843);
-  --sidebar-ring: oklch(0.7058 0 0);
+  --sidebar-accent: #1d1d21;
+  --sidebar-accent-foreground: #f1f1f0;
+  --sidebar-border: #1f1f23;
+  --sidebar-ring: #9f9fa9;
 }
 
 @theme inline {
@@ -186,6 +196,10 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  --color-amend-warm: var(--amend-warm);
+  --color-amend-warm-foreground: var(--amend-warm-foreground);
+  --color-amend-success: var(--amend-success);
+  --color-amend-info: var(--amend-info);
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
   --font-serif: var(--font-serif);

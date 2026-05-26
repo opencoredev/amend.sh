@@ -22,13 +22,13 @@ export default function AmendDashboard() {
   }
 
   return (
-    <main className="dark min-h-svh overflow-hidden bg-background font-mono text-foreground">
+    <main className="dark min-h-svh overflow-hidden bg-background p-3 font-sans text-foreground">
       <div
         className={cn(
-          "grid min-h-svh",
+          "grid min-h-[calc(100svh-1.5rem)] overflow-hidden rounded-2xl bg-background shadow-[0_24px_80px_rgb(0_0_0/0.32)] ring-1 ring-white/[0.035]",
           dashboard.focusChangelogEditor
-            ? "lg:grid-cols-[3.75rem_minmax(0,1fr)]"
-            : "lg:grid-cols-[3.75rem_17.5rem_minmax(0,1fr)]",
+            ? "lg:grid-cols-[minmax(0,1fr)]"
+            : "lg:grid-cols-[16rem_minmax(0,1fr)]",
         )}
       >
         <DashboardSidebarChrome {...dashboard.sidebarProps} />

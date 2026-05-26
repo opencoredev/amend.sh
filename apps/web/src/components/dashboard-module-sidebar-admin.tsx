@@ -11,24 +11,22 @@ import {
 
 import {
   SidebarFrame,
-  SidebarItem,
-  SidebarSection,
-  SidebarTitle,
+  SidebarNavItem,
+  SidebarNavList,
 } from "@/components/dashboard-module-sidebar-primitives";
 import type { ModuleSidebarProps } from "@/components/dashboard-module-sidebar-types";
 
 export function SetupModuleSidebar({ onViewChange }: Pick<ModuleSidebarProps, "onViewChange">) {
   return (
     <SidebarFrame>
-      <SidebarTitle title="Setup" />
-      <SidebarSection title="Project">
-        <SidebarItem
+      <SidebarNavList>
+        <SidebarNavItem
           active
           icon={<GitPullRequestArrow />}
           label="Connect source"
           onClick={() => onViewChange("setup")}
         />
-      </SidebarSection>
+      </SidebarNavList>
     </SidebarFrame>
   );
 }
@@ -39,39 +37,38 @@ export function SettingsModuleSidebar({
 }: Pick<ModuleSidebarProps, "activeSettingsSection" | "onSettingsSectionChange">) {
   return (
     <SidebarFrame>
-      <SidebarTitle title="Settings" />
-      <SidebarSection title="Project settings">
-        <SidebarItem
+      <SidebarNavList>
+        <SidebarNavItem
           active={activeSettingsSection === "general"}
           icon={<Settings />}
           label="General"
           onClick={() => onSettingsSectionChange("general")}
         />
-        <SidebarItem
+        <SidebarNavItem
           active={activeSettingsSection === "services"}
           icon={<GitPullRequestArrow />}
           label="Connected services"
           onClick={() => onSettingsSectionChange("services")}
         />
-        <SidebarItem
+        <SidebarNavItem
           active={activeSettingsSection === "portal"}
           icon={<Globe />}
           label="Public portal"
           onClick={() => onSettingsSectionChange("portal")}
         />
-        <SidebarItem
+        <SidebarNavItem
           active={activeSettingsSection === "automation"}
           icon={<DatabaseZap />}
           label="Automation"
           onClick={() => onSettingsSectionChange("automation")}
         />
-        <SidebarItem
+        <SidebarNavItem
           active={activeSettingsSection === "accounts"}
           icon={<Users />}
           label="Accounts"
           onClick={() => onSettingsSectionChange("accounts")}
         />
-      </SidebarSection>
+      </SidebarNavList>
     </SidebarFrame>
   );
 }
@@ -82,20 +79,19 @@ export function AnalyticsModuleSidebar({
 }: Pick<ModuleSidebarProps, "onSettingsSectionChange" | "onViewChange">) {
   return (
     <SidebarFrame>
-      <SidebarTitle title="Analytics" />
-      <SidebarSection title="In-house dashboards">
-        <SidebarItem
+      <SidebarNavList>
+        <SidebarNavItem
           active
           icon={<ChartNoAxesCombined />}
           label="Overview"
           onClick={() => onViewChange("analytics")}
         />
-        <SidebarItem
+        <SidebarNavItem
           icon={<Activity />}
           label="Agent funnel"
           onClick={() => onViewChange("proactivation")}
         />
-        <SidebarItem
+        <SidebarNavItem
           icon={<DatabaseZap />}
           label="PostHog setup"
           onClick={() => {
@@ -103,7 +99,7 @@ export function AnalyticsModuleSidebar({
             onViewChange("settings");
           }}
         />
-      </SidebarSection>
+      </SidebarNavList>
     </SidebarFrame>
   );
 }
@@ -114,15 +110,14 @@ export function ProactivationModuleSidebar({
 }: Pick<ModuleSidebarProps, "onSettingsSectionChange" | "onViewChange">) {
   return (
     <SidebarFrame>
-      <SidebarTitle title="Proactivation" />
-      <SidebarSection title="Command center">
-        <SidebarItem
+      <SidebarNavList>
+        <SidebarNavItem
           active
           icon={<Sparkles />}
           label="Run and review"
           onClick={() => onViewChange("proactivation")}
         />
-        <SidebarItem
+        <SidebarNavItem
           icon={<DatabaseZap />}
           label="Automation rules"
           onClick={() => {
@@ -130,12 +125,12 @@ export function ProactivationModuleSidebar({
             onViewChange("settings");
           }}
         />
-        <SidebarItem
+        <SidebarNavItem
           icon={<GitPullRequestArrow />}
           label="Source setup"
           onClick={() => onViewChange("setup")}
         />
-      </SidebarSection>
+      </SidebarNavList>
     </SidebarFrame>
   );
 }

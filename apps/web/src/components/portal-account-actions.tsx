@@ -63,7 +63,7 @@ export function PortalMobileNav({ workspaceSlug }: { workspaceSlug: string }) {
         {isAuthenticated ? (
           <Link
             to="/dashboard"
-            className="flex h-10 items-center justify-center border border-foreground bg-foreground px-2 text-xs font-semibold text-background transition-[background-color,color] hover:bg-background hover:text-foreground"
+            className="flex h-10 items-center justify-center border border-primary bg-primary px-2 text-xs font-semibold text-primary-foreground transition-[background-color,color] hover:bg-background hover:text-foreground"
           >
             Dash
           </Link>
@@ -71,7 +71,7 @@ export function PortalMobileNav({ workspaceSlug }: { workspaceSlug: string }) {
           <Link
             to="/sign-in"
             search={{ redirectTo: portalRedirectTo(workspaceSlug) }}
-            className="flex h-10 items-center justify-center border border-foreground bg-foreground px-2 text-xs font-semibold text-background transition-[background-color,color] hover:bg-background hover:text-foreground"
+            className="flex h-10 items-center justify-center border border-primary bg-primary px-2 text-xs font-semibold text-primary-foreground transition-[background-color,color] hover:bg-background hover:text-foreground"
           >
             Sign in
           </Link>

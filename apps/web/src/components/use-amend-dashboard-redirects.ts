@@ -38,7 +38,7 @@ export function useAmendDashboardRedirects({
   useEffect(() => {
     if (activeProjectId || !projectsReady || requiresProjectSetup || activeView === "setup") return;
     if (activeProject.id === "new-project") return;
-    setRoute({ project: activeProject.id });
+    setRoute({ project: activeProject.id, replace: true });
   }, [
     activeProject.id,
     activeProjectId,
@@ -50,13 +50,13 @@ export function useAmendDashboardRedirects({
 
   useEffect(() => {
     if (!requiresProjectSetup || activeView === "setup") return;
-    setRoute({ project: "", view: "setup" });
+    setRoute({ project: "", replace: true, view: "setup" });
   }, [activeView, requiresProjectSetup, setRoute]);
 
   useEffect(() => {
     if (!activeProjectNeedsSource || activeView === "proactivation" || activeView === "setup") {
       return;
     }
-    setRoute({ project: activeProject.id, view: "setup" });
+    setRoute({ project: activeProject.id, replace: true, view: "setup" });
   }, [activeProject.id, activeProjectNeedsSource, activeView, setRoute]);
 }

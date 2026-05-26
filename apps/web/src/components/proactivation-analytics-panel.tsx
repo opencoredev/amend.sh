@@ -1,7 +1,4 @@
-"use client";
-
 import { Activity } from "lucide-react";
-import { Bar, BarChart, Cell, ResponsiveContainer, Tooltip, XAxis } from "recharts";
 
 import { formatDate, formatState } from "@/components/amend-dashboard-format";
 import type { DashboardOverview } from "@/components/amend-dashboard-types";
@@ -16,17 +13,14 @@ export function ProactivationAnalyticsPanel({
   const topEvents = analytics?.topEvents ?? [];
   const recentEvents = analytics?.recentEvents ?? [];
 
-  const chartData = topEvents.slice(0, 10).map((item) => ({
-    name: formatState(item.event).split(" ").slice(0, 2).join(" "),
-    count: item.count,
-    full: formatState(item.event),
-  }));
+  const maxCount = topEvents.length > 0 ? Math.max(...topEvents.map((e) => e.count)) : 1;
+  const chartItems = topEvents.slice(0, 10);
 
   return (
-    <section className="border border-border">
-      <div className="flex items-center justify-between gap-4 border-b border-border px-4 py-3">
+    <section className="rounded-lg border border-border/80 bg-card shadow-sm shadow-black/10">
+      <div className="flex items-center justify-between gap-4 border-b border-border/70 px-4 py-3">
         <div className="flex items-center gap-3">
-          <span className="grid size-7 shrink-0 place-items-center border border-border bg-muted/30 text-muted-foreground [&_svg]:size-3.5">
+          <span className="grid size-7 shrink-0 place-items-center rounded-md border border-border/80 bg-muted/60 text-muted-foreground [&_svg]:size-3.5">
             <Activity />
           </span>
           <div>
@@ -43,56 +37,45 @@ export function ProactivationAnalyticsPanel({
         </div>
       </div>
 
-      {chartData.length > 0 ? (
-        <div className="border-b border-border px-4 pb-3 pt-4">
+      {chartItems.length > 0 ? (
+        <div className="border-b border-border/70 px-4 pb-4 pt-3">
           <p className="mb-3 text-[0.6rem] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
             Top events
           </p>
-          <ResponsiveContainer width="100%" height={100}>
-            <BarChart
-              data={chartData}
-              margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
-              barCategoryGap="20%"
-            >
-              <XAxis
-                dataKey="name"
-                axisLine={false}
-                tickLine={false}
-                tick={{ fontSize: 9, fill: "currentColor", className: "text-muted-foreground" }}
-                height={20}
-              />
-              <Tooltip
-                cursor={{ fill: "transparent" }}
-                content={({ active, payload }) => {
-                  if (!active || !payload?.length) return null;
-                  const d = payload[0]?.payload;
-                  return (
-                    <div className="border border-border bg-popover px-3 py-2 shadow-lg">
-                      <p className="text-xs font-semibold">{d?.full}</p>
-                      <p className="mt-0.5 font-mono text-xs text-muted-foreground">
-                        {payload[0]?.value} events
-                      </p>
-                    </div>
-                  );
-                }}
-              />
-              <Bar dataKey="count" radius={0}>
-                {chartData.map((_, i) => (
-                  <Cell
-                    key={i}
-                    fill={
-                      i === 0
-                        ? "var(--color-foreground)"
-                        : `oklch(from var(--color-foreground) l c h / ${Math.max(0.2, 1 - i * 0.08)})`
-                    }
+          <div className="flex h-20 items-end gap-1">
+            {chartItems.map((item, i) => {
+              const pct = maxCount > 0 ? (item.count / maxCount) * 100 : 0;
+              const opacity = Math.max(0.2, 1 - i * 0.07);
+              return (
+                <div
+                  key={item.event}
+                  className="group relative flex flex-1 flex-col items-center justify-end"
+                  style={{ height: "100%" }}
+                >
+                  <div
+                    className="w-full min-h-[2px] rounded-t-sm bg-foreground transition-opacity duration-150"
+                    style={{ height: `${pct}%`, opacity }}
                   />
-                ))}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
+                  <span className="pointer-events-none absolute bottom-[calc(100%+4px)] left-1/2 z-10 hidden -translate-x-1/2 whitespace-nowrap rounded-md border border-border/80 bg-popover px-2 py-1 text-[0.6rem] font-semibold shadow group-hover:block">
+                    {formatState(item.event)}
+                    <span className="ml-1.5 font-mono text-muted-foreground">{item.count}</span>
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+          <div className="mt-1.5 flex gap-1">
+            {chartItems.map((item) => (
+              <div key={item.event} className="flex-1 overflow-hidden">
+                <p className="truncate text-center text-[0.55rem] text-muted-foreground/60">
+                  {formatState(item.event).split(" ")[0]}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
       ) : (
-        <div className="flex min-h-28 items-center justify-center border-b border-border">
+        <div className="flex min-h-28 items-center justify-center border-b border-border/70">
           <p className="text-xs text-muted-foreground">
             SDK, portal, and REST events will appear here
           </p>
@@ -100,10 +83,10 @@ export function ProactivationAnalyticsPanel({
       )}
 
       {analytics?.topCategories?.length ? (
-        <div className="flex flex-wrap gap-1.5 border-b border-border px-4 py-3">
+        <div className="flex flex-wrap gap-1.5 border-b border-border/70 px-4 py-3">
           {analytics.topCategories.slice(0, 5).map((category) => (
             <span
-              className="border border-border px-2 py-1 text-[0.6rem] font-semibold uppercase tracking-[0.1em] text-muted-foreground"
+              className="rounded-md border border-border/70 bg-background/50 px-2 py-1 text-[0.6rem] font-semibold uppercase tracking-[0.1em] text-muted-foreground"
               key={category.category}
             >
               {formatState(category.category)} · {category.count}
@@ -113,7 +96,7 @@ export function ProactivationAnalyticsPanel({
       ) : null}
 
       {recentEvents.length ? (
-        <div className="grid gap-px bg-border">
+        <div className="grid gap-px bg-border/70">
           {recentEvents.slice(0, 4).map((item) => (
             <div
               className="flex items-center justify-between gap-3 bg-card px-4 py-2.5 text-xs"

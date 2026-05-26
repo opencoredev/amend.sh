@@ -19,7 +19,7 @@ export function BuildBriefsPanel({ buildBriefs }: { buildBriefs: DashboardBuildB
             />
             <div className="grid gap-1 text-xs text-muted-foreground">
               {brief.acceptanceCriteria.slice(0, 2).map((criterion) => (
-                <p key={criterion} className="border-l border-border pl-3 leading-5">
+                <p key={criterion} className="border-l border-border/70 pl-3 leading-5">
                   {criterion}
                 </p>
               ))}
@@ -47,7 +47,7 @@ export function SourceEvidencePanel({ sources }: { sources: DashboardSourceEvent
             href={source.url}
             target="_blank"
             rel="noreferrer"
-            className="grid gap-1 border border-border bg-background p-3 text-xs transition-[border-color,color] hover:border-foreground"
+            className="grid gap-1 rounded-md border border-border/70 bg-background/70 p-3 text-xs transition-[border-color,color,background-color] hover:border-foreground/35 hover:bg-muted/45"
           >
             <span className="truncate font-semibold">{source.title}</span>
             <span className="truncate text-muted-foreground">

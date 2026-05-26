@@ -13,7 +13,7 @@ export function SourceEvidenceList({
 }) {
   if (links.length === 0) {
     return (
-      <p className="border border-border bg-background p-3 text-sm leading-6 text-muted-foreground">
+      <p className="rounded-lg bg-foreground/[0.03] p-3 text-sm leading-6 text-muted-foreground">
         No source link has been attached yet.
       </p>
     );
@@ -25,7 +25,7 @@ export function SourceEvidenceList({
         <a
           key={link.externalId ?? link.url}
           className={cn(
-            "flex min-w-0 items-center justify-between gap-3 border border-border bg-background text-muted-foreground transition-[border-color,color,scale] duration-200 hover:border-foreground hover:text-foreground active:scale-[0.99]",
+            "flex min-w-0 items-center justify-between gap-3 rounded-lg bg-foreground/[0.03] text-muted-foreground transition-colors duration-150 ease-linear hover:bg-foreground/[0.06] hover:text-foreground active:opacity-75",
             compact ? "min-h-10 px-3 text-xs" : "min-h-12 px-4 text-sm",
           )}
           href={link.url}
@@ -50,7 +50,7 @@ export function EmptyInline({
   title: string;
 }) {
   return (
-    <div className="grid min-h-36 place-items-center border border-dashed border-border bg-background/60 p-5 text-center">
+    <div className="grid min-h-36 place-items-center rounded-lg bg-foreground/[0.025] p-5 text-center">
       <div>
         <span className="mx-auto grid size-8 place-items-center text-muted-foreground [&_svg]:size-7">
           {icon}
@@ -64,7 +64,7 @@ export function EmptyInline({
 
 export function DetailStat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="grid gap-1 border border-border bg-background p-3">
+    <div className="grid gap-1 rounded-lg bg-foreground/[0.03] p-3">
       <span className="text-xs text-muted-foreground">{label}</span>
       <span className="truncate text-sm font-semibold">{value}</span>
     </div>
@@ -83,7 +83,7 @@ export function EditorButton({
   return (
     <button
       aria-label={label}
-      className="grid size-9 place-items-center border border-transparent text-xs text-muted-foreground transition-[background-color,border-color,color,scale] hover:border-border hover:bg-muted/30 hover:text-foreground active:scale-[0.96]"
+      className="grid size-9 place-items-center rounded-lg text-xs text-muted-foreground transition-colors duration-150 ease-linear hover:bg-foreground/[0.045] hover:text-foreground active:opacity-75"
       type="button"
       onClick={onClick}
     >

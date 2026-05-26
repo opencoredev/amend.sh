@@ -19,6 +19,7 @@ import {
   canonicalLink,
   defaultDescription,
   defaultTitle,
+  faqJsonLd,
   openGraphMeta,
   organizationJsonLd,
   productJsonLd,
@@ -37,7 +38,7 @@ export const Route = createFileRoute("/")({
       {
         name: "keywords",
         content:
-          "customer feedback, product roadmap, changelog, GitHub issues, release notes, customer notifications",
+          "customer feedback management, GitHub changelog, Linear roadmap, Slack feedback, Discord feedback, product roadmap software, feedback to source code, release notes automation, customer request tracking, open source feedback tool, self-hosted roadmap, AI feedback analysis, source-linked product updates, customer demand platform",
       },
       ...openGraphMeta({ description: defaultDescription, title: defaultTitle }),
     ],
@@ -50,12 +51,12 @@ function HomeComponent() {
   useLandingMotion();
 
   return (
-    <main className="relative min-h-svh w-full max-w-full overflow-x-hidden bg-background pb-32 font-mono text-foreground dark md:pb-0">
+    <main className="relative min-h-svh w-full max-w-full overflow-x-hidden bg-background pb-32 font-sans text-foreground dark md:pb-0">
       <script
         type="application/ld+json"
         suppressHydrationWarning
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify([organizationJsonLd, productJsonLd]),
+          __html: JSON.stringify([organizationJsonLd, productJsonLd, faqJsonLd]),
         }}
       />
       <HomeHeader />

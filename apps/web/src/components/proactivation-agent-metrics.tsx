@@ -12,7 +12,7 @@ export function ProactivationAgentMetrics({
   runCount: number;
 }) {
   return (
-    <div className="grid grid-cols-5 border-b border-border">
+    <div className="grid grid-cols-5 border-b border-border/70 bg-card/20">
       <AgentMetric label="Inputs" value={inputChannelCount} />
       <AgentMetric label="Connected" value={connectedChannelCount} />
       <AgentMetric label="Runs" value={runCount} />
@@ -24,7 +24,7 @@ export function ProactivationAgentMetrics({
 
 function AgentMetric({ label, value }: { label: string; value: number }) {
   return (
-    <div className="flex flex-col justify-center gap-1 border-r border-border px-4 py-3 last:border-r-0">
+    <div className="flex flex-col justify-center gap-1 border-r border-border/70 px-4 py-3 last:border-r-0">
       <span className="font-mono text-xl font-semibold tabular-nums leading-none">{value}</span>
       <span className="text-[0.6rem] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
         {label}

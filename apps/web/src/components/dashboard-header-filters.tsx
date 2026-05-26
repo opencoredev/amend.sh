@@ -38,7 +38,7 @@ export function FilterMenu({
   ];
 
   return (
-    <div className="absolute right-0 top-[calc(100%+0.5rem)] z-40 w-72 border border-border bg-popover p-2 shadow-[0_18px_60px_rgb(0_0_0/0.45)]">
+    <div className="absolute right-0 top-[calc(100%+0.5rem)] z-40 w-72 rounded-xl bg-popover p-2 shadow-[0_18px_60px_rgb(0_0_0/0.45)] ring-1 ring-white/[0.06]">
       {activeView === "changelog" ? (
         <div className="grid gap-2">
           <p className="px-2 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
@@ -53,7 +53,7 @@ export function FilterMenu({
               onClick={() => onChangelogStatusChange(status)}
             />
           ))}
-          <div className="my-1 border-t border-border" />
+          <div className="my-1 h-px bg-foreground/[0.045]" />
           <p className="px-2 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
             Category
           </p>
@@ -114,8 +114,8 @@ function FilterMenuItem({
     <button
       type="button"
       className={cn(
-        "flex h-9 items-center gap-3 px-2 text-left text-xs font-semibold transition-[background-color,color,scale] hover:bg-muted hover:text-foreground active:scale-[0.98]",
-        active ? "bg-muted text-foreground" : "text-muted-foreground",
+        "flex h-9 items-center gap-3 rounded-lg px-2 text-left text-xs font-semibold transition-colors duration-150 ease-linear hover:bg-foreground/[0.055] hover:text-foreground active:opacity-75",
+        active ? "bg-foreground/[0.075] text-foreground" : "text-muted-foreground",
       )}
       onClick={onClick}
     >

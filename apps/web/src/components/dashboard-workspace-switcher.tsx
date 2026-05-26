@@ -27,14 +27,14 @@ export function WorkspaceSwitcher({
   query: string;
 }) {
   return (
-    <div ref={menuRef} className="relative border-b border-border p-3">
+    <div ref={menuRef} className="relative px-3 py-3">
       <button
         type="button"
-        className="flex min-h-10 w-full items-center justify-between gap-3 p-2 text-left transition-[background-color,scale] duration-200 hover:bg-muted/40 active:scale-[0.96]"
+        className="flex min-h-12 w-full items-center gap-3 rounded-xl bg-[#151518] px-2.5 text-left shadow-[inset_0_1px_0_rgb(255_255_255/0.035)] ring-1 ring-white/[0.055] transition-colors duration-150 ease-linear hover:bg-[#1a1a1d] active:opacity-75"
         aria-expanded={open}
         onClick={() => onOpenChange(!open)}
       >
-        <span className="grid size-9 shrink-0 place-items-center overflow-hidden border border-border bg-muted text-xs font-semibold">
+        <span className="grid size-9 shrink-0 place-items-center overflow-hidden rounded-lg bg-background/75 text-xs font-semibold ring-1 ring-white/[0.055]">
           {project.logoUrl ? (
             <img alt="" className="size-full object-cover" src={project.logoUrl} />
           ) : (
@@ -43,48 +43,50 @@ export function WorkspaceSwitcher({
         </span>
         <span className="min-w-0 flex-1">
           <span className="block truncate text-sm font-semibold">{project.name}</span>
-          <span className="block truncate text-xs text-muted-foreground">{project.repo}</span>
+          <span className="mt-0.5 block truncate text-[0.72rem] text-muted-foreground">
+            {project.repo}
+          </span>
         </span>
-        <ChevronDown className="size-4 text-muted-foreground" />
+        <ChevronDown className="size-4 shrink-0 text-muted-foreground" />
       </button>
 
       {open ? (
         <div
-          className="t-dropdown is-open absolute left-3 right-3 top-[calc(100%-0.25rem)] z-40 border border-border bg-popover p-2 shadow-[0_18px_60px_rgb(0_0_0/0.55)]"
+          className="t-dropdown is-open absolute left-2 right-2 top-[calc(100%-0.25rem)] z-40 rounded-xl bg-popover p-2 shadow-[0_18px_60px_rgb(0_0_0/0.55)] ring-1 ring-white/[0.06]"
           data-origin="top-left"
         >
           <label className="relative block">
-            <Search className="pointer-events-none absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
+            <Search className="pointer-events-none absolute left-2.5 top-1/2 size-3 -translate-y-1/2 text-muted-foreground" />
             <Input
               autoFocus
               value={query}
               onChange={(event) => onQueryChange(event.target.value)}
               placeholder="Search projects"
-              className="h-9 border-border bg-background pl-8 text-xs"
+              className="h-8 border-transparent bg-background/80 pl-7 text-xs ring-1 ring-white/[0.055]"
             />
           </label>
-          <div className="mt-2 grid gap-1">
+          <div className="mt-1.5 grid gap-0.5">
             {projectMatches.map((item) => (
               <button
                 key={item.id}
                 type="button"
                 className={cn(
-                  "grid min-h-10 gap-1 px-2 py-2 text-left text-xs text-muted-foreground transition-[background-color,color,scale] duration-200 hover:bg-muted hover:text-foreground active:scale-[0.96]",
-                  item.id === project.id && "bg-muted text-foreground",
+                  "grid min-h-9 gap-0.5 rounded-lg px-2 py-1.5 text-left text-xs text-muted-foreground transition-colors duration-150 ease-linear hover:bg-accent hover:text-foreground active:opacity-75",
+                  item.id === project.id && "bg-accent text-foreground",
                 )}
                 onClick={() => onProjectChange(item.id)}
               >
                 <span className="font-semibold">{item.name}</span>
-                <span className="truncate">{item.repo}</span>
+                <span className="truncate opacity-70">{item.repo}</span>
               </button>
             ))}
           </div>
           <button
             type="button"
-            className="mt-2 flex h-9 w-full items-center gap-2 border border-border px-2 text-xs font-semibold text-muted-foreground transition-[background-color,color,scale] duration-200 hover:bg-muted hover:text-foreground active:scale-[0.96]"
+            className="mt-1.5 flex h-8 w-full items-center gap-2 rounded-lg bg-foreground/[0.045] px-2 text-xs font-semibold text-muted-foreground transition-colors duration-150 ease-linear hover:bg-foreground/[0.075] hover:text-foreground active:opacity-75"
             onClick={onAddProject}
           >
-            <Plus className="size-3.5" />
+            <Plus className="size-3" />
             Add project
           </button>
         </div>

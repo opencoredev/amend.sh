@@ -1,13 +1,15 @@
-import { CircleDashed, ClipboardList } from "lucide-react";
+import { ClipboardList } from "lucide-react";
 
 import type { RoadmapStatus } from "@/components/amend-dashboard-types";
 import { statusMeta } from "@/components/amend-dashboard-status";
 import { roadmapStatusToRoadmapStatus } from "@/components/amend-dashboard-utils";
 import {
+  SidebarDivider,
   SidebarFrame,
-  SidebarItem,
-  SidebarSection,
-  SidebarTitle,
+  SidebarNavItem,
+  SidebarNavList,
+  SidebarPill,
+  SidebarPillGroup,
 } from "@/components/dashboard-module-sidebar-primitives";
 import type { ModuleSidebarProps } from "@/components/dashboard-module-sidebar-types";
 
@@ -23,42 +25,40 @@ export function RoadmapModuleSidebar({
 >) {
   return (
     <SidebarFrame>
-      <SidebarTitle title="Roadmap" />
-      <SidebarSection title="Roadmaps">
+      <SidebarNavList>
         {roadmapViews.map((roadmap) => (
-          <SidebarItem
+          <SidebarNavItem
             key={roadmap.id}
             active={activeRoadmap.id === roadmap.id}
             icon={<ClipboardList />}
             label={roadmap.name}
-            value={String(roadmap.entries.length)}
+            count={roadmap.entries.length}
             onClick={() => onRoadmapChange(roadmap.id)}
           />
         ))}
-      </SidebarSection>
-      <SidebarSection title="Columns">
-        <SidebarItem
+      </SidebarNavList>
+      <SidebarDivider />
+      <SidebarPillGroup label="Columns">
+        <SidebarPill
           active={activeStatus === "all"}
-          icon={<CircleDashed />}
-          label="All columns"
-          value={String(activeRoadmap.entries.length)}
+          count={activeRoadmap.entries.length}
           onClick={() => onStatusChange("all")}
-        />
+        >
+          All
+        </SidebarPill>
         {Object.entries(statusMeta).map(([status, meta]) => (
-          <SidebarItem
+          <SidebarPill
             key={status}
             active={activeStatus === status}
-            icon={meta.icon}
-            label={meta.label}
-            value={String(
-              activeRoadmap.entries.filter(
-                (item) => roadmapStatusToRoadmapStatus(item.status) === status,
-              ).length,
-            )}
+            count={activeRoadmap.entries.filter(
+              (item) => roadmapStatusToRoadmapStatus(item.status) === status,
+            ).length}
             onClick={() => onStatusChange(status as RoadmapStatus)}
-          />
+          >
+            {meta.label}
+          </SidebarPill>
         ))}
-      </SidebarSection>
+      </SidebarPillGroup>
     </SidebarFrame>
   );
 }

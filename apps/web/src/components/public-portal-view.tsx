@@ -7,6 +7,7 @@ import {
   PortalUpdatesSection,
 } from "@/components/public-portal-roadmap-updates";
 import type { PortalData } from "@/components/public-portal-types";
+import { createPortalTheme, portalThemeStyle } from "@/lib/portal-theme";
 
 export function PublicPortalView({
   portal,
@@ -19,9 +20,10 @@ export function PublicPortalView({
   const roadmap = settings?.roadmapVisibility === "private" ? [] : portal.roadmap;
   const changelog = settings?.changelogVisibility === "private" ? [] : portal.changelog;
   const feedback = settings?.feedbackMode === "closed" ? [] : portal.feedback;
+  const theme = createPortalTheme(settings?.accentColor);
 
   return (
-    <main className="min-h-svh bg-background text-foreground">
+    <main className="dark min-h-svh bg-background text-foreground" style={portalThemeStyle(theme)}>
       <PortalHeader workspace={portal.workspace} />
       <PortalMobileNav workspaceSlug={portal.workspace.slug} />
 

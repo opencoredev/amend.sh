@@ -54,7 +54,7 @@ export function ProactivationMainPanel({
         runCount={runCount}
       />
 
-      <div className="flex items-center justify-between gap-4 border-b border-border px-6 py-4">
+      <div className="flex items-center justify-between gap-4 border-b border-border/70 bg-card/35 px-6 py-4">
         <div className="min-w-0">
           <p className="text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
             Proactivation
@@ -65,7 +65,7 @@ export function ProactivationMainPanel({
         </div>
         <div className="flex shrink-0 gap-2">
           <Button
-            className="h-8 border border-border bg-background px-3 text-xs font-semibold text-foreground transition-colors duration-150 ease-linear hover:border-foreground/50 hover:bg-muted active:opacity-75"
+            className="h-8 rounded-lg border border-border/80 bg-background/70 px-3 text-xs font-semibold text-foreground transition-colors duration-150 ease-linear hover:border-foreground/40 hover:bg-muted active:opacity-75"
             onClick={onConfigureAutomation}
             type="button"
           >
@@ -73,7 +73,7 @@ export function ProactivationMainPanel({
             Configure
           </Button>
           <Button
-            className="h-8 border border-foreground bg-foreground px-3 text-xs font-semibold text-background transition-colors duration-150 ease-linear hover:bg-foreground/80 active:opacity-75 disabled:opacity-40"
+            className="h-8 rounded-lg border border-foreground bg-foreground px-3 text-xs font-semibold text-background transition-colors duration-150 ease-linear hover:bg-foreground/80 active:opacity-75 disabled:opacity-40"
             disabled={!canRun || running}
             onClick={onRunAgent}
             type="button"

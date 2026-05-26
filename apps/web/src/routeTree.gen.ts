@@ -17,7 +17,9 @@ import { Route as BrandRouteImport } from './routes/brand'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PortalWorkspaceSlugRouteImport } from './routes/portal.$workspaceSlug'
 import { Route as DashboardViewRouteImport } from './routes/dashboard.$view'
+import { Route as ApiOgIndexRouteImport } from './routes/api/og/index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as ApiOgPortalSlugRouteImport } from './routes/api/og/portal.$slug'
 
 const SignUpRoute = SignUpRouteImport.update({
   id: '/sign-up',
@@ -59,9 +61,19 @@ const DashboardViewRoute = DashboardViewRouteImport.update({
   path: '/$view',
   getParentRoute: () => DashboardRoute,
 } as any)
+const ApiOgIndexRoute = ApiOgIndexRouteImport.update({
+  id: '/api/og/',
+  path: '/api/og/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiOgPortalSlugRoute = ApiOgPortalSlugRouteImport.update({
+  id: '/api/og/portal/$slug',
+  path: '/api/og/portal/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -75,6 +87,8 @@ export interface FileRoutesByFullPath {
   '/dashboard/$view': typeof DashboardViewRoute
   '/portal/$workspaceSlug': typeof PortalWorkspaceSlugRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/og/': typeof ApiOgIndexRoute
+  '/api/og/portal/$slug': typeof ApiOgPortalSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -86,6 +100,8 @@ export interface FileRoutesByTo {
   '/dashboard/$view': typeof DashboardViewRoute
   '/portal/$workspaceSlug': typeof PortalWorkspaceSlugRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/og': typeof ApiOgIndexRoute
+  '/api/og/portal/$slug': typeof ApiOgPortalSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -98,6 +114,8 @@ export interface FileRoutesById {
   '/dashboard/$view': typeof DashboardViewRoute
   '/portal/$workspaceSlug': typeof PortalWorkspaceSlugRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/og/': typeof ApiOgIndexRoute
+  '/api/og/portal/$slug': typeof ApiOgPortalSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -111,6 +129,8 @@ export interface FileRouteTypes {
     | '/dashboard/$view'
     | '/portal/$workspaceSlug'
     | '/api/auth/$'
+    | '/api/og/'
+    | '/api/og/portal/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -122,6 +142,8 @@ export interface FileRouteTypes {
     | '/dashboard/$view'
     | '/portal/$workspaceSlug'
     | '/api/auth/$'
+    | '/api/og'
+    | '/api/og/portal/$slug'
   id:
     | '__root__'
     | '/'
@@ -133,6 +155,8 @@ export interface FileRouteTypes {
     | '/dashboard/$view'
     | '/portal/$workspaceSlug'
     | '/api/auth/$'
+    | '/api/og/'
+    | '/api/og/portal/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -144,6 +168,8 @@ export interface RootRouteChildren {
   SignUpRoute: typeof SignUpRoute
   PortalWorkspaceSlugRoute: typeof PortalWorkspaceSlugRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
+  ApiOgIndexRoute: typeof ApiOgIndexRoute
+  ApiOgPortalSlugRoute: typeof ApiOgPortalSlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -204,11 +230,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardViewRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/api/og/': {
+      id: '/api/og/'
+      path: '/api/og'
+      fullPath: '/api/og/'
+      preLoaderRoute: typeof ApiOgIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
       fullPath: '/api/auth/$'
       preLoaderRoute: typeof ApiAuthSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/og/portal/$slug': {
+      id: '/api/og/portal/$slug'
+      path: '/api/og/portal/$slug'
+      fullPath: '/api/og/portal/$slug'
+      preLoaderRoute: typeof ApiOgPortalSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -235,6 +275,8 @@ const rootRouteChildren: RootRouteChildren = {
   SignUpRoute: SignUpRoute,
   PortalWorkspaceSlugRoute: PortalWorkspaceSlugRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
+  ApiOgIndexRoute: ApiOgIndexRoute,
+  ApiOgPortalSlugRoute: ApiOgPortalSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

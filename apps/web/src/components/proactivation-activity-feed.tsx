@@ -16,15 +16,15 @@ export function ProactivationActivityFeed({ activity }: { activity: DashboardAge
           {activity.length} events
         </span>
       </div>
-      <div className="border border-border">
+      <div className="overflow-hidden rounded-lg border border-border/80 bg-card shadow-sm shadow-black/10">
         {activity.length > 0 ? (
-          <div className="grid gap-px bg-border">
+          <div className="grid divide-y divide-border/70">
             {activity.map((item) => (
               <article
                 key={`${item.kind}-${item.id}`}
-                className="grid grid-cols-[7rem_minmax(0,1fr)] items-start bg-card"
+                className="grid grid-cols-[7rem_minmax(0,1fr)] items-start bg-card transition-colors duration-150 ease-linear hover:bg-muted/35"
               >
-                <div className="flex h-full flex-col justify-start border-r border-border px-3 py-3">
+                <div className="flex h-full flex-col justify-start border-r border-border/70 px-3 py-3">
                   <div className="flex items-center gap-1.5 text-muted-foreground">
                     <ActivityIcon kind={item.kind} />
                     <span className="text-[0.65rem] font-semibold uppercase tracking-[0.1em]">
@@ -63,7 +63,7 @@ function StateChip({ state }: { state: string }) {
   return (
     <span
       className={cn(
-        "mt-2 w-fit px-1.5 py-0.5 text-[0.55rem] font-semibold uppercase tracking-wide",
+        "mt-2 w-fit rounded-md px-1.5 py-0.5 text-[0.55rem] font-semibold uppercase tracking-wide",
         isPositive && "bg-emerald-500/10 text-emerald-500",
         isWarning && "bg-amber-500/10 text-amber-500",
         !isPositive && !isWarning && "bg-muted text-muted-foreground",

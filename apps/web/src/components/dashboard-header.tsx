@@ -56,6 +56,7 @@ export function DashboardHeader({
   const showSearch = searchableViews.has(activeView);
   const sourceLabel = project.sourceReady ? project.repo : workspace.repo;
   const portalLabel = project.id === "new-project" ? workspace.portal : project.portal;
+
   const title =
     activeView === "posts"
       ? activeStatus === "all"
@@ -68,10 +69,7 @@ export function DashboardHeader({
           : activeView === "setup"
             ? "Create project"
             : viewTitle(activeView);
-  const titleWithCount =
-    typeof itemCount === "number" && activeView !== "settings" && activeView !== "setup"
-      ? `${title} (${itemCount})`
-      : title;
+
   const sortLabel =
     activeView === "roadmap"
       ? "Top upvoted"
@@ -80,95 +78,106 @@ export function DashboardHeader({
         : "Recent posts";
 
   return (
-    <header className="sticky top-0 z-20 border-b border-border bg-background/95 px-4 py-4 backdrop-blur md:px-6">
-      <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
-        <div className="min-w-0">
-          <h1 className="text-2xl font-semibold leading-tight">{titleWithCount}</h1>
-          <div className="mt-2 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
-            <span>{sourceLabel}</span>
-            <span>{portalLabel}</span>
-            {activeView === "posts" ? <span>{activeBoard.name}</span> : null}
-          </div>
-        </div>
-
-        <div className="relative flex flex-col gap-2 sm:flex-row sm:items-center">
-          {showSearch ? (
-            <label className="relative min-w-0 sm:w-52">
-              <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                placeholder={`Search ${viewTitle(activeView).toLowerCase()}`}
-                className="h-10 pl-9 text-xs"
-                value={searchQuery}
-                onChange={(event) => onSearchChange(event.target.value)}
-              />
-            </label>
-          ) : null}
-          {showSearch ? (
+    <header className="sticky top-0 z-20 flex min-h-16 items-center justify-between gap-5 bg-background/95 px-5 backdrop-blur md:px-8">
+      <div className="flex min-w-0 items-center gap-3">
+        <h1 className="text-base font-semibold leading-none">{title}</h1>
+        {typeof itemCount === "number" && activeView !== "settings" && activeView !== "setup" ? (
+          <span className="font-mono text-sm tabular-nums text-muted-foreground">{itemCount}</span>
+        ) : null}
+        <span className="hidden text-muted-foreground/35 md:block">·</span>
+        <div className="hidden items-center gap-2.5 text-sm text-muted-foreground md:flex">
+          <span>{sourceLabel}</span>
+          <span className="opacity-40">·</span>
+          <span>{portalLabel}</span>
+          {activeView === "posts" ? (
             <>
-              <button
-                type="button"
-                className={cn(
-                  "inline-flex h-10 items-center gap-2 border px-3 text-xs font-semibold transition-[border-color,color,scale] hover:border-foreground hover:text-foreground active:scale-[0.96]",
-                  filtersOpen
-                    ? "border-foreground text-foreground"
-                    : "border-border text-muted-foreground",
-                )}
-                onClick={() => setFiltersOpen((open) => !open)}
-              >
-                <CircleDashed className="size-3.5" />
-                Filters
-              </button>
-              <button
-                type="button"
-                className="inline-flex h-10 min-w-40 items-center justify-between gap-3 border border-border px-3 text-xs font-semibold text-muted-foreground transition-[border-color,color,scale] hover:border-foreground hover:text-foreground active:scale-[0.96]"
-              >
-                {sortLabel}
-                <ChevronDown className="size-3.5" />
-              </button>
+              <span className="opacity-40">·</span>
+              <span>{activeBoard.name}</span>
             </>
           ) : null}
-          {showSearch && filtersOpen ? (
-            <FilterMenu
-              activeChangelogCategory={activeChangelogCategory}
-              activeChangelogStatus={activeChangelogStatus}
-              activeStatus={activeStatus}
-              activeView={activeView}
-              categories={changelogCategories}
-              onChangelogCategoryChange={(category) => {
-                onChangelogCategoryChange(category);
-                setFiltersOpen(false);
-              }}
-              onChangelogStatusChange={(status) => {
-                onChangelogStatusChange(status);
-                setFiltersOpen(false);
-              }}
-              onStatusChange={(status) => {
-                onStatusChange(status);
-                setFiltersOpen(false);
-              }}
-            />
-          ) : null}
-          {activeView === "posts" ? (
-            <Button
-              type="button"
-              className="h-10 border border-foreground bg-foreground px-4 text-xs font-semibold text-background transition-[background-color,color,scale] duration-200 hover:bg-background hover:text-foreground active:scale-[0.96]"
-              onClick={onCreate}
-            >
-              <Plus data-icon="inline-start" />
-              New feedback
-            </Button>
-          ) : null}
-          {activeView === "changelog" ? (
-            <Button
-              type="button"
-              className="h-10 border border-foreground bg-foreground px-4 text-xs font-semibold text-background transition-[background-color,color,scale] duration-200 hover:bg-background hover:text-foreground active:scale-[0.96]"
-              onClick={onCreate}
-            >
-              <Plus data-icon="inline-start" />
-              New changelog
-            </Button>
-          ) : null}
         </div>
+      </div>
+
+      <div className="relative flex items-center gap-2">
+        {showSearch ? (
+          <label className="relative hidden sm:block">
+            <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              placeholder={`Search…`}
+              className="h-10 w-56 border-transparent bg-[#151518] pl-9 text-sm ring-1 ring-white/[0.055] focus-visible:ring-white/[0.16]"
+              value={searchQuery}
+              onChange={(event) => onSearchChange(event.target.value)}
+            />
+          </label>
+        ) : null}
+
+        {showSearch ? (
+          <>
+            <button
+              type="button"
+              className={cn(
+                "inline-flex h-10 items-center gap-2 rounded-xl px-3 text-sm font-semibold transition-colors duration-150 ease-linear active:opacity-75",
+                filtersOpen
+                  ? "bg-[#1a1a1d] text-foreground ring-1 ring-white/[0.07]"
+                  : "bg-[#151518] text-muted-foreground ring-1 ring-white/[0.055] hover:bg-[#1a1a1d] hover:text-foreground",
+              )}
+              onClick={() => setFiltersOpen((open) => !open)}
+            >
+              <CircleDashed className="size-3.5" />
+              Filters
+            </button>
+            <button
+              type="button"
+              className="inline-flex h-10 items-center gap-2 rounded-xl bg-[#151518] px-3 text-sm font-semibold text-muted-foreground ring-1 ring-white/[0.055] transition-colors duration-150 ease-linear hover:bg-[#1a1a1d] hover:text-foreground active:opacity-75"
+            >
+              {sortLabel}
+              <ChevronDown className="size-3.5" />
+            </button>
+          </>
+        ) : null}
+
+        {showSearch && filtersOpen ? (
+          <FilterMenu
+            activeChangelogCategory={activeChangelogCategory}
+            activeChangelogStatus={activeChangelogStatus}
+            activeStatus={activeStatus}
+            activeView={activeView}
+            categories={changelogCategories}
+            onChangelogCategoryChange={(category) => {
+              onChangelogCategoryChange(category);
+              setFiltersOpen(false);
+            }}
+            onChangelogStatusChange={(status) => {
+              onChangelogStatusChange(status);
+              setFiltersOpen(false);
+            }}
+            onStatusChange={(status) => {
+              onStatusChange(status);
+              setFiltersOpen(false);
+            }}
+          />
+        ) : null}
+
+        {activeView === "posts" ? (
+          <Button
+            type="button"
+            className="h-10 rounded-xl border border-foreground bg-foreground px-4 text-sm font-semibold text-background transition-colors duration-150 ease-linear hover:bg-foreground/80 active:opacity-75"
+            onClick={onCreate}
+          >
+            <Plus className="size-3.5" />
+            New feedback
+          </Button>
+        ) : null}
+        {activeView === "changelog" ? (
+          <Button
+            type="button"
+            className="h-10 rounded-xl border border-foreground bg-foreground px-4 text-sm font-semibold text-background transition-colors duration-150 ease-linear hover:bg-foreground/80 active:opacity-75"
+            onClick={onCreate}
+          >
+            <Plus className="size-3.5" />
+            New changelog
+          </Button>
+        ) : null}
       </div>
     </header>
   );

@@ -46,10 +46,10 @@ export function AutomationControlsPanel({
             key={mode}
             type="button"
             className={cn(
-              "h-8 border px-2 text-[0.65rem] font-semibold transition-colors duration-150 ease-linear active:opacity-75 disabled:opacity-40",
+              "h-8 rounded-md border px-2 text-[0.65rem] font-semibold transition-colors duration-150 ease-linear active:opacity-75 disabled:opacity-40",
               rules?.mode === mode
                 ? "border-foreground bg-foreground text-background"
-                : "border-border text-muted-foreground hover:border-foreground/50 hover:text-foreground",
+                : "border-border/80 bg-background/50 text-muted-foreground hover:border-foreground/40 hover:text-foreground",
             )}
             disabled={!canRun || savingMode === mode}
             onClick={() => onAutomationModeChange(mode)}
@@ -113,7 +113,7 @@ export function CurrentReviewPanel({
               <button
                 key={status}
                 type="button"
-                className="h-8 border border-border px-2 text-[0.65rem] font-semibold text-muted-foreground transition-colors duration-150 ease-linear hover:border-foreground/50 hover:text-foreground active:opacity-75 disabled:opacity-40"
+                className="h-8 rounded-md border border-border/80 bg-background/50 px-2 text-[0.65rem] font-semibold text-muted-foreground transition-colors duration-150 ease-linear hover:border-foreground/40 hover:text-foreground active:opacity-75 disabled:opacity-40"
                 disabled={!latestReview.recordId || savingReview === status}
                 onClick={() => onReviewStatusChange(status)}
               >
@@ -154,7 +154,7 @@ export function LatestDecisionPanel({
           {latestDecision.recordId && latestDecision.outcome === "applied" ? (
             <button
               type="button"
-              className="h-8 border border-border px-3 text-xs font-semibold text-muted-foreground transition-colors duration-150 ease-linear hover:border-foreground/50 hover:text-foreground active:opacity-75"
+              className="h-8 rounded-md border border-border/80 bg-background/50 px-3 text-xs font-semibold text-muted-foreground transition-colors duration-150 ease-linear hover:border-foreground/40 hover:text-foreground active:opacity-75"
               disabled={revertingDecision}
               onClick={onRevertDecision}
             >

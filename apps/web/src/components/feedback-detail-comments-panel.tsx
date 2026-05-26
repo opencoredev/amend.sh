@@ -49,7 +49,7 @@ export function FeedbackDetailCommentsPanel({
             Replies will attach to this feedback item.
           </p>
           <Button
-            className="h-9 border border-foreground bg-foreground px-3 text-xs font-semibold text-background transition-[background-color,color,scale] hover:bg-background hover:text-foreground active:scale-[0.96]"
+            className="h-9 border border-foreground bg-foreground px-3 text-xs font-semibold text-background transition-colors duration-150 ease-linear hover:bg-background hover:text-foreground active:opacity-75"
             disabled={!noteDraft.trim() || savingNote}
             type="button"
             onClick={addNote}
