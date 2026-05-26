@@ -12,7 +12,7 @@ jobs:
   deploy-preview:
     name: Deploy preview
     if: github.event.action != 'closed'
-    runs-on: depot-ubuntu-24.04
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       pull-requests: read
@@ -58,7 +58,7 @@ jobs:
   cleanup-preview:
     name: Cleanup preview
     if: github.event.action == 'closed'
-    runs-on: depot-ubuntu-24.04
+    runs-on: ubuntu-latest
     permissions:
       contents: read
     env:
