@@ -14,7 +14,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "check-types": "tsc --noEmit"
+    "check-types": "bun run --cwd ../sdk build && tsc --noEmit"
   },
   "dependencies": {
     "@amend/sdk": "workspace:*"

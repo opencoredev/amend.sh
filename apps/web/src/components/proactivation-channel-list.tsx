@@ -24,7 +24,7 @@ export function ProactivationChannelList({
     <section>
       <div className="mb-3 flex items-center justify-between gap-3">
         <h3 className="text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-          Channels &amp; integrations
+          Channels and integrations
         </h3>
         {channels.length > 0 && (
           <span className="font-mono text-xs tabular-nums text-muted-foreground">

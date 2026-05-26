@@ -133,11 +133,10 @@ export const plans = [
     name: "Open Source",
     price: "$0",
     note: "self-hosted",
-    badge: "BYO providers",
-    description: "For maintainers who want the source-linked loop in their own infrastructure.",
+    description:
+      "Own the stack. Run Amend on your infrastructure with your own API keys and providers.",
     points: [
-      "Self-hosted portal, roadmap, changelog, SDK, API, and CLI",
-      "Deterministic local agent and no-secret demo mode",
+      "Full portal, roadmap, changelog, SDK, API, and CLI",
       "BYO GitHub, AI, email, Slack, Discord, and Stripe keys",
     ],
   },
@@ -145,36 +144,33 @@ export const plans = [
     name: "Free Cloud",
     price: "$0",
     note: "hosted",
-    badge: "Public projects",
-    description: "For small or public projects proving the loop before a paid workspace.",
+    description:
+      "Start free. Hosted feedback collection for public or early-stage projects — no card required.",
     points: [
       "Hosted portal, roadmap, changelog, and feedback collection",
-      "Limited active projects, history, and notification volume",
-      "Upgrade path when the proactive agent becomes part of the workflow",
+      "Limited volume with a clear upgrade path",
     ],
   },
   {
     name: "Starter",
     price: "$19",
     note: "per month",
-    badge: "Founder plan",
-    description: "For founders and OSS teams closing the loop across multiple active projects.",
+    description:
+      "Multiple active projects with GitHub-linked history and a reviewable changelog — for founders and OSS teams.",
     points: [
-      "Multiple projects, custom domain, API tokens, SDK, and CLI",
+      "Multiple projects, custom domain, API tokens, and CLI",
       "GitHub source linking with reviewable roadmap and changelog drafts",
-      "Local fallback agent plus provider-gated setup states",
     ],
   },
   {
     name: "Pro",
     price: "$49",
     note: "per month",
-    badge: "Hosted agent",
-    description: "For teams with more signals, more integrations, and a busier roadmap.",
+    description:
+      "A hosted agent that monitors signals, queues customer updates, and sends them after your team reviews.",
     points: [
-      "Hosted proactive agent, build briefs, and source-linked review queue",
-      "Slack, Discord, support, import, and notification outbox workflows",
-      "Higher history, draft, project, and notification limits",
+      "Hosted proactive agent with source-linked review queue",
+      "Slack, Discord, support, and notification outbox workflows",
     ],
     featured: true,
   },
@@ -182,24 +178,21 @@ export const plans = [
     name: "Team",
     price: "$99",
     note: "per month",
-    badge: "Permissions",
-    description: "For product, engineering, and support teams that need shared review controls.",
+    description:
+      "Shared permissions, private projects, and cross-functional review controls for product, engineering, and support.",
     points: [
       "Members, permissions, private projects, and review controls",
-      "Branding, custom domains, and private coordination before public updates",
-      "Team limits with self-host and BYO compatibility",
+      "Custom domains, branding, and self-host compatibility",
     ],
   },
   {
     name: "Scale",
     price: "Custom",
     note: "non-enterprise",
-    badge: "Higher volume",
-    description: "For growing teams that need more history, white-label embeds, and support.",
+    description: "Higher volume, white-label embeds, and priority support for growing platforms.",
     points: [
-      "Longer retention, higher notification volume, and white-label embeds",
+      "Extended retention, higher limits, and white-label embeds",
       "Priority support, security review, and migration planning",
-      "Clear hosted versus OSS feature boundaries",
     ],
   },
 ] as const;

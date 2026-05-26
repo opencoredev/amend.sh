@@ -80,7 +80,9 @@ export function BooleanRow({ checked, label }: { checked: boolean; label: string
       <span
         className={cn(
           "grid size-4 place-items-center border text-[0.6rem] font-semibold",
-          checked ? "border-foreground bg-foreground text-background" : "border-border bg-muted text-muted-foreground",
+          checked
+            ? "border-foreground bg-foreground text-background"
+            : "border-border bg-muted text-muted-foreground",
         )}
       >
         {checked ? "Y" : "N"}
