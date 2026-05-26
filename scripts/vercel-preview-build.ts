@@ -7,6 +7,7 @@ if (!convexUrl) {
   throw new Error("VITE_CONVEX_URL must be set by convex deploy --cmd-url-env-var-name.");
 }
 
+process.env.NITRO_PRESET ??= "vercel";
 process.env.VITE_CONVEX_SITE_URL ??= convexUrl.replace(".convex.cloud", ".convex.site");
 process.env.VITE_DOCS_URL ??= "https://amend.sh/docs";
 process.env.VITE_AMEND_PREVIEW_AUTH = isPreview ? "true" : "false";
