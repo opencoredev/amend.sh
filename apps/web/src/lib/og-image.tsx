@@ -12,22 +12,26 @@ let fontBold: ArrayBuffer | null = null;
 let monoRegular: ArrayBuffer | null = null;
 let monoBold: ArrayBuffer | null = null;
 
+async function fetchFont(url: string) {
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`Failed to load OG font ${url}: ${response.status}`);
+  }
+  return response.arrayBuffer();
+}
+
 async function loadFonts(origin: string) {
   if (!fontRegular) {
-    fontRegular = await fetch(`${origin}/fonts/geist-sans-400.ttf`).then((r) =>
-      r.arrayBuffer(),
-    );
+    fontRegular = await fetchFont(`${origin}/fonts/geist-sans-400.ttf`);
   }
   if (!fontBold) {
-    fontBold = await fetch(`${origin}/fonts/geist-sans-700.ttf`).then((r) => r.arrayBuffer());
+    fontBold = await fetchFont(`${origin}/fonts/geist-sans-700.ttf`);
   }
   if (!monoRegular) {
-    monoRegular = await fetch(`${origin}/fonts/geist-mono-400.ttf`).then((r) =>
-      r.arrayBuffer(),
-    );
+    monoRegular = await fetchFont(`${origin}/fonts/geist-mono-400.ttf`);
   }
   if (!monoBold) {
-    monoBold = await fetch(`${origin}/fonts/geist-mono-700.ttf`).then((r) => r.arrayBuffer());
+    monoBold = await fetchFont(`${origin}/fonts/geist-mono-700.ttf`);
   }
   return {
     fontRegular: fontRegular!,

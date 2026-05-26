@@ -19,7 +19,7 @@ export function Footer() {
           </div>
           <Link
             to="/sign-up"
-            className="flex h-10 items-center justify-center rounded-lg border border-transparent bg-foreground px-4 text-[13px] font-medium text-background transition-[background-color,color,opacity] hover:bg-foreground/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground sm:justify-start"
+            className="flex h-10 items-center justify-center rounded-lg border border-transparent bg-foreground px-4 text-[13px] font-medium text-background transition-colors duration-150 ease-linear hover:bg-foreground/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground sm:justify-start"
           >
             Request access
           </Link>

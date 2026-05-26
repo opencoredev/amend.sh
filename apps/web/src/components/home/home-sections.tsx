@@ -17,7 +17,7 @@ export function MobileActionBar() {
             <a
               key={label}
               href={href}
-              className="flex h-9 items-center justify-center rounded-lg border border-border bg-card/40 px-2 text-[0.72rem] font-medium text-muted-foreground transition-[border-color,background-color,color,opacity] hover:border-foreground/35 hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground"
+              className="flex h-9 items-center justify-center rounded-lg border border-border bg-card/40 px-2 text-[0.72rem] font-medium text-muted-foreground transition-colors duration-150 ease-linear hover:border-foreground/35 hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground"
             >
               {label}
             </a>
@@ -25,7 +25,7 @@ export function MobileActionBar() {
         </nav>
         <Link
           to="/sign-up"
-          className="flex h-10 items-center justify-center rounded-lg border border-transparent bg-foreground px-4 text-[13px] font-medium text-background transition-[background-color,color,opacity] hover:bg-foreground/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground"
+          className="flex h-10 items-center justify-center rounded-lg border border-transparent bg-foreground px-4 text-[13px] font-medium text-background transition-colors duration-150 ease-linear hover:bg-foreground/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground"
         >
           Request access
         </Link>

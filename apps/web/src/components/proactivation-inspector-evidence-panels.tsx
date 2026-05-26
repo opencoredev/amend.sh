@@ -47,7 +47,7 @@ export function SourceEvidencePanel({ sources }: { sources: DashboardSourceEvent
             href={source.url}
             target="_blank"
             rel="noreferrer"
-            className="grid gap-1 rounded-md border border-border/70 bg-background/70 p-3 text-xs transition-[border-color,color,background-color] hover:border-foreground/35 hover:bg-muted/45"
+            className="grid gap-1 rounded-md border border-border/70 bg-background/70 p-3 text-xs transition-colors duration-150 ease-linear hover:border-foreground/35 hover:bg-muted/45"
           >
             <span className="truncate font-semibold">{source.title}</span>
             <span className="truncate text-muted-foreground">

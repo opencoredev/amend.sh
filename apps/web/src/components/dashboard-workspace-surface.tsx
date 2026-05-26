@@ -14,7 +14,7 @@ export function DashboardWorkspaceSurface({
     <div className={cn("t-panel-slide bg-background p-4 pt-2", className)} data-open="true">
       <section
         className={cn(
-          "min-h-[calc(100svh-8.5rem)] rounded-2xl bg-[#151518] shadow-[inset_0_1px_0_rgb(255_255_255/0.045),0_24px_80px_rgb(0_0_0/0.18)] ring-1 ring-white/[0.055]",
+          "min-h-[calc(100svh-8.5rem)] rounded-2xl bg-[var(--workspace-surface-background)] shadow-[var(--workspace-surface-shadow)] ring-1 ring-[color:var(--workspace-surface-ring)]",
           contentClassName,
         )}
       >

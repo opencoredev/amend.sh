@@ -24,4 +24,4 @@ Do not install `recharts` — it has CJS/ESM interop issues with this Vite + Tan
 
 SirPaul story work must go through a pull request. Do not treat "ship it" or similar language as permission to bypass a PR for SirPaul work unless the user explicitly says not to make a PR in the current turn.
 
-After opening or updating the PR, wait for CodeRabbit. Review its findings, apply real fixes, rerun the narrow validation, and push the follow-up before considering the story ready.
+After opening or updating the PR, wait until CodeRabbit is actually finished. A pending CodeRabbit status, an in-progress summary comment, or missing review state means the story is not done yet. Once CodeRabbit completes, review every finding, apply real fixes, rerun the narrow validation, and push the follow-up before considering the story ready.

@@ -104,8 +104,8 @@ export function useAmendDashboardRoute() {
         }
       }
 
-      const replace =
-        next.replace ?? (Object.keys(next).length === 1 && Object.hasOwn(next, "q"));
+      // Typing in dashboard search should replace history; other patches should push by default.
+      const replace = next.replace ?? (Object.keys(next).length === 1 && Object.hasOwn(next, "q"));
 
       void navigate({
         params: { view: nextView },

@@ -44,26 +44,26 @@ export function PortalMobileNav({ workspaceSlug }: { workspaceSlug: string }) {
       <nav aria-label="Portal sections" className="mx-auto grid max-w-md grid-cols-4 gap-2">
         <a
           href="#feedback"
-          className="flex h-10 items-center justify-center border border-border text-xs font-semibold text-muted-foreground transition-[border-color,color] hover:border-foreground hover:text-foreground"
+          className="flex h-10 items-center justify-center border border-border text-xs font-semibold text-muted-foreground transition-colors duration-150 ease-linear hover:border-foreground hover:text-foreground"
         >
           Feedback
         </a>
         <a
           href="#roadmap"
-          className="flex h-10 items-center justify-center border border-border text-xs font-semibold text-muted-foreground transition-[border-color,color] hover:border-foreground hover:text-foreground"
+          className="flex h-10 items-center justify-center border border-border text-xs font-semibold text-muted-foreground transition-colors duration-150 ease-linear hover:border-foreground hover:text-foreground"
         >
           Roadmap
         </a>
         <a
           href="#updates"
-          className="flex h-10 items-center justify-center border border-border text-xs font-semibold text-muted-foreground transition-[border-color,color] hover:border-foreground hover:text-foreground"
+          className="flex h-10 items-center justify-center border border-border text-xs font-semibold text-muted-foreground transition-colors duration-150 ease-linear hover:border-foreground hover:text-foreground"
         >
           Updates
         </a>
         {isAuthenticated ? (
           <Link
             to="/dashboard"
-            className="flex h-10 items-center justify-center border border-primary bg-primary px-2 text-xs font-semibold text-primary-foreground transition-[background-color,color] hover:bg-background hover:text-foreground"
+            className="flex h-10 items-center justify-center border border-primary bg-primary px-2 text-xs font-semibold text-primary-foreground transition-colors duration-150 ease-linear hover:bg-background hover:text-foreground"
           >
             Dash
           </Link>
@@ -71,7 +71,7 @@ export function PortalMobileNav({ workspaceSlug }: { workspaceSlug: string }) {
           <Link
             to="/sign-in"
             search={{ redirectTo: portalRedirectTo(workspaceSlug) }}
-            className="flex h-10 items-center justify-center border border-primary bg-primary px-2 text-xs font-semibold text-primary-foreground transition-[background-color,color] hover:bg-background hover:text-foreground"
+            className="flex h-10 items-center justify-center border border-primary bg-primary px-2 text-xs font-semibold text-primary-foreground transition-colors duration-150 ease-linear hover:bg-background hover:text-foreground"
           >
             Sign in
           </Link>

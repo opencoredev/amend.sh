@@ -75,7 +75,7 @@ function ChannelCard({
   const isAttention = channel.state === "attention";
 
   return (
-    <div className="flex flex-col gap-3 rounded-lg border border-border/80 bg-card p-4 shadow-sm shadow-black/10 transition-[border-color,background-color,opacity] duration-150 ease-linear hover:border-foreground/20">
+    <div className="flex flex-col gap-3 rounded-lg border border-border/80 bg-card p-4 shadow-sm shadow-black/10 transition-colors duration-150 ease-linear hover:border-foreground/20">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex items-center gap-2">

@@ -38,7 +38,10 @@ export function FilterMenu({
   ];
 
   return (
-    <div className="absolute right-0 top-[calc(100%+0.5rem)] z-40 w-72 rounded-xl bg-popover p-2 shadow-[0_18px_60px_rgb(0_0_0/0.45)] ring-1 ring-white/[0.06]">
+    <div
+      className="t-dropdown is-open absolute right-0 top-[calc(100%+0.5rem)] z-40 w-72 rounded-xl bg-popover p-2 shadow-[0_18px_60px_rgb(0_0_0/0.45)] ring-1 ring-white/[0.06]"
+      data-origin="top-right"
+    >
       {activeView === "changelog" ? (
         <div className="grid gap-2">
           <p className="px-2 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">

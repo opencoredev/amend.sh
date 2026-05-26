@@ -34,7 +34,7 @@ export function BoardRow({
     <a
       href={href}
       className={cn(
-        "flex items-center gap-2 rounded-md px-2 py-2 text-sm transition-[background-color,color] hover:bg-muted/70 hover:text-foreground",
+        "flex items-center gap-2 rounded-md px-2 py-2 text-sm transition-colors duration-150 ease-linear hover:bg-muted/70 hover:text-foreground",
         active ? "bg-primary/10 font-medium text-foreground" : "text-muted-foreground",
       )}
     >

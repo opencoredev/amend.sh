@@ -30,7 +30,7 @@ export function ChangelogEditorHeader({
         <div className="min-w-0">
           <button
             type="button"
-            className="inline-flex min-h-10 items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground transition-colors duration-200 hover:text-foreground active:opacity-75"
+            className="inline-flex min-h-10 items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground transition-colors duration-150 ease-linear hover:text-foreground active:opacity-75"
             onClick={onRequestClose}
           >
             <ChevronDown className="size-3 rotate-90" />
@@ -46,7 +46,7 @@ export function ChangelogEditorHeader({
         </div>
         <div className="flex items-center gap-2">
           <Button
-            className="h-10 border border-border bg-background px-3 text-xs font-semibold text-muted-foreground transition-colors hover:border-foreground hover:text-foreground active:opacity-75"
+            className="h-10 border border-border bg-background px-3 text-xs font-semibold text-muted-foreground transition-colors duration-150 ease-linear hover:border-foreground hover:text-foreground active:opacity-75"
             type="button"
             onClick={onClose}
           >
@@ -54,7 +54,7 @@ export function ChangelogEditorHeader({
           </Button>
           <Button
             id="amend-changelog-save"
-            className="h-10 border border-foreground bg-foreground px-3 text-xs font-semibold text-background transition-colors hover:bg-background hover:text-foreground active:opacity-75"
+            className="h-10 border border-foreground bg-foreground px-3 text-xs font-semibold text-background transition-colors duration-150 ease-linear hover:bg-background hover:text-foreground active:opacity-75"
             disabled={saving || !canSave}
             type="submit"
           >
@@ -68,14 +68,14 @@ export function ChangelogEditorHeader({
           <p className="text-sm text-muted-foreground">Discard unsaved changelog edits?</p>
           <div className="flex items-center gap-2">
             <Button
-              className="h-9 border border-border bg-background px-3 text-xs font-semibold text-muted-foreground transition-colors hover:border-foreground hover:text-foreground active:opacity-75"
+              className="h-9 border border-border bg-background px-3 text-xs font-semibold text-muted-foreground transition-colors duration-150 ease-linear hover:border-foreground hover:text-foreground active:opacity-75"
               type="button"
               onClick={onCancelClose}
             >
               Keep editing
             </Button>
             <Button
-              className="h-9 border border-foreground bg-foreground px-3 text-xs font-semibold text-background transition-colors hover:bg-background hover:text-foreground active:opacity-75"
+              className="h-9 border border-foreground bg-foreground px-3 text-xs font-semibold text-background transition-colors duration-150 ease-linear hover:bg-background hover:text-foreground active:opacity-75"
               type="button"
               onClick={onDiscard}
             >

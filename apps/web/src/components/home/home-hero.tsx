@@ -29,13 +29,13 @@ export function HomeHero() {
           <div className="amend-hero-actions flex w-full flex-col items-stretch gap-4 sm:w-auto sm:flex-row sm:items-start">
             <Link
               to="/sign-up"
-              className="group flex h-10 items-center justify-center gap-2 rounded-lg border border-transparent bg-foreground px-4 text-[13px] font-medium text-background shadow-sm transition-[background-color,color,opacity] hover:bg-foreground/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground sm:justify-start"
+              className="group flex h-10 items-center justify-center gap-2 rounded-lg border border-transparent bg-foreground px-4 text-[13px] font-medium text-background shadow-sm transition-colors duration-150 ease-linear hover:bg-foreground/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground sm:justify-start"
             >
               Request access
             </Link>
             <a
               href="#workflow"
-              className="group flex h-10 items-center justify-center gap-2 rounded-lg border border-border bg-card/40 px-4 text-[13px] font-medium text-muted-foreground transition-[border-color,color,background-color,opacity] hover:border-foreground/35 hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground sm:justify-start"
+              className="group flex h-10 items-center justify-center gap-2 rounded-lg border border-border bg-card/40 px-4 text-[13px] font-medium text-muted-foreground transition-colors duration-150 ease-linear hover:border-foreground/35 hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground sm:justify-start"
             >
               How it works
               <span className="transition-transform duration-200 group-hover:translate-x-1">

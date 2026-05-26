@@ -15,7 +15,11 @@ export async function getPublicPortalData(workspaceSlug: string) {
 
 function getConvexClient() {
   if (!convexClient) {
-    convexClient = new ConvexHttpClient(env.VITE_CONVEX_URL);
+    const convexUrl = env.VITE_CONVEX_URL;
+    if (!convexUrl) {
+      throw new Error("VITE_CONVEX_URL is required to fetch public portal data.");
+    }
+    convexClient = new ConvexHttpClient(convexUrl);
   }
 
   return convexClient;

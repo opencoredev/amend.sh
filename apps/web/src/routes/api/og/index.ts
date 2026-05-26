@@ -10,7 +10,7 @@ export const Route = createFileRoute("/api/og/")({
           const origin = new URL(request.url).origin;
           const png = await generateOgPng({ type: "landing" }, origin);
 
-          return new Response(Buffer.from(png), {
+          return new Response(new Blob([png as unknown as BlobPart], { type: "image/png" }), {
             headers: {
               "Content-Type": "image/png",
               "Cache-Control": "public, max-age=604800, s-maxage=604800, immutable",

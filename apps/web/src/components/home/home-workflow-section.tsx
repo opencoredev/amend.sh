@@ -55,7 +55,7 @@ export function WorkflowSection() {
                 href={docsUrl("source-trace")}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex h-10 min-w-36 shrink-0 items-center justify-center whitespace-nowrap rounded-lg border border-border bg-card/40 px-4 text-[13px] font-medium text-muted-foreground transition-[border-color,color,background-color,opacity] hover:border-foreground/35 hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground"
+                className="inline-flex h-10 min-w-36 shrink-0 items-center justify-center whitespace-nowrap rounded-lg border border-border bg-card/40 px-4 text-[13px] font-medium text-muted-foreground transition-colors duration-150 ease-linear hover:border-foreground/35 hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground"
               >
                 Read source trace docs
               </a>

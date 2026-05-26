@@ -29,7 +29,7 @@ export const Route = createFileRoute("/api/og/portal/$slug")({
             origin,
           );
 
-          return new Response(Buffer.from(png), {
+          return new Response(new Blob([png as unknown as BlobPart], { type: "image/png" }), {
             headers: {
               "Content-Type": "image/png",
               // Portal data can change — cache for 1 day, revalidate in background

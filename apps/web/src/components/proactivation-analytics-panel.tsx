@@ -56,7 +56,7 @@ export function ProactivationAnalyticsPanel({
                     className="w-full min-h-[2px] rounded-t-sm bg-foreground transition-opacity duration-150"
                     style={{ height: `${pct}%`, opacity }}
                   />
-                  <span className="pointer-events-none absolute bottom-[calc(100%+4px)] left-1/2 z-10 hidden -translate-x-1/2 whitespace-nowrap rounded-md border border-border/80 bg-popover px-2 py-1 text-[0.6rem] font-semibold shadow group-hover:block">
+                  <span className="pointer-events-none absolute bottom-[calc(100%+4px)] left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded-md border border-border/80 bg-popover px-2 py-1 text-[0.6rem] font-semibold opacity-0 shadow transition-opacity duration-150 ease-in-out group-hover:opacity-100">
                     {formatState(item.event)}
                     <span className="ml-1.5 font-mono text-muted-foreground">{item.count}</span>
                   </span>

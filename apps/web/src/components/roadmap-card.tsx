@@ -30,7 +30,7 @@ export function RoadmapCard({
   return (
     <article
       className={cn(
-        "t-resize group cursor-grab rounded-xl bg-[#151518] p-3 shadow-[inset_0_1px_0_rgb(255_255_255/0.035)] ring-1 ring-white/[0.045] transition-[background-color,opacity] duration-150 hover:bg-[#1a1a1d] active:cursor-grabbing",
+        "t-resize group cursor-grab rounded-xl bg-[#151518] p-3 shadow-[inset_0_1px_0_rgb(255_255_255/0.035)] ring-1 ring-white/[0.045] transition-[background-color,opacity] duration-150 ease-linear hover:bg-[#1a1a1d] active:cursor-grabbing",
         dragging && "opacity-45",
       )}
       draggable
