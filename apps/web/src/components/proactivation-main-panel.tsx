@@ -2,8 +2,10 @@ import { Button } from "@amend/ui/components/button";
 import { Settings, Sparkles } from "lucide-react";
 
 import type { DashboardAgentActivity, DashboardChannel } from "@/components/amend-dashboard-types";
+import type { DashboardOverview } from "@/components/amend-dashboard-types";
 import { ProactivationActivityFeed } from "@/components/proactivation-activity-feed";
 import { ProactivationAgentMetrics } from "@/components/proactivation-agent-metrics";
+import { ProactivationAnalyticsPanel } from "@/components/proactivation-analytics-panel";
 import {
   ProactivationChannelList,
   type ProactivationChannelState,
@@ -11,6 +13,7 @@ import {
 
 export function ProactivationMainPanel({
   activity,
+  analytics,
   buildBriefCount,
   canRun,
   channels,
@@ -26,6 +29,7 @@ export function ProactivationMainPanel({
   savingChannel,
 }: {
   activity: DashboardAgentActivity[];
+  analytics: DashboardOverview["analytics"] | undefined;
   buildBriefCount: number;
   canRun: boolean;
   channels: DashboardChannel[];
@@ -41,7 +45,7 @@ export function ProactivationMainPanel({
   savingChannel: string;
 }) {
   return (
-    <section className="min-w-0 border-r border-border">
+    <section className="min-w-0">
       <ProactivationAgentMetrics
         buildBriefCount={buildBriefCount}
         connectedChannelCount={connectedChannelCount}
@@ -50,44 +54,37 @@ export function ProactivationMainPanel({
         runCount={runCount}
       />
 
-      <div className="border-b border-border p-4 md:p-6">
-        <div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-end">
-          <div className="max-w-3xl">
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
-              Proactivation
-            </p>
-            <h2 className="mt-3 text-2xl font-semibold leading-tight">
-              Agent operations and automation control
-            </h2>
-            <p className="mt-3 text-sm leading-6 text-muted-foreground">
-              This is the working surface for the background agent. Channels bring in signals;
-              integrations provide context or delivery; every automated move lands in the ledger
-              before public changes go out.
-            </p>
-          </div>
-          <div className="flex flex-col gap-2 sm:flex-row">
-            <Button
-              className="h-10 border border-border bg-background px-4 text-xs font-semibold text-foreground transition-[background-color,color,scale] duration-200 hover:border-foreground hover:bg-muted active:scale-[0.96]"
-              onClick={onConfigureAutomation}
-              type="button"
-            >
-              <Settings data-icon="inline-start" />
-              Configure
-            </Button>
-            <Button
-              className="h-10 border border-foreground bg-foreground px-4 text-xs font-semibold text-background transition-[background-color,color,scale] duration-200 hover:bg-background hover:text-foreground active:scale-[0.96]"
-              disabled={!canRun || running}
-              onClick={onRunAgent}
-              type="button"
-            >
-              <Sparkles data-icon="inline-start" />
-              {running ? "Running agent..." : "Run agent"}
-            </Button>
-          </div>
+      <div className="flex items-center justify-between gap-4 border-b border-border px-6 py-4">
+        <div className="min-w-0">
+          <p className="text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+            Proactivation
+          </p>
+          <h2 className="mt-1 truncate text-base font-semibold">
+            Agent operations and automation control
+          </h2>
+        </div>
+        <div className="flex shrink-0 gap-2">
+          <Button
+            className="h-8 border border-border bg-background px-3 text-xs font-semibold text-foreground transition-colors duration-150 ease-linear hover:border-foreground/50 hover:bg-muted active:opacity-75"
+            onClick={onConfigureAutomation}
+            type="button"
+          >
+            <Settings className="size-3" />
+            Configure
+          </Button>
+          <Button
+            className="h-8 border border-foreground bg-foreground px-3 text-xs font-semibold text-background transition-colors duration-150 ease-linear hover:bg-foreground/80 active:opacity-75 disabled:opacity-40"
+            disabled={!canRun || running}
+            onClick={onRunAgent}
+            type="button"
+          >
+            <Sparkles className="size-3" />
+            {running ? "Running..." : "Run agent"}
+          </Button>
         </div>
       </div>
 
-      <div className="grid gap-6 p-4 md:p-6">
+      <div className="grid gap-4 p-6">
         <ProactivationChannelList
           canRun={canRun}
           channels={channels}
@@ -95,6 +92,7 @@ export function ProactivationMainPanel({
           onOpenSetup={onOpenSetup}
           savingChannel={savingChannel}
         />
+        <ProactivationAnalyticsPanel analytics={analytics} />
         <ProactivationActivityFeed activity={activity} />
       </div>
     </section>

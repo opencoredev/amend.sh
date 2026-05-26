@@ -1,5 +1,6 @@
 import type { Doc, Id } from "./_generated/dataModel";
 import type { MutationCtx } from "./_generated/server";
+import { recordAnalyticsEvent } from "./amendAnalytics";
 import { compact, workspaceSlug } from "./amendBackendUtils";
 import { normalizeDelivery } from "./amendNormalizers";
 import { defaultDeliveryProvider, deliveryRecipients } from "./amendNotifications";
@@ -25,7 +26,8 @@ export async function planNotificationDeliveriesHandler(
   args: PlanNotificationDeliveriesArgs,
 ) {
   const now = Date.now();
-  const workspace = await ensureBaseRecords(ctx, workspaceSlug(args.workspaceSlug));
+  const normalizedWorkspaceSlug = workspaceSlug(args.workspaceSlug);
+  const workspace = await ensureBaseRecords(ctx, normalizedWorkspaceSlug);
   const notifications = args.notificationKey
     ? compact([
         await ctx.db
@@ -121,6 +123,19 @@ export async function planNotificationDeliveriesHandler(
     }
   }
 
+  await recordAnalyticsEvent(ctx, {
+    workspaceId: workspace._id,
+    workspaceSlug: normalizedWorkspaceSlug,
+    event: "delivery_planned",
+    metadata: {
+      duplicate,
+      notificationCount: notifications.length,
+      planned: insertedDeliveries.filter((delivery) => delivery.status === "queued").length,
+      skipped: insertedDeliveries.filter((delivery) => delivery.status === "skipped").length,
+    },
+    source: "rest",
+  });
+
   return {
     duplicate,
     notificationCount: notifications.length,
@@ -151,6 +166,22 @@ export async function updateDeliveryStatusHandler(
   const updated = await ctx.db.get(args.deliveryId);
   if (!updated) {
     throw new Error("Failed to update delivery");
+  }
+  const workspace = await ctx.db.get(updated.workspaceId);
+  if (workspace) {
+    await recordAnalyticsEvent(ctx, {
+      workspaceId: updated.workspaceId,
+      workspaceSlug: workspace.slug,
+      event: "delivery_status_updated",
+      metadata: {
+        channel: updated.channel,
+        deliveryId: updated._id,
+        notificationId: updated.notificationId,
+        provider: updated.provider,
+        status: updated.status,
+      },
+      source: "rest",
+    });
   }
   return normalizeDelivery(updated);
 }

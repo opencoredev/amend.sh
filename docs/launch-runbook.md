@@ -56,6 +56,8 @@ bunx convex env set GITHUB_APP_CLIENT_ID "replace-with-github-client-id"
 bunx convex env set GITHUB_APP_CLIENT_SECRET "replace-with-github-client-secret"
 bunx convex env set GITHUB_APP_PRIVATE_KEY "replace-with-github-private-key"
 bunx convex env set AMEND_API_TOKEN "replace-with-owner-api-token"
+bunx convex env set POSTHOG_API_KEY "phc_BCb25jVTo59jtEMPysgGUvgt85bUYGwN8XBNA2oMNLY7"
+bunx convex env set POSTHOG_HOST "https://us.i.posthog.com"
 bunx convex env set OPENAI_API_KEY "replace-with-provider-key"
 bunx convex env set OPENAI_MODEL "gpt-5.1-mini"
 bunx convex env set CROF_API_KEY "replace-with-crof-key"
@@ -73,6 +75,9 @@ Set the production web deployment values:
 VITE_CONVEX_URL=https://<convex-deployment>.convex.cloud
 VITE_CONVEX_SITE_URL=https://<convex-site>.convex.site
 VITE_DOCS_URL=https://docs.amend.sh/docs
+VITE_POSTHOG_TOKEN=phc_BCb25jVTo59jtEMPysgGUvgt85bUYGwN8XBNA2oMNLY7
+VITE_POSTHOG_HOST=https://us.i.posthog.com
+VITE_POSTHOG_PROJECT_ID=441195
 ```
 
 ## GitHub App

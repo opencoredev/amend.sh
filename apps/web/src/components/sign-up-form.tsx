@@ -1,13 +1,74 @@
-import { Link } from "@tanstack/react-router";
+import { FieldGroup } from "@amend/ui/components/field";
+import { useForm } from "@tanstack/react-form";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { useState } from "react";
+import z from "zod";
 
-import { AuthFormHeader } from "@/components/auth-form-primitives";
+import {
+  AuthFormError,
+  AuthFormHeader,
+  AuthSubmitButton,
+  AuthTextField,
+} from "@/components/auth-form-primitives";
+import { authClient } from "@/lib/auth-client";
+import { authErrorMessage } from "@/lib/auth-errors";
+import { demoWorkspaceSlug } from "@/lib/demo-workspace";
+import { toast } from "@/lib/toast";
 
 export default function SignUpForm({ onSwitchToSignIn }: { onSwitchToSignIn?: () => void }) {
+  const [formError, setFormError] = useState("");
+  const navigate = useNavigate({ from: "/" });
+  const form = useForm({
+    defaultValues: {
+      email: "",
+      name: "",
+      password: "",
+    },
+    onSubmit: async ({ value }) => {
+      setFormError("");
+      await authClient.signUp.email(
+        {
+          email: value.email,
+          name: value.name,
+          password: value.password,
+        },
+        {
+          onSuccess: () => {
+            toast.success("Account created");
+            navigate({
+              params: { view: "setup" },
+              search: { workspace: demoWorkspaceSlug },
+              to: "/dashboard/$view",
+            });
+          },
+          onError: (error) => {
+            const message = authErrorMessage(
+              error,
+              "Sign up failed because the account could not be created. Check the fields and try again.",
+            );
+            setFormError(message);
+            toast.error({
+              title: "Sign up failed",
+              description: message,
+            });
+          },
+        },
+      );
+    },
+    validators: {
+      onSubmit: z.object({
+        email: z.email("Invalid email address"),
+        name: z.string().min(2, "Name must be at least 2 characters"),
+        password: z.string().min(8, "Password must be at least 8 characters"),
+      }),
+    },
+  });
+
   return (
     <div className="w-full">
       <AuthFormHeader
-        title="Amend Cloud is coming soon"
-        description="Public signup is closed while the hosted workspace is being prepared. The landing page is live, but new accounts are invite-only for now."
+        title="Create your Amend account"
+        description="Start a workspace for feedback, roadmap, changelog, agent runs, and analytics."
         action={
           <>
             Already have an account?{" "}
@@ -26,26 +87,76 @@ export default function SignUpForm({ onSwitchToSignIn }: { onSwitchToSignIn?: ()
         }
       />
 
-      <div className="grid gap-5 border-y py-6 text-sm leading-6 text-muted-foreground">
-        <p>
-          We are connecting the hosted Amend experience to the production backend before opening
-          self-serve accounts.
-        </p>
-        <p>
-          If you already have access, sign in. Otherwise, check back soon for the public launch.
-        </p>
-        <Link
-          to="/sign-in"
-          onClick={(event) => {
-            if (!onSwitchToSignIn) return;
-            event.preventDefault();
-            onSwitchToSignIn();
-          }}
-          className="inline-flex items-center justify-center border border-foreground bg-foreground px-5 py-3 text-sm font-semibold text-background transition-[background-color,color,scale] duration-200 hover:bg-transparent hover:text-foreground active:scale-[0.96] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground"
-        >
-          Sign in
-        </Link>
-      </div>
+      <form
+        onSubmit={(event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          form.handleSubmit();
+        }}
+        className="flex flex-col gap-6"
+      >
+        <FieldGroup>
+          <form.Field name="name">
+            {(field) => (
+              <AuthTextField
+                id={field.name}
+                label="Name"
+                placeholder="Ada Lovelace"
+                value={field.state.value}
+                onBlur={field.handleBlur}
+                onChange={field.handleChange}
+                errors={field.state.meta.errors}
+              />
+            )}
+          </form.Field>
+
+          <form.Field name="email">
+            {(field) => (
+              <AuthTextField
+                id={field.name}
+                label="Email"
+                type="email"
+                placeholder="you@company.com"
+                value={field.state.value}
+                onBlur={field.handleBlur}
+                onChange={field.handleChange}
+                errors={field.state.meta.errors}
+              />
+            )}
+          </form.Field>
+
+          <form.Field name="password">
+            {(field) => (
+              <AuthTextField
+                id={field.name}
+                label="Password"
+                type="password"
+                placeholder="Create a password"
+                value={field.state.value}
+                onBlur={field.handleBlur}
+                onChange={field.handleChange}
+                errors={field.state.meta.errors}
+              />
+            )}
+          </form.Field>
+
+          <form.Subscribe
+            selector={(state) => ({ canSubmit: state.canSubmit, isSubmitting: state.isSubmitting })}
+          >
+            {({ canSubmit, isSubmitting }) => (
+              <AuthSubmitButton
+                disabled={!canSubmit || isSubmitting}
+                pending={isSubmitting}
+                pendingLabel="Creating account..."
+              >
+                Create account
+              </AuthSubmitButton>
+            )}
+          </form.Subscribe>
+
+          <AuthFormError message={formError} />
+        </FieldGroup>
+      </form>
     </div>
   );
 }

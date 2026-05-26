@@ -1,5 +1,6 @@
 import type { Doc, Id } from "./_generated/dataModel";
 import type { MutationCtx } from "./_generated/server";
+import { recordAnalyticsEvent } from "./amendAnalytics";
 import { requireDashboardUser, requireDashboardWorkspace } from "./amendWorkspace";
 
 type UpdateReviewStatusArgs = {
@@ -59,6 +60,21 @@ export async function updateReviewStatusHandler(ctx: MutationCtx, args: UpdateRe
   if (approved) {
     await applyApprovedReview(ctx, review, args.status, now);
   }
+
+  await recordAnalyticsEvent(ctx, {
+    workspaceId: review.workspaceId,
+    workspaceSlug: reviewWorkspace.slug,
+    event: "review_status_updated",
+    externalUserId: user.id,
+    metadata: {
+      kind: review.kind,
+      reviewItemId: review._id,
+      reviewKey: review.stableKey,
+      status: args.status,
+      targetKey: review.targetKey,
+    },
+    source: "rest",
+  });
 
   return {
     reviewItemId: review._id,

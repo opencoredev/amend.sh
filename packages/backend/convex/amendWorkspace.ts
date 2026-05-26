@@ -1,5 +1,6 @@
 export type { DashboardAuthUser } from "./amendWorkspaceAccess";
 export {
+  dashboardAuthIdentity,
   filterProjectDocs,
   getDashboardProject,
   getDashboardWorkspace,

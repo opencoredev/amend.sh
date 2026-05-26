@@ -17,44 +17,48 @@ export function ProactivationWorkspace({
   const proactivation = useProactivationController({ dashboard, workspace });
 
   return (
-    <div
-      className="t-panel-slide min-h-[calc(100svh-5.5rem)] min-w-0 overflow-x-hidden"
-      data-open="true"
-    >
-      <div className="grid min-h-[calc(100svh-5.5rem)] min-w-0 xl:grid-cols-[minmax(0,1fr)_22rem]">
-        <ProactivationMainPanel
-          activity={proactivation.activity}
-          buildBriefCount={proactivation.buildBriefs.length}
-          canRun={proactivation.canRun}
-          channels={proactivation.channels}
-          connectedChannelCount={proactivation.connectedChannels}
-          decisionCount={proactivation.decisions.length}
-          inputChannelCount={proactivation.inputChannels.length}
-          onChannelStateChange={proactivation.updateChannelState}
-          onConfigureAutomation={onConfigureAutomation}
-          onOpenSetup={onOpenSetup}
-          onRunAgent={proactivation.runAgentNow}
-          runCount={proactivation.runs.length}
-          running={proactivation.running}
-          savingChannel={proactivation.savingChannel}
-        />
+    <div className="t-panel-slide" data-open="true">
+      <div className="flex h-[calc(100svh-5.5rem)] min-w-0 overflow-hidden">
+        <div className="min-w-0 flex-1 overflow-y-auto">
+          <ProactivationMainPanel
+            activity={proactivation.activity}
+            analytics={proactivation.analytics}
+            buildBriefCount={proactivation.buildBriefs.length}
+            canRun={proactivation.canRun}
+            channels={proactivation.channels}
+            connectedChannelCount={proactivation.connectedChannels}
+            decisionCount={proactivation.decisions.length}
+            inputChannelCount={proactivation.inputChannels.length}
+            onChannelStateChange={proactivation.updateChannelState}
+            onConfigureAutomation={onConfigureAutomation}
+            onOpenSetup={onOpenSetup}
+            onRunAgent={proactivation.runAgentNow}
+            runCount={proactivation.runs.length}
+            running={proactivation.running}
+            savingChannel={proactivation.savingChannel}
+          />
+        </div>
 
-        <ProactivationInspector
-          buildBriefs={proactivation.buildBriefs}
-          canRun={proactivation.canRun}
-          latestDecision={proactivation.latestDecision}
-          latestReview={proactivation.latestReview}
-          latestRun={proactivation.latestRun}
-          onAutomationModeChange={proactivation.saveAutomationMode}
-          onRevertDecision={proactivation.revertLatestDecision}
-          onReviewStatusChange={proactivation.updateLatestReviewStatus}
-          revertingDecision={proactivation.revertingDecision}
-          reviews={proactivation.reviews}
-          rules={proactivation.rules}
-          savingMode={proactivation.savingMode}
-          savingReview={proactivation.savingReview}
-          sources={proactivation.sources}
-        />
+        <aside className="hidden w-[22rem] shrink-0 border-l border-border xl:block">
+          <div className="h-full overflow-y-auto">
+            <ProactivationInspector
+              buildBriefs={proactivation.buildBriefs}
+              canRun={proactivation.canRun}
+              latestDecision={proactivation.latestDecision}
+              latestReview={proactivation.latestReview}
+              latestRun={proactivation.latestRun}
+              onAutomationModeChange={proactivation.saveAutomationMode}
+              onRevertDecision={proactivation.revertLatestDecision}
+              onReviewStatusChange={proactivation.updateLatestReviewStatus}
+              revertingDecision={proactivation.revertingDecision}
+              reviews={proactivation.reviews}
+              rules={proactivation.rules}
+              savingMode={proactivation.savingMode}
+              savingReview={proactivation.savingReview}
+              sources={proactivation.sources}
+            />
+          </div>
+        </aside>
       </div>
     </div>
   );

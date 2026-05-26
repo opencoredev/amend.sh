@@ -26,12 +26,6 @@ export async function handleSignalRestPost(input: RestPostInput) {
       sourceUrl: optionalString(body.sourceUrl),
       title: requiredString(body.title, "title"),
     });
-    await ctx.runMutation(api.amend.trackEvent, {
-      workspaceSlug,
-      event: "feedback_submitted",
-      metadata: { stableKey: result.stableKey },
-      source: "rest",
-    });
     return json(result, 201);
   }
 

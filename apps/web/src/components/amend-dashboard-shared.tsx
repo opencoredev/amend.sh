@@ -15,26 +15,26 @@ export function SettingsPanel({
   title: string;
 }) {
   return (
-    <section className="border border-border bg-card p-4">
-      <div className="mb-4 flex items-center justify-between gap-3">
-        <div className="flex min-w-0 items-center gap-3">
-          <span className="grid size-9 shrink-0 place-items-center border border-border bg-muted/30 text-muted-foreground [&_svg]:size-4">
+    <section className="border border-border bg-card">
+      <div className="flex items-center justify-between gap-3 border-b border-border px-4 py-3">
+        <div className="flex min-w-0 items-center gap-2.5">
+          <span className="grid size-7 shrink-0 place-items-center border border-border bg-muted/30 text-muted-foreground [&_svg]:size-3.5">
             {icon}
           </span>
-          <h3 className="truncate text-sm font-semibold">{title}</h3>
+          <h3 className="truncate text-xs font-semibold uppercase tracking-[0.12em]">{title}</h3>
         </div>
         {action}
       </div>
-      <div className="grid gap-3">{children}</div>
+      <div className="grid gap-2 p-4">{children}</div>
     </section>
   );
 }
 
 export function StatusRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex min-h-10 items-center justify-between gap-3 border border-border bg-background px-3">
-      <span className="truncate text-xs font-semibold">{label}</span>
-      <span className="truncate text-xs text-muted-foreground">{value}</span>
+    <div className="flex min-h-9 items-center justify-between gap-3 border border-border bg-background px-3">
+      <span className="text-xs font-medium text-muted-foreground">{label}</span>
+      <span className="truncate text-right text-xs font-semibold">{value}</span>
     </div>
   );
 }
@@ -53,16 +53,16 @@ export function EmptyModule({
   title: string;
 }) {
   return (
-    <section className="grid min-h-64 place-items-center border border-border bg-card p-6 text-center">
+    <section className="grid min-h-56 place-items-center p-6 text-center">
       <div>
-        <span className="mx-auto grid size-12 place-items-center border border-border bg-muted text-muted-foreground [&_svg]:size-5">
+        <span className="mx-auto grid size-10 place-items-center border border-border bg-muted/50 text-muted-foreground [&_svg]:size-4">
           {icon}
         </span>
-        <h2 className="mt-4 text-xl font-semibold">{title}</h2>
-        <p className="mt-2 max-w-md text-sm leading-6 text-muted-foreground">{copy}</p>
+        <h2 className="mt-3 text-sm font-semibold">{title}</h2>
+        <p className="mt-1.5 max-w-xs text-xs leading-5 text-muted-foreground">{copy}</p>
         {action && onAction ? (
           <Button
-            className="mt-5 h-9 bg-foreground text-background hover:bg-background hover:text-foreground"
+            className="mt-4 h-8 bg-foreground px-3 text-xs text-background transition-colors duration-150 ease-linear hover:bg-foreground/80 active:opacity-75"
             onClick={onAction}
           >
             {action}
@@ -75,12 +75,12 @@ export function EmptyModule({
 
 export function BooleanRow({ checked, label }: { checked: boolean; label: string }) {
   return (
-    <div className="flex min-h-10 items-center justify-between gap-3 border border-border bg-background px-3">
-      <span className="text-xs font-semibold text-muted-foreground">{label}</span>
+    <div className="flex min-h-9 items-center justify-between gap-3 border border-border bg-background px-3">
+      <span className="text-xs font-medium text-muted-foreground">{label}</span>
       <span
         className={cn(
-          "grid size-5 place-items-center border border-border text-[0.65rem]",
-          checked ? "bg-foreground text-background" : "bg-muted text-muted-foreground",
+          "grid size-4 place-items-center border text-[0.6rem] font-semibold",
+          checked ? "border-foreground bg-foreground text-background" : "border-border bg-muted text-muted-foreground",
         )}
       >
         {checked ? "Y" : "N"}

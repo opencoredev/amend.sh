@@ -1,5 +1,6 @@
 import type { Id } from "./_generated/dataModel";
 import type { MutationCtx } from "./_generated/server";
+import { recordAnalyticsEvent } from "./amendAnalytics";
 import type { PersistProactiveAgentRunArgs } from "./amendAgentRunTypes";
 import { compact, slugPart } from "./amendBackendUtils";
 import { normalizeSourceEvent, sourceLinkForEvent, titleize } from "./amendNormalizers";
@@ -144,6 +145,23 @@ export async function persistProactiveAgentRunHandler(
     completedAt: now,
     createdAt: now,
     updatedAt: now,
+  });
+
+  await recordAnalyticsEvent(ctx, {
+    workspaceId: workspace._id,
+    workspaceSlug: workspace.slug,
+    event: "agent_run_completed",
+    metadata: {
+      decisionCount: decisionIds.length,
+      projectSlug: args.projectSlug,
+      provider: args.provider,
+      providerConfigured: args.providerConfigured,
+      reviewCount: reviewItemIds.length,
+      runId,
+      runStatus,
+      sourceEventCount: scopedSourceEvents.length,
+    },
+    source: "rest",
   });
 
   return {

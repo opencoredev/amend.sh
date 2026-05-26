@@ -11,7 +11,11 @@ import {
 import { createGitHubAppJwt, githubJson } from "./amendGithub";
 import { defaultPermissionsForRole } from "./amendNormalizers";
 import { ensureDemoDataForWorkspace } from "./amendSeed";
-import { getDashboardWorkspaceSlugForUser, requireDashboardUser } from "./amendWorkspace";
+import {
+  dashboardAuthIdentity,
+  getDashboardWorkspaceSlugForUser,
+  requireDashboardUser,
+} from "./amendWorkspace";
 import type { DashboardAuthUser } from "./amendWorkspace";
 import { authComponent } from "./auth";
 
@@ -155,9 +159,9 @@ export async function joinSeededDemoWorkspaceHandler(
   const slug = workspaceSlug(args.workspaceSlug);
   const workspaceId = await ensureDemoDataForWorkspace(ctx, slug);
   const authUser = (await authComponent.safeGetAuthUser(ctx)) as DashboardAuthUser | null;
-  const authUserId = authUser?.userId ?? authUser?.user?.id ?? authUser?._id;
-  const memberEmail = authUser?.user?.email ?? args.email;
-  const memberName = authUser?.user?.name ?? args.name;
+  const identity = dashboardAuthIdentity(authUser);
+  const memberEmail = identity?.email ?? args.email;
+  const memberName = identity?.name ?? args.name;
   const existingMember = await ctx.db
     .query("workspaceMembers")
     .withIndex("by_workspace_and_email", (q) =>
@@ -167,7 +171,7 @@ export async function joinSeededDemoWorkspaceHandler(
   const patch = {
     email: memberEmail,
     name: memberName,
-    ...(authUserId ? { externalUserId: authUserId } : {}),
+    ...(identity?.id ? { externalUserId: identity.id } : {}),
     permissions: defaultPermissionsForRole("owner"),
     role: "owner" as const,
     updatedAt: Date.now(),

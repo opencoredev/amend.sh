@@ -1,3 +1,4 @@
+import { cn } from "@amend/ui/lib/utils";
 import { ClipboardList, DatabaseZap, Radio, Settings } from "lucide-react";
 
 import { SettingsPanel, StatusRow } from "@/components/amend-dashboard-shared";
@@ -10,6 +11,12 @@ import type {
 import { formatDate, formatState } from "@/components/amend-dashboard-utils";
 import { InspectorBlock } from "@/components/proactivation-inspector-block";
 import type { AutomationMode, ReviewStatus } from "@/components/use-proactivation-controller";
+
+const MODE_LABELS: Record<string, string> = {
+  mostly_auto: "Mostly Auto",
+  review_first: "Review First",
+  manual: "Manual",
+};
 
 export function AutomationControlsPanel({
   canRun,
@@ -33,16 +40,21 @@ export function AutomationControlsPanel({
         label="Public copy"
         value={rules?.requireReviewForPublicCopy ? "Review required" : "Can auto-apply"}
       />
-      <div className="grid grid-cols-3 gap-2">
+      <div className="grid grid-cols-3 gap-1.5 pt-1">
         {(["mostly_auto", "review_first", "manual"] as const).map((mode) => (
           <button
             key={mode}
             type="button"
-            className="min-h-9 border border-border px-2 text-xs font-semibold text-muted-foreground transition-[border-color,color,scale] hover:border-foreground hover:text-foreground active:scale-[0.96] disabled:opacity-50"
+            className={cn(
+              "h-8 border px-2 text-[0.65rem] font-semibold transition-colors duration-150 ease-linear active:opacity-75 disabled:opacity-40",
+              rules?.mode === mode
+                ? "border-foreground bg-foreground text-background"
+                : "border-border text-muted-foreground hover:border-foreground/50 hover:text-foreground",
+            )}
             disabled={!canRun || savingMode === mode}
             onClick={() => onAutomationModeChange(mode)}
           >
-            {savingMode === mode ? "Saving" : formatState(mode)}
+            {savingMode === mode ? "Saving…" : MODE_LABELS[mode]}
           </button>
         ))}
       </div>
@@ -89,19 +101,19 @@ export function CurrentReviewPanel({
   return (
     <SettingsPanel icon={<ClipboardList />} title="Current review">
       {latestReview ? (
-        <div className="grid gap-4">
+        <div className="grid gap-3">
           <InspectorBlock
             meta={formatState(latestReview.status)}
             sourceLinks={latestReview.sourceLinks}
             summary={latestReview.summary}
             title={latestReview.title}
           />
-          <div className="grid gap-2 sm:grid-cols-3 xl:grid-cols-1">
+          <div className="grid grid-cols-3 gap-1.5">
             {(["approved", "changes_requested", "published"] as const).map((status) => (
               <button
                 key={status}
                 type="button"
-                className="h-9 border border-border px-3 text-xs font-semibold text-muted-foreground transition-[border-color,color,scale] hover:border-foreground hover:text-foreground active:scale-[0.96]"
+                className="h-8 border border-border px-2 text-[0.65rem] font-semibold text-muted-foreground transition-colors duration-150 ease-linear hover:border-foreground/50 hover:text-foreground active:opacity-75 disabled:opacity-40"
                 disabled={!latestReview.recordId || savingReview === status}
                 onClick={() => onReviewStatusChange(status)}
               >
@@ -111,7 +123,7 @@ export function CurrentReviewPanel({
           </div>
         </div>
       ) : (
-        <p className="text-sm leading-6 text-muted-foreground">
+        <p className="text-xs leading-5 text-muted-foreground">
           Public copy, low-confidence matches, and notification blasts will appear here before they
           ship.
         </p>
@@ -132,7 +144,7 @@ export function LatestDecisionPanel({
   return (
     <SettingsPanel icon={<DatabaseZap />} title="Latest decision">
       {latestDecision ? (
-        <div className="grid gap-4">
+        <div className="grid gap-3">
           <InspectorBlock
             meta={`${Math.round(latestDecision.confidence * 100)}% confidence / ${formatState(latestDecision.outcome)}`}
             sourceLinks={latestDecision.sourceLinks}
@@ -142,16 +154,16 @@ export function LatestDecisionPanel({
           {latestDecision.recordId && latestDecision.outcome === "applied" ? (
             <button
               type="button"
-              className="h-9 border border-border px-3 text-xs font-semibold text-muted-foreground transition-[border-color,color,scale] hover:border-foreground hover:text-foreground active:scale-[0.96]"
+              className="h-8 border border-border px-3 text-xs font-semibold text-muted-foreground transition-colors duration-150 ease-linear hover:border-foreground/50 hover:text-foreground active:opacity-75"
               disabled={revertingDecision}
               onClick={onRevertDecision}
             >
-              {revertingDecision ? "Reverting..." : "Revert decision"}
+              {revertingDecision ? "Reverting…" : "Revert decision"}
             </button>
           ) : null}
         </div>
       ) : (
-        <p className="text-sm leading-6 text-muted-foreground">
+        <p className="text-xs leading-5 text-muted-foreground">
           Run the agent after a channel has source evidence or customer signals.
         </p>
       )}

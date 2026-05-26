@@ -162,6 +162,7 @@ export function useAmendDashboardController() {
         uiState.setSelectedChangelogKey(entry.stableKey),
       onOpenFeedback: dashboardActions.openFeedbackPost,
       onOpenFeedbackKey: dashboardActions.openFeedbackFromRoadmap,
+      onOpenProactivation: () => navigation.changeView("proactivation"),
       onOpenRoadmapItem: dashboardActions.openRoadmapItem,
       onOpenSetup: navigation.openSetup,
       onProjectCreated: navigation.projectCreated,

@@ -18,6 +18,27 @@ import type { PortalSettings } from "@/components/amend-dashboard-core-types";
 export type DashboardOverview = {
   agentActivity: DashboardAgentActivity[];
   agentRuns: DashboardAgentRun[];
+  analytics?: {
+    recentEvents: Array<{
+      accountId?: string;
+      createdAt: number;
+      event: string;
+      externalUserId?: string;
+      source: string;
+      updateKey?: string;
+    }>;
+    topEvents: Array<{
+      count: number;
+      event: string;
+    }>;
+    topCategories: Array<{
+      category: string;
+      count: number;
+    }>;
+    totalEvents: number;
+    uniqueAccounts: number;
+    uniqueUsers: number;
+  };
   automationDecisions: DashboardAutomationDecision[];
   buildBriefs: DashboardBuildBrief[];
   channels: DashboardChannel[];

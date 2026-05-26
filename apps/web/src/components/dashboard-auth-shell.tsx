@@ -10,18 +10,18 @@ type DashboardAuthShellProps = {
 
 export default function DashboardAuthShell({ showSignIn }: DashboardAuthShellProps) {
   return (
-    <main className="grid min-h-svh bg-background text-foreground [--accent-foreground:oklch(0.1221_0_0)] [--primary:oklch(0.1221_0_0)] [--primary-foreground:oklch(0.994_0_0)] [--ring:oklch(0.1221_0_0)] lg:grid-cols-2">
+    <main className="dark grid min-h-svh bg-background font-mono text-foreground lg:grid-cols-2">
       <section className="flex flex-col gap-4 p-6 md:p-10">
-        <div className="flex justify-center gap-2 md:justify-start">
-          <Link to="/" className="flex items-center gap-2 font-medium">
-            <AmendLogo markVariant="mono" size="md" />
+        <div className="flex justify-start gap-2">
+          <Link to="/" className="flex items-center gap-2">
+            <AmendLogo markVariant="mono" size="sm" />
           </Link>
         </div>
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-xs">{showSignIn ? <SignInForm /> : <SignUpForm />}</div>
         </div>
       </section>
-      <section className="relative hidden bg-white lg:block">
+      <section className="relative hidden bg-background lg:block">
         <img
           src="/auth-cover.svg"
           alt=""

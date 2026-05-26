@@ -1,5 +1,6 @@
 import {
   ChangelogModuleSidebar,
+  AnalyticsModuleSidebar,
   FeedbackModuleSidebar,
   ProactivationModuleSidebar,
   RoadmapModuleSidebar,
@@ -35,6 +36,15 @@ export function ModuleSidebar(props: ModuleSidebarProps) {
 
   if (props.activeView === "setup") {
     return <SetupModuleSidebar onViewChange={props.onViewChange} />;
+  }
+
+  if (props.activeView === "analytics") {
+    return (
+      <AnalyticsModuleSidebar
+        onSettingsSectionChange={props.onSettingsSectionChange}
+        onViewChange={props.onViewChange}
+      />
+    );
   }
 
   if (props.activeView === "settings") {

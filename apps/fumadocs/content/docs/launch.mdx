@@ -44,6 +44,16 @@ bunx convex env set SITE_URL https://amend.sh
 bunx convex env set BETTER_AUTH_SECRET "<generated-secret>"
 bunx convex env set GITHUB_WEBHOOK_SECRET "<webhook-secret>"
 bunx convex env set AMEND_API_TOKEN "<owner-token>"
+bunx convex env set POSTHOG_API_KEY "phc_BCb25jVTo59jtEMPysgGUvgt85bUYGwN8XBNA2oMNLY7"
+bunx convex env set POSTHOG_HOST "https://us.i.posthog.com"
+```
+
+Set the matching web deployment analytics values:
+
+```bash
+VITE_POSTHOG_TOKEN=phc_BCb25jVTo59jtEMPysgGUvgt85bUYGwN8XBNA2oMNLY7
+VITE_POSTHOG_HOST=https://us.i.posthog.com
+VITE_POSTHOG_PROJECT_ID=441195
 ```
 
 ## Domains

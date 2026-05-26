@@ -18,6 +18,7 @@ export async function loadDashboardOverviewRecords(
     allReviews,
     allBuildBriefs,
     allAgentRuns,
+    allEventRecords,
     allSourceEvents,
     allAutomationDecisions,
     integrations,
@@ -98,6 +99,11 @@ export async function loadDashboardOverviewRecords(
       .order("desc")
       .take(project ? 100 : 8),
     ctx.db
+      .query("eventRecords")
+      .withIndex("by_workspace_and_createdAt", (q) => q.eq("workspaceId", workspace._id))
+      .order("desc")
+      .take(100),
+    ctx.db
       .query("sourceEvents")
       .withIndex("by_workspace_and_observedAt", (q) => q.eq("workspaceId", workspace._id))
       .order("desc")
@@ -146,6 +152,7 @@ export async function loadDashboardOverviewRecords(
       8,
     ),
     agentRuns: latestDocs(filterProjectDocs(allAgentRuns, project), (item) => item.completedAt, 8),
+    eventRecords: allEventRecords,
     sourceEvents,
     automationDecisions: latestDocs(
       filterProjectDocs(allAutomationDecisions, project),

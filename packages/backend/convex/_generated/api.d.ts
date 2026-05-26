@@ -19,6 +19,8 @@ import type * as amendAgentRunHandlers from "../amendAgentRunHandlers.js";
 import type * as amendAgentRunPersistence from "../amendAgentRunPersistence.js";
 import type * as amendAgentRunTypes from "../amendAgentRunTypes.js";
 import type * as amendAgentTypes from "../amendAgentTypes.js";
+import type * as amendAnalytics from "../amendAnalytics.js";
+import type * as amendAnalyticsEvents from "../amendAnalyticsEvents.js";
 import type * as amendAutomationFunctionArgs from "../amendAutomationFunctionArgs.js";
 import type * as amendAutomationRecordNormalizers from "../amendAutomationRecordNormalizers.js";
 import type * as amendAutomationRulesMutationHandlers from "../amendAutomationRulesMutationHandlers.js";
@@ -130,6 +132,7 @@ import type * as httpRuntimeScalars from "../httpRuntimeScalars.js";
 import type * as httpRuntimeSourceEventInputs from "../httpRuntimeSourceEventInputs.js";
 import type * as httpRuntimeSourceEventTypes from "../httpRuntimeSourceEventTypes.js";
 import type * as httpRuntimeStripe from "../httpRuntimeStripe.js";
+import type * as posthog from "../posthog.js";
 import type * as privateData from "../privateData.js";
 import type * as projectWebsiteEnrichment from "../projectWebsiteEnrichment.js";
 import type * as projectWebsiteMetadata from "../projectWebsiteMetadata.js";
@@ -168,6 +171,8 @@ declare const fullApi: ApiFromModules<{
   amendAgentRunPersistence: typeof amendAgentRunPersistence;
   amendAgentRunTypes: typeof amendAgentRunTypes;
   amendAgentTypes: typeof amendAgentTypes;
+  amendAnalytics: typeof amendAnalytics;
+  amendAnalyticsEvents: typeof amendAnalyticsEvents;
   amendAutomationFunctionArgs: typeof amendAutomationFunctionArgs;
   amendAutomationRecordNormalizers: typeof amendAutomationRecordNormalizers;
   amendAutomationRulesMutationHandlers: typeof amendAutomationRulesMutationHandlers;
@@ -279,6 +284,7 @@ declare const fullApi: ApiFromModules<{
   httpRuntimeSourceEventInputs: typeof httpRuntimeSourceEventInputs;
   httpRuntimeSourceEventTypes: typeof httpRuntimeSourceEventTypes;
   httpRuntimeStripe: typeof httpRuntimeStripe;
+  posthog: typeof posthog;
   privateData: typeof privateData;
   projectWebsiteEnrichment: typeof projectWebsiteEnrichment;
   projectWebsiteMetadata: typeof projectWebsiteMetadata;
@@ -328,5 +334,6 @@ export declare const internal: FilterApi<
 
 export declare const components: {
   betterAuth: import("@convex-dev/better-auth/_generated/component.js").ComponentApi<"betterAuth">;
+  posthog: import("@posthog/convex/_generated/component.js").ComponentApi<"posthog">;
   rateLimiter: import("@convex-dev/rate-limiter/_generated/component.js").ComponentApi<"rateLimiter">;
 };

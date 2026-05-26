@@ -119,6 +119,7 @@ export function viewTitle(view: DashboardView) {
     posts: "Feedback",
     roadmap: "Roadmap",
     changelog: "Changelog",
+    analytics: "Analytics",
     proactivation: "Proactivation",
     settings: "Settings",
     setup: "Create project",

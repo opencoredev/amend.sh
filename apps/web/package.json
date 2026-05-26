@@ -27,9 +27,11 @@
     "gsap": "^3.15.0",
     "lucide-react": "^1.8.0",
     "next-themes": "catalog:",
+    "posthog-js": "^1.376.2",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
     "react-grab": "^0.1.33",
+    "recharts": "^3.8.1",
     "sileo": "^0.1.5",
     "tailwindcss": "^4.2.2",
     "zod": "catalog:"

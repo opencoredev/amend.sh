@@ -11,6 +11,7 @@ import {
 } from "@/components/amend-dashboard-workspaces";
 import type { DashboardContentProps } from "@/components/amend-dashboard-content-types";
 import { changelogCategoryFilters } from "@/components/amend-dashboard-utils";
+import { AnalyticsWorkspace } from "@/components/analytics-workspace";
 import { DashboardHeader } from "@/components/dashboard-navigation";
 import { OnboardingWorkspace } from "@/components/project-setup-workspace";
 import { ProactivationWorkspace } from "@/components/proactivation-workspace";
@@ -41,6 +42,7 @@ export function AmendDashboardMainWorkspace({
   onMoveRoadmapItem,
   onOpenChangelog,
   onOpenFeedback,
+  onOpenProactivation,
   onOpenRoadmapItem,
   onOpenSetup,
   onProjectCreated,
@@ -60,6 +62,7 @@ export function AmendDashboardMainWorkspace({
         changelogCategories={changelogCategoryFilters(changelogEntries)}
         itemCount={getHeaderItemCount({
           activeView,
+          dashboard,
           scopedChangelogEntries,
           scopedPosts,
           scopedRoadmapEntries,
@@ -95,6 +98,14 @@ export function AmendDashboardMainWorkspace({
       {activeView === "changelog" ? (
         <ChangelogWorkspace entries={scopedChangelogEntries} onOpen={onOpenChangelog} />
       ) : null}
+      {activeView === "analytics" ? (
+        <AnalyticsWorkspace
+          dashboard={dashboard}
+          workspace={workspace}
+          onOpenProactivation={onOpenProactivation}
+          onOpenSetup={onOpenSetup}
+        />
+      ) : null}
       {activeView === "proactivation" ? (
         <ProactivationWorkspace
           dashboard={dashboard}
@@ -126,8 +137,10 @@ function getHeaderItemCount({
   scopedChangelogEntries,
   scopedPosts,
   scopedRoadmapEntries,
+  dashboard,
 }: {
   activeView: DashboardView;
+  dashboard?: DashboardContentProps["dashboard"];
   scopedChangelogEntries: DashboardChangelog[];
   scopedPosts: Post[];
   scopedRoadmapEntries: DashboardRoadmap[];
@@ -135,5 +148,6 @@ function getHeaderItemCount({
   if (activeView === "posts") return scopedPosts.length;
   if (activeView === "roadmap") return scopedRoadmapEntries.length;
   if (activeView === "changelog") return scopedChangelogEntries.length;
+  if (activeView === "analytics") return dashboard?.analytics?.totalEvents ?? 0;
   return undefined;
 }

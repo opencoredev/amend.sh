@@ -1,5 +1,6 @@
 import type { Id } from "./_generated/dataModel";
 import type { MutationCtx } from "./_generated/server";
+import { recordAnalyticsEvent } from "./amendAnalytics";
 import { workspaceSlug } from "./amendBackendUtils";
 import type { RecordFeedbackInteractionArgs } from "./amendFeedbackTypes";
 import { ensureBaseRecords } from "./amendSeed";
@@ -16,7 +17,8 @@ export async function recordFeedbackInteractionHandler(
   const authUserId = authUser?.userId ?? authUser?.user?.id ?? authUser?._id;
   const actorId = args.externalUserId ?? authUserId;
   const actorEmail = args.email ?? authUser?.user?.email;
-  const workspace = await ensureBaseRecords(ctx, workspaceSlug(args.workspaceSlug));
+  const normalizedWorkspaceSlug = workspaceSlug(args.workspaceSlug);
+  const workspace = await ensureBaseRecords(ctx, normalizedWorkspaceSlug);
   const project = await getWritableDashboardProject(ctx, workspace._id, args.projectSlug);
   const feedback = await ctx.db
     .query("feedbackItems")
@@ -45,6 +47,7 @@ export async function recordFeedbackInteractionHandler(
         now,
         votes: Math.max(feedback.votes - 1, 0),
         workspaceId: workspace._id,
+        workspaceSlug: normalizedWorkspaceSlug,
         actorId,
       });
     }
@@ -72,8 +75,9 @@ export async function recordFeedbackInteractionHandler(
     updatedAt: now,
   });
 
-  await ctx.db.insert("eventRecords", {
+  await recordAnalyticsEvent(ctx, {
     workspaceId: workspace._id,
+    workspaceSlug: normalizedWorkspaceSlug,
     event: eventForInteractionKind(args.kind),
     ...(actorId ? { externalUserId: actorId } : {}),
     metadata: {
@@ -83,7 +87,6 @@ export async function recordFeedbackInteractionHandler(
       ...(args.reaction ? { reaction: args.reaction } : {}),
     },
     source: args.source ?? "rest",
-    createdAt: now,
   });
 
   return {
@@ -129,6 +132,7 @@ async function removeExistingVote(
     now: number;
     votes: number;
     workspaceId: Id<"workspaces">;
+    workspaceSlug: string;
   },
 ) {
   await ctx.db.delete(input.existingVoteId);
@@ -136,8 +140,9 @@ async function removeExistingVote(
     votes: input.votes,
     updatedAt: input.now,
   });
-  await ctx.db.insert("eventRecords", {
+  await recordAnalyticsEvent(ctx, {
     workspaceId: input.workspaceId,
+    workspaceSlug: input.workspaceSlug,
     event: "vote_removed",
     ...(input.actorId ? { externalUserId: input.actorId } : {}),
     metadata: {
@@ -145,7 +150,6 @@ async function removeExistingVote(
       interactionId: input.existingVoteId,
     },
     source: input.args.source ?? "rest",
-    createdAt: input.now,
   });
 
   return {

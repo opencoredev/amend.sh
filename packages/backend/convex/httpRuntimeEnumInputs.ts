@@ -12,12 +12,22 @@ const buildBriefStatuses = new Set(["draft", "in_review", "approved", "exported"
 const eventNames = new Set([
   "identify",
   "account_identify",
+  "agent_run_completed",
+  "changelog_upserted",
   "feedback_submitted",
   "vote_added",
+  "vote_removed",
   "comment_added",
+  "delivery_planned",
+  "delivery_status_updated",
   "reaction_added",
+  "review_status_updated",
+  "roadmap_upserted",
+  "roadmap_vote_added",
+  "roadmap_vote_removed",
   "roadmap_viewed",
   "changelog_viewed",
+  "source_event_ingested",
   "update_seen",
   "shipped_feature_used",
 ]);
@@ -68,15 +78,25 @@ export function eventName(value: unknown) {
   if (typeof value === "string" && eventNames.has(value)) {
     return value as
       | "account_identify"
+      | "agent_run_completed"
       | "changelog_viewed"
+      | "changelog_upserted"
       | "comment_added"
+      | "delivery_planned"
+      | "delivery_status_updated"
       | "feedback_submitted"
       | "identify"
       | "reaction_added"
+      | "review_status_updated"
+      | "roadmap_upserted"
       | "roadmap_viewed"
+      | "roadmap_vote_added"
+      | "roadmap_vote_removed"
       | "shipped_feature_used"
+      | "source_event_ingested"
       | "update_seen"
-      | "vote_added";
+      | "vote_added"
+      | "vote_removed";
   }
   throw new Error("event must be a supported Amend event name");
 }

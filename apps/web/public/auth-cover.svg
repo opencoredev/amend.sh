@@ -1,3 +1,100 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1200" role="img" aria-label="">
-  <rect width="1600" height="1200" fill="#ffffff" />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1200" role="img" aria-label="Amend.sh">
+  <rect width="800" height="1200" fill="#0a0a0a"/>
+
+  <defs>
+    <pattern id="dot-grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <circle cx="20" cy="20" r="0.9" fill="#ffffff" fill-opacity="0.07"/>
+    </pattern>
+    <linearGradient id="ascii-fade-top" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="1"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="ascii-fade-bottom" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="1"/>
+    </linearGradient>
+    <mask id="mask-top">
+      <rect width="800" height="460" fill="url(#ascii-fade-top)"/>
+    </mask>
+    <mask id="mask-bottom">
+      <rect x="0" y="730" width="800" height="470" fill="url(#ascii-fade-bottom)"/>
+    </mask>
+  </defs>
+
+  <rect width="800" height="1200" fill="url(#dot-grid)"/>
+
+  <!-- Faint vertical column guides -->
+  <line x1="48" y1="0" x2="48" y2="1200" stroke="#ffffff" stroke-opacity="0.04" stroke-width="1"/>
+  <line x1="752" y1="0" x2="752" y2="1200" stroke="#ffffff" stroke-opacity="0.04" stroke-width="1"/>
+
+  <!-- Corner brackets -->
+  <path d="M48 100 L48 48 L100 48" stroke="#ffffff" stroke-opacity="0.28" stroke-width="1.5" fill="none"/>
+  <path d="M700 48 L752 48 L752 100" stroke="#ffffff" stroke-opacity="0.28" stroke-width="1.5" fill="none"/>
+  <path d="M48 1100 L48 1152 L100 1152" stroke="#ffffff" stroke-opacity="0.28" stroke-width="1.5" fill="none"/>
+  <path d="M700 1152 L752 1152 L752 1100" stroke="#ffffff" stroke-opacity="0.28" stroke-width="1.5" fill="none"/>
+
+  <!-- ASCII text – upper, fading to transparent near center -->
+  <g mask="url(#mask-top)" opacity="0.055">
+    <text font-family="'Courier New',Courier,monospace" font-size="9.5" fill="#ffffff" x="64" y="80">      customer ask       roadmap item       github source       changelog draft     </text>
+    <text font-family="'Courier New',Courier,monospace" font-size="9.5" fill="#ffffff" x="64" y="102">  feedback -&gt; amend -&gt; linked work -&gt; review -&gt; customer update</text>
+    <text font-family="'Courier New',Courier,monospace" font-size="9.5" fill="#ffffff" x="64" y="124">        issue closed        request grouped        notify subscribers</text>
+    <text font-family="'Courier New',Courier,monospace" font-size="9.5" fill="#ffffff" x="64" y="146">   linear moved        feedback linked        publish portal        close request</text>
+    <text font-family="'Courier New',Courier,monospace" font-size="9.5" fill="#ffffff" x="64" y="168">      requested feature       source matched       reviewed customer update</text>
+    <text font-family="'Courier New',Courier,monospace" font-size="9.5" fill="#ffffff" x="64" y="190">      customer ask       roadmap item       github source       changelog draft     </text>
+    <text font-family="'Courier New',Courier,monospace" font-size="9.5" fill="#ffffff" x="64" y="212">  feedback -&gt; amend -&gt; linked work -&gt; review -&gt; customer update</text>
+    <text font-family="'Courier New',Courier,monospace" font-size="9.5" fill="#ffffff" x="64" y="234">        issue closed        request grouped        notify subscribers</text>
+    <text font-family="'Courier New',Courier,monospace" font-size="9.5" fill="#ffffff" x="64" y="256">   linear moved        feedback linked        publish portal        close request</text>
+    <text font-family="'Courier New',Courier,monospace" font-size="9.5" fill="#ffffff" x="64" y="278">      requested feature       source matched       reviewed customer update</text>
+    <text font-family="'Courier New',Courier,monospace" font-size="9.5" fill="#ffffff" x="64" y="300">      customer ask       roadmap item       github source       changelog draft     </text>
+    <text font-family="'Courier New',Courier,monospace" font-size="9.5" fill="#ffffff" x="64" y="322">  feedback -&gt; amend -&gt; linked work -&gt; review -&gt; customer update</text>
+    <text font-family="'Courier New',Courier,monospace" font-size="9.5" fill="#ffffff" x="64" y="344">        issue closed        request grouped        notify subscribers</text>
+    <text font-family="'Courier New',Courier,monospace" font-size="9.5" fill="#ffffff" x="64" y="366">   linear moved        feedback linked        publish portal        close request</text>
+    <text font-family="'Courier New',Courier,monospace" font-size="9.5" fill="#ffffff" x="64" y="388">      requested feature       source matched       reviewed customer update</text>
+    <text font-family="'Courier New',Courier,monospace" font-size="9.5" fill="#ffffff" x="64" y="410">      customer ask       roadmap item       github source       changelog draft     </text>
+    <text font-family="'Courier New',Courier,monospace" font-size="9.5" fill="#ffffff" x="64" y="432">  feedback -&gt; amend -&gt; linked work -&gt; review -&gt; customer update</text>
+    <text font-family="'Courier New',Courier,monospace" font-size="9.5" fill="#ffffff" x="64" y="454">        issue closed        request grouped        notify subscribers</text>
+  </g>
+
+  <!-- Horizontal rules flanking the brand mark -->
+  <line x1="64" y1="500" x2="736" y2="500" stroke="#ffffff" stroke-opacity="0.1" stroke-width="1"/>
+
+  <!-- Brand mark – outer square + inner square, centered -->
+  <rect x="384" y="522" width="32" height="32" fill="none" stroke="#ffffff" stroke-opacity="0.65" stroke-width="1.5"/>
+  <rect x="393" y="531" width="14" height="14" fill="#ffffff" fill-opacity="0.65"/>
+
+  <!-- AMEND logotype -->
+  <text font-family="'Courier New',Courier,monospace" font-size="56" font-weight="700" fill="#ffffff" fill-opacity="0.95" text-anchor="middle" x="400" y="632" letter-spacing="7">AMEND</text>
+
+  <!-- Dot + SH suffix -->
+  <circle cx="370" cy="654" r="2.8" fill="#ffffff" fill-opacity="0.28"/>
+  <text font-family="'Courier New',Courier,monospace" font-size="15" font-weight="500" fill="#ffffff" fill-opacity="0.28" text-anchor="start" x="381" y="660" letter-spacing="5">SH</text>
+
+  <line x1="64" y1="686" x2="736" y2="686" stroke="#ffffff" stroke-opacity="0.1" stroke-width="1"/>
+
+  <!-- Tagline -->
+  <text font-family="'Courier New',Courier,monospace" font-size="8.5" fill="#ffffff" fill-opacity="0.2" text-anchor="middle" x="400" y="710" letter-spacing="3.5">SOURCE-LINKED FEEDBACK LOOP</text>
+
+  <!-- ASCII text – lower, fading to transparent near center -->
+  <g mask="url(#mask-bottom)" opacity="0.055">
+    <text font-family="'Courier New',Courier,monospace" font-size="9.5" fill="#ffffff" x="64" y="740">      customer ask       roadmap item       github source       changelog draft     </text>
+    <text font-family="'Courier New',Courier,monospace" font-size="9.5" fill="#ffffff" x="64" y="762">  feedback -&gt; amend -&gt; linked work -&gt; review -&gt; customer update</text>
+    <text font-family="'Courier New',Courier,monospace" font-size="9.5" fill="#ffffff" x="64" y="784">        issue closed        request grouped        notify subscribers</text>
+    <text font-family="'Courier New',Courier,monospace" font-size="9.5" fill="#ffffff" x="64" y="806">   linear moved        feedback linked        publish portal        close request</text>
+    <text font-family="'Courier New',Courier,monospace" font-size="9.5" fill="#ffffff" x="64" y="828">      requested feature       source matched       reviewed customer update</text>
+    <text font-family="'Courier New',Courier,monospace" font-size="9.5" fill="#ffffff" x="64" y="850">      customer ask       roadmap item       github source       changelog draft     </text>
+    <text font-family="'Courier New',Courier,monospace" font-size="9.5" fill="#ffffff" x="64" y="872">  feedback -&gt; amend -&gt; linked work -&gt; review -&gt; customer update</text>
+    <text font-family="'Courier New',Courier,monospace" font-size="9.5" fill="#ffffff" x="64" y="894">        issue closed        request grouped        notify subscribers</text>
+    <text font-family="'Courier New',Courier,monospace" font-size="9.5" fill="#ffffff" x="64" y="916">   linear moved        feedback linked        publish portal        close request</text>
+    <text font-family="'Courier New',Courier,monospace" font-size="9.5" fill="#ffffff" x="64" y="938">      requested feature       source matched       reviewed customer update</text>
+    <text font-family="'Courier New',Courier,monospace" font-size="9.5" fill="#ffffff" x="64" y="960">      customer ask       roadmap item       github source       changelog draft     </text>
+    <text font-family="'Courier New',Courier,monospace" font-size="9.5" fill="#ffffff" x="64" y="982">  feedback -&gt; amend -&gt; linked work -&gt; review -&gt; customer update</text>
+    <text font-family="'Courier New',Courier,monospace" font-size="9.5" fill="#ffffff" x="64" y="1004">        issue closed        request grouped        notify subscribers</text>
+    <text font-family="'Courier New',Courier,monospace" font-size="9.5" fill="#ffffff" x="64" y="1026">   linear moved        feedback linked        publish portal        close request</text>
+    <text font-family="'Courier New',Courier,monospace" font-size="9.5" fill="#ffffff" x="64" y="1048">      requested feature       source matched       reviewed customer update</text>
+    <text font-family="'Courier New',Courier,monospace" font-size="9.5" fill="#ffffff" x="64" y="1070">      customer ask       roadmap item       github source       changelog draft     </text>
+    <text font-family="'Courier New',Courier,monospace" font-size="9.5" fill="#ffffff" x="64" y="1092">  feedback -&gt; amend -&gt; linked work -&gt; review -&gt; customer update</text>
+    <text font-family="'Courier New',Courier,monospace" font-size="9.5" fill="#ffffff" x="64" y="1114">        issue closed        request grouped        notify subscribers</text>
+    <text font-family="'Courier New',Courier,monospace" font-size="9.5" fill="#ffffff" x="64" y="1136">   linear moved        feedback linked        publish portal        close request</text>
+    <text font-family="'Courier New',Courier,monospace" font-size="9.5" fill="#ffffff" x="64" y="1158">      requested feature       source matched       reviewed customer update</text>
+  </g>
 </svg>

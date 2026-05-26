@@ -78,6 +78,29 @@ If `AMEND_API_TOKEN` is set in Convex, owner-level mutation endpoints require
 `Authorization: Bearer <token>`. Public portal reads, feedback submission, identity mapping,
 event tracking, and signed GitHub webhooks remain available for customer-facing integration flows.
 
+## Analytics Contract
+
+Amend stores every product-loop analytics event in Convex `eventRecords` and also forwards it to
+PostHog through the Convex PostHog component. The in-house Analytics dashboard reads the Convex
+records so operators do not need to learn PostHog first; PostHog remains the raw event warehouse.
+
+Tracked events are grouped by `packages/backend/convex/amendAnalyticsEvents.ts` into these
+dashboard categories:
+
+| Category   | What belongs here                                           |
+| ---------- | ----------------------------------------------------------- |
+| `identity` | User/account identify calls and account mapping             |
+| `feedback` | Feedback submissions, comments, reactions, and votes        |
+| `source`   | GitHub/support/Slack/Discord/import source evidence         |
+| `agent`    | Proactive agent runs, reviews, and automation decisions     |
+| `roadmap`  | Roadmap creation, views, and roadmap votes                  |
+| `update`   | Changelog views, shipped feature usage, and seen updates    |
+| `delivery` | Planned or status-updated notification/delivery outbox work |
+
+When adding a feature that changes customer-visible product state, add or reuse a `loopEvent`
+literal, record it with `recordAnalyticsEvent`, and place it in `analyticsEventCategories`. That
+keeps the REST/SDK event contract, Convex dashboard, and PostHog metadata aligned.
+
 Generate a development owner token locally with:
 
 ```bash

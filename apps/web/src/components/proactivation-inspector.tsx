@@ -51,7 +51,7 @@ export function ProactivationInspector({
   sources: DashboardSourceEvent[];
 }) {
   return (
-    <aside className="grid h-fit min-w-0 gap-4 p-4 md:p-6">
+    <div className="grid gap-px bg-border">
       <AutomationControlsPanel
         canRun={canRun}
         rules={rules}
@@ -72,6 +72,6 @@ export function ProactivationInspector({
       <BuildBriefsPanel buildBriefs={buildBriefs} />
       <SourceEvidencePanel sources={sources} />
       <SetupChecklistPanel />
-    </aside>
+    </div>
   );
 }

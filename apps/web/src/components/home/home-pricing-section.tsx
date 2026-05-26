@@ -36,9 +36,9 @@ export function PricingSection() {
                 <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
                   {plan.name}
                 </p>
-                <div className="mt-8 flex items-end gap-3">
-                  <p className="amend-display text-4xl font-medium text-foreground">{plan.price}</p>
-                  <p className="pb-1 text-xs uppercase tracking-[0.14em] text-muted-foreground">
+                <div className="mt-8 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                  <p className="font-mono text-4xl font-medium text-foreground">{plan.price}</p>
+                  <p className="text-xs uppercase tracking-[0.14em] text-muted-foreground">
                     {plan.note}
                   </p>
                 </div>

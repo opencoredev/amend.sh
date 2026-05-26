@@ -58,6 +58,7 @@ export type DashboardContentProps = {
   onOpenChangelog: (entry: DashboardChangelog) => void;
   onOpenFeedback: (post: Post) => void;
   onOpenFeedbackKey: (stableKey: string) => void;
+  onOpenProactivation: () => void;
   onOpenRoadmapItem: (item: DashboardRoadmap) => void;
   onOpenSetup: () => void;
   onProjectCreated: (projectSlug: string, workspaceSlug?: string) => void;

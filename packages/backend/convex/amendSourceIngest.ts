@@ -1,5 +1,6 @@
 import type { Id } from "./_generated/dataModel";
 import type { MutationCtx } from "./_generated/server";
+import { recordAnalyticsEvent } from "./amendAnalytics";
 import { workspaceSlug } from "./amendBackendUtils";
 import { ensureBaseRecords, ensureGitHubConnection } from "./amendSeed";
 import {
@@ -14,7 +15,8 @@ export async function ingestSourceEventHandler(ctx: MutationCtx, args: IngestSou
   const now = Date.now();
   const observedAt = args.observedAt ?? now;
   const provider = args.provider ?? "github";
-  const workspace = await ensureBaseRecords(ctx, workspaceSlug(args.workspaceSlug));
+  const normalizedWorkspaceSlug = workspaceSlug(args.workspaceSlug);
+  const workspace = await ensureBaseRecords(ctx, normalizedWorkspaceSlug);
   const connection =
     provider === "github"
       ? await ensureGitHubConnection(ctx, workspace._id, args.owner, args.repo)
@@ -83,6 +85,21 @@ export async function ingestSourceEventHandler(ctx: MutationCtx, args: IngestSou
     notificationId = shippedResult.notificationId;
     reviewItemId = shippedResult.reviewItemId;
   }
+
+  await recordAnalyticsEvent(ctx, {
+    workspaceId: workspace._id,
+    workspaceSlug: normalizedWorkspaceSlug,
+    event: "source_event_ingested",
+    metadata: {
+      externalId: args.externalId,
+      kind: args.kind,
+      provider,
+      sourceEventId,
+      status: existing ? "updated" : "created",
+      title: args.title,
+    },
+    source: "rest",
+  });
 
   return {
     changelogEntryId,

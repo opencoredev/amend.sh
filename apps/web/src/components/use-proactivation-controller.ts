@@ -26,6 +26,7 @@ export function useProactivationController({
   const queryArgs = workspace.id === fallbackWorkspace.id ? {} : { workspaceSlug: workspace.id };
   const settings = useQuery(workspaceSettingsQuery, queryArgs) as WorkspaceSettingsData | undefined;
   const channels = dashboard?.channels ?? [];
+  const analytics = dashboard?.analytics;
   const activity = dashboard?.agentActivity ?? [];
   const runs = dashboard?.agentRuns ?? [];
   const decisions = dashboard?.automationDecisions ?? [];
@@ -43,6 +44,7 @@ export function useProactivationController({
 
   return {
     activity,
+    analytics,
     buildBriefs,
     canRun,
     channels,

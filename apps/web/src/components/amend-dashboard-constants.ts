@@ -10,6 +10,7 @@ export const viewValues: DashboardView[] = [
   "posts",
   "roadmap",
   "changelog",
+  "analytics",
   "proactivation",
   "settings",
   "setup",

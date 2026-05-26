@@ -43,6 +43,10 @@ export async function runSmokeDashboardChecks() {
         await read("apps/web/src/components/proactivation-agent-metrics.tsx"),
         await read("apps/web/src/components/proactivation-channel-list.tsx"),
       ].join("\n");
+      const analyticsWorkspace = [
+        await read("apps/web/src/components/analytics-workspace.tsx"),
+        await read("apps/web/src/components/analytics-workspace-panels.tsx"),
+      ].join("\n");
       const projectSetupShell = await read("apps/web/src/components/project-setup-shell.tsx");
       const dashboardRoute = await read("apps/web/src/routes/dashboard.tsx");
       const backend = await read("packages/backend/convex/amend.ts");
@@ -55,7 +59,15 @@ export async function runSmokeDashboardChecks() {
       ].join("\n");
       const backendWorkspace = await read("packages/backend/convex/amendWorkspace.ts");
       assertIncludes(dashboardTypes, '"proactivation"', "dashboard proactivation view");
+      assertIncludes(dashboardTypes, '"analytics"', "dashboard analytics view");
       assertIncludes(dashboardContent, "ProactivationWorkspace", "dashboard proactivation view");
+      assertIncludes(dashboardContent, "AnalyticsWorkspace", "dashboard analytics view");
+      assertIncludes(analyticsWorkspace, "Analytics command center", "dashboard analytics view");
+      assertIncludes(analyticsWorkspace, "Top events", "dashboard analytics top events");
+      assertIncludes(analyticsWorkspace, "Recent analytics events", "dashboard analytics ledger");
+      assertIncludes(analyticsWorkspace, "Event categories", "dashboard analytics categories");
+      assertIncludes(analyticsWorkspace, "Channel health", "dashboard analytics source health");
+      assertIncludes(analyticsWorkspace, "Agent output", "dashboard analytics agent output");
       assertIncludes(
         proactivationMain,
         "Agent operations and automation control",

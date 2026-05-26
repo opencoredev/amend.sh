@@ -1,4 +1,5 @@
 import type { QueryCtx } from "./_generated/server";
+import { analyticsEventCategory } from "./amendAnalyticsEvents";
 import { isDraftChangelogStatus } from "./amendBackendUtils";
 import { emptyDashboard } from "./amendDashboardFallbacks";
 import { loadDashboardOverviewRecords } from "./amendDashboardOverviewRecords";
@@ -46,6 +47,7 @@ export async function getDashboardOverviewHandler(ctx: QueryCtx, args: GetDashbo
     buildBriefs,
     changelog,
     connection,
+    eventRecords,
     feedback,
     integrations,
     notifications,
@@ -72,6 +74,41 @@ export async function getDashboardOverviewHandler(ctx: QueryCtx, args: GetDashbo
         feedback.filter((item) => item.sourceLinks.length > 0).length +
         notifications.filter((item) => item.sourceLinks.length > 0).length +
         buildBriefs.filter((item) => item.sourceLinks.length > 0).length,
+    },
+    analytics: {
+      totalEvents: eventRecords.length,
+      uniqueAccounts: new Set(
+        eventRecords.flatMap((item) => (item.accountId ? [item.accountId] : [])),
+      ).size,
+      uniqueUsers: new Set(
+        eventRecords.flatMap((item) => (item.externalUserId ? [item.externalUserId] : [])),
+      ).size,
+      recentEvents: eventRecords.slice(0, 8).map((item) => ({
+        accountId: item.accountId,
+        createdAt: item.createdAt,
+        event: item.event,
+        externalUserId: item.externalUserId,
+        source: item.source,
+        updateKey: item.updateKey,
+      })),
+      topEvents: Object.entries(
+        eventRecords.reduce<Record<string, number>>((counts, item) => {
+          counts[item.event] = (counts[item.event] ?? 0) + 1;
+          return counts;
+        }, {}),
+      )
+        .map(([event, count]) => ({ count, event }))
+        .sort((a, b) => b.count - a.count || a.event.localeCompare(b.event))
+        .slice(0, 6),
+      topCategories: Object.entries(
+        eventRecords.reduce<Record<string, number>>((counts, item) => {
+          const category = analyticsEventCategory(item.event);
+          counts[category] = (counts[category] ?? 0) + 1;
+          return counts;
+        }, {}),
+      )
+        .map(([category, count]) => ({ category, count }))
+        .sort((a, b) => b.count - a.count || a.category.localeCompare(b.category)),
     },
     recentChangelog: changelog.map(normalizeChangelog),
     roadmap: roadmap.map(normalizeRoadmap),

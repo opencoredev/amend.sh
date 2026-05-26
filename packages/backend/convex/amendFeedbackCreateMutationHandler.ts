@@ -1,4 +1,5 @@
 import type { MutationCtx } from "./_generated/server";
+import { recordAnalyticsEvent } from "./amendAnalytics";
 import { slugPart, workspaceSlug } from "./amendBackendUtils";
 import { demoWorkspace } from "./amendDemoData";
 import type { CreateFeedbackArgs } from "./amendFeedbackTypes";
@@ -9,7 +10,8 @@ import { authComponent } from "./auth";
 
 export async function createFeedbackHandler(ctx: MutationCtx, args: CreateFeedbackArgs) {
   const now = Date.now();
-  const workspace = await ensureBaseRecords(ctx, workspaceSlug(args.workspaceSlug));
+  const normalizedWorkspaceSlug = workspaceSlug(args.workspaceSlug);
+  const workspace = await ensureBaseRecords(ctx, normalizedWorkspaceSlug);
   const project = await getWritableDashboardProject(ctx, workspace._id, args.projectSlug);
   const settings = workspace.portalSettings ?? demoWorkspace.portalSettings;
   if (settings.feedbackMode === "closed") {
@@ -74,6 +76,21 @@ export async function createFeedbackHandler(ctx: MutationCtx, args: CreateFeedba
     sourceLinks: [sourceLink],
     createdAt: now,
     updatedAt: now,
+  });
+
+  await recordAnalyticsEvent(ctx, {
+    workspaceId: workspace._id,
+    workspaceSlug: normalizedWorkspaceSlug,
+    event: "feedback_submitted",
+    metadata: {
+      authorEmail: args.authorEmail,
+      feedbackId,
+      notificationId,
+      reviewItemId,
+      stableKey,
+      title: args.title,
+    },
+    source: sourceLink.provider === "github" ? "rest" : "portal",
   });
 
   return {

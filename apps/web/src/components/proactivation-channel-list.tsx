@@ -1,3 +1,4 @@
+import { cn } from "@amend/ui/lib/utils";
 import { DatabaseZap } from "lucide-react";
 
 import { EmptyModule } from "@/components/amend-dashboard-shared";
@@ -22,13 +23,19 @@ export function ProactivationChannelList({
   return (
     <section>
       <div className="mb-3 flex items-center justify-between gap-3">
-        <h3 className="text-sm font-semibold">Channels and integrations</h3>
-        <span className="text-xs text-muted-foreground">{channels.length} configured</span>
+        <h3 className="text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+          Channels &amp; integrations
+        </h3>
+        {channels.length > 0 && (
+          <span className="font-mono text-xs tabular-nums text-muted-foreground">
+            {channels.length} configured
+          </span>
+        )}
       </div>
-      <div className="grid overflow-hidden border border-border bg-card lg:grid-cols-2">
+      <div className="grid gap-px border border-border bg-border lg:grid-cols-2">
         {channels.length > 0 ? (
           channels.map((channel) => (
-            <ChannelRow
+            <ChannelCard
               key={channel.id}
               canRun={canRun}
               channel={channel}
@@ -37,20 +44,22 @@ export function ProactivationChannelList({
             />
           ))
         ) : (
-          <EmptyModule
-            action="Create project"
-            copy="Create a project and connect the first channel before the agent can observe signals."
-            icon={<DatabaseZap />}
-            onAction={onOpenSetup}
-            title="No channels yet"
-          />
+          <div className="col-span-2 bg-card">
+            <EmptyModule
+              action="Create project"
+              copy="Create a project and connect the first channel before the agent can observe signals."
+              icon={<DatabaseZap />}
+              onAction={onOpenSetup}
+              title="No channels yet"
+            />
+          </div>
         )}
       </div>
     </section>
   );
 }
 
-function ChannelRow({
+function ChannelCard({
   canRun,
   channel,
   onChannelStateChange,
@@ -62,36 +71,37 @@ function ChannelRow({
   savingChannel: string;
 }) {
   const disabled = savingChannel === channel.id || !canRun;
+  const isConnected = channel.health === "healthy";
+  const isAttention = channel.state === "attention";
 
   return (
-    <div className="grid gap-2 border-b border-border p-4 last:border-b-0 lg:border-r lg:[&:nth-child(even)]:border-r-0">
+    <div className="flex flex-col gap-3 bg-card p-4">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="truncate text-sm font-semibold">{channel.label}</p>
+          <div className="flex items-center gap-2">
+            <HealthDot connected={isConnected} attention={isAttention} />
+            <p className="truncate text-sm font-semibold">{channel.label}</p>
+          </div>
           <p className="mt-1 line-clamp-2 text-xs leading-5 text-muted-foreground">
             {channel.detail}
           </p>
         </div>
-        <span className="shrink-0 border border-border bg-muted/25 px-2 py-1 text-xs text-muted-foreground">
+        <span className="shrink-0 border border-border px-1.5 py-0.5 text-[0.6rem] font-semibold uppercase tracking-wide text-muted-foreground">
           {channel.kind}
         </span>
       </div>
-      <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
-        <span className="border border-border bg-background px-2 py-1">
-          {formatState(channel.state)}
-        </span>
-        <span className="border border-border bg-background px-2 py-1">
-          {formatState(channel.health)}
-        </span>
-        <span className="border border-border bg-background px-2 py-1">
-          {channel.signalCount} signals
-        </span>
+
+      <div className="flex flex-wrap items-center gap-1.5">
+        <StatusPill label={formatState(channel.state)} />
+        <StatusPill label={formatState(channel.health)} />
+        <StatusPill label={`${channel.signalCount} signals`} mono />
       </div>
+
       {isConfigurableProvider(channel.provider) ? (
-        <div className="flex flex-wrap gap-2 pt-1">
+        <div className="flex gap-1.5 border-t border-border pt-3">
           <button
             type="button"
-            className="h-8 border border-border px-2 text-xs font-semibold text-muted-foreground transition-[border-color,color,scale] hover:border-foreground hover:text-foreground active:scale-[0.96]"
+            className="h-7 border border-border px-2.5 text-xs font-semibold text-muted-foreground transition-colors duration-150 ease-linear hover:border-foreground/50 hover:text-foreground active:opacity-75 disabled:opacity-40"
             disabled={disabled}
             onClick={() =>
               onChannelStateChange(
@@ -104,7 +114,7 @@ function ChannelRow({
           </button>
           <button
             type="button"
-            className="h-8 border border-border px-2 text-xs font-semibold text-muted-foreground transition-[border-color,color,scale] hover:border-foreground hover:text-foreground active:scale-[0.96]"
+            className="h-7 border border-border px-2.5 text-xs font-semibold text-muted-foreground transition-colors duration-150 ease-linear hover:border-foreground/50 hover:text-foreground active:opacity-75 disabled:opacity-40"
             disabled={disabled}
             onClick={() => onChannelStateChange(channel, "disabled")}
           >
@@ -113,6 +123,30 @@ function ChannelRow({
         </div>
       ) : null}
     </div>
+  );
+}
+
+function HealthDot({ connected, attention }: { connected: boolean; attention: boolean }) {
+  return (
+    <span
+      className={cn(
+        "size-1.5 shrink-0 rounded-full",
+        attention ? "bg-amber-400" : connected ? "bg-emerald-400" : "bg-muted-foreground/40",
+      )}
+    />
+  );
+}
+
+function StatusPill({ label, mono }: { label: string; mono?: boolean }) {
+  return (
+    <span
+      className={cn(
+        "border border-border bg-background px-2 py-0.5 text-[0.65rem] text-muted-foreground",
+        mono && "font-mono tabular-nums",
+      )}
+    >
+      {label}
+    </span>
   );
 }
 

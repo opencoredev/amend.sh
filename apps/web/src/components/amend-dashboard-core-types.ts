@@ -6,6 +6,7 @@ export type DashboardView =
   | "posts"
   | "roadmap"
   | "changelog"
+  | "analytics"
   | "proactivation"
   | "settings"
   | "setup";

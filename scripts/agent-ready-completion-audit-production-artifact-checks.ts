@@ -50,6 +50,8 @@ export function addProductionArtifactChecks(
       "requiredProductionEnv",
       "webProductionEnvKeys",
       "VITE_CONVEX_URL",
+      "VITE_POSTHOG_TOKEN",
+      "POSTHOG_API_KEY",
       "STRIPE_WEBHOOK_SECRET",
     ]) &&
       includesAll(context.statusReporter, [

@@ -11,15 +11,25 @@ export type TrackEventArgs = {
   workspaceSlug?: string;
   event:
     | "account_identify"
+    | "agent_run_completed"
     | "changelog_viewed"
+    | "changelog_upserted"
     | "comment_added"
+    | "delivery_planned"
+    | "delivery_status_updated"
     | "feedback_submitted"
     | "identify"
     | "reaction_added"
+    | "review_status_updated"
+    | "roadmap_upserted"
     | "roadmap_viewed"
+    | "roadmap_vote_added"
+    | "roadmap_vote_removed"
     | "shipped_feature_used"
+    | "source_event_ingested"
     | "update_seen"
-    | "vote_added";
+    | "vote_added"
+    | "vote_removed";
   externalUserId?: string;
   accountId?: string;
   updateKey?: string;

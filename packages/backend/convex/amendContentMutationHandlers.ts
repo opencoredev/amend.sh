@@ -1,5 +1,6 @@
 import type { Doc } from "./_generated/dataModel";
 import type { MutationCtx } from "./_generated/server";
+import { recordAnalyticsEvent } from "./amendAnalytics";
 import { slugPart, workspaceSlug } from "./amendBackendUtils";
 import { normalizeChangelog, normalizeRoadmap } from "./amendNormalizers";
 import { ensureBaseRecords } from "./amendSeed";
@@ -47,7 +48,8 @@ export async function upsertChangelogEntryHandler(
   args: UpsertChangelogEntryArgs,
 ) {
   const now = Date.now();
-  const workspace = await ensureBaseRecords(ctx, workspaceSlug(args.workspaceSlug));
+  const normalizedWorkspaceSlug = workspaceSlug(args.workspaceSlug);
+  const workspace = await ensureBaseRecords(ctx, normalizedWorkspaceSlug);
   const project = await getWritableDashboardProject(ctx, workspace._id, args.projectSlug);
   const stableKey = args.stableKey ?? `changelog-${slugPart(args.title)}`;
   const existing = await ctx.db
@@ -85,12 +87,25 @@ export async function upsertChangelogEntryHandler(
   if (!entry) {
     throw new Error("Failed to save changelog entry");
   }
+  await recordAnalyticsEvent(ctx, {
+    workspaceId: workspace._id,
+    workspaceSlug: normalizedWorkspaceSlug,
+    event: "changelog_upserted",
+    metadata: {
+      changelogEntryId: entryId,
+      stableKey,
+      status: entry.status,
+      title: entry.title,
+    },
+    source: "rest",
+  });
   return normalizeChangelog(entry);
 }
 
 export async function upsertRoadmapItemHandler(ctx: MutationCtx, args: UpsertRoadmapItemArgs) {
   const now = Date.now();
-  const workspace = await ensureBaseRecords(ctx, workspaceSlug(args.workspaceSlug));
+  const normalizedWorkspaceSlug = workspaceSlug(args.workspaceSlug);
+  const workspace = await ensureBaseRecords(ctx, normalizedWorkspaceSlug);
   const project = await getWritableDashboardProject(ctx, workspace._id, args.projectSlug);
   const stableKey = args.stableKey ?? `roadmap-${slugPart(args.title)}`;
   const existing = await ctx.db
@@ -127,6 +142,18 @@ export async function upsertRoadmapItemHandler(ctx: MutationCtx, args: UpsertRoa
   if (!item) {
     throw new Error("Failed to save roadmap item");
   }
+  await recordAnalyticsEvent(ctx, {
+    workspaceId: workspace._id,
+    workspaceSlug: normalizedWorkspaceSlug,
+    event: "roadmap_upserted",
+    metadata: {
+      roadmapItemId: itemId,
+      stableKey,
+      status: item.status,
+      title: item.title,
+    },
+    source: "rest",
+  });
   return normalizeRoadmap(item);
 }
 
@@ -174,6 +201,18 @@ export async function voteRoadmapItemHandler(ctx: MutationCtx, args: VoteRoadmap
     if (!updated) {
       throw new Error("Failed to remove roadmap vote");
     }
+    await recordAnalyticsEvent(ctx, {
+      workspaceId: workspace._id,
+      workspaceSlug: workspace.slug,
+      event: "roadmap_vote_removed",
+      externalUserId: user.id,
+      metadata: {
+        roadmapKey: item.stableKey,
+        roadmapItemId: item._id,
+        votes: updated.votes,
+      },
+      source: "rest",
+    });
     return normalizeRoadmap(updated);
   }
 
@@ -199,6 +238,19 @@ export async function voteRoadmapItemHandler(ctx: MutationCtx, args: VoteRoadmap
   if (!updated) {
     throw new Error("Failed to save roadmap vote");
   }
+
+  await recordAnalyticsEvent(ctx, {
+    workspaceId: workspace._id,
+    workspaceSlug: workspace.slug,
+    event: "roadmap_vote_added",
+    externalUserId: user.id,
+    metadata: {
+      roadmapKey: item.stableKey,
+      roadmapItemId: item._id,
+      votes: updated.votes,
+    },
+    source: "rest",
+  });
 
   return normalizeRoadmap(updated);
 }

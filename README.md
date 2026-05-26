@@ -187,6 +187,13 @@ bunx convex dev --configure new --dev-deployment local --project amend --once --
 
 Copy the generated `CONVEX_URL` and `CONVEX_SITE_URL` from `packages/backend/.env.local`
 into `apps/web/.env` as `VITE_CONVEX_URL` and `VITE_CONVEX_SITE_URL`.
+PostHog browser analytics defaults to the Amend US Cloud project token in code and can be
+overridden with `VITE_POSTHOG_TOKEN`, `VITE_POSTHOG_HOST`, and `VITE_POSTHOG_PROJECT_ID`.
+Backend product-loop events are stored in Convex `eventRecords`, forwarded through the Convex
+PostHog component, and surfaced in the in-house Analytics dashboard. New product-loop features
+should record an analytics event with `recordAnalyticsEvent` and add the event to
+`packages/backend/convex/amendAnalyticsEvents.ts` so dashboard categories and PostHog metadata stay
+aligned.
 
 Set local Convex auth environment variables:
 
@@ -195,6 +202,8 @@ bunx convex env set BETTER_AUTH_SECRET "$(openssl rand -base64 32)"
 bunx convex env set SITE_URL http://amend.localhost:1355
 bunx convex env set GITHUB_WEBHOOK_SECRET "replace-with-your-github-webhook-secret"
 bunx convex env set AMEND_API_TOKEN "$(openssl rand -base64 32)"
+bunx convex env set POSTHOG_API_KEY "phc_BCb25jVTo59jtEMPysgGUvgt85bUYGwN8XBNA2oMNLY7"
+bunx convex env set POSTHOG_HOST "https://us.i.posthog.com"
 ```
 
 Then, run the development server:

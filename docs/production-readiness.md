@@ -33,6 +33,9 @@ Set these in the production Convex deployment or deployment platform:
 | `VITE_CONVEX_URL`          | Production web Convex client URL                               |
 | `VITE_CONVEX_SITE_URL`     | Production web Convex HTTP actions URL                         |
 | `VITE_DOCS_URL`            | Public docs root, `https://docs.amend.sh/docs` for this launch |
+| `VITE_POSTHOG_TOKEN`       | Browser PostHog project token                                  |
+| `VITE_POSTHOG_HOST`        | Browser PostHog ingestion host                                 |
+| `VITE_POSTHOG_PROJECT_ID`  | Browser PostHog project ID                                     |
 | `SITE_URL`                 | Hosted app origin and auth callbacks                           |
 | `BETTER_AUTH_SECRET`       | Better Auth session security                                   |
 | `GITHUB_WEBHOOK_SECRET`    | Signed GitHub webhook ingestion                                |
@@ -42,6 +45,8 @@ Set these in the production Convex deployment or deployment platform:
 | `GITHUB_APP_CLIENT_SECRET` | GitHub App OAuth callback exchange                             |
 | `GITHUB_APP_PRIVATE_KEY`   | GitHub App installation token signing                          |
 | `AMEND_API_TOKEN`          | Owner-level REST mutation protection                           |
+| `POSTHOG_API_KEY`          | Convex backend analytics event capture                         |
+| `POSTHOG_HOST`             | PostHog ingestion host, e.g. `https://us.i.posthog.com`        |
 | `OPENAI_API_KEY`           | Provider-backed changelog drafting                             |
 | `OPENAI_MODEL`             | Model used for changelog drafting                              |
 | `CROF_API_KEY`             | Crof/Kimi proactive agent provider key                         |

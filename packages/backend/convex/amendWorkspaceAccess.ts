@@ -4,6 +4,9 @@ import { authComponent } from "./auth";
 
 export type DashboardAuthUser = {
   _id?: string;
+  email?: string;
+  id?: string;
+  name?: string;
   user?: {
     email?: string;
     id?: string;
@@ -11,6 +14,19 @@ export type DashboardAuthUser = {
   };
   userId?: string;
 };
+
+export function dashboardAuthIdentity(authUser: DashboardAuthUser | null) {
+  const userId = authUser?.userId ?? authUser?.user?.id ?? authUser?.id ?? authUser?._id;
+  if (!userId) {
+    return null;
+  }
+
+  return {
+    email: authUser?.user?.email ?? authUser?.email,
+    id: userId,
+    name: authUser?.user?.name ?? authUser?.name,
+  };
+}
 
 export async function getWorkspaceRecord(ctx: QueryCtx | MutationCtx, slug: string) {
   return await ctx.db
@@ -21,15 +37,11 @@ export async function getWorkspaceRecord(ctx: QueryCtx | MutationCtx, slug: stri
 
 export async function requireDashboardUser(ctx: QueryCtx | MutationCtx) {
   const authUser = (await authComponent.safeGetAuthUser(ctx)) as DashboardAuthUser | null;
-  const userId = authUser?.userId ?? authUser?.user?.id ?? authUser?._id;
-  if (!userId) {
+  const identity = dashboardAuthIdentity(authUser);
+  if (!identity) {
     throw new Error("Sign in before using the Amend dashboard.");
   }
-  return {
-    email: authUser?.user?.email,
-    id: userId,
-    name: authUser?.user?.name,
-  };
+  return identity;
 }
 
 async function getWorkspaceMembershipForUser(

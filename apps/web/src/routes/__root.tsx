@@ -7,6 +7,7 @@ import {
   Outlet,
   Scripts,
   createRootRouteWithContext,
+  useLocation,
   useRouteContext,
 } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
@@ -15,6 +16,7 @@ import { Toaster } from "sileo";
 
 import { authClient } from "@/lib/auth-client";
 import { getToken } from "@/lib/auth-server";
+import { capturePostHogPageview } from "@/lib/posthog";
 import { defaultDescription, defaultTitle, openGraphMeta } from "@/lib/seo";
 
 import appCss from "../index.css?url";
@@ -94,12 +96,17 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
 
 function RootDocument() {
   const context = useRouteContext({ from: Route.id });
+  const location = useLocation();
 
   useEffect(() => {
     if (import.meta.env.DEV) {
       void import("react-grab");
     }
   }, []);
+
+  useEffect(() => {
+    capturePostHogPageview(location.href);
+  }, [location.href]);
 
   return (
     <ConvexBetterAuthProvider

@@ -37,6 +37,9 @@ export function registerAgentReadyCoreTests() {
       "VITE_CONVEX_URL",
       "VITE_CONVEX_SITE_URL",
       "VITE_DOCS_URL",
+      "VITE_POSTHOG_TOKEN",
+      "VITE_POSTHOG_HOST",
+      "VITE_POSTHOG_PROJECT_ID",
       "SITE_URL",
       "BETTER_AUTH_SECRET",
       "GITHUB_WEBHOOK_SECRET",
@@ -46,6 +49,8 @@ export function registerAgentReadyCoreTests() {
       "GITHUB_APP_CLIENT_SECRET",
       "GITHUB_APP_PRIVATE_KEY",
       "AMEND_API_TOKEN",
+      "POSTHOG_API_KEY",
+      "POSTHOG_HOST",
       "OPENAI_API_KEY",
       "OPENAI_MODEL",
       "CROF_API_KEY",
@@ -66,6 +71,9 @@ export function registerAgentReadyCoreTests() {
       "VITE_CONVEX_URL",
       "VITE_CONVEX_SITE_URL",
       "VITE_DOCS_URL",
+      "VITE_POSTHOG_TOKEN",
+      "VITE_POSTHOG_HOST",
+      "VITE_POSTHOG_PROJECT_ID",
     ]);
     expect([...webProductionEnvKeys].every((key) => requiredProductionEnv.includes(key))).toBe(
       true,

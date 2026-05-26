@@ -38,14 +38,59 @@ export async function runSmokeProductLoopChecks() {
   });
 
   await check("event-lite analytics expose identify and account identify", async () => {
+    const backendAnalytics = await read("packages/backend/convex/amendAnalytics.ts");
+    const backendAnalyticsEvents = await read("packages/backend/convex/amendAnalyticsEvents.ts");
+    const backendIdentity = await read(
+      "packages/backend/convex/amendFeedbackIdentityMutationHandlers.ts",
+    );
+    const backendConfig = await read("packages/backend/convex/convex.config.ts");
+    const sourceIngest = await read("packages/backend/convex/amendSourceIngest.ts");
+    const agentPersistence = await read("packages/backend/convex/amendAgentRunPersistence.ts");
+    const dashboardOverview = await read("packages/backend/convex/amendDashboardOverview.ts");
+    const webPostHog = await read("apps/web/src/lib/posthog.ts");
+    const rootRoute = await read("apps/web/src/routes/__root.tsx");
+    const openApi = await read("packages/api-spec/openapi.yaml");
+    const openApiTypes = await read("packages/sdk/src/openapi-types.ts");
+    const proactivationAnalytics = await read(
+      "apps/web/src/components/proactivation-analytics-panel.tsx",
+    );
     const validators = await read("packages/backend/convex/amendValidators.ts");
     const sdk = await readSdkSource();
     const docs = await readIntegrationDocs();
+    const readme = await read("README.md");
+    assertIncludes(backendConfig, "@posthog/convex", "Convex PostHog component");
+    assertIncludes(backendAnalytics, "posthog.capture", "PostHog event capture");
+    assertIncludes(backendAnalytics, "recordAnalyticsEvent", "analytics event recorder");
+    assertIncludes(backendAnalytics, "analyticsEventCategory", "analytics event categories");
+    assertIncludes(backendAnalyticsEvents, "analyticsEventCategories", "analytics event contract");
+    assertIncludes(
+      backendAnalyticsEvents,
+      'agent_run_completed: "agent"',
+      "agent analytics category",
+    );
+    assertIncludes(
+      backendAnalyticsEvents,
+      'feedback_submitted: "feedback"',
+      "feedback analytics category",
+    );
+    assertIncludes(backendIdentity, "recordAnalyticsEvent", "analytics fan-out");
+    assertIncludes(sourceIngest, "source_event_ingested", "source analytics");
+    assertIncludes(agentPersistence, "agent_run_completed", "agent analytics");
+    assertIncludes(openApi, "source_event_ingested", "OpenAPI analytics events");
+    assertIncludes(openApiTypes, '"source_event_ingested"', "OpenAPI analytics event types");
+    assertIncludes(dashboardOverview, "topEvents", "dashboard analytics");
+    assertIncludes(dashboardOverview, "topCategories", "dashboard analytics categories");
+    assertIncludes(webPostHog, "posthog.init", "browser PostHog setup");
+    assertIncludes(rootRoute, "capturePostHogPageview", "browser PostHog pageviews");
+    assertIncludes(proactivationAnalytics, "Event capture", "analytics panel");
     assertIncludes(validators, 'v.literal("identify")', "event schema");
     assertIncludes(validators, 'v.literal("account_identify")', "event schema");
     assertIncludes(sdk, "identify(identity", "SDK identify");
     assertIncludes(sdk, "identifyAccount", "SDK identify account");
     assertIncludes(docs, "await amend.identifyAccount", "integration guide");
+    assertIncludes(docs, "Analytics Contract", "integration analytics contract");
+    assertIncludes(docs, "recordAnalyticsEvent", "integration analytics contract");
+    assertIncludes(readme, "amendAnalyticsEvents.ts", "README analytics contract");
   });
 
   await check("notification preferences support digest and unsubscribe flows", async () => {

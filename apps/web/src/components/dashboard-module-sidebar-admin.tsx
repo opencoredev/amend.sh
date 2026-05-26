@@ -1,4 +1,13 @@
-import { DatabaseZap, GitPullRequestArrow, Globe, Settings, Sparkles, Users } from "lucide-react";
+import {
+  Activity,
+  ChartNoAxesCombined,
+  DatabaseZap,
+  GitPullRequestArrow,
+  Globe,
+  Settings,
+  Sparkles,
+  Users,
+} from "lucide-react";
 
 import {
   SidebarFrame,
@@ -61,6 +70,38 @@ export function SettingsModuleSidebar({
           icon={<Users />}
           label="Accounts"
           onClick={() => onSettingsSectionChange("accounts")}
+        />
+      </SidebarSection>
+    </SidebarFrame>
+  );
+}
+
+export function AnalyticsModuleSidebar({
+  onSettingsSectionChange,
+  onViewChange,
+}: Pick<ModuleSidebarProps, "onSettingsSectionChange" | "onViewChange">) {
+  return (
+    <SidebarFrame>
+      <SidebarTitle title="Analytics" />
+      <SidebarSection title="In-house dashboards">
+        <SidebarItem
+          active
+          icon={<ChartNoAxesCombined />}
+          label="Overview"
+          onClick={() => onViewChange("analytics")}
+        />
+        <SidebarItem
+          icon={<Activity />}
+          label="Agent funnel"
+          onClick={() => onViewChange("proactivation")}
+        />
+        <SidebarItem
+          icon={<DatabaseZap />}
+          label="PostHog setup"
+          onClick={() => {
+            onSettingsSectionChange("services");
+            onViewChange("settings");
+          }}
         />
       </SidebarSection>
     </SidebarFrame>
