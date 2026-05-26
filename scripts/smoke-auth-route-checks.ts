@@ -160,6 +160,7 @@ export async function runAuthRouteSmokeCheck() {
     assert(!authSurface.includes("violet"), "auth surfaces should not use violet styling");
     assert(!authSurface.includes("indigo"), "auth surfaces should not use indigo styling");
     assertIncludes(signInForm, "FieldGroup", "shadcn sign-in form");
+    assertIncludes(signUpForm, "Private access", "production sign-up gate");
     assertIncludes(signUpForm, "authClient.signUp.email", "real sign-up form");
     assertIncludes(signUpForm, "FieldGroup", "shadcn sign-up form");
     assertIncludes(dashboardRedirects, 'to: "/sign-in"', "dashboard unauthenticated redirect");

@@ -19,6 +19,7 @@ declare const process: {
 
 const siteUrl = process.env.SITE_URL ?? "http://amend.localhost:1355";
 const previewAuthEnabled = process.env.AMEND_PREVIEW_AUTH_ENABLED === "true";
+const gatedAuthEmails = allowedAuthEmails();
 
 export const authComponent = createClient<DataModel>(components.betterAuth);
 
@@ -32,18 +33,18 @@ function createAuth(ctx: GenericCtx<DataModel>) {
       disableSignUp: !previewAuthEnabled,
       requireEmailVerification: false,
     },
-    hooks: previewAuthEnabled
+    hooks: gatedAuthEmails.size > 0
       ? {
           before: createAuthMiddleware(async (authContext) => {
-            if (!isPreviewEmailPasswordPath(authContext.path)) {
+            if (!isEmailPasswordPath(authContext.path)) {
               return;
             }
 
-            const email = previewAuthEmailFromBody(authContext.body);
-            if (!isAllowedPreviewEmail(email)) {
+            const email = authEmailFromBody(authContext.body);
+            if (!isAllowedAuthEmail(email)) {
               throw APIError.from("FORBIDDEN", {
-                code: "PREVIEW_ACCESS_DENIED",
-                message: "This preview is private.",
+                code: "AUTH_ACCESS_DENIED",
+                message: "This Amend instance is private.",
               });
             }
           }),
@@ -69,11 +70,11 @@ function trustedOriginsForRequest(request?: Request) {
   return [...origins];
 }
 
-function isPreviewEmailPasswordPath(path: string) {
+function isEmailPasswordPath(path: string) {
   return path === "/sign-in/email" || path === "/sign-up/email";
 }
 
-function previewAuthEmailFromBody(body: unknown) {
+function authEmailFromBody(body: unknown) {
   if (!body || typeof body !== "object") {
     return undefined;
   }
@@ -81,15 +82,15 @@ function previewAuthEmailFromBody(body: unknown) {
   return typeof email === "string" ? email : undefined;
 }
 
-function isAllowedPreviewEmail(email: string | undefined) {
+function isAllowedAuthEmail(email: string | undefined) {
   const normalizedEmail = email?.trim().toLowerCase();
   if (!normalizedEmail) {
     return false;
   }
-  return previewAllowedEmails().has(normalizedEmail);
+  return gatedAuthEmails.has(normalizedEmail);
 }
 
-function previewAllowedEmails() {
+function allowedAuthEmails() {
   return new Set(
     (process.env.AMEND_AUTH_ALLOWED_EMAILS ?? "")
       .split(",")

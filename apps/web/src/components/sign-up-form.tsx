@@ -15,7 +15,44 @@ import { authErrorMessage } from "@/lib/auth-errors";
 import { demoWorkspaceSlug } from "@/lib/demo-workspace";
 import { toast } from "@/lib/toast";
 
+const previewAuthEnabled = import.meta.env.VITE_AMEND_PREVIEW_AUTH === "true";
+
 export default function SignUpForm({ onSwitchToSignIn }: { onSwitchToSignIn?: () => void }) {
+  if (!previewAuthEnabled) {
+    return <GatedSignUpForm onSwitchToSignIn={onSwitchToSignIn} />;
+  }
+
+  return <PreviewSignUpForm onSwitchToSignIn={onSwitchToSignIn} />;
+}
+
+function GatedSignUpForm({ onSwitchToSignIn }: { onSwitchToSignIn?: () => void }) {
+  return (
+    <div className="w-full">
+      <AuthFormHeader
+        title="Private access"
+        description="Amend is not accepting public sign-ups on this production instance."
+        action={
+          <>
+            Already have an account?{" "}
+            <Link
+              to="/sign-in"
+              onClick={(event) => {
+                if (!onSwitchToSignIn) return;
+                event.preventDefault();
+                onSwitchToSignIn();
+              }}
+              className="font-medium text-foreground underline-offset-4 hover:underline"
+            >
+              Sign in
+            </Link>
+          </>
+        }
+      />
+    </div>
+  );
+}
+
+function PreviewSignUpForm({ onSwitchToSignIn }: { onSwitchToSignIn?: () => void }) {
   const [formError, setFormError] = useState("");
   const navigate = useNavigate({ from: "/" });
   const form = useForm({
