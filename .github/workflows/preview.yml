@@ -53,7 +53,6 @@ jobs:
         run: |
           DEPLOYMENT_URL="$(bunx vercel deploy --prebuilt --yes --scope opencoredev --token "$VERCEL_TOKEN" | tail -n 1)"
           echo "Vercel preview: $DEPLOYMENT_URL"
-          bun --cwd packages/backend convex env set SITE_URL "$DEPLOYMENT_URL"
 
   cleanup-preview:
     name: Cleanup preview
