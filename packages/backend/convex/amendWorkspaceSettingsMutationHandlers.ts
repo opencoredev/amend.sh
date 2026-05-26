@@ -1,0 +1,69 @@
+import type { Doc } from "./_generated/dataModel";
+import type { MutationCtx } from "./_generated/server";
+import { demoWorkspace } from "./amendDemoData";
+import { normalizeWorkspace } from "./amendNormalizers";
+import { ensureDashboardBaseRecords, requireDashboardUser } from "./amendWorkspace";
+
+type UpdatePortalSettingsArgs = {
+  workspaceSlug?: string;
+  accentColor?: string;
+  changelogVisibility?: NonNullable<Doc<"workspaces">["portalSettings"]>["changelogVisibility"];
+  feedbackMode?: NonNullable<Doc<"workspaces">["portalSettings"]>["feedbackMode"];
+  headline?: string;
+  intro?: string;
+  roadmapVisibility?: NonNullable<Doc<"workspaces">["portalSettings"]>["roadmapVisibility"];
+};
+
+type UpdateWorkspaceArgs = {
+  workspaceSlug: string;
+  description?: string;
+  name?: string;
+  visibility?: Doc<"workspaces">["visibility"];
+};
+
+export async function updatePortalSettingsHandler(
+  ctx: MutationCtx,
+  args: UpdatePortalSettingsArgs,
+) {
+  const user = await requireDashboardUser(ctx);
+  const workspace = await ensureDashboardBaseRecords(ctx, user, args.workspaceSlug);
+  const current = workspace.portalSettings ?? demoWorkspace.portalSettings;
+  const next = {
+    accentColor: args.accentColor ?? current.accentColor,
+    changelogVisibility: args.changelogVisibility ?? current.changelogVisibility,
+    feedbackMode: args.feedbackMode ?? current.feedbackMode,
+    headline: args.headline ?? current.headline,
+    intro: args.intro ?? current.intro,
+    roadmapVisibility: args.roadmapVisibility ?? current.roadmapVisibility,
+  };
+
+  await ctx.db.patch(workspace._id, {
+    portalSettings: next,
+    updatedAt: Date.now(),
+  });
+
+  const updated = await ctx.db.get(workspace._id);
+  if (!updated) {
+    throw new Error("Failed to update portal settings");
+  }
+
+  return normalizeWorkspace(updated);
+}
+
+export async function updateWorkspaceHandler(ctx: MutationCtx, args: UpdateWorkspaceArgs) {
+  const user = await requireDashboardUser(ctx);
+  const workspace = await ensureDashboardBaseRecords(ctx, user, args.workspaceSlug);
+
+  await ctx.db.patch(workspace._id, {
+    ...(args.description === undefined ? {} : { description: args.description }),
+    ...(args.name === undefined ? {} : { name: args.name }),
+    ...(args.visibility === undefined ? {} : { visibility: args.visibility }),
+    updatedAt: Date.now(),
+  });
+
+  const updated = await ctx.db.get(workspace._id);
+  if (!updated) {
+    throw new Error("Failed to update workspace");
+  }
+  return normalizeWorkspace(updated);
+}

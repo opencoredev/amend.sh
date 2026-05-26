@@ -1,0 +1,17 @@
+{
+  "name": "@amend/api-spec",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./openapi.yaml": "./openapi.yaml"
+  },
+  "scripts": {
+    "generate:types": "bunx --yes openapi-typescript openapi.yaml -o ../sdk/src/openapi-types.ts",
+    "lint": "bunx --yes @redocly/cli lint openapi.yaml"
+  },
+  "devDependencies": {
+    "openapi-fetch": "^0.15.0",
+    "openapi-typescript": "^7.10.1"
+  }
+}

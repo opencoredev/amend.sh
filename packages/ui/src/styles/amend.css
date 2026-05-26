@@ -1,0 +1,86 @@
+.amend-display {
+  font-family: var(--amend-font-display);
+}
+
+.amend-hero-mark {
+  contain: layout paint style;
+  color: var(--foreground);
+  isolation: isolate;
+}
+
+.amend-hero-pixel-canvas {
+  display: block;
+  image-rendering: auto;
+  pointer-events: none;
+}
+
+.amend-composer-editor ul,
+.amend-composer-editor ol {
+  margin: 0.25rem 0 0.25rem 1.25rem;
+  padding: 0;
+}
+
+.amend-composer-editor ul {
+  list-style: disc;
+}
+
+.amend-composer-editor ol {
+  list-style: decimal;
+}
+
+.amend-composer-editor a {
+  color: var(--foreground);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.amend-composer-editor pre {
+  margin: 0.35rem 0;
+  border: 1px solid var(--border);
+  background: var(--muted);
+  color: var(--foreground);
+  padding: 0.65rem 0.75rem;
+  white-space: pre-wrap;
+}
+
+.amend-code-block {
+  position: relative;
+}
+
+.amend-code-block::before {
+  content: attr(data-language);
+  display: block;
+  margin-bottom: 0.45rem;
+  color: var(--muted-foreground);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.amend-code-block code {
+  font-family: var(--amend-font-mono);
+  font-size: 0.78rem;
+  line-height: 1.65;
+}
+
+.amend-code-block .token-key,
+.amend-code-block .token-keyword {
+  color: oklch(0.86 0 0);
+  font-weight: 700;
+}
+
+.amend-code-block .token-string {
+  color: oklch(0.74 0 0);
+}
+
+.amend-code-block .token-comment {
+  color: oklch(0.48 0 0);
+  font-style: italic;
+}
+
+.amend-code-block .token-number,
+.amend-code-block .token-literal,
+.amend-code-block .token-flag {
+  color: oklch(0.92 0 0);
+}

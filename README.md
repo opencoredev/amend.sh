@@ -1,5 +1,9 @@
 # Amend.sh
 
+> **Beta / work in progress:** Amend.sh is still early, changing quickly, and not production-stable
+> yet. The hosted cloud launch is being wired up, public signup is closed for now, and the repo
+> should be treated as an active beta implementation rather than finished software.
+
 Amend.sh is an open-source product update automation platform. It connects GitHub,
 customer signals, roadmap, changelog, and notifications into one mostly automatic loop:
 when work ships, Amend updates the product story and closes the loop with the people
@@ -20,7 +24,8 @@ be self-hostable while still supporting a hosted cloud path.
 - Open-source/self-host posture with bring-your-own AI key and visible audit trails
 
 See [docs/brand.md](docs/brand.md) for the brand system and asset inventory.
-See [docs/integration.md](docs/integration.md) for SDK, REST API, embed, and self-host setup.
+See [docs/integration.md](docs/integration.md) for the integration hub, with focused companion
+guides for source imports, customer surfaces, and automation operations.
 See [docs/completion-audit.md](docs/completion-audit.md) for the current prompt-to-artifact
 coverage and remaining production blockers.
 See [docs/agent-ready-audit.md](docs/agent-ready-audit.md) for the AI/agent visibility checklist.

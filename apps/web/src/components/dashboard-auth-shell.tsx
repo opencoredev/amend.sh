@@ -10,7 +10,7 @@ type DashboardAuthShellProps = {
 
 export default function DashboardAuthShell({ showSignIn }: DashboardAuthShellProps) {
   return (
-    <main className="grid min-h-svh bg-background text-foreground lg:grid-cols-2">
+    <main className="grid min-h-svh bg-background text-foreground [--accent-foreground:oklch(0.1221_0_0)] [--primary:oklch(0.1221_0_0)] [--primary-foreground:oklch(0.994_0_0)] [--ring:oklch(0.1221_0_0)] lg:grid-cols-2">
       <section className="flex flex-col gap-4 p-6 md:p-10">
         <div className="flex justify-center gap-2 md:justify-start">
           <Link to="/" className="flex items-center gap-2 font-medium">

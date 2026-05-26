@@ -4,8 +4,16 @@ node_modules
 .pnp.js
 
 # Build outputs
+.next
+.output
+.open-next
+.react-router
+.tanstack
+.vinxi
+.vite
 dist
 build
+out
 *.tsbuildinfo
 
 # Environment variables
@@ -40,9 +48,15 @@ lerna-debug.log*
 # Better-T-Stack
 .alchemy
 
+# Local platform state
+.convex
+.source
+.wrangler
+
 # Testing
 coverage
 .nyc_output
+.codex-artifacts/
 agent-ready-live-report.json
 agent-ready-production-report.json
 agent-ready-status.json
@@ -53,3 +67,4 @@ agent-ready-completion-audit-report.json
 .cache
 tmp
 temp
+.vercel

@@ -8,21 +8,21 @@ export const amendBrand = {
   colors: {
     ink: "oklch(0.16 0.01 255)",
     source: "oklch(0.7459 0.1483 156.4499)",
-    amend: "oklch(0.6217 0.2589 305.3090)",
+    amend: "oklch(0.7336 0.1758 50.5517)",
     line: "oklch(0.93 0.0094 286.2156)",
   },
   classNames: {
     focusRing:
-      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[oklch(0.6217_0.2589_305.3090)] focus-visible:ring-offset-2",
+      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2",
     hairline: "border-border",
-    sourceText: "text-[oklch(0.6217_0.2589_305.3090)] dark:text-[oklch(0.8003_0.1821_151.7110)]",
+    sourceText: "text-[oklch(0.7459_0.1483_156.4499)] dark:text-[oklch(0.8003_0.1821_151.7110)]",
     amendText: "text-[oklch(0.7336_0.1758_50.5517)] dark:text-[oklch(0.8077_0.1035_19.5706)]",
   },
 } as const;
 
 const dotToneClasses: Record<BrandPrimitiveTone, string> = {
   neutral: "bg-muted-foreground/35",
-  source: "bg-[oklch(0.6217_0.2589_305.3090)]",
+  source: "bg-[oklch(0.7459_0.1483_156.4499)]",
   amend: "bg-[oklch(0.7336_0.1758_50.5517)]",
 };
 

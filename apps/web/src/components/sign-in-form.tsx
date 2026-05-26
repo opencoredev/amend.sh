@@ -1,25 +1,55 @@
-import { Button } from "@amend/ui/components/button";
-import {
-  Field,
-  FieldDescription,
-  FieldError,
-  FieldGroup,
-  FieldLabel,
-} from "@amend/ui/components/field";
-import { Input } from "@amend/ui/components/input";
+import { FieldGroup } from "@amend/ui/components/field";
 import { useForm } from "@tanstack/react-form";
-import { Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { Link, useNavigate, useSearch } from "@tanstack/react-router";
+import { lazy, Suspense, useState } from "react";
 import z from "zod";
 
+import {
+  AuthFormError,
+  AuthFormHeader,
+  AuthSubmitButton,
+  AuthTextField,
+} from "@/components/auth-form-primitives";
+import { parsePortalRedirectTo } from "@/lib/auth-redirects";
+import { authErrorMessage } from "@/lib/auth-errors";
 import { authClient } from "@/lib/auth-client";
+import { demoWorkspaceSlug } from "@/lib/demo-workspace";
 import { toast } from "@/lib/toast";
+
+const DevDemoSignInButton = import.meta.env.DEV
+  ? lazy(async () => ({
+      default: (await import("@/components/dev-demo-sign-in-button")).DevDemoSignInButton,
+    }))
+  : null;
 
 export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp?: () => void }) {
   const [formError, setFormError] = useState("");
   const navigate = useNavigate({
     from: "/",
   });
+  const search = useSearch({ from: "/sign-in" }) as { redirectTo?: string };
+  const portalRedirect = parsePortalRedirectTo(search.redirectTo);
+
+  function navigateToDashboardAfterSignIn(workspace = demoWorkspaceSlug) {
+    navigate({
+      params: { view: "proactivation" },
+      search: { workspace },
+      to: "/dashboard/$view",
+    });
+  }
+
+  function navigateAfterEmailSignIn() {
+    if (portalRedirect) {
+      navigate({
+        hash: portalRedirect.section,
+        params: { workspaceSlug: portalRedirect.workspaceSlug },
+        to: "/portal/$workspaceSlug",
+      });
+      return;
+    }
+
+    navigateToDashboardAfterSignIn();
+  }
 
   const form = useForm({
     defaultValues: {
@@ -35,18 +65,14 @@ export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp?: ()
         },
         {
           onSuccess: () => {
-            navigate({
-              params: { view: "agent" },
-              search: {},
-              to: "/dashboard/$view",
-            });
+            navigateAfterEmailSignIn();
             toast.success("Sign in successful");
           },
           onError: (error) => {
-            const message =
-              error.error.message ||
-              error.error.statusText ||
-              "Sign in failed because the email or password was not accepted. Check both fields and try again.";
+            const message = authErrorMessage(
+              error,
+              "Sign in failed because the email or password was not accepted. Check both fields and try again.",
+            );
             setFormError(message);
             toast.error({
               title: "Sign in failed",
@@ -66,26 +92,32 @@ export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp?: ()
 
   return (
     <div className="w-full">
-      <div className="mb-6 flex flex-col items-center gap-1 text-center">
-        <h1 className="text-2xl font-bold">Sign in to Amend</h1>
-        <p className="text-sm text-balance text-muted-foreground">
-          Enter your email and password to open your workspace.
-        </p>
-        <p className="text-sm text-muted-foreground">
-          No account?{" "}
-          <Link
-            to="/sign-up"
-            onClick={(event) => {
-              if (!onSwitchToSignUp) return;
-              event.preventDefault();
-              onSwitchToSignUp();
-            }}
-            className="font-medium text-primary underline-offset-4 hover:underline"
-          >
-            Sign up for a new account
-          </Link>
-        </p>
-      </div>
+      <AuthFormHeader
+        title="Sign in to Amend"
+        description="Enter your email and password to open your workspace."
+        action={
+          <>
+            No account?{" "}
+            <Link
+              to="/sign-up"
+              onClick={(event) => {
+                if (!onSwitchToSignUp) return;
+                event.preventDefault();
+                onSwitchToSignUp();
+              }}
+              className="font-medium text-foreground underline-offset-4 hover:underline"
+            >
+              Sign up for a new account
+            </Link>
+          </>
+        }
+      />
+
+      {DevDemoSignInButton ? (
+        <Suspense fallback={null}>
+          <DevDemoSignInButton onError={setFormError} onSuccess={navigateToDashboardAfterSignIn} />
+        </Suspense>
+      ) : null}
 
       <form
         onSubmit={(e) => {
@@ -98,47 +130,39 @@ export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp?: ()
         <FieldGroup>
           <form.Field name="email">
             {(field) => (
-              <Field data-invalid={field.state.meta.errors.length > 0}>
-                <FieldLabel htmlFor={field.name}>Email</FieldLabel>
-                <Input
-                  id={field.name}
-                  name={field.name}
-                  type="email"
-                  placeholder="Enter your email"
-                  value={field.state.value}
-                  onBlur={field.handleBlur}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  aria-invalid={field.state.meta.errors.length > 0}
-                />
-                <FieldError errors={field.state.meta.errors} />
-              </Field>
+              <AuthTextField
+                id={field.name}
+                label="Email"
+                type="email"
+                placeholder="Enter your email"
+                value={field.state.value}
+                onBlur={field.handleBlur}
+                onChange={field.handleChange}
+                errors={field.state.meta.errors}
+              />
             )}
           </form.Field>
 
           <form.Field name="password">
             {(field) => (
-              <Field data-invalid={field.state.meta.errors.length > 0}>
-                <div className="flex items-center justify-between gap-3">
-                  <FieldLabel htmlFor={field.name}>Password</FieldLabel>
+              <AuthTextField
+                id={field.name}
+                label="Password"
+                type="password"
+                placeholder="Enter your password"
+                value={field.state.value}
+                onBlur={field.handleBlur}
+                onChange={field.handleChange}
+                errors={field.state.meta.errors}
+                action={
                   <a
                     href="mailto:support@amend.sh?subject=Amend.sh%20password%20reset"
-                    className="text-sm text-primary underline-offset-4 hover:underline"
+                    className="text-sm text-foreground underline-offset-4 hover:underline"
                   >
                     Forgot password?
                   </a>
-                </div>
-                <Input
-                  id={field.name}
-                  name={field.name}
-                  type="password"
-                  placeholder="Enter your password"
-                  value={field.state.value}
-                  onBlur={field.handleBlur}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  aria-invalid={field.state.meta.errors.length > 0}
-                />
-                <FieldError errors={field.state.meta.errors} />
-              </Field>
+                }
+              />
             )}
           </form.Field>
 
@@ -146,24 +170,17 @@ export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp?: ()
             selector={(state) => ({ canSubmit: state.canSubmit, isSubmitting: state.isSubmitting })}
           >
             {({ canSubmit, isSubmitting }) => (
-              <Field>
-                <Button type="submit" className="w-full" disabled={!canSubmit || isSubmitting}>
-                  {isSubmitting ? "Signing in..." : "Sign in"}
-                </Button>
-              </Field>
+              <AuthSubmitButton
+                disabled={!canSubmit || isSubmitting}
+                pending={isSubmitting}
+                pendingLabel="Signing in..."
+              >
+                Sign in
+              </AuthSubmitButton>
             )}
           </form.Subscribe>
 
-          {formError ? (
-            <Field data-invalid>
-              <FieldDescription
-                role="alert"
-                className="border border-destructive/30 bg-destructive/10 p-3 text-destructive"
-              >
-                {formError}
-              </FieldDescription>
-            </Field>
-          ) : null}
+          <AuthFormError message={formError} />
         </FieldGroup>
       </form>
     </div>

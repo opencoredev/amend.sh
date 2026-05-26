@@ -10,7 +10,7 @@ export const Route = createFileRoute("/sign-up")({
   beforeLoad: ({ context }) => {
     if (context.isAuthenticated) {
       throw redirect({
-        params: { view: "agent" },
+        params: { view: "setup" },
         search: {},
         to: "/dashboard/$view",
       });

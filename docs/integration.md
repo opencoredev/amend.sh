@@ -1,6 +1,12 @@
 # Amend.sh Integration Guide
 
-This guide documents the integration surfaces that make Amend useful outside the hosted portal.
+This guide is the integration hub for the surfaces that make Amend useful outside the hosted portal.
+Keep it open when wiring a product for the first time, then use the companion guides when you need
+deeper operational details:
+
+- [Source event imports](integration-source-events.md)
+- [Customer surfaces](integration-customer-surfaces.md)
+- [Automation operations](integration-automation-ops.md)
 
 ## GitHub Setup
 
@@ -72,18 +78,35 @@ If `AMEND_API_TOKEN` is set in Convex, owner-level mutation endpoints require
 `Authorization: Bearer <token>`. Public portal reads, feedback submission, identity mapping,
 event tracking, and signed GitHub webhooks remain available for customer-facing integration flows.
 
+Generate a development owner token locally with:
+
+```bash
+bun packages/cli/src/index.ts token generate --limit 32
+```
+
+Then set the emitted `AMEND_API_TOKEN=...` value in Convex or your hosting environment.
+
 ## REST API
 
 REST endpoints are served by Convex HTTP actions from `packages/backend/convex/http.ts`.
+The beta OpenAPI contract lives at `packages/api-spec/openapi.yaml`; generate SDK-facing types with:
+
+```bash
+bun run --cwd packages/api-spec generate:types
+```
 
 | Method | Endpoint                             | Purpose                                           |
 | ------ | ------------------------------------ | ------------------------------------------------- |
+| `GET`  | `/api/v1/version`                    | Fetch deployed version and commit metadata        |
 | `GET`  | `/api/v1/:workspace/portal`          | Fetch public portal data                          |
 | `GET`  | `/api/v1/:workspace/roadmap`         | Fetch roadmap data and track a view               |
 | `GET`  | `/api/v1/:workspace/changelog`       | Fetch changelog data and track a view             |
 | `GET`  | `/api/v1/:workspace/updates`         | Fetch changelog, roadmap, and notification data   |
 | `GET`  | `/api/v1/:workspace/settings`        | Fetch rules, members, integrations, domains       |
 | `GET`  | `/api/v1/:workspace/decisions`       | Fetch source-linked automation decisions          |
+| `GET`  | `/api/v1/:workspace/source-events`   | Fetch source evidence from all channels           |
+| `GET`  | `/api/v1/:workspace/build-briefs`    | Fetch agent-readable build briefs                 |
+| `GET`  | `/api/v1/:workspace/agent-runs`      | Fetch proactive agent run history                 |
 | `GET`  | `/api/v1/:workspace/deliveries`      | Fetch planned delivery outbox records             |
 | `GET`  | `/api/v1/:workspace/github-app`      | Fetch GitHub App install URL and readiness        |
 | `GET`  | `/api/v1/:workspace/projects`        | Fetch workspace projects and connected repos      |
@@ -94,6 +117,7 @@ REST endpoints are served by Convex HTTP actions from `packages/backend/convex/h
 | `POST` | `/api/v1/:workspace/interactions`    | Record feedback votes, comments, and reactions    |
 | `POST` | `/api/v1/:workspace/events`          | Track event-lite product-loop events              |
 | `POST` | `/api/v1/:workspace/github`          | Ingest GitHub webhooks into source records        |
+| `POST` | `/api/v1/:workspace/source-events`   | Import Slack, Discord, email, CLI, or SDK signals |
 | `POST` | `/api/v1/:workspace/drafts`          | Draft changelog copy with BYO AI or dry-run       |
 | `POST` | `/api/v1/:workspace/changelog`       | Create or update a changelog entry                |
 | `POST` | `/api/v1/:workspace/roadmap`         | Create or update a roadmap item                   |
@@ -110,275 +134,52 @@ REST endpoints are served by Convex HTTP actions from `packages/backend/convex/h
 | `POST` | `/api/v1/:workspace/domains`         | Register a custom portal/embed/API domain         |
 | `POST` | `/api/v1/:workspace/deliveries`      | Plan queued notification delivery records         |
 
-## Identity Mapping
+## CLI
 
-Customer apps keep their own users. Amend maps those users into a workspace:
-
-```ts
-await amend.identify({
-  externalUserId: user.id,
-  email: user.email,
-  name: user.name,
-  accountId: workspace.id,
-  traits: { plan: "pro" },
-});
-
-await amend.identifyAccount(workspace.id, {
-  plan: "pro",
-  seats: 12,
-});
-```
-
-## Side Panel / Embed
-
-Use the lightweight embed helper when teams want a tasteful in-app side panel instead of building
-their own UI immediately.
-
-```ts
-import { createAmendPanel } from "@amend/sdk/embed";
-
-createAmendPanel({
-  project: "amend-labs",
-  apiBaseUrl: "http://127.0.0.1:3211/api/v1",
-});
-```
-
-The panel shows shipped updates, roadmap items, and a feedback form. Teams can still use the SDK
-or REST API to build a fully custom surface.
-
-Run the browser demo at `http://amend.localhost:1355/embed-demo` while `bun run dev` is running.
-It mounts the same `createAmendPanel` helper against the local portal API.
-
-## Projects And Repositories
-
-Projects group product surfaces inside a workspace. Each project can connect one or more GitHub
-repositories.
-
-```ts
-const project = await amend.createProject({
-  name: "Web App",
-  slug: "web-app",
-  visibility: "public",
-});
-
-await amend.connectRepository({
-  projectKey: project.stableKey,
-  owner: "acme",
-  repo: "web",
-});
-```
-
-## Team Permissions
-
-Workspace members have explicit roles and permissions for review, changelog publishing, and rules
-management:
-
-```ts
-await amend.upsertWorkspaceMember({
-  email: "reviewer@example.com",
-  name: "Release reviewer",
-  role: "reviewer",
-  permissions: ["review:approve", "changelog:edit"],
-});
-```
-
-## Integration Connections
-
-Channels are the input surfaces Amend watches: GitHub, feedback board, SDK events, Discord, Slack,
-support, Linear, and usage signals. Integrations are the saved provider connections that let those
-channels ingest context or send updates back out. GitHub is deepest; other connections can be
-represented before their OAuth/webhook credentials are live:
-
-```ts
-await amend.upsertIntegration({
-  provider: "slack",
-  direction: "outbound",
-  state: "planned",
-  displayName: "Slack release updates",
-  config: { channel: "#product-updates" },
-});
-```
-
-The authenticated dashboard uses these records for the proactive agent's channel map, so a
-`planned`, `connected`, `attention`, or `disabled` state should reflect what the agent can safely
-trust.
-
-## Notification Rules
-
-Use `markUpdateSeen`, `updatesForUser`, and event tracking to keep notification behavior tied to
-what a user asked for, voted on, commented on, reacted to, subscribed to, or used.
-`updatesForUser` calls the REST updates endpoint with the external user id and returns the user's
-filtered notification feed, seen update keys, roadmap, and changelog data.
-Use `updatesForContact` when a customer app has both an external user id and the same email a user
-may use in the hosted portal.
-
-```ts
-await amend.vote("feedback-show-shipping-pr", user.id);
-await amend.comment("feedback-show-shipping-pr", "This would help our admins.", user.id);
-await amend.react("feedback-show-shipping-pr", "heart", user.id);
-
-await amend.markUpdateSeen("changelog-reviewable-publishing", user.id);
-await amend.trackShippedFeature("roadmap-source-linked-portal", user.id);
-await amend.updatesForContact({ userId: user.id, email: user.email });
-await amend.setNotificationPreference({
-  externalUserId: user.id,
-  email: user.email,
-  mode: "digest",
-  digestDay: "friday",
-  digestHour: 16,
-});
-
-await amend.unsubscribe({ email: user.email });
-
-await amend.planDeliveries({
-  channel: "email",
-  notificationKey: "notification-changelog-review-ready",
-});
-
-await amend.sendDeliveries({
-  channel: "email",
-  dryRun: true,
-  limit: 10,
-});
-```
-
-Email delivery uses the delivery outbox. Configure `RESEND_API_KEY` and `EMAIL_FROM` in Convex for
-real email sends; keep `dryRun: true` for local verification.
-
-## Automation Rules
-
-Automation should default to Mostly Auto:
-
-- safe, high-confidence status updates can apply automatically
-- public copy, low-confidence matches, and high-impact notification changes should require review
-- every decision should keep source evidence and confidence context
-
-```ts
-await amend.updateAutomationRules({
-  mode: "mostly_auto",
-  autoDraftChangelog: true,
-  autoPublishChangelog: false,
-  requireReviewBelowConfidence: 0.82,
-});
-```
-
-## BYO AI Drafting
-
-Set `OPENAI_API_KEY` and optionally `OPENAI_MODEL` in Convex to enable AI-backed changelog drafting.
-Local dry-runs do not require credentials.
-
-```ts
-await amend.draftChangelog({
-  title: "Webhook retry status",
-  kind: "pull_request",
-  dryRun: true,
-});
-```
-
-## Proactive Agent Provider
-
-The proactive agent runs server-side through `amend:runProactiveAgentForWorkspace`. It reads channel
-events, source evidence, feedback, roadmap, changelog, notification state, and workspace rules, then
-persists source-linked automation decisions. Public copy and risky actions should remain reviewable.
-
-Set Crof/Kimi environment variables on the Convex deployment:
+The local CLI lives in `packages/cli` and is designed for developers and coding agents. It is
+read-only by default and has deterministic demo mode so the product loop can be checked without
+real provider keys.
 
 ```bash
-bunx convex env set CROF_API_KEY "replace-with-crof-key"
-bunx convex env set CROF_MODEL "kimi-k2.6"
-bunx convex env set CROF_BASE_URL "https://crof.ai/v1"
+bun packages/cli/src/index.ts init --endpoint "http://127.0.0.1:3211/api/v1" --project amend-labs
+bun packages/cli/src/index.ts config show
+bun packages/cli/src/index.ts permissions inspect
+bun packages/cli/src/index.ts status --demo
+bun packages/cli/src/index.ts feedback list --demo
+bun packages/cli/src/index.ts requests search --demo --query "github"
+bun packages/cli/src/index.ts agent run --demo
+bun packages/cli/src/index.ts agent runs --demo
+bun packages/cli/src/index.ts briefs list --demo --status in_review
+bun packages/cli/src/index.ts source list --demo --provider slack
+bun packages/cli/src/index.ts source import --demo --provider slack --kind customer_signal --external-id slack:feedback:123 --title "Request from #feedback"
+bun packages/cli/src/index.ts changelog draft --demo --title "Source-linked update"
+bun packages/cli/src/index.ts openapi export
+bun packages/cli/src/index.ts doctor
+bun packages/cli/src/index.ts version --server --check
+bun packages/cli/src/index.ts token create --limit 32
+bun packages/cli/src/index.ts token create --plain
 ```
 
-If the provider is not configured or returns invalid output, the backend records a local fallback
-decision instead of inventing source links.
-
-## Manual Roadmap And Changelog Edits
-
-Teams can keep source-linked automation but still manually edit public records:
-
-```ts
-await amend.upsertChangelog({
-  title: "Webhook retry status",
-  summary: "Retry status is now visible in the update loop.",
-  body: "Admins can see retry recovery status before publishing customer-facing copy.",
-  status: "in_review",
-});
-
-await amend.upsertRoadmapItem({
-  title: "Digest windows",
-  description: "Let teams choose when shipped-user digests are sent.",
-  status: "planned",
-});
-```
-
-## Custom Domains
-
-Customize the public portal before registering a domain:
-
-```ts
-await amend.updatePortalSettings({
-  headline: "Launch notes",
-  intro: "Product updates with source links and customer context.",
-  feedbackMode: "authenticated",
-  roadmapVisibility: "public",
-  changelogVisibility: "public",
-});
-```
-
-Register custom domains for portal, embed, or API surfaces:
-
-```ts
-const domain = await amend.registerCustomDomain("updates.example.com", "portal");
-// Add a TXT record containing domain.verificationToken, then:
-await amend.verifyCustomDomain("updates.example.com");
-
-// Production host routing can resolve the verified domain before rendering:
-await amend.resolveCustomDomain("updates.example.com", "portal");
-```
-
-## Plans
-
-Read the public catalog and update the workspace's selected plan:
-
-```ts
-const catalog = await amend.plans();
-await amend.updatePlan("pro", 5);
-```
-
-Create a hosted Stripe Checkout session for self-serve paid plans:
-
-```ts
-const checkout = await amend.createCheckoutSession({
-  tier: "pro",
-  seats: 5,
-  customerEmail: "owner@example.com",
-  dryRun: true,
-});
-```
-
-Checkout uses Stripe-hosted Checkout Sessions in `subscription` mode. Local dry-runs do not require
-Stripe credentials; production checkout requires `STRIPE_SECRET_KEY`.
-
-Configure Stripe webhooks to send `checkout.session.completed` events to
-`/api/v1/:workspace/stripe`. Amend verifies the raw request body with `STRIPE_WEBHOOK_SECRET` before
-applying plan changes from Checkout metadata.
-
-## Self-Hosting
-
-For local self-hosting, run:
+Configure live workspaces with:
 
 ```bash
-bunx convex dev --configure new --dev-deployment local --project amend --once --tail-logs disable
-bunx convex env set BETTER_AUTH_SECRET "$(openssl rand -base64 32)"
-bunx convex env set SITE_URL http://amend.localhost:1355
-bunx convex env set AMEND_API_TOKEN "$(openssl rand -base64 32)"
-bun dev
+export AMEND_API_BASE_URL="http://127.0.0.1:3211/api/v1"
+export AMEND_PROJECT="amend-labs"
+export AMEND_API_TOKEN="replace-with-owner-token"
 ```
 
-The normal web URL is `http://amend.localhost:1355`.
+`amend init` writes `.amend/config.json` with the endpoint and project so developers and coding
+agents do not need to repeat flags. Tokens are not stored by default; prefer `AMEND_API_TOKEN` for
+shared repos and only pass `--token` to `amend init` when you explicitly want a local config file to
+hold that credential. Flags override env, env overrides `.amend/config.json`, and config overrides
+the built-in localhost defaults.
 
-## Bring Your Own AI Key
+Use `amend config show` for machine-readable effective configuration. It reports the selected
+endpoint, project/workspace, config file path, config existence, token presence, and token source
+without printing the token value. Use `amend permissions inspect` before handing the CLI to coding
+agents; it reports safe read scopes, confirms `readOnlyDefault: true`, and only surfaces write scopes
+from explicit `AMEND_WRITE_SCOPES`, `--write-scopes`, or `.amend/config.json` scope configuration.
 
-BYO AI is part of the product posture. Store provider keys as deployment environment variables and
-make automation decisions source-linked and reviewable. Do not let generated public copy publish
-without workspace rules and confidence checks.
+`amend doctor` does not contact release metadata unless `--check` is passed. `token generate`
+remains as a compatibility alias for `token create`; both commands generate local development tokens
+that must be stored in the self-host environment or explicitly added to local CLI config.

@@ -20,7 +20,11 @@ import { defaultDescription, defaultTitle, openGraphMeta } from "@/lib/seo";
 import appCss from "../index.css?url";
 
 const getAuth = createServerFn({ method: "GET" }).handler(async () => {
-  return await getToken();
+  try {
+    return await getToken();
+  } catch {
+    return null;
+  }
 });
 
 export interface RouterAppContext {

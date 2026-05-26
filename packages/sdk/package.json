@@ -15,7 +15,8 @@
   },
   "scripts": {
     "build": "tsc",
-    "check-types": "tsc --noEmit"
+    "check-types": "tsc --noEmit",
+    "generate:openapi-types": "bun run --cwd ../api-spec generate:types"
   },
   "devDependencies": {
     "@amend/config": "workspace:*",

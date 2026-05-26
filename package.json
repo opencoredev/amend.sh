@@ -48,13 +48,16 @@
     "agent-ready:audit:check": "bun run agent-ready:production:validate-report agent-ready-production-report.json && bun run agent-ready:live:validate-report agent-ready-live-report.json && bun run agent-ready:status:validate-report agent-ready-status.json && bun run agent-ready:completion-audit:validate-report agent-ready-completion-audit-report.json && bun run agent-ready:sync-audit:check agent-ready-production-report.json",
     "agent-ready:production:validate-report": "bun scripts/agent-ready-production-report-validate.ts",
     "build:size": "bun scripts/build-size.ts",
+    "repo:hygiene": "bun scripts/repo-hygiene.ts",
+    "source:size": "bun scripts/source-size-audit.ts",
+    "source:size:report": "bun scripts/source-size-audit.ts --report",
     "readiness": "bun scripts/readiness.ts",
     "readiness:strict": "bun scripts/readiness.ts --strict",
     "dev:web": "turbo -F web dev",
     "dev:docs": "turbo -F fumadocs dev",
     "dev:server": "turbo -F @amend/backend dev",
     "dev:setup": "turbo -F @amend/backend dev:setup",
-    "check": "bun run lint && bun run format:check && bun run check-types && bun run test",
+    "check": "bun run lint && bun run format:check && bun run check-types && bun run repo:hygiene && bun run source:size && bun run test",
     "fix": "oxlint --fix . && oxfmt ."
   },
   "dependencies": {

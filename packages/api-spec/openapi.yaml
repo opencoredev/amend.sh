@@ -1,0 +1,1854 @@
+openapi: 3.1.0
+info:
+  title: Amend API
+  version: 0.1.0-beta
+  license:
+    identifier: MIT
+    name: MIT
+  summary: Source-linked product updates, roadmap, feedback, and notification loop API.
+  description: >
+    Beta contract for the Convex HTTP routes served from /api/v1. Public customer-facing
+    reads and feedback writes can be called without a token. Owner-level mutations require
+    Authorization: Bearer <AMEND_API_TOKEN> when AMEND_API_TOKEN is configured.
+servers:
+  - url: /api/v1
+    description: Same-origin hosted API
+  - url: http://127.0.0.1:3211/api/v1
+    description: Local Convex HTTP actions
+tags:
+  - name: Public
+    description: Public portal, roadmap, changelog, and domain routing reads.
+  - name: Customer
+    description: Customer-facing identity, feedback, event, and notification preference routes.
+  - name: Owner
+    description: Workspace owner/admin routes guarded by the Amend API token when configured.
+  - name: Webhooks
+    description: Provider webhook ingestion routes with provider signature checks where configured.
+  - name: System
+    description: Self-host version and deployment metadata.
+security:
+  - AmendApiToken: []
+paths:
+  "/version":
+    get:
+      summary: Fetch deployed version metadata
+      operationId: getVersion
+      tags: [System]
+      security: []
+      responses:
+        "200":
+          description: Version metadata for the running Amend deployment.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VersionInfo"
+        "4XX":
+          $ref: "#/components/responses/ClientError"
+  "/{workspaceSlug}/portal":
+    get:
+      summary: Fetch public portal data
+      operationId: getPortal
+      tags: [Public]
+      security: []
+      parameters:
+        - $ref: "#/components/parameters/WorkspaceSlug"
+        - name: roadmapStatus
+          in: query
+          schema:
+            $ref: "#/components/schemas/RoadmapStatus"
+      responses:
+        "200":
+          description: Public portal data.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PortalResponse"
+        "4XX":
+          $ref: "#/components/responses/ClientError"
+  "/{workspaceSlug}/roadmap":
+    get:
+      summary: Fetch public roadmap items
+      operationId: getRoadmap
+      tags: [Public]
+      security: []
+      parameters:
+        - $ref: "#/components/parameters/WorkspaceSlug"
+        - name: status
+          in: query
+          schema:
+            $ref: "#/components/schemas/RoadmapStatus"
+      responses:
+        "200":
+          description: Roadmap items and a tracked roadmap view event.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [roadmap]
+                properties:
+                  roadmap:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/RoadmapItem"
+        "4XX":
+          $ref: "#/components/responses/ClientError"
+    post:
+      summary: Create or update a roadmap item
+      operationId: upsertRoadmapItem
+      tags: [Owner]
+      parameters:
+        - $ref: "#/components/parameters/WorkspaceSlug"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RoadmapItemInput"
+      responses:
+        "201":
+          description: Created or updated roadmap item.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RoadmapItem"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+  "/{workspaceSlug}/changelog":
+    get:
+      summary: Fetch public changelog entries
+      operationId: getChangelog
+      tags: [Public]
+      security: []
+      parameters:
+        - $ref: "#/components/parameters/WorkspaceSlug"
+      responses:
+        "200":
+          description: Changelog entries and a tracked changelog view event.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [changelog]
+                properties:
+                  changelog:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ChangelogEntry"
+        "4XX":
+          $ref: "#/components/responses/ClientError"
+    post:
+      summary: Create or update a changelog entry
+      operationId: upsertChangelogEntry
+      tags: [Owner]
+      parameters:
+        - $ref: "#/components/parameters/WorkspaceSlug"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChangelogEntryInput"
+      responses:
+        "201":
+          description: Created or updated changelog entry.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChangelogEntry"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+  "/{workspaceSlug}/updates":
+    get:
+      summary: Fetch user-specific updates
+      operationId: getUpdates
+      tags: [Customer]
+      security: []
+      parameters:
+        - $ref: "#/components/parameters/WorkspaceSlug"
+        - name: externalUserId
+          in: query
+          schema:
+            type: string
+        - name: userId
+          in: query
+          deprecated: true
+          schema:
+            type: string
+        - name: email
+          in: query
+          schema:
+            type: string
+            format: email
+      responses:
+        "200":
+          description: User-filtered notifications plus public roadmap and changelog context.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UpdatesResponse"
+        "4XX":
+          $ref: "#/components/responses/ClientError"
+  "/{workspaceSlug}/settings":
+    get:
+      summary: Fetch workspace settings
+      operationId: getWorkspaceSettings
+      tags: [Owner]
+      parameters:
+        - $ref: "#/components/parameters/WorkspaceSlug"
+      responses:
+        "200":
+          description: Workspace settings for owner/admin surfaces.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WorkspaceSettings"
+        "4XX":
+          $ref: "#/components/responses/ClientError"
+  "/{workspaceSlug}/decisions":
+    get:
+      summary: Fetch automation decisions
+      operationId: getAutomationDecisions
+      tags: [Owner]
+      parameters:
+        - $ref: "#/components/parameters/WorkspaceSlug"
+      responses:
+        "200":
+          description: Source-linked proactive agent decisions.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [decisions]
+                properties:
+                  decisions:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/AutomationDecision"
+        "4XX":
+          $ref: "#/components/responses/ClientError"
+  "/{workspaceSlug}/build-briefs":
+    get:
+      summary: Fetch agent-readable build briefs
+      operationId: getBuildBriefs
+      tags: [Owner]
+      parameters:
+        - $ref: "#/components/parameters/WorkspaceSlug"
+        - name: status
+          in: query
+          schema:
+            $ref: "#/components/schemas/BuildBriefStatus"
+        - name: projectSlug
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Agent-readable build briefs for customer-demand driven implementation.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [buildBriefs]
+                properties:
+                  buildBriefs:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/BuildBrief"
+        "4XX":
+          $ref: "#/components/responses/ClientError"
+  "/{workspaceSlug}/agent-runs":
+    get:
+      summary: Fetch proactive agent run history
+      operationId: getAgentRuns
+      tags: [Owner]
+      parameters:
+        - $ref: "#/components/parameters/WorkspaceSlug"
+        - name: projectSlug
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Persisted proactive agent runs for audit and coding-agent context.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [runs]
+                properties:
+                  runs:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/AgentRun"
+        "4XX":
+          $ref: "#/components/responses/ClientError"
+  "/{workspaceSlug}/deliveries":
+    get:
+      summary: Fetch delivery outbox records
+      operationId: getDeliveryOutbox
+      tags: [Owner]
+      parameters:
+        - $ref: "#/components/parameters/WorkspaceSlug"
+      responses:
+        "200":
+          description: Planned delivery outbox records.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [deliveries]
+                properties:
+                  deliveries:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Delivery"
+        "4XX":
+          $ref: "#/components/responses/ClientError"
+    post:
+      summary: Plan or send delivery records
+      operationId: planOrSendDeliveries
+      tags: [Owner]
+      parameters:
+        - $ref: "#/components/parameters/WorkspaceSlug"
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: "#/components/schemas/DeliveryPlanInput"
+                - $ref: "#/components/schemas/DeliverySendInput"
+      responses:
+        "200":
+          description: Delivery send result when action is send.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeliverySendResult"
+        "201":
+          description: Planned delivery records.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JsonObject"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+  "/{workspaceSlug}/github-app":
+    get:
+      summary: Fetch GitHub App install readiness
+      operationId: getGitHubAppInstallInfo
+      tags: [Owner]
+      security: []
+      parameters:
+        - $ref: "#/components/parameters/WorkspaceSlug"
+      responses:
+        "200":
+          description: GitHub App installation readiness.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GitHubAppInfo"
+        "4XX":
+          $ref: "#/components/responses/ClientError"
+  "/{workspaceSlug}/projects":
+    get:
+      summary: List workspace projects
+      operationId: listProjects
+      tags: [Owner]
+      parameters:
+        - $ref: "#/components/parameters/WorkspaceSlug"
+      responses:
+        "200":
+          description: Workspace projects.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [projects]
+                properties:
+                  projects:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Project"
+        "4XX":
+          $ref: "#/components/responses/ClientError"
+    post:
+      summary: Create a workspace project
+      operationId: createProject
+      tags: [Owner]
+      parameters:
+        - $ref: "#/components/parameters/WorkspaceSlug"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProjectInput"
+      responses:
+        "201":
+          description: Created project.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+  "/{workspaceSlug}/plans":
+    get:
+      summary: Fetch plan catalog
+      operationId: getPlanCatalog
+      tags: [Owner]
+      security: []
+      parameters:
+        - $ref: "#/components/parameters/WorkspaceSlug"
+      responses:
+        "200":
+          description: Plan catalog and current workspace plan.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PlanCatalog"
+        "4XX":
+          $ref: "#/components/responses/ClientError"
+    post:
+      summary: Update workspace plan
+      operationId: updatePlan
+      tags: [Owner]
+      parameters:
+        - $ref: "#/components/parameters/WorkspaceSlug"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PlanUpdateInput"
+      responses:
+        "200":
+          description: Updated plan.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JsonObject"
+        "4XX":
+          $ref: "#/components/responses/ClientError"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+  "/_/domains":
+    get:
+      summary: Resolve a custom domain
+      operationId: resolveCustomDomain
+      tags: [Public]
+      security: []
+      parameters:
+        - name: domain
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: purpose
+          in: query
+          schema:
+            $ref: "#/components/schemas/DomainPurpose"
+      responses:
+        "200":
+          description: Domain resolution result.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DomainResolution"
+        "404":
+          description: Domain was not resolved.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DomainResolution"
+  "/{workspaceSlug}/identity":
+    post:
+      summary: Identify a customer user
+      operationId: identifyUser
+      tags: [Customer]
+      security: []
+      parameters:
+        - $ref: "#/components/parameters/WorkspaceSlug"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - type: object
+                  required: [identity]
+                  properties:
+                    identity:
+                      $ref: "#/components/schemas/IdentityInput"
+                - $ref: "#/components/schemas/IdentityInput"
+      responses:
+        "200":
+          description: Mapped identity.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JsonObject"
+        "4XX":
+          $ref: "#/components/responses/ClientError"
+  "/{workspaceSlug}/feedback":
+    post:
+      summary: Create customer feedback
+      operationId: createFeedback
+      tags: [Customer]
+      security: []
+      parameters:
+        - $ref: "#/components/parameters/WorkspaceSlug"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FeedbackInput"
+      responses:
+        "201":
+          description: Created feedback request.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Feedback"
+        "4XX":
+          $ref: "#/components/responses/ClientError"
+  "/{workspaceSlug}/interactions":
+    post:
+      summary: Record a feedback interaction
+      operationId: recordFeedbackInteraction
+      tags: [Customer]
+      security: []
+      parameters:
+        - $ref: "#/components/parameters/WorkspaceSlug"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FeedbackInteractionInput"
+      responses:
+        "201":
+          description: Recorded vote, comment, or reaction.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JsonObject"
+        "4XX":
+          $ref: "#/components/responses/ClientError"
+  "/{workspaceSlug}/events":
+    post:
+      summary: Track a product-loop event
+      operationId: trackEvent
+      tags: [Customer]
+      security: []
+      parameters:
+        - $ref: "#/components/parameters/WorkspaceSlug"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EventInput"
+      responses:
+        "201":
+          description: Tracked event.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JsonObject"
+        "4XX":
+          $ref: "#/components/responses/ClientError"
+  "/{workspaceSlug}/github":
+    post:
+      summary: Ingest a GitHub webhook
+      operationId: ingestGitHubWebhook
+      tags: [Webhooks]
+      security: []
+      parameters:
+        - $ref: "#/components/parameters/WorkspaceSlug"
+        - name: X-GitHub-Event
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: X-GitHub-Delivery
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: X-Hub-Signature-256
+          in: header
+          required: false
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GitHubWebhookPayload"
+      responses:
+        "202":
+          description: Ingested source event.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SourceEvent"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+  "/{workspaceSlug}/source-events":
+    get:
+      summary: Fetch imported source events
+      operationId: getSourceEvents
+      tags: [Owner]
+      parameters:
+        - $ref: "#/components/parameters/WorkspaceSlug"
+        - name: projectSlug
+          in: query
+          schema:
+            type: string
+        - name: provider
+          in: query
+          schema:
+            $ref: "#/components/schemas/SourceProvider"
+        - name: kind
+          in: query
+          schema:
+            $ref: "#/components/schemas/SourceKind"
+        - name: limit
+          in: query
+          schema:
+            type: number
+      responses:
+        "200":
+          description: Source evidence imported from GitHub, SDK/API, CLI, portal, and channel adapters.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [sourceEvents]
+                properties:
+                  sourceEvents:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/SourceEvent"
+        "4XX":
+          $ref: "#/components/responses/ClientError"
+    post:
+      summary: Import a source event
+      operationId: importSourceEvent
+      tags: [Owner]
+      parameters:
+        - $ref: "#/components/parameters/WorkspaceSlug"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: "#/components/schemas/SourceEventInput"
+                - type: object
+                  required: [sourceEvent]
+                  properties:
+                    sourceEvent:
+                      $ref: "#/components/schemas/SourceEventInput"
+      responses:
+        "201":
+          description: Imported or updated source evidence for the proactive agent loop.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SourceEventImportResult"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+  "/{workspaceSlug}/stripe":
+    post:
+      summary: Ingest a Stripe webhook
+      operationId: ingestStripeWebhook
+      tags: [Webhooks]
+      security: []
+      parameters:
+        - $ref: "#/components/parameters/WorkspaceSlug"
+        - name: Stripe-Signature
+          in: header
+          required: false
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/JsonObject"
+      responses:
+        "200":
+          description: Processed Stripe event.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JsonObject"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+  "/{workspaceSlug}/drafts":
+    post:
+      summary: Draft changelog copy
+      operationId: draftChangelog
+      tags: [Owner]
+      parameters:
+        - $ref: "#/components/parameters/WorkspaceSlug"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChangelogDraftInput"
+      responses:
+        "201":
+          description: Drafted changelog copy.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChangelogDraft"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+  "/{workspaceSlug}/rules":
+    post:
+      summary: Update automation rules
+      operationId: updateAutomationRules
+      tags: [Owner]
+      parameters:
+        - $ref: "#/components/parameters/WorkspaceSlug"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AutomationRulesInput"
+      responses:
+        "200":
+          description: Updated automation rules.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JsonObject"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+  "/{workspaceSlug}/members":
+    post:
+      summary: Upsert a workspace member
+      operationId: upsertWorkspaceMember
+      tags: [Owner]
+      parameters:
+        - $ref: "#/components/parameters/WorkspaceSlug"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WorkspaceMemberInput"
+      responses:
+        "200":
+          description: Upserted workspace member.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JsonObject"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+  "/{workspaceSlug}/integrations":
+    post:
+      summary: Upsert an integration connection
+      operationId: upsertIntegration
+      tags: [Owner]
+      parameters:
+        - $ref: "#/components/parameters/WorkspaceSlug"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/IntegrationInput"
+      responses:
+        "200":
+          description: Upserted integration connection.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JsonObject"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+  "/{workspaceSlug}/portal-settings":
+    post:
+      summary: Update portal settings
+      operationId: updatePortalSettings
+      tags: [Owner]
+      parameters:
+        - $ref: "#/components/parameters/WorkspaceSlug"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PortalSettingsInput"
+      responses:
+        "200":
+          description: Updated portal settings.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JsonObject"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+  "/{workspaceSlug}/repositories":
+    post:
+      summary: Connect a GitHub repository
+      operationId: connectRepository
+      tags: [Owner]
+      parameters:
+        - $ref: "#/components/parameters/WorkspaceSlug"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RepositoryInput"
+      responses:
+        "201":
+          description: Connected repository.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JsonObject"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+  "/{workspaceSlug}/checkout":
+    post:
+      summary: Create a checkout session
+      operationId: createCheckoutSession
+      tags: [Owner]
+      parameters:
+        - $ref: "#/components/parameters/WorkspaceSlug"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CheckoutInput"
+      responses:
+        "200":
+          description: Dry-run checkout result.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CheckoutSession"
+        "201":
+          description: Created Stripe checkout session.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CheckoutSession"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+  "/{workspaceSlug}/preferences":
+    post:
+      summary: Set notification preferences
+      operationId: setNotificationPreference
+      tags: [Customer]
+      parameters:
+        - $ref: "#/components/parameters/WorkspaceSlug"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NotificationPreferenceInput"
+      responses:
+        "200":
+          description: Updated notification preference.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JsonObject"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+  "/{workspaceSlug}/domains":
+    post:
+      summary: Register or verify a custom domain
+      operationId: registerOrVerifyCustomDomain
+      tags: [Owner]
+      parameters:
+        - $ref: "#/components/parameters/WorkspaceSlug"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: "#/components/schemas/DomainRegistrationInput"
+                - $ref: "#/components/schemas/DomainVerificationInput"
+      responses:
+        "200":
+          description: Domain verification result.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JsonObject"
+        "201":
+          description: Registered custom domain.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JsonObject"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+components:
+  securitySchemes:
+    AmendApiToken:
+      type: http
+      scheme: bearer
+  parameters:
+    WorkspaceSlug:
+      name: workspaceSlug
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Public Amend workspace slug.
+  responses:
+    ClientError:
+      description: Bad request, missing resource, invalid input, or another client-side failure.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+    Unauthorized:
+      description: Missing or invalid Amend API token or webhook signature.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+  schemas:
+    JsonValue:
+      description: Any JSON-serializable metadata value.
+    JsonObject:
+      type: object
+      additionalProperties: true
+    ErrorResponse:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
+    VersionInfo:
+      type: object
+      required: [apiVersion, name, source, updateCheck, updateCheckDisabled, version]
+      properties:
+        apiVersion:
+          type: string
+          description: Stable REST API version served by this deployment.
+        buildTime:
+          type: string
+          description: Build timestamp when provided by AMEND_BUILD_TIME.
+        commit:
+          type: string
+          description: Commit SHA or deployment revision when provided by AMEND_COMMIT_SHA or AMEND_BUILD_SHA.
+        name:
+          type: string
+          enum: [amend]
+        source:
+          type: string
+          enum: [backend]
+        updateCheck:
+          type: object
+          required: [enabled, privacy, releaseUrl]
+          properties:
+            enabled:
+              type: boolean
+            privacy:
+              type: string
+            releaseUrl:
+              type: string
+              description: Public release metadata URL used by explicit CLI update checks.
+        updateCheckDisabled:
+          type: boolean
+          description: True when AMEND_DISABLE_VERSION_CHECK=1 is set for the deployment.
+        version:
+          type: string
+          description: Release tag or application version from AMEND_VERSION.
+    RoadmapStatus:
+      type: string
+      enum: [considering, under_review, planned, in_progress, shipped, closed, paused]
+    RoadmapPriority:
+      type: string
+      enum: [P0, P1, P2, P3]
+    BuildBriefStatus:
+      type: string
+      enum: [draft, in_review, approved, exported, archived]
+    AgentRunStatus:
+      type: string
+      enum: [completed, completed_with_fallback, failed]
+    SourceProvider:
+      type: string
+      enum:
+        [
+          api,
+          cli,
+          discord,
+          email,
+          embed,
+          github,
+          import,
+          linear,
+          manual,
+          portal,
+          sdk,
+          slack,
+          support,
+          x,
+        ]
+    SourceKind:
+      type: string
+      enum:
+        [
+          pull_request,
+          issue,
+          release,
+          label,
+          milestone,
+          discussion,
+          customer_signal,
+          import_record,
+          portal_feedback,
+          support_ticket,
+          usage_event,
+        ]
+    SourceState:
+      type: string
+      enum: [open, closed, merged, published, draft]
+    ChangelogStatus:
+      type: string
+      enum: [draft, in_review, scheduled, published, archived]
+    ChangelogCategory:
+      type: string
+      enum: [added, changed, fixed, removed, security]
+    PlanTier:
+      type: string
+      enum: [free, starter, pro, team, scale, enterprise, open_source]
+    DeliveryChannel:
+      type: string
+      enum: [email, in_app, slack, webhook]
+    DomainPurpose:
+      type: string
+      enum: [api, embed, portal]
+    PortalResponse:
+      type: object
+      additionalProperties: true
+      properties:
+        workspace:
+          $ref: "#/components/schemas/Workspace"
+        roadmap:
+          type: array
+          items:
+            $ref: "#/components/schemas/RoadmapItem"
+        changelog:
+          type: array
+          items:
+            $ref: "#/components/schemas/ChangelogEntry"
+        feedback:
+          type: array
+          items:
+            $ref: "#/components/schemas/Feedback"
+    UpdatesResponse:
+      type: object
+      required: [changelog, notifications, roadmap, seenUpdateKeys]
+      properties:
+        changelog:
+          type: array
+          items:
+            $ref: "#/components/schemas/ChangelogEntry"
+        notifications:
+          type: array
+          items:
+            $ref: "#/components/schemas/Notification"
+        roadmap:
+          type: array
+          items:
+            $ref: "#/components/schemas/RoadmapItem"
+        seenUpdateKeys:
+          type: array
+          items:
+            type: string
+        user:
+          oneOf:
+            - type: "null"
+            - $ref: "#/components/schemas/ExternalUser"
+    Workspace:
+      type: object
+      additionalProperties: true
+      properties:
+        slug:
+          type: string
+        name:
+          type: string
+        visibility:
+          type: string
+          enum: [private, public]
+    WorkspaceSettings:
+      type: object
+      additionalProperties: true
+      properties:
+        workspace:
+          $ref: "#/components/schemas/Workspace"
+        members:
+          type: array
+          items:
+            $ref: "#/components/schemas/JsonObject"
+        integrations:
+          type: array
+          items:
+            $ref: "#/components/schemas/JsonObject"
+        customDomains:
+          type: array
+          items:
+            $ref: "#/components/schemas/JsonObject"
+    Project:
+      type: object
+      additionalProperties: true
+      properties:
+        stableKey:
+          type: string
+        name:
+          type: string
+        slug:
+          type: string
+        visibility:
+          type: string
+          enum: [private, public]
+    ProjectInput:
+      type: object
+      required: [name]
+      properties:
+        description:
+          type: string
+        name:
+          type: string
+        slug:
+          type: string
+        visibility:
+          type: string
+          enum: [private, public]
+    RepositoryInput:
+      type: object
+      required: [owner, projectKey, repo]
+      properties:
+        defaultBranch:
+          type: string
+        owner:
+          type: string
+        projectKey:
+          type: string
+        repo:
+          type: string
+        repositoryUrl:
+          type: string
+          format: uri
+    RoadmapItem:
+      type: object
+      additionalProperties: true
+      properties:
+        stableKey:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        status:
+          $ref: "#/components/schemas/RoadmapStatus"
+        priority:
+          $ref: "#/components/schemas/RoadmapPriority"
+        sourceLinks:
+          type: array
+          items:
+            $ref: "#/components/schemas/SourceLink"
+    RoadmapItemInput:
+      type: object
+      required: [description, title]
+      properties:
+        description:
+          type: string
+        impact:
+          type: string
+        priority:
+          $ref: "#/components/schemas/RoadmapPriority"
+        stableKey:
+          type: string
+        status:
+          $ref: "#/components/schemas/RoadmapStatus"
+        target:
+          type: string
+        title:
+          type: string
+    AgentRun:
+      type: object
+      additionalProperties: true
+      properties:
+        recordId:
+          type: string
+        stableKey:
+          type: string
+        status:
+          $ref: "#/components/schemas/AgentRunStatus"
+        provider:
+          type: string
+        providerConfigured:
+          type: boolean
+        decisionCount:
+          type: number
+        reviewCount:
+          type: number
+        sourceEventCount:
+          type: number
+        error:
+          type: string
+        decisionIds:
+          type: array
+          items:
+            type: string
+        reviewItemIds:
+          type: array
+          items:
+            type: string
+        sourceLinks:
+          type: array
+          items:
+            $ref: "#/components/schemas/SourceLink"
+        startedAt:
+          type: number
+        completedAt:
+          type: number
+        createdAt:
+          type: number
+        updatedAt:
+          type: number
+    BuildBrief:
+      type: object
+      additionalProperties: true
+      properties:
+        recordId:
+          type: string
+        projectId:
+          type: string
+        stableKey:
+          type: string
+        title:
+          type: string
+        problem:
+          type: string
+        evidenceSummary:
+          type: string
+        recommendedScope:
+          type: string
+        acceptanceCriteria:
+          type: array
+          items:
+            type: string
+        suggestedFiles:
+          type: array
+          items:
+            type: string
+        sourceLinks:
+          type: array
+          items:
+            $ref: "#/components/schemas/SourceLink"
+        feedbackItemIds:
+          type: array
+          items:
+            type: string
+        roadmapItemIds:
+          type: array
+          items:
+            type: string
+        changelogEntryIds:
+          type: array
+          items:
+            type: string
+        sourceEventIds:
+          type: array
+          items:
+            type: string
+        status:
+          $ref: "#/components/schemas/BuildBriefStatus"
+        priority:
+          $ref: "#/components/schemas/RoadmapPriority"
+        createdBy:
+          type: string
+        createdAt:
+          type: number
+        updatedAt:
+          type: number
+        exportedAt:
+          type: number
+    ChangelogEntry:
+      type: object
+      additionalProperties: true
+      properties:
+        stableKey:
+          type: string
+        title:
+          type: string
+        summary:
+          type: string
+        body:
+          type: string
+        status:
+          $ref: "#/components/schemas/ChangelogStatus"
+        sourceLinks:
+          type: array
+          items:
+            $ref: "#/components/schemas/SourceLink"
+    ChangelogEntryInput:
+      type: object
+      required: [body, summary, title]
+      properties:
+        body:
+          type: string
+        category:
+          $ref: "#/components/schemas/ChangelogCategory"
+        publishedAt:
+          type: number
+        scheduledFor:
+          type: number
+        stableKey:
+          type: string
+        status:
+          $ref: "#/components/schemas/ChangelogStatus"
+        summary:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        title:
+          type: string
+        version:
+          type: string
+    ChangelogDraftInput:
+      type: object
+      required: [title]
+      properties:
+        body:
+          type: string
+        dryRun:
+          type: boolean
+        kind:
+          type: string
+        sourceLinks:
+          type: array
+          items:
+            $ref: "#/components/schemas/JsonValue"
+        title:
+          type: string
+    ChangelogDraft:
+      type: object
+      additionalProperties: true
+      properties:
+        body:
+          type: string
+        model:
+          type: string
+        provider:
+          type: string
+        summary:
+          type: string
+        title:
+          type: string
+    FeedbackInput:
+      type: object
+      required: [body, title]
+      properties:
+        authorEmail:
+          type: string
+          format: email
+        authorName:
+          type: string
+        body:
+          type: string
+        labels:
+          type: array
+          items:
+            type: string
+        sourceUrl:
+          type: string
+          format: uri
+        title:
+          type: string
+    Feedback:
+      type: object
+      additionalProperties: true
+      properties:
+        stableKey:
+          type: string
+        title:
+          type: string
+        body:
+          type: string
+        status:
+          type: string
+    FeedbackInteractionInput:
+      type: object
+      required: [kind]
+      properties:
+        body:
+          type: string
+        email:
+          type: string
+          format: email
+        externalUserId:
+          type: string
+        feedbackKey:
+          type: string
+        kind:
+          type: string
+          enum: [vote, comment, reaction]
+        reaction:
+          type: string
+        requestKey:
+          type: string
+        updateKey:
+          type: string
+        userId:
+          type: string
+    IdentityInput:
+      type: object
+      required: [externalUserId]
+      properties:
+        accountId:
+          type: string
+        email:
+          type: string
+          format: email
+        externalUserId:
+          type: string
+        name:
+          type: string
+        traits:
+          $ref: "#/components/schemas/JsonObject"
+    EventName:
+      type: string
+      enum:
+        - identify
+        - account_identify
+        - feedback_submitted
+        - vote_added
+        - comment_added
+        - reaction_added
+        - roadmap_viewed
+        - changelog_viewed
+        - update_seen
+        - shipped_feature_used
+    EventInput:
+      type: object
+      required: [event]
+      properties:
+        accountId:
+          type: string
+        event:
+          $ref: "#/components/schemas/EventName"
+        externalUserId:
+          type: string
+        metadata:
+          $ref: "#/components/schemas/JsonObject"
+        updateKey:
+          type: string
+        userId:
+          type: string
+    NotificationPreferenceInput:
+      type: object
+      required: [mode]
+      properties:
+        accountId:
+          type: string
+        digestDay:
+          type: string
+        digestHour:
+          type: number
+        email:
+          type: string
+          format: email
+        externalUserId:
+          type: string
+        mode:
+          type: string
+          enum: [digest, instant, muted]
+        unsubscribed:
+          type: boolean
+        userId:
+          type: string
+    AutomationRulesInput:
+      type: object
+      additionalProperties: false
+      properties:
+        autoDraftChangelog:
+          type: boolean
+        autoNotifyUsers:
+          type: boolean
+        autoPublishChangelog:
+          type: boolean
+        autoUpdateFeedbackStatus:
+          type: boolean
+        autoUpdateRoadmapStatus:
+          type: boolean
+        byokConfigured:
+          type: boolean
+        byokProvider:
+          type: string
+        mode:
+          type: string
+          enum: [manual, mostly_auto, review_first]
+        requireReviewBelowConfidence:
+          type: number
+        requireReviewForHighImpact:
+          type: boolean
+        requireReviewForPublicCopy:
+          type: boolean
+    WorkspaceMemberInput:
+      type: object
+      required: [email, role]
+      properties:
+        email:
+          type: string
+          format: email
+        externalUserId:
+          type: string
+        name:
+          type: string
+        permissions:
+          type: array
+          items:
+            type: string
+        role:
+          type: string
+          enum: [owner, admin, reviewer, member, viewer]
+        userId:
+          type: string
+    IntegrationInput:
+      type: object
+      required: [direction, provider, state]
+      properties:
+        config:
+          $ref: "#/components/schemas/JsonObject"
+        direction:
+          type: string
+          enum: [bidirectional, inbound, outbound]
+        displayName:
+          type: string
+        provider:
+          type: string
+          enum: [databuddy, discord, github, linear, posthog, slack, support, x]
+        state:
+          type: string
+          enum: [attention, connected, disabled, planned]
+    PortalSettingsInput:
+      type: object
+      properties:
+        accentColor:
+          type: string
+        changelogVisibility:
+          type: string
+          enum: [private, public]
+        feedbackMode:
+          type: string
+          enum: [authenticated, closed, open]
+        headline:
+          type: string
+        intro:
+          type: string
+        roadmapVisibility:
+          type: string
+          enum: [private, public]
+    PlanCatalog:
+      type: object
+      additionalProperties: true
+    PlanUpdateInput:
+      type: object
+      required: [tier]
+      properties:
+        seats:
+          type: number
+        tier:
+          $ref: "#/components/schemas/PlanTier"
+    CheckoutInput:
+      type: object
+      required: [tier]
+      properties:
+        cancelUrl:
+          type: string
+          format: uri
+        customerEmail:
+          type: string
+          format: email
+        dryRun:
+          type: boolean
+        seats:
+          type: number
+        successUrl:
+          type: string
+          format: uri
+        tier:
+          type: string
+          enum: [starter, pro, team, scale]
+    CheckoutSession:
+      type: object
+      additionalProperties: true
+      properties:
+        checkoutUrl:
+          type: string
+          format: uri
+        provider:
+          type: string
+    DeliveryPlanInput:
+      type: object
+      properties:
+        channel:
+          $ref: "#/components/schemas/DeliveryChannel"
+        notificationKey:
+          type: string
+        provider:
+          type: string
+    DeliverySendInput:
+      type: object
+      properties:
+        action:
+          type: string
+          enum: [send]
+        channel:
+          $ref: "#/components/schemas/DeliveryChannel"
+        dryRun:
+          type: boolean
+        limit:
+          type: number
+    DeliverySendResult:
+      type: object
+      additionalProperties: true
+      properties:
+        dryRun:
+          type: boolean
+        results:
+          type: array
+          items:
+            $ref: "#/components/schemas/JsonObject"
+        sent:
+          type: number
+    Delivery:
+      type: object
+      additionalProperties: true
+      properties:
+        stableKey:
+          type: string
+        channel:
+          $ref: "#/components/schemas/DeliveryChannel"
+        recipient:
+          type: string
+        status:
+          type: string
+    DomainRegistrationInput:
+      type: object
+      required: [domain]
+      properties:
+        domain:
+          type: string
+        purpose:
+          $ref: "#/components/schemas/DomainPurpose"
+    DomainVerificationInput:
+      type: object
+      required: [action, domain]
+      properties:
+        action:
+          type: string
+          enum: [verify]
+        domain:
+          type: string
+    DomainResolution:
+      type: object
+      additionalProperties: true
+      properties:
+        domain:
+          type: string
+        purpose:
+          $ref: "#/components/schemas/DomainPurpose"
+        resolved:
+          type: boolean
+        workspace:
+          $ref: "#/components/schemas/Workspace"
+    GitHubAppInfo:
+      type: object
+      required: [configured, missing, workspaceSlug]
+      properties:
+        appId:
+          type: string
+        clientId:
+          type: string
+        configured:
+          type: boolean
+        installUrl:
+          type: string
+          format: uri
+        missing:
+          type: array
+          items:
+            type: string
+        workspaceSlug:
+          type: string
+    GitHubWebhookPayload:
+      type: object
+      additionalProperties: true
+      properties:
+        action:
+          type: string
+        event:
+          type: string
+        repository:
+          $ref: "#/components/schemas/JsonObject"
+        sender:
+          $ref: "#/components/schemas/JsonObject"
+    SourceLink:
+      type: object
+      additionalProperties: true
+      properties:
+        provider:
+          $ref: "#/components/schemas/SourceProvider"
+        kind:
+          $ref: "#/components/schemas/SourceKind"
+        externalId:
+          type: string
+        title:
+          type: string
+        url:
+          type: string
+          format: uri
+    SourceEvent:
+      type: object
+      additionalProperties: true
+      properties:
+        recordId:
+          type: string
+        externalId:
+          type: string
+        kind:
+          $ref: "#/components/schemas/SourceKind"
+        provider:
+          $ref: "#/components/schemas/SourceProvider"
+        state:
+          $ref: "#/components/schemas/SourceState"
+        title:
+          type: string
+        url:
+          type: string
+          format: uri
+        labels:
+          type: array
+          items:
+            type: string
+        observedAt:
+          type: number
+    SourceEventInput:
+      type: object
+      required: [externalId, kind, title]
+      properties:
+        author:
+          type: string
+        externalId:
+          type: string
+          description: Stable idempotency key from the source system.
+        kind:
+          $ref: "#/components/schemas/SourceKind"
+        labels:
+          type: array
+          items:
+            type: string
+        milestone:
+          type: string
+        number:
+          type: number
+        observedAt:
+          oneOf:
+            - type: number
+            - type: string
+              format: date-time
+        owner:
+          type: string
+        projectSlug:
+          type: string
+        provider:
+          $ref: "#/components/schemas/SourceProvider"
+        repo:
+          type: string
+        sourceCreatedAt:
+          oneOf:
+            - type: number
+            - type: string
+              format: date-time
+        sourceUpdatedAt:
+          oneOf:
+            - type: number
+            - type: string
+              format: date-time
+        state:
+          $ref: "#/components/schemas/SourceState"
+        title:
+          type: string
+        url:
+          type: string
+          format: uri
+    SourceEventImportResult:
+      type: object
+      additionalProperties: true
+      properties:
+        changelogEntryId:
+          type: string
+        notificationId:
+          type: string
+        reviewItemId:
+          type: string
+        sourceEventId:
+          type: string
+        status:
+          type: string
+          enum: [created, updated]
+    AutomationDecision:
+      type: object
+      additionalProperties: true
+      properties:
+        action:
+          type: string
+        confidence:
+          type: number
+        rationale:
+          type: string
+        sourceEventExternalIds:
+          type: array
+          items:
+            type: string
+        targetKey:
+          type: string
+    Notification:
+      type: object
+      additionalProperties: true
+      properties:
+        stableKey:
+          type: string
+        title:
+          type: string
+        body:
+          type: string
+    ExternalUser:
+      type: object
+      additionalProperties: true
+      properties:
+        externalUserId:
+          type: string
+        email:
+          type: string
+          format: email
