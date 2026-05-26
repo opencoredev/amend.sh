@@ -118,6 +118,14 @@ export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp?: ()
                 toast.success("Preview account ready");
                 return;
               }
+
+              const message = signUpResult.message ?? "This preview is private.";
+              setFormError(message);
+              toast.error({
+                title: "Preview account was not created",
+                description: message,
+              });
+              return;
             }
 
             const message = authErrorMessage(

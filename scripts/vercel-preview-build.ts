@@ -7,8 +7,10 @@ if (!convexUrl) {
   throw new Error("VITE_CONVEX_URL must be set by convex deploy --cmd-url-env-var-name.");
 }
 
+const convexSiteUrl = convexUrl.replace(".convex.cloud", ".convex.site");
+
 process.env.NITRO_PRESET ??= "vercel";
-process.env.VITE_CONVEX_SITE_URL ??= convexUrl.replace(".convex.cloud", ".convex.site");
+process.env.VITE_CONVEX_SITE_URL ??= convexSiteUrl;
 process.env.VITE_DOCS_URL ??= "https://amend.sh/docs";
 process.env.VITE_AMEND_PREVIEW_AUTH = isPreview ? "true" : "false";
 
@@ -27,6 +29,7 @@ if (isPreview && vercelUrl) {
 await run("bun", ["run", "--cwd", "packages/sdk", "build"]);
 await run("bun", ["run", "--cwd", "apps/web", "build"]);
 await prepareVercelOutput();
+await writePreviewMetadata();
 
 async function prepareVercelOutput() {
   await run("sh", [
@@ -42,6 +45,17 @@ async function prepareVercelOutput() {
       "cp -RL node_modules/.bun/scheduler@*/node_modules/scheduler .vercel/output/functions/__server.func/node_modules/scheduler",
     ].join(" && "),
   ]);
+}
+
+async function writePreviewMetadata() {
+  if (!isPreview) {
+    return;
+  }
+
+  await Bun.write(
+    ".vercel/convex-preview.json",
+    `${JSON.stringify({ convexSiteUrl, convexUrl }, null, 2)}\n`,
+  );
 }
 
 async function run(command: string, args: string[]) {
