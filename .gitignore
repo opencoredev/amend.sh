@@ -17,7 +17,9 @@ out
 *.tsbuildinfo
 
 # Environment variables
-.env
+.env*
+!.env.example
+!.env.*.example
 .env*.local
 
 # IDEs and editors
@@ -44,6 +46,7 @@ lerna-debug.log*
 # Turbo
 .turbo
 .nx
+.nitro
 
 # Better-T-Stack
 .alchemy
@@ -65,6 +68,7 @@ agent-ready-completion-audit-report.json
 # Misc
 *.tgz
 .cache
+.parcel-cache
 tmp
 temp
 .vercel
