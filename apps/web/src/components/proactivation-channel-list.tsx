@@ -32,7 +32,7 @@ export function ProactivationChannelList({
           </span>
         )}
       </div>
-      <div className="grid gap-px border border-border bg-border lg:grid-cols-2">
+      <div className="grid gap-3 lg:grid-cols-2">
         {channels.length > 0 ? (
           channels.map((channel) => (
             <ChannelCard
@@ -44,7 +44,7 @@ export function ProactivationChannelList({
             />
           ))
         ) : (
-          <div className="col-span-2 bg-card">
+          <div className="col-span-2 rounded-lg border border-border/80 bg-card">
             <EmptyModule
               action="Create project"
               copy="Create a project and connect the first channel before the agent can observe signals."
@@ -75,7 +75,7 @@ function ChannelCard({
   const isAttention = channel.state === "attention";
 
   return (
-    <div className="flex flex-col gap-3 bg-card p-4">
+    <div className="flex flex-col gap-3 rounded-lg border border-border/80 bg-card p-4 shadow-sm shadow-black/10 transition-colors duration-150 ease-linear hover:border-foreground/20">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex items-center gap-2">
@@ -86,7 +86,7 @@ function ChannelCard({
             {channel.detail}
           </p>
         </div>
-        <span className="shrink-0 border border-border px-1.5 py-0.5 text-[0.6rem] font-semibold uppercase tracking-wide text-muted-foreground">
+        <span className="shrink-0 rounded-md border border-border/70 bg-background/60 px-1.5 py-0.5 text-[0.6rem] font-semibold uppercase tracking-wide text-muted-foreground">
           {channel.kind}
         </span>
       </div>
@@ -98,10 +98,10 @@ function ChannelCard({
       </div>
 
       {isConfigurableProvider(channel.provider) ? (
-        <div className="flex gap-1.5 border-t border-border pt-3">
+        <div className="flex gap-1.5 border-t border-border/70 pt-3">
           <button
             type="button"
-            className="h-7 border border-border px-2.5 text-xs font-semibold text-muted-foreground transition-colors duration-150 ease-linear hover:border-foreground/50 hover:text-foreground active:opacity-75 disabled:opacity-40"
+            className="h-7 rounded-md border border-border/80 bg-background/50 px-2.5 text-xs font-semibold text-muted-foreground transition-colors duration-150 ease-linear hover:border-foreground/40 hover:text-foreground active:opacity-75 disabled:opacity-40"
             disabled={disabled}
             onClick={() =>
               onChannelStateChange(
@@ -114,7 +114,7 @@ function ChannelCard({
           </button>
           <button
             type="button"
-            className="h-7 border border-border px-2.5 text-xs font-semibold text-muted-foreground transition-colors duration-150 ease-linear hover:border-foreground/50 hover:text-foreground active:opacity-75 disabled:opacity-40"
+            className="h-7 rounded-md border border-border/80 bg-background/50 px-2.5 text-xs font-semibold text-muted-foreground transition-colors duration-150 ease-linear hover:border-foreground/40 hover:text-foreground active:opacity-75 disabled:opacity-40"
             disabled={disabled}
             onClick={() => onChannelStateChange(channel, "disabled")}
           >
@@ -141,7 +141,7 @@ function StatusPill({ label, mono }: { label: string; mono?: boolean }) {
   return (
     <span
       className={cn(
-        "border border-border bg-background px-2 py-0.5 text-[0.65rem] text-muted-foreground",
+        "rounded-md border border-border/70 bg-background/60 px-2 py-0.5 text-[0.65rem] text-muted-foreground",
         mono && "font-mono tabular-nums",
       )}
     >

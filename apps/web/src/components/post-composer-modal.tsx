@@ -41,7 +41,7 @@ export function ComposerModal({
         role="dialog"
         aria-modal="true"
         aria-label="Create post"
-        className="relative grid h-[min(68vh,30rem)] w-full max-w-[56rem] grid-rows-[auto_minmax(0,1fr)_auto] overflow-visible border border-border bg-card text-card-foreground shadow-[0_22px_90px_rgb(0_0_0/0.55)] animate-in fade-in-0 zoom-in-95 slide-in-from-bottom-4 duration-300"
+        className="t-modal is-open relative grid h-[min(68vh,30rem)] w-full max-w-[56rem] grid-rows-[auto_minmax(0,1fr)_auto] overflow-visible rounded-xl border border-border bg-card text-card-foreground shadow-[0_22px_90px_rgb(0_0_0/0.55)]"
         onPointerDown={(event) => event.stopPropagation()}
         onPointerDownCapture={(event) => {
           if (composer.panel && !composer.panelRef.current?.contains(event.target as Node)) {

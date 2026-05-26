@@ -4,6 +4,7 @@ import { useState } from "react";
 import { statusMeta } from "@/components/amend-dashboard-status";
 import type { DashboardRoadmap, RoadmapStatus } from "@/components/amend-dashboard-types";
 import { roadmapStatusToRoadmapStatus } from "@/components/amend-dashboard-utils";
+import { DashboardWorkspaceSurface } from "@/components/dashboard-workspace-surface";
 import { RoadmapColumn } from "@/components/roadmap-column";
 
 export function RoadmapWorkspace({
@@ -29,14 +30,11 @@ export function RoadmapWorkspace({
       : ([activeStatus] as RoadmapStatus[]);
 
   return (
-    <div
-      className="t-panel-slide min-h-[calc(100svh-5.5rem)] bg-card/40 p-3 md:p-5"
-      data-open="true"
-    >
+    <DashboardWorkspaceSurface className="h-[calc(100svh-6.5rem)]" contentClassName="flex min-h-0 overflow-hidden">
       <div
         className={cn(
-          "grid min-h-[calc(100svh-8rem)] gap-3",
-          activeStatus === "all" ? "md:grid-cols-2 xl:grid-cols-4" : "grid-cols-1",
+          "flex min-h-0 flex-1 gap-3 p-3",
+          activeStatus !== "all" && "flex-col",
         )}
       >
         {visibleStatuses.map((columnStatus) => {
@@ -45,35 +43,42 @@ export function RoadmapWorkspace({
           );
           const isDropTarget = dropStatus === columnStatus;
           return (
-            <RoadmapColumn
+            <div
               key={columnStatus}
-              cards={cards}
-              columnStatus={columnStatus}
-              draggingKey={draggingKey}
-              isDropTarget={isDropTarget}
-              onAdd={onAdd}
-              onDragEnd={() => {
-                setDraggingKey("");
-                setDropStatus(null);
-              }}
-              onDragStart={(itemKey, event) => {
-                setDraggingKey(itemKey);
-                event.dataTransfer.effectAllowed = "move";
-                event.dataTransfer.setData("text/plain", itemKey);
-              }}
-              onDropItem={(stableKey, status) => {
-                setDraggingKey("");
-                const item = entries.find((entry) => entry.stableKey === stableKey);
-                if (!item || roadmapStatusToRoadmapStatus(item.status) === status) return;
-                onMove(item, status);
-              }}
-              onDropStatusChange={setDropStatus}
-              onOpenItem={onOpenItem}
-              onVote={onVote}
-            />
+              className={cn(
+                "min-w-0 flex-1",
+                activeStatus === "all" && "min-w-[160px]",
+              )}
+            >
+              <RoadmapColumn
+                cards={cards}
+                columnStatus={columnStatus}
+                draggingKey={draggingKey}
+                isDropTarget={isDropTarget}
+                onAdd={onAdd}
+                onDragEnd={() => {
+                  setDraggingKey("");
+                  setDropStatus(null);
+                }}
+                onDragStart={(itemKey, event) => {
+                  setDraggingKey(itemKey);
+                  event.dataTransfer.effectAllowed = "move";
+                  event.dataTransfer.setData("text/plain", itemKey);
+                }}
+                onDropItem={(stableKey, status) => {
+                  setDraggingKey("");
+                  const item = entries.find((entry) => entry.stableKey === stableKey);
+                  if (!item || roadmapStatusToRoadmapStatus(item.status) === status) return;
+                  onMove(item, status);
+                }}
+                onDropStatusChange={setDropStatus}
+                onOpenItem={onOpenItem}
+                onVote={onVote}
+              />
+            </div>
           );
         })}
       </div>
-    </div>
+    </DashboardWorkspaceSurface>
   );
 }

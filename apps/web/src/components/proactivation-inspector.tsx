@@ -51,7 +51,7 @@ export function ProactivationInspector({
   sources: DashboardSourceEvent[];
 }) {
   return (
-    <div className="grid gap-px bg-border">
+    <div className="grid gap-3 bg-background p-3">
       <AutomationControlsPanel
         canRun={canRun}
         rules={rules}

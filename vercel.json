@@ -1,4 +1,7 @@
 {
+  "git": {
+    "deploymentEnabled": false
+  },
   "installCommand": "bun install --frozen-lockfile",
   "buildCommand": "bun scripts/vercel-preview-build.ts"
 }

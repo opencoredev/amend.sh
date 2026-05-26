@@ -34,11 +34,11 @@ export function BoardRow({
     <a
       href={href}
       className={cn(
-        "flex items-center gap-2 rounded-md px-2 py-2 text-sm transition-[background-color,color] hover:bg-muted/70 hover:text-foreground",
-        active ? "bg-muted font-medium" : "text-muted-foreground",
+        "flex items-center gap-2 rounded-md px-2 py-2 text-sm transition-colors duration-150 ease-linear hover:bg-muted/70 hover:text-foreground",
+        active ? "bg-primary/10 font-medium text-foreground" : "text-muted-foreground",
       )}
     >
-      <span className="size-2 rounded-full bg-muted-foreground" />
+      <span className={cn("size-2 rounded-full", active ? "bg-primary" : "bg-muted-foreground")} />
       <span className="min-w-0 flex-1 truncate">{label}</span>
       <span className="rounded-full border bg-background px-2 text-xs">{count}</span>
     </a>

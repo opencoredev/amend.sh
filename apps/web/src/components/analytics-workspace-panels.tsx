@@ -21,21 +21,25 @@ export function TopEventsPanel({ analytics }: { analytics?: AnalyticsOverview })
   const max = Math.max(...events.map((event) => event.count), 1);
 
   return (
-    <section className="grid gap-3 border border-border bg-background p-4">
+    <section className="rounded-2xl bg-[#151518] p-4 shadow-[inset_0_1px_0_rgb(255_255_255/0.035)] ring-1 ring-white/[0.05]">
       <SectionHeader eyebrow="PostHog stream" icon={<RadioTower />} title="Top events" />
       {events.length ? (
-        <div className="grid gap-2">
+        <div className="mt-3 grid gap-1.5">
           {events.slice(0, 8).map((event) => (
-            <div className="grid gap-2 border border-border p-3" key={event.event}>
-              <div className="flex items-center justify-between gap-3 text-xs">
-                <span className="truncate font-semibold">{formatState(event.event)}</span>
-                <span className="font-mono tabular-nums text-muted-foreground">{event.count}</span>
-              </div>
-              <div className="h-1 bg-muted">
-                <div
-                  className="h-full bg-foreground"
-                  style={{ width: `${Math.max(6, Math.round((event.count / max) * 100))}%` }}
-                />
+            <div className="flex items-center gap-3 rounded-xl bg-background/65 px-3 py-2.5 ring-1 ring-white/[0.035]" key={event.event}>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center justify-between gap-3 text-xs">
+                  <span className="truncate font-medium">{formatState(event.event)}</span>
+                  <span className="shrink-0 font-mono tabular-nums text-muted-foreground">
+                    {event.count}
+                  </span>
+                </div>
+                <div className="mt-1.5 h-px bg-foreground/[0.08]">
+                  <div
+                    className="h-full bg-foreground/60"
+                    style={{ width: `${Math.max(6, Math.round((event.count / max) * 100))}%` }}
+                  />
+                </div>
               </div>
             </div>
           ))}
@@ -43,7 +47,7 @@ export function TopEventsPanel({ analytics }: { analytics?: AnalyticsOverview })
       ) : (
         <EmptyPanel
           icon={<RadioTower />}
-          text="Events will populate here after SDK, portal, REST, or agent activity is captured."
+          text="Events will populate after SDK, portal, REST, or agent activity is captured."
         />
       )}
     </section>
@@ -54,26 +58,24 @@ export function EventLedgerPanel({ analytics }: { analytics?: AnalyticsOverview 
   const events = analytics?.recentEvents ?? [];
 
   return (
-    <section className="grid gap-3 border border-border bg-background p-4">
+    <section className="rounded-2xl bg-[#151518] p-4 shadow-[inset_0_1px_0_rgb(255_255_255/0.035)] ring-1 ring-white/[0.05]">
       <SectionHeader eyebrow="Ledger" icon={<Activity />} title="Recent analytics events" />
       {events.length ? (
-        <div className="grid gap-2">
+        <div className="mt-3 grid gap-1.5">
           {events.slice(0, 10).map((event) => (
             <div
-              className="grid gap-1 border border-border px-3 py-2 text-xs"
+              className="grid gap-0.5 rounded-xl bg-background/65 px-3 py-2.5 text-xs ring-1 ring-white/[0.035]"
               key={`${event.event}-${event.createdAt}-${event.source}`}
             >
               <div className="flex items-center justify-between gap-3">
-                <span className="truncate font-semibold">{formatState(event.event)}</span>
-                <span className="shrink-0 text-muted-foreground">
-                  {formatDate(event.createdAt)}
-                </span>
+                <span className="truncate font-medium">{formatState(event.event)}</span>
+                <span className="shrink-0 text-muted-foreground">{formatDate(event.createdAt)}</span>
               </div>
-              <div className="flex min-w-0 flex-wrap gap-x-3 gap-y-1 text-muted-foreground">
+              <div className="flex min-w-0 gap-3 text-muted-foreground/70">
                 <span className="truncate">
                   {event.externalUserId ?? event.accountId ?? "anonymous"}
                 </span>
-                <span className="truncate">{event.updateKey ?? event.source}</span>
+                <span className="shrink-0 truncate">{event.updateKey ?? event.source}</span>
               </div>
             </div>
           ))}
@@ -93,25 +95,27 @@ export function CategoryPanel({ analytics }: { analytics?: AnalyticsOverview }) 
   const max = Math.max(...categories.map((category) => category.count), 1);
 
   return (
-    <section className="grid gap-3 border border-border bg-background p-4">
+    <section className="rounded-2xl bg-[#151518] p-4 shadow-[inset_0_1px_0_rgb(255_255_255/0.035)] ring-1 ring-white/[0.05]">
       <SectionHeader eyebrow="Contract" icon={<DatabaseZap />} title="Event categories" />
       {categories.length ? (
-        <div className="grid gap-2">
+        <div className="mt-3 grid gap-1.5">
           {categories.map((category) => (
-            <div className="grid gap-2 border border-border p-3" key={category.category}>
-              <div className="flex items-center justify-between gap-3 text-xs">
-                <span className="truncate font-semibold">{formatState(category.category)}</span>
-                <span className="font-mono tabular-nums text-muted-foreground">
-                  {category.count}
-                </span>
-              </div>
-              <div className="h-1 bg-muted">
-                <div
-                  className="h-full bg-foreground"
-                  style={{
-                    width: `${Math.max(6, Math.round((category.count / max) * 100))}%`,
-                  }}
-                />
+            <div className="flex items-center gap-3 rounded-xl bg-background/65 px-3 py-2.5 ring-1 ring-white/[0.035]" key={category.category}>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center justify-between gap-3 text-xs">
+                  <span className="truncate font-medium">{formatState(category.category)}</span>
+                  <span className="shrink-0 font-mono tabular-nums text-muted-foreground">
+                    {category.count}
+                  </span>
+                </div>
+                <div className="mt-1.5 h-px bg-foreground/[0.08]">
+                  <div
+                    className="h-full bg-foreground/60"
+                    style={{
+                      width: `${Math.max(6, Math.round((category.count / max) * 100))}%`,
+                    }}
+                  />
+                </div>
               </div>
             </div>
           ))}
@@ -134,29 +138,28 @@ export function SourceHealthPanel({
   sourceEvents: DashboardOverview["sourceEvents"];
 }) {
   return (
-    <section className="grid gap-3 border border-border bg-background p-4">
+    <section className="rounded-2xl bg-[#151518] p-4 shadow-[inset_0_1px_0_rgb(255_255_255/0.035)] ring-1 ring-white/[0.05]">
       <SectionHeader eyebrow="Sources" icon={<GitBranch />} title="Channel health" />
       {channels.length ? (
-        <div className="grid gap-2">
+        <div className="mt-3 grid gap-1.5">
           {channels.slice(0, 6).map((channel) => (
-            <div className="grid gap-2 border border-border p-3 text-xs" key={channel.id}>
+            <div className="grid gap-1 rounded-xl bg-background/65 px-3 py-2.5 text-xs ring-1 ring-white/[0.035]" key={channel.id}>
               <div className="flex items-center justify-between gap-3">
-                <span className="truncate font-semibold">{channel.label}</span>
+                <span className="truncate font-medium">{channel.label}</span>
                 <span
                   className={cn(
-                    "border px-1.5 py-0.5 font-mono text-[0.65rem] uppercase tracking-[0.08em]",
+                    "shrink-0 rounded-md px-1.5 py-0.5 font-mono text-[0.6rem] uppercase tracking-[0.08em] ring-1",
                     channel.state === "connected"
-                      ? "border-foreground text-foreground"
-                      : "border-border text-muted-foreground",
+                      ? "text-foreground ring-white/[0.14]"
+                      : "text-muted-foreground ring-white/[0.04]",
                   )}
                 >
                   {channel.state}
                 </span>
               </div>
-              <p className="line-clamp-2 text-muted-foreground">{channel.detail}</p>
-              <span className="font-mono text-muted-foreground">
+              <span className="font-mono text-muted-foreground/70">
                 {channel.signalCount} signals
-                {channel.lastEventAt ? ` / ${formatDate(channel.lastEventAt)}` : ""}
+                {channel.lastEventAt ? ` · ${formatDate(channel.lastEventAt)}` : ""}
               </span>
             </div>
           ))}
@@ -167,9 +170,9 @@ export function SourceHealthPanel({
           text="Connect feedback, GitHub, or SDK sources to start measuring source health."
         />
       )}
-      <div className="border-t border-border pt-3 text-xs text-muted-foreground">
-        {sourceEvents.length} normalized source events available for product decisions.
-      </div>
+      <p className="mt-3 text-xs text-muted-foreground/60">
+        {sourceEvents.length} normalized source events available.
+      </p>
     </section>
   );
 }
@@ -199,18 +202,16 @@ export function AgentOutputPanel({
   ] as const;
 
   return (
-    <section className="grid gap-3 border border-border bg-background p-4">
+    <section className="rounded-2xl bg-[#151518] p-4 shadow-[inset_0_1px_0_rgb(255_255_255/0.035)] ring-1 ring-white/[0.05]">
       <SectionHeader eyebrow="Automation" icon={<Sparkles />} title="Agent output" />
-      <div className="grid grid-cols-2 gap-2">
+      <div className="mt-3 grid grid-cols-3 gap-1.5">
         {rows.map(([label, value, icon]) => (
-          <div className="grid gap-2 border border-border p-3" key={label}>
-            <div className="flex items-center justify-between gap-2 text-muted-foreground [&_svg]:size-3.5">
-              <span className="text-[0.65rem] font-semibold uppercase tracking-[0.12em]">
-                {label}
-              </span>
+          <div className="grid gap-1.5 rounded-xl bg-background/65 p-3 ring-1 ring-white/[0.035]" key={label}>
+            <div className="flex items-center justify-between gap-1 text-muted-foreground [&_svg]:size-3">
+              <span className="text-[0.6rem] font-semibold uppercase tracking-[0.1em]">{label}</span>
               {icon}
             </div>
-            <span className="font-mono text-xl font-semibold tabular-nums">{value}</span>
+            <span className="font-mono text-lg font-semibold tabular-nums">{value}</span>
           </div>
         ))}
       </div>
@@ -230,12 +231,12 @@ export function SectionHeader({
   return (
     <div className="flex items-center justify-between gap-3">
       <div>
-        <p className="text-[0.65rem] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+        <p className="text-[0.6rem] font-semibold uppercase tracking-[0.14em] text-muted-foreground/70">
           {eyebrow}
         </p>
-        <h2 className="mt-1 text-sm font-semibold">{title}</h2>
+        <h2 className="mt-0.5 text-xs font-semibold">{title}</h2>
       </div>
-      <span className="grid size-8 place-items-center border border-border text-muted-foreground [&_svg]:size-4">
+      <span className="grid size-8 place-items-center rounded-lg bg-background/70 text-muted-foreground ring-1 ring-white/[0.045] [&_svg]:size-3.5">
         {icon}
       </span>
     </div>
@@ -244,12 +245,12 @@ export function SectionHeader({
 
 function EmptyPanel({ icon, text }: { icon: ReactElement; text: string }) {
   return (
-    <div className="grid min-h-32 place-items-center border border-dashed border-border p-5 text-center">
-      <div className="grid justify-items-center gap-3">
-        <span className="grid size-9 place-items-center border border-border text-muted-foreground [&_svg]:size-4">
+    <div className="mt-3 grid min-h-24 place-items-center p-4 text-center">
+      <div className="grid justify-items-center gap-2">
+        <span className="grid size-8 place-items-center rounded-lg bg-background/70 text-muted-foreground ring-1 ring-white/[0.045] [&_svg]:size-3.5">
           {icon}
         </span>
-        <p className="max-w-sm text-sm leading-6 text-muted-foreground">{text}</p>
+        <p className="max-w-xs text-xs leading-5 text-muted-foreground">{text}</p>
       </div>
     </div>
   );

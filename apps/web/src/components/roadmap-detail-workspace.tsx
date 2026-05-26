@@ -32,7 +32,7 @@ export function RoadmapDetailWorkspace({
       <div className="border-b border-border bg-background/70 px-4 py-4 backdrop-blur md:px-6">
         <button
           type="button"
-          className="inline-flex min-h-10 items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground transition-[color,scale] duration-200 hover:text-foreground active:scale-[0.96]"
+          className="inline-flex min-h-10 items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground transition-colors duration-150 ease-linear hover:text-foreground active:opacity-75"
           onClick={onBack}
         >
           <ChevronDown className="size-3 rotate-90" />
@@ -41,7 +41,7 @@ export function RoadmapDetailWorkspace({
         <div className="mt-4 flex flex-wrap items-start justify-between gap-4">
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-              <span className="rounded-full border border-border bg-muted/25 px-3 py-1 font-semibold">
+              <span className="border border-border bg-muted/25 px-2.5 py-0.5 font-semibold">
                 {statusTitle(roadmapStatusToRoadmapStatus(item.status))}
               </span>
               <span>{priorityLabel(item.priority)}</span>
@@ -53,7 +53,7 @@ export function RoadmapDetailWorkspace({
           </div>
           <button
             type="button"
-            className="flex min-h-10 items-center gap-2 border border-border bg-background px-3 text-sm text-muted-foreground transition-[border-color,color,scale] hover:border-foreground hover:text-foreground active:scale-[0.96]"
+            className="flex min-h-10 items-center gap-2 border border-border bg-background px-3 text-sm text-muted-foreground transition-colors duration-150 ease-linear hover:border-foreground hover:text-foreground active:opacity-75"
             disabled={voting}
             onClick={() => {
               setVoting(true);
@@ -106,7 +106,7 @@ export function RoadmapDetailWorkspace({
             <h2 className="text-sm font-semibold">Linked feedback</h2>
             {feedbackKey ? (
               <Button
-                className="h-10 border border-foreground bg-foreground px-3 text-xs font-semibold text-background transition-[background-color,color,scale] hover:bg-background hover:text-foreground active:scale-[0.96]"
+                className="h-10 border border-foreground bg-foreground px-3 text-xs font-semibold text-background transition-colors duration-150 ease-linear hover:bg-background hover:text-foreground active:opacity-75"
                 type="button"
                 onClick={() => onOpenFeedback(feedbackKey)}
               >

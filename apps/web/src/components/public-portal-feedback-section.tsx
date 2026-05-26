@@ -23,7 +23,7 @@ export function PortalFeedbackSection({
       <section className="rounded-lg border bg-card">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b px-4 py-3">
           <div className="flex items-center gap-2">
-            <span className="size-2 rounded-full bg-muted-foreground" />
+            <span className="size-2 rounded-full bg-primary" />
             <h2 className="text-lg font-semibold">All feedback</h2>
           </div>
           <div className="flex items-center gap-2">
@@ -51,17 +51,19 @@ export function PortalFeedbackSection({
                     <h3 className="text-base font-semibold">{item.title}</h3>
                     <p className="mt-2 text-sm leading-6 text-muted-foreground">{item.body}</p>
                   </div>
-                  <span className="rounded-full border bg-muted px-2.5 py-1 text-xs text-muted-foreground">
+                  <span className="rounded-full border border-primary/25 bg-primary/10 px-2.5 py-1 text-xs text-foreground">
                     {item.status}
                   </span>
                 </div>
                 <div className="mt-4 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
-                  <span className="grid size-8 place-items-center rounded-full bg-muted font-medium text-foreground">
+                  <span className="grid size-8 place-items-center rounded-full bg-primary font-medium text-primary-foreground">
                     {item.authorName.slice(0, 2).toUpperCase()}
                   </span>
                   <span>{item.authorName}</span>
                   <span>{item.sourceLinks.length} sources</span>
-                  <span className="ml-auto rounded-md border px-2 py-1">{item.votes} votes</span>
+                  <span className="ml-auto rounded-md border border-primary/25 bg-primary/10 px-2 py-1 text-foreground">
+                    {item.votes} votes
+                  </span>
                 </div>
               </article>
             ))}

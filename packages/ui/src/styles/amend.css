@@ -52,10 +52,9 @@
   display: block;
   margin-bottom: 0.45rem;
   color: var(--muted-foreground);
-  font-size: 0.65rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
 }
 
 .amend-code-block code {

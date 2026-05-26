@@ -12,12 +12,12 @@ export function PricingSection() {
           <div>
             <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Pricing</p>
             <h2 className="amend-display mt-5 text-4xl font-medium leading-tight sm:text-5xl">
-              Start free. Scale when the loop is working.
+              Friendly pricing. No credit meter.
             </h2>
           </div>
           <p className="max-w-sm text-sm leading-6 text-muted-foreground">
-            Self-hosted or cloud. Add the agent, team controls, and higher limits as the workflow
-            grows.
+            The core loop is included on every hosted plan. Higher plans raise projects, seats,
+            signal volume, history, and processing priority.
           </p>
         </div>
 
@@ -25,7 +25,7 @@ export function PricingSection() {
           {plans.map((plan) => (
             <article key={plan.name} className="relative flex min-h-72 flex-col bg-background p-6">
               {"featured" in plan && plan.featured ? (
-                <span className="absolute right-4 top-4 border border-foreground bg-foreground px-2 py-0.5 text-[0.6rem] font-semibold uppercase tracking-[0.14em] text-background">
+                <span className="absolute right-4 top-4 rounded-md border border-amend-warm/20 bg-amend-warm px-2 py-0.5 text-[0.6rem] font-semibold uppercase tracking-[0.12em] text-amend-warm-foreground">
                   Popular
                 </span>
               ) : null}
@@ -63,13 +63,14 @@ export function PricingSection() {
 
         <div className="mt-10 flex flex-col justify-between gap-5 border-y py-6 md:flex-row md:items-center">
           <p className="max-w-2xl text-sm leading-6 text-muted-foreground">
-            Self-hosting is there for teams that need infrastructure control. It is not the first
-            thing you have to decide.
+            Hosted plans count useful captured product signals, not raw messages or model tokens.
+            Noise is free. Self-hosted teams can run Amend with their own infrastructure and
+            provider keys.
           </p>
           <div className="flex flex-col gap-3 sm:flex-row">
             <Link
               to="/sign-up"
-              className="inline-flex items-center justify-center border border-foreground bg-foreground px-5 py-3 text-sm font-semibold text-background transition-[background-color,color,scale] duration-200 hover:bg-transparent hover:text-foreground active:scale-[0.96] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground"
+              className="inline-flex h-10 items-center justify-center rounded-lg border border-transparent bg-foreground px-4 text-[13px] font-medium text-background transition-colors duration-150 ease-linear hover:bg-foreground/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground"
             >
               Request access
             </Link>
@@ -77,7 +78,7 @@ export function PricingSection() {
               href={docsUrl("self-hosting")}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center justify-center border border-border px-5 py-3 text-sm font-semibold text-muted-foreground transition-[border-color,color,scale] duration-200 hover:border-foreground hover:text-foreground active:scale-[0.96] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground"
+              className="inline-flex h-10 items-center justify-center rounded-lg border border-border bg-card/40 px-4 text-[13px] font-medium text-muted-foreground transition-colors duration-150 ease-linear hover:border-foreground/35 hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground"
             >
               Self-hosting notes
             </a>

@@ -27,7 +27,7 @@ export function InspectorBlock({
             href={link.url}
             target="_blank"
             rel="noreferrer"
-            className="flex min-h-9 items-center justify-between gap-3 border border-border bg-background px-3 text-xs text-muted-foreground transition-[border-color,color] hover:border-foreground hover:text-foreground"
+            className="flex min-h-9 items-center justify-between gap-3 rounded-md border border-border/70 bg-background/70 px-3 text-xs text-muted-foreground transition-colors duration-150 ease-linear hover:border-foreground/35 hover:bg-muted/45 hover:text-foreground"
           >
             <span className="truncate">{link.title}</span>
             <ExternalLink className="size-3" />

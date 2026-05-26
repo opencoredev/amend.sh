@@ -1,11 +1,9 @@
-import { BookOpen, CalendarClock, Circle, CircleDashed, Radio } from "lucide-react";
-
 import { changelogCategories, stateValue } from "@/components/amend-dashboard-utils";
 import {
+  SidebarDivider,
   SidebarFrame,
-  SidebarItem,
-  SidebarSection,
-  SidebarTitle,
+  SidebarPill,
+  SidebarPillGroup,
 } from "@/components/dashboard-module-sidebar-primitives";
 import type { ModuleSidebarProps } from "@/components/dashboard-module-sidebar-types";
 
@@ -23,71 +21,75 @@ export function ChangelogModuleSidebar({
   | "onChangelogCategoryChange"
   | "onChangelogStatusChange"
 >) {
-  const allCount = changelogEntries.length;
-  const publishedCount = changelogEntries.filter((entry) => entry.status === "published").length;
-  const draftCount = changelogEntries.filter((entry) => entry.status === "draft").length;
-  const reviewCount = changelogEntries.filter((entry) => entry.status === "in_review").length;
-  const scheduledCount = changelogEntries.filter((entry) => entry.status === "scheduled").length;
+  const publishedCount = changelogEntries.filter((e) => e.status === "published").length;
+  const draftCount = changelogEntries.filter((e) => e.status === "draft").length;
+  const reviewCount = changelogEntries.filter((e) => e.status === "in_review").length;
+  const scheduledCount = changelogEntries.filter((e) => e.status === "scheduled").length;
+  const categories = changelogCategories(changelogEntries);
 
   return (
     <SidebarFrame>
-      <SidebarTitle title="Changelog" />
-      <SidebarSection title="Status">
-        <SidebarItem
+      <SidebarPillGroup>
+        <SidebarPill
           active={activeChangelogStatus === "all"}
-          icon={<CircleDashed />}
-          label="All changelogs"
-          value={String(allCount)}
+          count={changelogEntries.length}
           onClick={() => onChangelogStatusChange("all")}
-        />
-        <SidebarItem
+        >
+          All
+        </SidebarPill>
+        <SidebarPill
           active={activeChangelogStatus === "published"}
-          icon={<Radio />}
-          label="Published"
-          value={String(publishedCount)}
+          count={publishedCount}
           onClick={() => onChangelogStatusChange("published")}
-        />
-        <SidebarItem
+        >
+          Published
+        </SidebarPill>
+        <SidebarPill
           active={activeChangelogStatus === "draft"}
-          icon={<BookOpen />}
-          label="Draft"
-          value={String(draftCount)}
+          count={draftCount}
           onClick={() => onChangelogStatusChange("draft")}
-        />
-        <SidebarItem
+        >
+          Draft
+        </SidebarPill>
+        <SidebarPill
           active={activeChangelogStatus === "in_review"}
-          icon={<Circle />}
-          label="In review"
-          value={String(reviewCount)}
+          count={reviewCount}
           onClick={() => onChangelogStatusChange("in_review")}
-        />
-        <SidebarItem
+        >
+          In review
+        </SidebarPill>
+        <SidebarPill
           active={activeChangelogStatus === "scheduled"}
-          icon={<CalendarClock />}
-          label="Scheduled"
-          value={String(scheduledCount)}
+          count={scheduledCount}
           onClick={() => onChangelogStatusChange("scheduled")}
-        />
-      </SidebarSection>
-      <SidebarSection title="Categories">
-        <SidebarItem
-          active={activeChangelogCategory === "all"}
-          icon={<CircleDashed />}
-          label="All categories"
-          value={String(changelogEntries.length)}
-          onClick={() => onChangelogCategoryChange("all")}
-        />
-        {changelogCategories(changelogEntries).map(({ label, value }) => (
-          <SidebarItem
-            key={label}
-            active={activeChangelogCategory === stateValue(label)}
-            icon={<Circle />}
-            label={label}
-            value={String(value)}
-            onClick={() => onChangelogCategoryChange(stateValue(label))}
-          />
-        ))}
-      </SidebarSection>
+        >
+          Scheduled
+        </SidebarPill>
+      </SidebarPillGroup>
+      {categories.length > 0 ? (
+        <>
+          <SidebarDivider />
+          <SidebarPillGroup label="Categories">
+            <SidebarPill
+              active={activeChangelogCategory === "all"}
+              count={changelogEntries.length}
+              onClick={() => onChangelogCategoryChange("all")}
+            >
+              All
+            </SidebarPill>
+            {categories.map(({ label, value }) => (
+              <SidebarPill
+                key={label}
+                active={activeChangelogCategory === stateValue(label)}
+                count={value}
+                onClick={() => onChangelogCategoryChange(stateValue(label))}
+              >
+                {label}
+              </SidebarPill>
+            ))}
+          </SidebarPillGroup>
+        </>
+      ) : null}
     </SidebarFrame>
   );
 }

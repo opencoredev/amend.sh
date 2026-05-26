@@ -5,9 +5,9 @@ export function MemorySection() {
     <section className="amend-deferred-section relative z-10 border-t">
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-20 sm:px-6 lg:grid-cols-[0.72fr_1.28fr] lg:px-8 lg:py-28">
         <div>
-          <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Memory</p>
+          <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">The record</p>
           <h2 className="amend-display mt-5 max-w-lg text-4xl font-medium leading-tight sm:text-5xl">
-            Know why each roadmap item exists.
+            When someone asks why you built it, the answer is already there.
           </h2>
         </div>
 

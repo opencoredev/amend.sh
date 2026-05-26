@@ -114,11 +114,7 @@ export function FeedbackSubmissionPanel({
           className="min-h-24 w-full resize-y rounded-md border border-input bg-transparent px-3 py-2 text-sm outline-none placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring/50"
         />
       </div>
-      <Button
-        type="submit"
-        className="mt-3 w-full border border-foreground bg-foreground text-background hover:bg-background hover:text-foreground"
-        disabled={state === "submitting"}
-      >
+      <Button type="submit" className="mt-3 w-full" disabled={state === "submitting"}>
         {state === "submitting" ? "Submitting" : "Submit a post"}
       </Button>
       <div className="mt-2 min-h-4 text-xs text-muted-foreground">

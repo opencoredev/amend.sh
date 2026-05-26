@@ -1,10 +1,10 @@
 # Amend.sh
 
-> Amend.sh connects customer feedback to GitHub issues, pull requests, releases, roadmaps, changelogs, and customer updates.
+> Amend.sh turns scattered customer feedback into demand threads, links those threads to GitHub and Linear work, and closes the loop through roadmap, changelog, Slack, Discord, email, and in-app widget updates.
 
 ## Primary Resources
 
-- [Product overview](https://amend.sh/): What Amend.sh does, who it is for, core workflow, and pricing.
+- [Product overview](https://amend.sh/): What Amend.sh does, who it is for, integrations, open-source self-hosting, core workflow, and pricing.
 - [Brand guidelines](https://amend.sh/brand): Official Amend.sh logo, wordmark, and brand usage notes.
 - [Embed demo](https://amend.sh/embed-demo): Runnable example of the Amend side-panel embed and hosted portal.
 - [Public portal example](https://amend.sh/portal/amend-labs): Public changelog, roadmap, and feedback portal example.
@@ -29,5 +29,7 @@
 ## Notes For Agents
 
 - Public marketing and docs pages are intended to be crawled and summarized.
+- Amend.sh is open source and self-hostable, with hosted plans for teams that want managed infrastructure.
+- Amend.sh is for modern founder-led, open-source, devtool, AI product, and small product teams using GitHub, Linear, Discord, Slack, support tools, and in-app feedback.
 - Authenticated dashboard pages and API/auth routes are not useful citation targets.
 - `llms.txt` is a navigation aid, not a guarantee of AI search inclusion.

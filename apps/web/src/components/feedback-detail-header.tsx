@@ -8,7 +8,7 @@ export function FeedbackDetailHeader({ onBack, post }: { onBack: () => void; pos
     <div className="border-b border-border bg-background/70 px-4 py-4 backdrop-blur md:px-6">
       <button
         type="button"
-        className="inline-flex min-h-10 items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground transition-[color,scale] duration-200 hover:text-foreground active:scale-[0.96]"
+        className="inline-flex min-h-10 items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground transition-colors duration-150 ease-linear hover:text-foreground active:opacity-75"
         onClick={onBack}
       >
         <ChevronDown className="size-3 rotate-90" />
@@ -17,7 +17,7 @@ export function FeedbackDetailHeader({ onBack, post }: { onBack: () => void; pos
       <div className="mt-4 flex flex-wrap items-start justify-between gap-4">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-            <span className="rounded-full border border-border bg-muted/25 px-3 py-1 font-semibold">
+            <span className="border border-border bg-muted/25 px-2.5 py-0.5 font-semibold">
               {statusTitle(post.status)}
             </span>
             <span>{post.source}</span>

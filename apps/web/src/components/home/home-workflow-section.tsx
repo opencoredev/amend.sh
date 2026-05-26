@@ -7,13 +7,13 @@ export function WorkflowSection() {
     <section id="workflow" className="amend-deferred-section relative z-10 border-t">
       <div className="mx-auto grid max-w-7xl gap-12 px-4 py-24 sm:px-6 lg:grid-cols-[0.82fr_1.18fr] lg:px-8 lg:py-32">
         <div className="lg:sticky lg:top-28 lg:self-start">
-          <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Workflow</p>
+          <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">How it works</p>
           <h2 className="amend-display mt-5 max-w-2xl text-4xl font-medium leading-tight sm:text-5xl">
-            Turn customer asks into roadmap decisions.
+            A normal week, with less product archaeology.
           </h2>
           <p className="mt-6 max-w-md text-sm leading-6 text-muted-foreground">
-            Amend watches customer requests and source work in the background. Your team still
-            decides what to build, what to announce, and who should hear about it.
+            Amend keeps working after setup. It watches selected sources, groups real demand, follows
+            GitHub and Linear, and helps the team update people when the work ships.
           </p>
         </div>
 
@@ -49,13 +49,13 @@ export function WorkflowSection() {
           <div className="border-t py-8 text-sm">
             <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
               <p className="max-w-xl text-xl font-semibold leading-tight text-foreground sm:text-2xl">
-                Review the source work before customers see the update.
+                Internal records can update on their own. Public posts and emails follow your rules.
               </p>
               <a
                 href={docsUrl("source-trace")}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex min-w-36 shrink-0 items-center justify-center whitespace-nowrap border border-border px-5 py-3 font-semibold text-muted-foreground transition-[border-color,color,background-color,scale] duration-200 hover:border-foreground hover:bg-foreground hover:text-background active:scale-[0.96] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground"
+                className="inline-flex h-10 min-w-36 shrink-0 items-center justify-center whitespace-nowrap rounded-lg border border-border bg-card/40 px-4 text-[13px] font-medium text-muted-foreground transition-colors duration-150 ease-linear hover:border-foreground/35 hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground"
               >
                 Read source trace docs
               </a>
