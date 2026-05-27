@@ -38,9 +38,7 @@ export function HomeHero() {
               className="group flex h-10 items-center justify-center gap-2 rounded-lg border border-border bg-card/40 px-4 text-[13px] font-medium text-muted-foreground transition-colors duration-150 ease-linear hover:border-foreground/35 hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground sm:justify-start"
             >
               How it works
-              <span className="transition-transform duration-200 group-hover:translate-x-1">
-                -&gt;
-              </span>
+              <span aria-hidden>-&gt;</span>
             </a>
           </div>
 

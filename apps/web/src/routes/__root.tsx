@@ -1,6 +1,5 @@
 import { ThemeProvider } from "next-themes";
 import { ConvexBetterAuthProvider } from "@convex-dev/better-auth/react";
-import { PostHogErrorBoundary, PostHogProvider } from "@posthog/react";
 import type { ConvexQueryClient } from "@convex-dev/react-query";
 import type { QueryClient } from "@tanstack/react-query";
 import {
@@ -13,12 +12,9 @@ import {
 } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { useEffect } from "react";
-import posthog from "posthog-js";
-import { Toaster } from "sileo";
 
 import { authClient } from "@/lib/auth-client";
 import { getToken } from "@/lib/auth-server";
-import { capturePostHogPageview } from "@/lib/posthog";
 import { defaultDescription, defaultTitle, openGraphMeta } from "@/lib/seo";
 
 import appCss from "../index.css?url";
@@ -59,17 +55,18 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
     ],
     links: [
       {
-        rel: "preconnect",
-        href: "https://fonts.googleapis.com",
-      },
-      {
-        rel: "preconnect",
-        href: "https://fonts.gstatic.com",
+        rel: "preload",
+        href: "/fonts/geist-sans-400.ttf",
+        as: "font",
+        type: "font/ttf",
         crossOrigin: "anonymous",
       },
       {
-        rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600;700&display=swap",
+        rel: "preload",
+        href: "/fonts/geist-sans-700.ttf",
+        as: "font",
+        type: "font/ttf",
+        crossOrigin: "anonymous",
       },
       {
         rel: "stylesheet",
@@ -107,7 +104,24 @@ function RootDocument() {
   }, []);
 
   useEffect(() => {
-    capturePostHogPageview(location.href);
+    const capture = () => {
+      void import("@/lib/posthog").then(({ capturePostHogPageview }) => {
+        void capturePostHogPageview(location.href);
+      });
+    };
+
+    const windowWithIdleCallback = window as Window & {
+      requestIdleCallback?: (callback: IdleRequestCallback, options?: IdleRequestOptions) => number;
+      cancelIdleCallback?: (handle: number) => void;
+    };
+
+    if (windowWithIdleCallback.requestIdleCallback) {
+      const handle = windowWithIdleCallback.requestIdleCallback(capture, { timeout: 3000 });
+      return () => windowWithIdleCallback.cancelIdleCallback?.(handle);
+    }
+
+    const timeout = window.setTimeout(capture, 1500);
+    return () => window.clearTimeout(timeout);
   }, [location.href]);
 
   return (
@@ -127,62 +141,13 @@ function RootDocument() {
             enableSystem
             disableTransitionOnChange
           >
-            <PostHogProvider client={posthog}>
-              <PostHogErrorBoundary
-                fallback={RootErrorFallback}
-                additionalProperties={() => ({
-                  app: "amend-web",
-                  path: window.location.href,
-                  surface: "root-react-boundary",
-                })}
-              >
-                <div className="min-h-svh">
-                  <Outlet />
-                </div>
-              </PostHogErrorBoundary>
-            </PostHogProvider>
-            <Toaster
-              position="top-right"
-              offset={{ right: 18, top: 18 }}
-              theme="dark"
-              options={{
-                fill: "#111111",
-                roundness: 12,
-                styles: {
-                  badge: "bg-white/10!",
-                  button: "bg-white/10! text-white! hover:bg-white/15!",
-                  description: "text-white/70!",
-                  title: "text-white!",
-                },
-              }}
-            />
+            <div className="min-h-svh">
+              <Outlet />
+            </div>
           </ThemeProvider>
           <Scripts />
         </body>
       </html>
     </ConvexBetterAuthProvider>
-  );
-}
-
-function RootErrorFallback() {
-  return (
-    <main className="grid min-h-svh place-items-center bg-[#050505] px-6 text-white">
-      <section className="w-full max-w-md rounded-2xl border border-white/10 bg-[#111111] p-6 shadow-2xl shadow-black/40">
-        <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-white/45">
-          Amend recovered this view
-        </p>
-        <h1 className="mt-4 text-2xl font-semibold leading-tight">Something went wrong.</h1>
-        <p className="mt-3 text-sm leading-6 text-white/65">
-          The error was sent to PostHog. Refresh the page to reload the workspace.
-        </p>
-        <button
-          className="mt-6 rounded-lg bg-white px-4 py-2 text-sm font-semibold text-black transition-colors duration-150 ease-linear hover:bg-white/85 active:opacity-75"
-          type="button"
-          onClick={() => window.location.reload()}
-        >
-          Refresh
-        </button>
-      </section>
-    </main>
   );
 }

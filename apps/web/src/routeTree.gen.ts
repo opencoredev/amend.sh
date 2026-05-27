@@ -25,12 +25,12 @@ const SignUpRoute = SignUpRouteImport.update({
   id: '/sign-up',
   path: '/sign-up',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any).lazy(() => import('./routes/sign-up.lazy').then((d) => d.Route))
 const SignInRoute = SignInRouteImport.update({
   id: '/sign-in',
   path: '/sign-in',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any).lazy(() => import('./routes/sign-in.lazy').then((d) => d.Route))
 const EmbedDemoRoute = EmbedDemoRouteImport.update({
   id: '/embed-demo',
   path: '/embed-demo',

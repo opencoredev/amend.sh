@@ -1,7 +1,7 @@
 import { FieldGroup } from "@amend/ui/components/field";
 import { useForm } from "@tanstack/react-form";
 import { Link, useSearch } from "@tanstack/react-router";
-import { useMutation } from "convex/react";
+import { useConvex } from "convex/react";
 import { lazy, Suspense, useState } from "react";
 import z from "zod";
 
@@ -11,10 +11,6 @@ import {
   AuthSubmitButton,
   AuthTextField,
 } from "@/components/auth-form-primitives";
-import {
-  joinSeededDemoWorkspaceMutation,
-  localDemoWorkspaceSlug,
-} from "@/components/dev-demo-sign-in-model";
 import { parsePortalRedirectTo } from "@/lib/auth-redirects";
 import { authErrorMessage } from "@/lib/auth-errors";
 import { authClient } from "@/lib/auth-client";
@@ -34,7 +30,7 @@ export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp?: ()
   const [formError, setFormError] = useState("");
   const search = useSearch({ from: "/sign-in" }) as { redirectTo?: string };
   const portalRedirect = parsePortalRedirectTo(search.redirectTo);
-  const joinSeededDemoWorkspace = useMutation(joinSeededDemoWorkspaceMutation);
+  const convex = useConvex();
 
   function navigateToDashboardAfterSignIn(workspace = demoWorkspaceSlug) {
     window.location.assign(`/dashboard/proactivation?workspace=${encodeURIComponent(workspace)}`);
@@ -86,10 +82,12 @@ export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp?: ()
       return;
     }
 
-    await joinSeededDemoWorkspace({
+    const { joinSeededDemoWorkspaceMutation } = await import("@/components/dev-demo-sign-in-model");
+
+    await convex.mutation(joinSeededDemoWorkspaceMutation, {
       email,
       name: previewNameFromEmail(email),
-      workspaceSlug: localDemoWorkspaceSlug,
+      workspaceSlug: demoWorkspaceSlug,
     });
   }
 

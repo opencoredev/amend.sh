@@ -1,6 +1,7 @@
-import { env } from "@amend/env/web";
 import type posthog from "posthog-js";
 import type { PostHogConfig } from "posthog-js";
+
+import { optionalClientEnv } from "@/lib/client-env";
 
 const defaultPostHogHost = "https://us.i.posthog.com";
 const defaultPostHogProjectId = "441195";
@@ -46,22 +47,23 @@ function loadPostHog() {
 }
 
 export function getPostHogToken() {
-  return env.VITE_POSTHOG_TOKEN ?? defaultPostHogToken;
+  return optionalClientEnv("VITE_POSTHOG_TOKEN") ?? defaultPostHogToken;
 }
 
 export function getPostHogOptions(): Partial<PostHogConfig> {
   return {
-    api_host: env.VITE_POSTHOG_HOST ?? defaultPostHogHost,
-    autocapture: true,
+    api_host: optionalClientEnv("VITE_POSTHOG_HOST") ?? defaultPostHogHost,
+    autocapture: false,
     capture_exceptions: true,
-    capture_pageleave: true,
+    capture_pageleave: false,
     capture_pageview: false,
     defaults: "2026-01-30",
+    disable_session_recording: true,
     person_profiles: "identified_only",
     persistence: "localStorage+cookie",
     loaded: (client) => {
       client.register({
-        amend_project_id: env.VITE_POSTHOG_PROJECT_ID ?? defaultPostHogProjectId,
+        amend_project_id: optionalClientEnv("VITE_POSTHOG_PROJECT_ID") ?? defaultPostHogProjectId,
         app: "amend-web",
       });
     },

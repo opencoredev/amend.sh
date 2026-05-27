@@ -1,6 +1,5 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 
-import DashboardAuthShell from "@/components/dashboard-auth-shell";
 import { parsePortalRedirectTo } from "@/lib/auth-redirects";
 import { noIndexMeta } from "@/lib/seo";
 
@@ -29,12 +28,7 @@ export const Route = createFileRoute("/sign-in")({
       });
     }
   },
-  component: SignInRoute,
 });
-
-function SignInRoute() {
-  return <DashboardAuthShell showSignIn />;
-}
 
 function redirectToPortal(redirectTarget: NonNullable<ReturnType<typeof parsePortalRedirectTo>>) {
   return redirect({
