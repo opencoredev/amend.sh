@@ -21,6 +21,7 @@
     "noUncheckedSideEffectImports": true,
     "paths": {
       "@/*": ["./src/*"],
+      "@amend/sdk/*": ["../../packages/sdk/src/*"],
       "@amend/ui/*": ["../../packages/ui/src/*"]
     }
   }
