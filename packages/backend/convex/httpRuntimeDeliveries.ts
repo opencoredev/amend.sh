@@ -1,5 +1,6 @@
 import type { Id } from "./_generated/dataModel";
-import { escapeHtml, optionalString, record } from "./httpRuntimeScalars";
+import { escapeHtml } from "./httpRuntimeScalars";
+import { sendTransactionalEmail } from "./amendTransactionalEmails";
 
 declare const process: {
   env: {
@@ -117,9 +118,7 @@ async function sendDelivery(
 }
 
 async function sendEmailDelivery(delivery: DeliveryRecord, dryRun: boolean) {
-  const resendApiKey = process.env.RESEND_API_KEY;
-  const from = process.env.EMAIL_FROM;
-  if (dryRun || !resendApiKey || !from) {
+  if (dryRun || !process.env.RESEND_API_KEY || !process.env.EMAIL_FROM) {
     return {
       error: dryRun ? undefined : "Missing RESEND_API_KEY or EMAIL_FROM",
       provider: "dry-run",
@@ -128,33 +127,25 @@ async function sendEmailDelivery(delivery: DeliveryRecord, dryRun: boolean) {
     };
   }
 
-  const response = await fetch("https://api.resend.com/emails", {
-    body: JSON.stringify({
-      from,
+  try {
+    const providerMessageId = await sendTransactionalEmail({
       html: emailHtml(delivery),
       subject: String(delivery.payload.title ?? "Amend update"),
       text: emailText(delivery),
       to: delivery.recipient,
-    }),
-    headers: {
-      Authorization: `Bearer ${resendApiKey}`,
-      "Content-Type": "application/json",
-    },
-    method: "POST",
-  });
-  const payload = await response.json().catch(() => ({}));
-  if (!response.ok) {
+    });
     return {
-      error: String(record(payload)?.message ?? `Resend returned ${response.status}`),
+      provider: "resend",
+      providerMessageId,
+      status: "sent" as const,
+    };
+  } catch (error) {
+    return {
+      error: error instanceof Error ? error.message : "Resend delivery failed",
       provider: "resend",
       status: "failed" as const,
     };
   }
-  return {
-    provider: "resend",
-    providerMessageId: optionalString(record(payload)?.id),
-    status: "sent" as const,
-  };
 }
 
 function emailText(delivery: DeliveryRecord) {

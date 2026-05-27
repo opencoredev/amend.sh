@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import type { ReactNode } from "react";
 
 import AmendLogo from "@/components/amend-logo";
 import { AppToaster } from "@/components/app-toaster";
@@ -6,10 +7,14 @@ import SignInForm from "@/components/sign-in-form";
 import SignUpForm from "@/components/sign-up-form";
 
 type DashboardAuthShellProps = {
-  showSignIn: boolean;
+  children?: ReactNode;
+  showSignIn?: boolean;
 };
 
-export default function DashboardAuthShell({ showSignIn }: DashboardAuthShellProps) {
+export default function DashboardAuthShell({
+  children,
+  showSignIn = true,
+}: DashboardAuthShellProps) {
   return (
     <main className="dark grid min-h-svh bg-background font-mono text-foreground lg:grid-cols-2">
       <section className="flex flex-col gap-4 p-6 md:p-10">
@@ -19,7 +24,9 @@ export default function DashboardAuthShell({ showSignIn }: DashboardAuthShellPro
           </Link>
         </div>
         <div className="flex flex-1 items-center justify-center">
-          <div className="w-full max-w-xs">{showSignIn ? <SignInForm /> : <SignUpForm />}</div>
+          <div className="w-full max-w-xs">
+            {children ?? (showSignIn ? <SignInForm /> : <SignUpForm />)}
+          </div>
         </div>
       </section>
       <section className="relative hidden bg-white lg:block overflow-hidden">

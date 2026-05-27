@@ -94,4 +94,18 @@ export const workspaceCoreTables = {
     .index("by_email", ["email"])
     .index("by_workspace_and_email", ["workspaceId", "email"])
     .index("by_workspace_and_role", ["workspaceId", "role"]),
+
+  waitlistEntries: defineTable({
+    email: v.string(),
+    name: v.optional(v.string()),
+    company: v.optional(v.string()),
+    source: v.optional(v.string()),
+    status: v.union(v.literal("waitlisted"), v.literal("invited"), v.literal("converted")),
+    requestCount: v.number(),
+    lastRequestedAt: v.number(),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_email", ["email"])
+    .index("by_status", ["status"]),
 };

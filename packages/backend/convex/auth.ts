@@ -8,6 +8,7 @@ import { components } from "./_generated/api";
 import type { DataModel } from "./_generated/dataModel";
 import { mutation, query } from "./_generated/server";
 import { isLocalAuthSiteUrl } from "./amendBackendUtils";
+import { sendPasswordResetEmail } from "./amendTransactionalEmails";
 import authConfig from "./auth.config";
 
 declare const process: {
@@ -34,6 +35,14 @@ function createAuth(ctx: GenericCtx<DataModel>) {
       enabled: true,
       disableSignUp: !previewAuthEnabled && !localAuthEnabled,
       requireEmailVerification: false,
+      resetPasswordTokenExpiresIn: 60 * 60,
+      revokeSessionsOnPasswordReset: true,
+      sendResetPassword: async ({ user, url }) => {
+        await sendPasswordResetEmail({
+          email: user.email,
+          resetUrl: url,
+        });
+      },
     },
     hooks:
       gatedAuthEmails.size > 0

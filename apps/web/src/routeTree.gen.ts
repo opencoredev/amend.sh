@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignUpRouteImport } from './routes/sign-up'
 import { Route as SignInRouteImport } from './routes/sign-in'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as EmbedDemoRouteImport } from './routes/embed-demo'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as BrandRouteImport } from './routes/brand'
@@ -31,6 +32,11 @@ const SignInRoute = SignInRouteImport.update({
   path: '/sign-in',
   getParentRoute: () => rootRouteImport,
 } as any).lazy(() => import('./routes/sign-in.lazy').then((d) => d.Route))
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EmbedDemoRoute = EmbedDemoRouteImport.update({
   id: '/embed-demo',
   path: '/embed-demo',
@@ -82,6 +88,7 @@ export interface FileRoutesByFullPath {
   '/brand': typeof BrandRoute
   '/dashboard': typeof DashboardRouteWithChildren
   '/embed-demo': typeof EmbedDemoRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
   '/dashboard/$view': typeof DashboardViewRoute
@@ -95,6 +102,7 @@ export interface FileRoutesByTo {
   '/brand': typeof BrandRoute
   '/dashboard': typeof DashboardRouteWithChildren
   '/embed-demo': typeof EmbedDemoRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
   '/dashboard/$view': typeof DashboardViewRoute
@@ -109,6 +117,7 @@ export interface FileRoutesById {
   '/brand': typeof BrandRoute
   '/dashboard': typeof DashboardRouteWithChildren
   '/embed-demo': typeof EmbedDemoRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
   '/dashboard/$view': typeof DashboardViewRoute
@@ -124,6 +133,7 @@ export interface FileRouteTypes {
     | '/brand'
     | '/dashboard'
     | '/embed-demo'
+    | '/reset-password'
     | '/sign-in'
     | '/sign-up'
     | '/dashboard/$view'
@@ -137,6 +147,7 @@ export interface FileRouteTypes {
     | '/brand'
     | '/dashboard'
     | '/embed-demo'
+    | '/reset-password'
     | '/sign-in'
     | '/sign-up'
     | '/dashboard/$view'
@@ -150,6 +161,7 @@ export interface FileRouteTypes {
     | '/brand'
     | '/dashboard'
     | '/embed-demo'
+    | '/reset-password'
     | '/sign-in'
     | '/sign-up'
     | '/dashboard/$view'
@@ -164,6 +176,7 @@ export interface RootRouteChildren {
   BrandRoute: typeof BrandRoute
   DashboardRoute: typeof DashboardRouteWithChildren
   EmbedDemoRoute: typeof EmbedDemoRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   SignInRoute: typeof SignInRoute
   SignUpRoute: typeof SignUpRoute
   PortalWorkspaceSlugRoute: typeof PortalWorkspaceSlugRoute
@@ -186,6 +199,13 @@ declare module '@tanstack/react-router' {
       path: '/sign-in'
       fullPath: '/sign-in'
       preLoaderRoute: typeof SignInRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/embed-demo': {
@@ -271,6 +291,7 @@ const rootRouteChildren: RootRouteChildren = {
   BrandRoute: BrandRoute,
   DashboardRoute: DashboardRouteWithChildren,
   EmbedDemoRoute: EmbedDemoRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   SignInRoute: SignInRoute,
   SignUpRoute: SignUpRoute,
   PortalWorkspaceSlugRoute: PortalWorkspaceSlugRoute,

@@ -28,6 +28,7 @@ const previewAuthEnabled = import.meta.env.VITE_AMEND_PREVIEW_AUTH === "true";
 
 export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp?: () => void }) {
   const [formError, setFormError] = useState("");
+  const [showPasswordReset, setShowPasswordReset] = useState(false);
   const search = useSearch({ from: "/sign-in" }) as { redirectTo?: string };
   const portalRedirect = parsePortalRedirectTo(search.redirectTo);
   const convex = useConvex();
@@ -182,6 +183,10 @@ export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp?: ()
     },
   });
 
+  if (showPasswordReset) {
+    return <ForgotPasswordForm onBack={() => setShowPasswordReset(false)} />;
+  }
+
   return (
     <div className="w-full">
       <AuthFormHeader
@@ -257,12 +262,13 @@ export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp?: ()
                 onChange={field.handleChange}
                 errors={field.state.meta.errors}
                 action={
-                  <a
-                    href="mailto:support@amend.sh?subject=Amend.sh%20password%20reset"
+                  <button
+                    type="button"
+                    onClick={() => setShowPasswordReset(true)}
                     className="text-sm text-foreground underline-offset-4 hover:underline"
                   >
                     Forgot password?
-                  </a>
+                  </button>
                 }
               />
             )}
@@ -295,4 +301,116 @@ function previewNameFromEmail(email: string) {
     ?.replace(/[._-]+/g, " ")
     .trim();
   return name || "Preview user";
+}
+
+function ForgotPasswordForm({ onBack }: { onBack: () => void }) {
+  const [formError, setFormError] = useState("");
+  const [sentTo, setSentTo] = useState("");
+  const form = useForm({
+    defaultValues: {
+      email: "",
+    },
+    onSubmit: async ({ value }) => {
+      setFormError("");
+      try {
+        const response = await fetch("/api/auth/request-password-reset", {
+          body: JSON.stringify({
+            email: value.email,
+            redirectTo: `${window.location.origin}/reset-password`,
+          }),
+          headers: { "Content-Type": "application/json" },
+          method: "POST",
+        });
+        if (!response.ok) {
+          const payload = await response.json().catch(() => ({}));
+          throw new Error(
+            typeof payload.message === "string"
+              ? payload.message
+              : "The reset email could not be sent.",
+          );
+        }
+        setSentTo(value.email);
+        toast.success("Reset link sent");
+      } catch (caught) {
+        const message =
+          caught instanceof Error ? caught.message : "The reset email could not send.";
+        setFormError(message);
+        toast.error({
+          title: "Reset email failed",
+          description: message,
+        });
+      }
+    },
+    validators: {
+      onSubmit: z.object({
+        email: z.email("Invalid email address"),
+      }),
+    },
+  });
+
+  return (
+    <div className="w-full">
+      <AuthFormHeader
+        title="Reset your password"
+        description="Enter your account email and we will send a reset link."
+        action={
+          <button
+            type="button"
+            onClick={onBack}
+            className="font-medium text-foreground underline-offset-4 hover:underline"
+          >
+            Back to sign in
+          </button>
+        }
+      />
+
+      {sentTo ? (
+        <div className="mb-6 border border-border bg-card/40 p-3 text-center text-sm text-muted-foreground">
+          Check <span className="text-foreground">{sentTo}</span> for the reset link.
+        </div>
+      ) : null}
+
+      <form
+        onSubmit={(event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          form.handleSubmit();
+        }}
+        className="flex flex-col gap-6"
+      >
+        <FieldGroup>
+          <form.Field name="email">
+            {(field) => (
+              <AuthTextField
+                id={field.name}
+                label="Email"
+                type="email"
+                placeholder="you@company.com"
+                value={field.state.value}
+                onBlur={field.handleBlur}
+                onChange={field.handleChange}
+                errors={field.state.meta.errors}
+              />
+            )}
+          </form.Field>
+
+          <form.Subscribe
+            selector={(state) => ({ canSubmit: state.canSubmit, isSubmitting: state.isSubmitting })}
+          >
+            {({ canSubmit, isSubmitting }) => (
+              <AuthSubmitButton
+                disabled={!canSubmit || isSubmitting}
+                pending={isSubmitting}
+                pendingLabel="Sending reset link..."
+              >
+                Send reset link
+              </AuthSubmitButton>
+            )}
+          </form.Subscribe>
+
+          <AuthFormError message={formError} />
+        </FieldGroup>
+      </form>
+    </div>
+  );
 }

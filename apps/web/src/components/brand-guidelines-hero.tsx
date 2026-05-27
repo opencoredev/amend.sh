@@ -28,14 +28,14 @@ export function BrandGuidelinesHero() {
           <div className="mt-8 flex flex-col gap-4 sm:flex-row">
             <button
               type="button"
-              className="border border-foreground bg-foreground px-6 py-3 text-sm font-semibold text-background transition-[background-color,color,scale] duration-200 hover:bg-background hover:text-foreground active:scale-[0.96]"
+              className="border border-foreground bg-foreground px-6 py-3 text-sm font-semibold text-background transition-colors duration-150 ease-linear hover:bg-background hover:text-foreground active:opacity-75"
               onClick={downloadBrandAssets}
             >
               Download assets
             </button>
             <button
               type="button"
-              className="border border-border px-6 py-3 text-sm font-semibold text-muted-foreground transition-[border-color,color,scale] duration-200 hover:border-foreground hover:text-foreground active:scale-[0.96]"
+              className="border border-border px-6 py-3 text-sm font-semibold text-muted-foreground transition-colors duration-150 ease-linear hover:border-foreground hover:text-foreground active:opacity-75"
               onClick={() => copySvg(amendWordmarkSvg)}
             >
               Copy full logo as SVG
