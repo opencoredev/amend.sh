@@ -95,11 +95,9 @@ export function useAmendDashboardController() {
   useAmendDashboardRedirects({
     activeProject,
     activeProjectId,
-    activeProjectNeedsSource,
     activeView,
     hasSession,
     projectsReady,
-    requiresProjectSetup,
     sessionPending: session.isPending,
     setRoute,
   });
@@ -140,6 +138,7 @@ export function useAmendDashboardController() {
       scopedPosts,
       scopedRoadmapEntries,
       searchQuery,
+      requiresProjectSetup,
       selectedChangelog,
       selectedFeedback,
       selectedRoadmap,

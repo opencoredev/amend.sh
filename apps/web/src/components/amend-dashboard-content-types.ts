@@ -40,6 +40,7 @@ export type DashboardContentProps = {
   scopedPosts: Post[];
   scopedRoadmapEntries: DashboardRoadmap[];
   searchQuery: string;
+  requiresProjectSetup: boolean;
   selectedChangelog: DashboardChangelog | null;
   selectedFeedback: Post | null;
   selectedRoadmap: DashboardRoadmap | null;
