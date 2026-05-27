@@ -1,5 +1,6 @@
 export const siteUrl = "https://amend.sh";
 export const agentDocsUrl = "https://docs.amend.sh";
+export const defaultOgImage = `${siteUrl}/og-image.png`;
 
 export const defaultTitle = "Amend.sh - close the loop when users ask and you ship";
 export const defaultDescription =
@@ -18,7 +19,7 @@ export function canonicalLink(path = "/") {
 
 export function openGraphMeta({
   description = defaultDescription,
-  image = `${siteUrl}/api/og/`,
+  image = defaultOgImage,
   path = "/",
   title = defaultTitle,
 }: {
@@ -36,13 +37,17 @@ export function openGraphMeta({
     { property: "og:description", content: description },
     { property: "og:url", content: url },
     { property: "og:image", content: image },
+    { property: "og:image:secure_url", content: image },
+    { property: "og:image:type", content: "image/png" },
     { property: "og:image:width", content: "1200" },
     { property: "og:image:height", content: "630" },
+    { property: "og:image:alt", content: "Amend.sh source-linked product update loop preview" },
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:site", content: "@amendsh" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
     { name: "twitter:image", content: image },
+    { name: "twitter:image:alt", content: "Amend.sh source-linked product update loop preview" },
   ];
 }
 

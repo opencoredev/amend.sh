@@ -45,4 +45,4 @@ jobs:
         run: bun scripts/vercel-preview-build.ts
 
       - name: Deploy Vercel production
-        run: bunx vercel deploy --prebuilt --prod --yes --scope opencoredev --token "$VERCEL_TOKEN"
+        run: bunx vercel deploy --prebuilt --prod --yes --token "$VERCEL_TOKEN"

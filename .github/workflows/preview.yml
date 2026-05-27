@@ -61,7 +61,6 @@ jobs:
           DEPLOYMENT_URL="$(bunx vercel deploy \
             --prebuilt \
             --yes \
-            --scope opencoredev \
             --token "$VERCEL_TOKEN" \
             --meta amendPreviewName="$CONVEX_PREVIEW_NAME" \
             --meta githubPullRequest="${{ github.event.pull_request.number }}" \

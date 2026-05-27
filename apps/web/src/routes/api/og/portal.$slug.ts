@@ -7,8 +7,9 @@ export const Route = createFileRoute("/api/og/portal/$slug")({
   server: {
     handlers: {
       GET: async ({ request, params }) => {
+        const origin = new URL(request.url).origin;
+
         try {
-          const origin = new URL(request.url).origin;
           const url = new URL(request.url);
           const portal = await getPublicPortalData(params.slug);
           const settings = portal.workspace.portalSettings;
@@ -38,7 +39,7 @@ export const Route = createFileRoute("/api/og/portal/$slug")({
           });
         } catch (error) {
           console.error(`[og] portal image failed for ${params.slug}:`, error);
-          return new Response("OG image generation failed", { status: 500 });
+          return Response.redirect(`${origin}/og-image.png`, 307);
         }
       },
     },
