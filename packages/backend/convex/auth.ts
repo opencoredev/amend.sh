@@ -7,6 +7,7 @@ import { v } from "convex/values";
 import { components } from "./_generated/api";
 import type { DataModel } from "./_generated/dataModel";
 import { mutation, query } from "./_generated/server";
+import { isLocalAuthSiteUrl } from "./amendBackendUtils";
 import authConfig from "./auth.config";
 
 declare const process: {
@@ -19,7 +20,7 @@ declare const process: {
 
 const siteUrl = process.env.SITE_URL ?? "http://amend.localhost:1355";
 const previewAuthEnabled = process.env.AMEND_PREVIEW_AUTH_ENABLED === "true";
-const localAuthEnabled = isLocalDevelopmentUrl(siteUrl);
+const localAuthEnabled = isLocalAuthSiteUrl(siteUrl);
 const gatedAuthEmails = allowedAuthEmails();
 
 export const authComponent = createClient<DataModel>(components.betterAuth);
@@ -121,24 +122,7 @@ function localDevelopmentOrigins() {
 }
 
 function isLocalDevelopmentOrigin(origin: string) {
-  try {
-    const url = new URL(origin);
-    return isLocalDevelopmentUrl(url);
-  } catch {
-    return false;
-  }
-}
-
-function isLocalDevelopmentUrl(value: string | URL) {
-  try {
-    const url = typeof value === "string" ? new URL(value) : value;
-    return (url.protocol === "http:" || url.protocol === "https:") &&
-      (url.hostname === "localhost" ||
-        url.hostname === "127.0.0.1" ||
-        url.hostname.endsWith(".localhost"));
-  } catch {
-    return false;
-  }
+  return isLocalAuthSiteUrl(origin);
 }
 
 export const getCurrentUser = query({
@@ -153,7 +137,7 @@ export const resetLocalAuthJwks = mutation({
     confirm: v.literal("reset-local-jwks"),
   },
   handler: async (ctx) => {
-    if (!siteUrl.includes("localhost") && !siteUrl.includes("127.0.0.1")) {
+    if (!isLocalAuthSiteUrl(siteUrl)) {
       throw new Error("JWKS reset is only available for local development.");
     }
 
