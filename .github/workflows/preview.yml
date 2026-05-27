@@ -22,6 +22,7 @@ jobs:
       AMEND_AUTH_ALLOWED_EMAILS: ${{ secrets.AMEND_PREVIEW_ALLOWED_EMAILS }}
       AMEND_PREVIEW_AUTH_ENABLED: "true"
       AMEND_PREVIEW_SEEDING_ENABLED: "true"
+      BETTER_AUTH_SECRET: ${{ secrets.AMEND_PREVIEW_BETTER_AUTH_SECRET }}
       VITE_AMEND_PREVIEW_AUTH: "true"
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
@@ -48,6 +49,12 @@ jobs:
             --preview-run amend:seedDemoData \
             --cmd-url-env-var-name VITE_CONVEX_URL \
             --cmd 'cd ../.. && bun scripts/vercel-preview-build.ts'
+          bun --cwd packages/backend convex deploy \
+            --preview-name "$CONVEX_PREVIEW_NAME" \
+            --typecheck disable \
+            --codegen disable
+          AMEND_PREVIEW_ENV_SYNC_PHASE=bootstrap bun scripts/sync-convex-preview-env.ts
+          bun scripts/assert-convex-preview-http.ts
 
       - name: Deploy Vercel preview
         run: |

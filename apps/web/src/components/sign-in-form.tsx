@@ -1,6 +1,6 @@
 import { FieldGroup } from "@amend/ui/components/field";
 import { useForm } from "@tanstack/react-form";
-import { Link, useNavigate, useSearch } from "@tanstack/react-router";
+import { Link, useSearch } from "@tanstack/react-router";
 import { useMutation } from "convex/react";
 import { lazy, Suspense, useState } from "react";
 import z from "zod";
@@ -31,28 +31,20 @@ const previewAuthEnabled = import.meta.env.VITE_AMEND_PREVIEW_AUTH === "true";
 
 export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp?: () => void }) {
   const [formError, setFormError] = useState("");
-  const navigate = useNavigate({
-    from: "/",
-  });
   const search = useSearch({ from: "/sign-in" }) as { redirectTo?: string };
   const portalRedirect = parsePortalRedirectTo(search.redirectTo);
   const joinSeededDemoWorkspace = useMutation(joinSeededDemoWorkspaceMutation);
 
   function navigateToDashboardAfterSignIn(workspace = demoWorkspaceSlug) {
-    navigate({
-      params: { view: "proactivation" },
-      search: { workspace },
-      to: "/dashboard/$view",
-    });
+    window.location.assign(`/dashboard/proactivation?workspace=${encodeURIComponent(workspace)}`);
   }
 
   function navigateAfterEmailSignIn() {
     if (portalRedirect) {
-      navigate({
-        hash: portalRedirect.section,
-        params: { workspaceSlug: portalRedirect.workspaceSlug },
-        to: "/portal/$workspaceSlug",
-      });
+      const hash = portalRedirect.section ? `#${encodeURIComponent(portalRedirect.section)}` : "";
+      window.location.assign(
+        `/portal/${encodeURIComponent(portalRedirect.workspaceSlug)}${hash}`,
+      );
       return;
     }
 
