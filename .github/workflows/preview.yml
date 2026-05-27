@@ -58,7 +58,14 @@ jobs:
 
       - name: Deploy Vercel preview
         run: |
-          DEPLOYMENT_URL="$(bunx vercel deploy --prebuilt --yes --scope opencoredev --token "$VERCEL_TOKEN" | tail -n 1)"
+          DEPLOYMENT_URL="$(bunx vercel deploy \
+            --prebuilt \
+            --yes \
+            --scope opencoredev \
+            --token "$VERCEL_TOKEN" \
+            --meta amendPreviewName="$CONVEX_PREVIEW_NAME" \
+            --meta githubPullRequest="${{ github.event.pull_request.number }}" \
+            --meta githubCommitSha="${{ github.sha }}" | tail -n 1)"
           echo "Vercel preview: $DEPLOYMENT_URL"
           DEPLOYMENT_URL="$DEPLOYMENT_URL" bun scripts/sync-convex-preview-env.ts
 
@@ -72,6 +79,9 @@ jobs:
       CONVEX_MANAGEMENT_TOKEN: ${{ secrets.CONVEX_MANAGEMENT_TOKEN }}
       CONVEX_PROJECT_ID: ${{ secrets.CONVEX_PROJECT_ID }}
       CONVEX_PREVIEW_NAME: pr-${{ github.event.pull_request.number }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -86,3 +96,6 @@ jobs:
 
       - name: Delete Convex preview
         run: bun scripts/delete-convex-preview.ts
+
+      - name: Delete Vercel preview deployments
+        run: bun scripts/delete-vercel-preview.ts

@@ -71,7 +71,10 @@ function trustedOriginsForRequest(request?: Request) {
 }
 
 function isEmailPasswordPath(path: string) {
-  return path === "/sign-in/email" || path === "/sign-up/email";
+  return path === "/sign-in/email" ||
+    path === "/sign-up/email" ||
+    path.endsWith("/sign-in/email") ||
+    path.endsWith("/sign-up/email");
 }
 
 function authEmailFromBody(body: unknown) {
