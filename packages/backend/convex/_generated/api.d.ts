@@ -152,6 +152,7 @@ import type * as schemaWorkspaceIntegrationTables from "../schemaWorkspaceIntegr
 import type * as schemaWorkspaceSourceTables from "../schemaWorkspaceSourceTables.js";
 import type * as schemaWorkspaceTables from "../schemaWorkspaceTables.js";
 import type * as signatures from "../signatures.js";
+import type * as waitlist from "../waitlist.js";
 
 import type {
   ApiFromModules,
@@ -304,6 +305,7 @@ declare const fullApi: ApiFromModules<{
   schemaWorkspaceSourceTables: typeof schemaWorkspaceSourceTables;
   schemaWorkspaceTables: typeof schemaWorkspaceTables;
   signatures: typeof signatures;
+  waitlist: typeof waitlist;
 }>;
 
 /**

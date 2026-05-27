@@ -8,32 +8,41 @@ export default defineConfig({
   build: {
     rolldownOptions: {
       output: {
-        manualChunks(id) {
-          if (!id.includes("node_modules")) {
-            return;
-          }
-
-          if (id.includes("/react/") || id.includes("/react-dom/")) {
-            return "vendor-react";
-          }
-
-          if (id.includes("@tanstack")) {
-            return "vendor-tanstack";
-          }
-
-          if (id.includes("convex") || id.includes("better-auth")) {
-            return "vendor-data-auth";
-          }
-
-          if (id.includes("lucide-react")) {
-            return "vendor-icons";
-          }
-
-          if (id.includes("/gsap/") || id.includes("/motion/") || id.includes("/sileo/")) {
-            return "vendor-motion";
-          }
-
-          return "vendor";
+        codeSplitting: {
+          includeDependenciesRecursively: false,
+          groups: [
+            {
+              name: "vendor-react",
+              priority: 50,
+              test: /node_modules[\\/](react|react-dom)[\\/]/,
+            },
+            {
+              name: "vendor-tanstack",
+              priority: 40,
+              test: /node_modules[\\/]@tanstack[\\/]/,
+            },
+            {
+              name: "vendor-data-auth",
+              priority: 30,
+              test: (id) => id.includes("convex") || id.includes("better-auth"),
+            },
+            {
+              name: "vendor-icons",
+              priority: 20,
+              test: /node_modules[\\/]lucide-react[\\/]/,
+            },
+            {
+              name: "vendor-motion",
+              priority: 10,
+              test: (id) =>
+                id.includes("/gsap/") || id.includes("/motion/") || id.includes("/sileo/"),
+            },
+            {
+              maxSize: 450 * 1024,
+              name: "vendor",
+              test: /node_modules/,
+            },
+          ],
         },
       },
     },
