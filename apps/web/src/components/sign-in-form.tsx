@@ -19,6 +19,7 @@ import { parsePortalRedirectTo } from "@/lib/auth-redirects";
 import { authErrorMessage } from "@/lib/auth-errors";
 import { authClient } from "@/lib/auth-client";
 import { demoWorkspaceSlug } from "@/lib/demo-workspace";
+import { capturePostHogEvent, identifyAndCapturePostHogEvent } from "@/lib/posthog";
 import { toast } from "@/lib/toast";
 
 const DevDemoSignInButton = import.meta.env.DEV
@@ -60,7 +61,18 @@ export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp?: ()
           name: previewNameFromEmail(value.email),
         },
         {
-          onSuccess: () => resolve({ ok: true }),
+          onSuccess: () => {
+            void identifyAndCapturePostHogEvent({
+              event: "user_signed_up",
+              identity: { email: value.email, name: previewNameFromEmail(value.email) },
+              properties: {
+                method: "email",
+                preview_auth_enabled: previewAuthEnabled,
+                surface: "sign_in_preview_fallback",
+              },
+            });
+            resolve({ ok: true });
+          },
           onError: (error) =>
             resolve({
               ok: false,
@@ -90,6 +102,11 @@ export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp?: ()
     },
     onSubmit: async ({ value }) => {
       setFormError("");
+      void capturePostHogEvent("sign_in_submitted", {
+        method: "email",
+        preview_auth_enabled: previewAuthEnabled,
+        surface: portalRedirect ? "portal_redirect" : "sign_in_page",
+      });
       await authClient.signIn.email(
         {
           email: value.email,
@@ -97,6 +114,15 @@ export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp?: ()
         },
         {
           onSuccess: async () => {
+            void identifyAndCapturePostHogEvent({
+              event: "user_signed_in",
+              identity: { email: value.email },
+              properties: {
+                method: "email",
+                preview_auth_enabled: previewAuthEnabled,
+                surface: portalRedirect ? "portal_redirect" : "sign_in_page",
+              },
+            });
             await joinPreviewWorkspace(value.email);
             navigateAfterEmailSignIn();
             toast.success("Sign in successful");
@@ -106,12 +132,26 @@ export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp?: ()
               const signUpResult = await createPreviewAccount(value);
               if (signUpResult.ok) {
                 await joinPreviewWorkspace(value.email);
+                void identifyAndCapturePostHogEvent({
+                  event: "user_signed_in",
+                  identity: { email: value.email },
+                  properties: {
+                    method: "email",
+                    preview_auth_enabled: previewAuthEnabled,
+                    surface: "sign_in_preview_fallback",
+                  },
+                });
                 navigateAfterEmailSignIn();
                 toast.success("Preview account ready");
                 return;
               }
 
               const message = signUpResult.message ?? "This preview is private.";
+              void capturePostHogEvent("sign_up_failed", {
+                method: "email",
+                preview_auth_enabled: previewAuthEnabled,
+                surface: "sign_in_preview_fallback",
+              });
               setFormError(message);
               toast.error({
                 title: "Preview account was not created",
@@ -124,6 +164,11 @@ export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp?: ()
               error,
               "Sign in failed because the email or password was not accepted. Check both fields and try again.",
             );
+            void capturePostHogEvent("sign_in_failed", {
+              method: "email",
+              preview_auth_enabled: previewAuthEnabled,
+              surface: portalRedirect ? "portal_redirect" : "sign_in_page",
+            });
             setFormError(message);
             toast.error({
               title: "Sign in failed",

@@ -12,9 +12,18 @@ const buildBriefStatuses = new Set(["draft", "in_review", "approved", "exported"
 const eventNames = new Set([
   "identify",
   "account_identify",
+  "sign_in_failed",
+  "sign_in_submitted",
+  "sign_up_failed",
+  "sign_up_submitted",
+  "user_signed_in",
+  "user_signed_out",
+  "user_signed_up",
   "agent_run_completed",
   "changelog_upserted",
   "feedback_submitted",
+  "project_created",
+  "project_source_connected",
   "vote_added",
   "vote_removed",
   "comment_added",
@@ -86,6 +95,8 @@ export function eventName(value: unknown) {
       | "delivery_status_updated"
       | "feedback_submitted"
       | "identify"
+      | "project_created"
+      | "project_source_connected"
       | "reaction_added"
       | "review_status_updated"
       | "roadmap_upserted"
@@ -93,8 +104,15 @@ export function eventName(value: unknown) {
       | "roadmap_vote_added"
       | "roadmap_vote_removed"
       | "shipped_feature_used"
+      | "sign_in_failed"
+      | "sign_in_submitted"
+      | "sign_up_failed"
+      | "sign_up_submitted"
       | "source_event_ingested"
       | "update_seen"
+      | "user_signed_in"
+      | "user_signed_out"
+      | "user_signed_up"
       | "vote_added"
       | "vote_removed";
   }

@@ -73,6 +73,8 @@ export async function runSmokeProductLoopChecks() {
       'feedback_submitted: "feedback"',
       "feedback analytics category",
     );
+    assertIncludes(backendAnalyticsEvents, 'user_signed_up: "identity"', "signup analytics");
+    assertIncludes(backendAnalyticsEvents, 'project_created: "project"', "project analytics");
     assertIncludes(backendIdentity, "recordAnalyticsEvent", "analytics fan-out");
     assertIncludes(sourceIngest, "source_event_ingested", "source analytics");
     assertIncludes(agentPersistence, "agent_run_completed", "agent analytics");
@@ -81,10 +83,13 @@ export async function runSmokeProductLoopChecks() {
     assertIncludes(dashboardOverview, "topEvents", "dashboard analytics");
     assertIncludes(dashboardOverview, "topCategories", "dashboard analytics categories");
     assertIncludes(webPostHog, "posthog.init", "browser PostHog setup");
+    assertIncludes(webPostHog, "capturePostHogEvent", "browser semantic PostHog events");
     assertIncludes(rootRoute, "capturePostHogPageview", "browser PostHog pageviews");
     assertIncludes(proactivationAnalytics, "Event capture", "analytics panel");
     assertIncludes(validators, 'v.literal("identify")', "event schema");
     assertIncludes(validators, 'v.literal("account_identify")', "event schema");
+    assertIncludes(validators, 'v.literal("user_signed_up")', "event schema");
+    assertIncludes(validators, 'v.literal("project_created")', "event schema");
     assertIncludes(sdk, "identify(identity", "SDK identify");
     assertIncludes(sdk, "identifyAccount", "SDK identify account");
     assertIncludes(docs, "await amend.identifyAccount", "integration guide");

@@ -13,6 +13,7 @@ import {
 import { authClient } from "@/lib/auth-client";
 import { authErrorMessage } from "@/lib/auth-errors";
 import { demoWorkspaceSlug } from "@/lib/demo-workspace";
+import { capturePostHogEvent, identifyAndCapturePostHogEvent } from "@/lib/posthog";
 import { toast } from "@/lib/toast";
 
 const previewAuthEnabled = import.meta.env.VITE_AMEND_PREVIEW_AUTH === "true";
@@ -63,6 +64,11 @@ function PreviewSignUpForm({ onSwitchToSignIn }: { onSwitchToSignIn?: () => void
     },
     onSubmit: async ({ value }) => {
       setFormError("");
+      void capturePostHogEvent("sign_up_submitted", {
+        method: "email",
+        preview_auth_enabled: previewAuthEnabled,
+        surface: "sign_up_page",
+      });
       await authClient.signUp.email(
         {
           email: value.email,
@@ -71,6 +77,15 @@ function PreviewSignUpForm({ onSwitchToSignIn }: { onSwitchToSignIn?: () => void
         },
         {
           onSuccess: () => {
+            void identifyAndCapturePostHogEvent({
+              event: "user_signed_up",
+              identity: { email: value.email, name: value.name },
+              properties: {
+                method: "email",
+                preview_auth_enabled: previewAuthEnabled,
+                surface: "sign_up_page",
+              },
+            });
             toast.success("Account created");
             navigate({
               params: { view: "setup" },
@@ -83,6 +98,11 @@ function PreviewSignUpForm({ onSwitchToSignIn }: { onSwitchToSignIn?: () => void
               error,
               "Sign up failed because the account could not be created. Check the fields and try again.",
             );
+            void capturePostHogEvent("sign_up_failed", {
+              method: "email",
+              preview_auth_enabled: previewAuthEnabled,
+              surface: "sign_up_page",
+            });
             setFormError(message);
             toast.error({
               title: "Sign up failed",
