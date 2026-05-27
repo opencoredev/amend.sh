@@ -11,6 +11,7 @@ import {
   AuthSubmitButton,
   AuthTextField,
 } from "@/components/auth-form-primitives";
+import { authEmailSearch } from "@/lib/auth-email-search";
 import { parsePortalRedirectTo } from "@/lib/auth-redirects";
 import { authErrorMessage } from "@/lib/auth-errors";
 import { authClient } from "@/lib/auth-client";
@@ -28,8 +29,8 @@ const previewAuthEnabled = import.meta.env.VITE_AMEND_PREVIEW_AUTH === "true";
 
 export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp?: () => void }) {
   const [formError, setFormError] = useState("");
-  const [showPasswordReset, setShowPasswordReset] = useState(false);
-  const search = useSearch({ from: "/sign-in" }) as { redirectTo?: string };
+  const [passwordResetEmail, setPasswordResetEmail] = useState<string | null>(null);
+  const search = useSearch({ from: "/sign-in" }) as { email?: string; redirectTo?: string };
   const portalRedirect = parsePortalRedirectTo(search.redirectTo);
   const convex = useConvex();
 
@@ -94,7 +95,7 @@ export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp?: ()
 
   const form = useForm({
     defaultValues: {
-      email: "",
+      email: search.email ?? "",
       password: "",
     },
     onSubmit: async ({ value }) => {
@@ -183,8 +184,13 @@ export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp?: ()
     },
   });
 
-  if (showPasswordReset) {
-    return <ForgotPasswordForm onBack={() => setShowPasswordReset(false)} />;
+  if (passwordResetEmail !== null) {
+    return (
+      <ForgotPasswordForm
+        initialEmail={passwordResetEmail}
+        onBack={() => setPasswordResetEmail(null)}
+      />
+    );
   }
 
   return (
@@ -198,20 +204,25 @@ export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp?: ()
         }
         action={
           previewAuthEnabled ? (
-            <>
-              No account?{" "}
-              <Link
-                to="/sign-up"
-                onClick={(event) => {
-                  if (!onSwitchToSignUp) return;
-                  event.preventDefault();
-                  onSwitchToSignUp();
-                }}
-                className="font-medium text-foreground underline-offset-4 hover:underline"
-              >
-                Sign up for a new account
-              </Link>
-            </>
+            <form.Subscribe selector={(state) => state.values.email}>
+              {(email) => (
+                <>
+                  No account?{" "}
+                  <Link
+                    to="/sign-up"
+                    search={authEmailSearch(email)}
+                    onClick={(event) => {
+                      if (!onSwitchToSignUp) return;
+                      event.preventDefault();
+                      onSwitchToSignUp();
+                    }}
+                    className="font-medium text-foreground underline-offset-4 hover:underline"
+                  >
+                    Sign up for a new account
+                  </Link>
+                </>
+              )}
+            </form.Subscribe>
           ) : (
             <>
               No account? <span className="text-foreground">Production access is private.</span>
@@ -262,13 +273,17 @@ export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp?: ()
                 onChange={field.handleChange}
                 errors={field.state.meta.errors}
                 action={
-                  <button
-                    type="button"
-                    onClick={() => setShowPasswordReset(true)}
-                    className="text-sm text-foreground underline-offset-4 hover:underline"
-                  >
-                    Forgot password?
-                  </button>
+                  <form.Subscribe selector={(state) => state.values.email}>
+                    {(email) => (
+                      <button
+                        type="button"
+                        onClick={() => setPasswordResetEmail(email)}
+                        className="text-sm text-foreground underline-offset-4 hover:underline"
+                      >
+                        Forgot password?
+                      </button>
+                    )}
+                  </form.Subscribe>
                 }
               />
             )}
@@ -303,12 +318,18 @@ function previewNameFromEmail(email: string) {
   return name || "Preview user";
 }
 
-function ForgotPasswordForm({ onBack }: { onBack: () => void }) {
+function ForgotPasswordForm({
+  initialEmail,
+  onBack,
+}: {
+  initialEmail: string;
+  onBack: () => void;
+}) {
   const [formError, setFormError] = useState("");
   const [sentTo, setSentTo] = useState("");
   const form = useForm({
     defaultValues: {
-      email: "",
+      email: initialEmail,
     },
     onSubmit: async ({ value }) => {
       setFormError("");
