@@ -5,6 +5,24 @@ import { feedbackInteractionKind, loopEvent } from "./schemaShared";
 import { sdkEventSource } from "./schemaProductCommon";
 
 export const productIdentityTables = {
+  waitlistEntries: defineTable({
+    email: v.string(),
+    status: v.union(v.literal("pending"), v.literal("verified"), v.literal("delivery_failed")),
+    codeHash: v.string(),
+    codeLength: v.number(),
+    codeExpiresAt: v.number(),
+    requestCount: v.number(),
+    providerMessageId: v.optional(v.string()),
+    lastError: v.optional(v.string()),
+    lastSentAt: v.optional(v.number()),
+    verifiedAt: v.optional(v.number()),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_email", ["email"])
+    .index("by_status", ["status"])
+    .index("by_createdAt", ["createdAt"]),
+
   feedbackInteractions: defineTable({
     workspaceId: v.id("workspaces"),
     projectId: v.optional(v.id("projects")),

@@ -8,6 +8,8 @@ type SignInSearch = {
   redirectTo?: string;
 };
 
+const previewAuthEnabled = import.meta.env.VITE_AMEND_PREVIEW_AUTH === "true";
+
 export const Route = createFileRoute("/sign-in")({
   head: () => ({
     meta: [{ title: "Sign in - Amend.sh" }, ...noIndexMeta],
@@ -17,6 +19,13 @@ export const Route = createFileRoute("/sign-in")({
     return portalRedirect ? { redirectTo: portalRedirect.href } : {};
   },
   beforeLoad: ({ context, search }) => {
+    if (!context.isAuthenticated && !previewAuthEnabled) {
+      throw redirect({
+        search: {},
+        to: "/sign-up",
+      });
+    }
+
     if (context.isAuthenticated) {
       const portalRedirect = parsePortalRedirectTo(search.redirectTo);
       if (portalRedirect) {
