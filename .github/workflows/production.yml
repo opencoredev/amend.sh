@@ -23,6 +23,10 @@ jobs:
       VITE_CONVEX_SITE_URL: https://benevolent-yak-945.convex.site
       VITE_DOCS_URL: https://amend.sh/docs
       VITE_AMEND_PREVIEW_AUTH: "false"
+      POSTHOG_CLI_API_KEY: ${{ secrets.POSTHOG_CLI_API_KEY }}
+      POSTHOG_CLI_HOST: https://us.posthog.com
+      POSTHOG_CLI_PROJECT_ID: "441195"
+      POSTHOG_RELEASE_NAME: amend-web
     steps:
       - name: Checkout
         uses: actions/checkout@v4

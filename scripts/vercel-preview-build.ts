@@ -29,6 +29,7 @@ if (isPreview && vercelUrl) {
 await run("bun", ["run", "--cwd", "packages/sdk", "build"]);
 await run("bun", ["run", "--cwd", "apps/web", "build"]);
 await prepareVercelOutput();
+await run("bun", ["scripts/posthog-sourcemaps.ts"]);
 await writePreviewMetadata();
 
 async function prepareVercelOutput() {
