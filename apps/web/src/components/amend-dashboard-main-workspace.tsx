@@ -13,7 +13,6 @@ import type { DashboardContentProps } from "@/components/amend-dashboard-content
 import { changelogCategoryFilters } from "@/components/amend-dashboard-utils";
 import { AnalyticsWorkspace } from "@/components/analytics-workspace";
 import { DashboardHeader } from "@/components/dashboard-navigation";
-import { OnboardingWorkspace } from "@/components/project-setup-workspace";
 import { ProactivationWorkspace } from "@/components/proactivation-workspace";
 import { SettingsWorkspace } from "@/components/settings-workspace";
 
@@ -22,7 +21,6 @@ export function AmendDashboardMainWorkspace({
   activeChangelogCategory,
   activeChangelogStatus,
   activeProject,
-  activeProjectNeedsSource,
   activeRoadmap,
   activeSettingsSection,
   activeStatus,
@@ -45,7 +43,6 @@ export function AmendDashboardMainWorkspace({
   onOpenProactivation,
   onOpenRoadmapItem,
   onOpenSetup,
-  onProjectCreated,
   onSearchChange,
   onStatusChange,
   onVoteRoadmapItem,
@@ -119,13 +116,6 @@ export function AmendDashboardMainWorkspace({
           activeProject={activeProject}
           activeSection={activeSettingsSection}
           workspace={workspace}
-        />
-      ) : null}
-      {activeView === "setup" ? (
-        <OnboardingWorkspace
-          existingProject={activeProjectNeedsSource ? activeProject : undefined}
-          workspace={workspace}
-          onCreated={onProjectCreated}
         />
       ) : null}
     </>

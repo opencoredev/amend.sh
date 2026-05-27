@@ -15,9 +15,12 @@ export default function AmendDashboard() {
     return <DashboardAuthShell showSignIn />;
   }
 
-  if (dashboard.requiresProjectSetup) {
+  if (dashboard.activeView === "setup") {
     return (
-      <ProjectSetupShell workspace={dashboard.workspace} onCreated={dashboard.onProjectCreated} />
+      <ProjectSetupShell
+        onCreated={dashboard.onProjectCreated}
+        workspace={dashboard.workspace}
+      />
     );
   }
 

@@ -7,6 +7,7 @@ import { v } from "convex/values";
 import { components } from "./_generated/api";
 import type { DataModel } from "./_generated/dataModel";
 import { mutation, query } from "./_generated/server";
+import { isLocalAuthSiteUrl } from "./amendBackendUtils";
 import authConfig from "./auth.config";
 
 declare const process: {
@@ -19,6 +20,7 @@ declare const process: {
 
 const siteUrl = process.env.SITE_URL ?? "http://amend.localhost:1355";
 const previewAuthEnabled = process.env.AMEND_PREVIEW_AUTH_ENABLED === "true";
+const localAuthEnabled = isLocalAuthSiteUrl(siteUrl);
 const gatedAuthEmails = allowedAuthEmails();
 
 export const authComponent = createClient<DataModel>(components.betterAuth);
@@ -30,7 +32,7 @@ function createAuth(ctx: GenericCtx<DataModel>) {
     database: authComponent.adapter(ctx),
     emailAndPassword: {
       enabled: true,
-      disableSignUp: !previewAuthEnabled,
+      disableSignUp: !previewAuthEnabled && !localAuthEnabled,
       requireEmailVerification: false,
     },
     hooks: gatedAuthEmails.size > 0
@@ -65,6 +67,12 @@ function trustedOriginsForRequest(request?: Request) {
   const origins = new Set([siteUrl]);
   const origin = request?.headers.get("origin")?.trim();
   if (previewAuthEnabled && origin) {
+    origins.add(origin);
+  }
+  for (const localOrigin of localDevelopmentOrigins()) {
+    origins.add(localOrigin);
+  }
+  if (origin && isLocalDevelopmentOrigin(origin)) {
     origins.add(origin);
   }
   return [...origins];
@@ -102,6 +110,21 @@ function allowedAuthEmails() {
   );
 }
 
+function localDevelopmentOrigins() {
+  return [
+    "https://amend.localhost:1355",
+    "https://localhost:1355",
+    "https://127.0.0.1:1355",
+    "http://amend.localhost:1355",
+    "http://localhost:1355",
+    "http://127.0.0.1:1355",
+  ];
+}
+
+function isLocalDevelopmentOrigin(origin: string) {
+  return isLocalAuthSiteUrl(origin);
+}
+
 export const getCurrentUser = query({
   args: {},
   handler: async (ctx) => {
@@ -114,7 +137,7 @@ export const resetLocalAuthJwks = mutation({
     confirm: v.literal("reset-local-jwks"),
   },
   handler: async (ctx) => {
-    if (!siteUrl.includes("localhost") && !siteUrl.includes("127.0.0.1")) {
+    if (!isLocalAuthSiteUrl(siteUrl)) {
       throw new Error("JWKS reset is only available for local development.");
     }
 
