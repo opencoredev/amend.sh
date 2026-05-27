@@ -35,23 +35,24 @@ function createAuth(ctx: GenericCtx<DataModel>) {
       disableSignUp: !previewAuthEnabled && !localAuthEnabled,
       requireEmailVerification: false,
     },
-    hooks: gatedAuthEmails.size > 0
-      ? {
-          before: createAuthMiddleware(async (authContext) => {
-            if (!isEmailPasswordPath(authContext.path)) {
-              return;
-            }
+    hooks:
+      gatedAuthEmails.size > 0
+        ? {
+            before: createAuthMiddleware(async (authContext) => {
+              if (!isEmailPasswordPath(authContext.path)) {
+                return;
+              }
 
-            const email = authEmailFromBody(authContext.body);
-            if (!isAllowedAuthEmail(email)) {
-              throw APIError.from("FORBIDDEN", {
-                code: "AUTH_ACCESS_DENIED",
-                message: "This Amend instance is private.",
-              });
-            }
-          }),
-        }
-      : undefined,
+              const email = authEmailFromBody(authContext.body);
+              if (!isAllowedAuthEmail(email)) {
+                throw APIError.from("FORBIDDEN", {
+                  code: "AUTH_ACCESS_DENIED",
+                  message: "This Amend instance is private.",
+                });
+              }
+            }),
+          }
+        : undefined,
     plugins: [
       convex({
         authConfig,
@@ -79,10 +80,12 @@ function trustedOriginsForRequest(request?: Request) {
 }
 
 function isEmailPasswordPath(path: string) {
-  return path === "/sign-in/email" ||
+  return (
+    path === "/sign-in/email" ||
     path === "/sign-up/email" ||
     path.endsWith("/sign-in/email") ||
-    path.endsWith("/sign-up/email");
+    path.endsWith("/sign-up/email")
+  );
 }
 
 function authEmailFromBody(body: unknown) {

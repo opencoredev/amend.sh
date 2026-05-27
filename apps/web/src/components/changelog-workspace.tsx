@@ -14,7 +14,13 @@ export function ChangelogWorkspace({
 }) {
   return (
     <DashboardWorkspaceSurface>
-      <div className={entries.length > 0 ? "grid divide-y divide-white/[0.045]" : "grid min-h-[calc(100svh-8.5rem)] place-items-center"}>
+      <div
+        className={
+          entries.length > 0
+            ? "grid divide-y divide-white/[0.045]"
+            : "grid min-h-[calc(100svh-8.5rem)] place-items-center"
+        }
+      >
         {entries.map((entry) => (
           <button
             key={entry.stableKey}

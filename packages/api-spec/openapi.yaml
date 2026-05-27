@@ -1440,9 +1440,18 @@ components:
       enum:
         - identify
         - account_identify
+        - sign_in_failed
+        - sign_in_submitted
+        - sign_up_failed
+        - sign_up_submitted
+        - user_signed_in
+        - user_signed_out
+        - user_signed_up
         - agent_run_completed
         - changelog_upserted
         - feedback_submitted
+        - project_created
+        - project_source_connected
         - vote_added
         - vote_removed
         - comment_added

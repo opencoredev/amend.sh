@@ -17,10 +17,7 @@ export default function AmendDashboard() {
 
   if (dashboard.activeView === "setup") {
     return (
-      <ProjectSetupShell
-        onCreated={dashboard.onProjectCreated}
-        workspace={dashboard.workspace}
-      />
+      <ProjectSetupShell onCreated={dashboard.onProjectCreated} workspace={dashboard.workspace} />
     );
   }
 

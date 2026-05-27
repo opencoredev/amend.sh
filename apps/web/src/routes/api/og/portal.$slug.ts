@@ -23,7 +23,10 @@ export const Route = createFileRoute("/api/og/portal/$slug")({
             settings?.headline ??
             undefined;
           const accentColor = url.searchParams.get("accent") ?? settings?.accentColor;
-          const label = settings?.feedbackMode === "closed" ? "Roadmap · Updates" : "Feedback · Roadmap · Updates";
+          const label =
+            settings?.feedbackMode === "closed"
+              ? "Roadmap · Updates"
+              : "Feedback · Roadmap · Updates";
 
           const png = await generateOgPng(
             { type: "portal", workspaceName, description, accentColor, label },

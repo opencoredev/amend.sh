@@ -209,6 +209,9 @@ Convex CLI can also auto-create a local anonymous deployment in non-interactive 
 `bunx convex dev --once`; `bun run dev:setup:local` keeps Amend's web env sync on top of that.
 PostHog browser analytics defaults to the Amend US Cloud project token in code and can be
 overridden with `VITE_POSTHOG_TOKEN`, `VITE_POSTHOG_HOST`, and `VITE_POSTHOG_PROJECT_ID`.
+The web app emits explicit lifecycle events such as `user signed up`, `user signed in`,
+`user signed out`, `project created`, and `project source connected` so PostHog workflows can
+trigger on semantic product activity instead of autocaptured clicks.
 Backend product-loop events are stored in Convex `eventRecords`, forwarded through the Convex
 PostHog component, and surfaced in the in-house Analytics dashboard. New product-loop features
 should record an analytics event with `recordAnalyticsEvent` and add the event to

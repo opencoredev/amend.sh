@@ -79,7 +79,9 @@ export function RoadmapCard({
           {priorityLabel(item.priority)}
         </span>
         {item.target ? (
-          <span className="rounded-lg bg-background/70 px-2 py-1 ring-1 ring-white/[0.04]">{item.target}</span>
+          <span className="rounded-lg bg-background/70 px-2 py-1 ring-1 ring-white/[0.04]">
+            {item.target}
+          </span>
         ) : null}
         <span className="w-full min-w-0 truncate sm:w-auto">
           {primarySource?.title ?? "No linked evidence"}

@@ -11,6 +11,7 @@ import {
 import { LogOut, UserRound } from "lucide-react";
 
 import { authClient } from "@/lib/auth-client";
+import { identifyAndCapturePostHogEvent } from "@/lib/posthog";
 
 export default function DashboardUserMenu() {
   const session = authClient.useSession();
@@ -31,13 +32,20 @@ export default function DashboardUserMenu() {
           <DropdownMenuItem
             variant="destructive"
             onClick={() => {
-              authClient.signOut({
-                fetchOptions: {
-                  onSuccess: () => {
-                    location.reload();
+              void (async () => {
+                await identifyAndCapturePostHogEvent({
+                  event: "user_signed_out",
+                  identity: { email: user?.email, name: user?.name, userId: user?.id },
+                  properties: { surface: "dashboard_user_menu" },
+                });
+                authClient.signOut({
+                  fetchOptions: {
+                    onSuccess: () => {
+                      location.reload();
+                    },
                   },
-                },
-              });
+                });
+              })();
             }}
           >
             <LogOut />

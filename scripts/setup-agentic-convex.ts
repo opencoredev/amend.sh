@@ -23,7 +23,8 @@ const backendDir = join(repoRoot, "packages/backend");
 const backendEnvPath = join(backendDir, ".env.local");
 const webEnvPath = join(repoRoot, "apps/web/.env");
 const webEnvExamplePath = join(repoRoot, "apps/web/.env.example");
-const defaultConvexProjectRef = process.env.CONVEX_DEV_PROJECT_REF ?? process.env.CONVEX_PROJECT_REF;
+const defaultConvexProjectRef =
+  process.env.CONVEX_DEV_PROJECT_REF ?? process.env.CONVEX_PROJECT_REF;
 
 const options = parseArgs(process.argv.slice(2));
 
@@ -152,9 +153,7 @@ function parseArgs(args: string[]): SetupOptions {
     dryRun: flags.has("dry-run"),
     expiration: optionValues.get("expiration") ?? process.env.CONVEX_DEV_EXPIRATION ?? "in 3 days",
     local,
-    projectRef:
-      optionValues.get("project-ref") ??
-      defaultConvexProjectRef,
+    projectRef: optionValues.get("project-ref") ?? defaultConvexProjectRef,
     siteUrl:
       optionValues.get("site-url") ??
       process.env.SITE_URL ??

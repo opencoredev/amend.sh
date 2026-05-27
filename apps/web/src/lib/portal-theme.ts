@@ -94,9 +94,7 @@ function contrastColor(rgb: Rgb) {
 function relativeLuminance({ b, g, r }: Rgb) {
   const linear = (value: number) => {
     const channel = value / 255;
-    return channel <= 0.03928
-      ? channel / 12.92
-      : ((channel + 0.055) / 1.055) ** 2.4;
+    return channel <= 0.03928 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4;
   };
 
   return 0.2126 * linear(r) + 0.7152 * linear(g) + 0.0722 * linear(b);

@@ -2,24 +2,14 @@ import { cn } from "@amend/ui/lib/utils";
 import type { ReactElement, ReactNode } from "react";
 
 export function SidebarFrame({ children }: { children: ReactNode }) {
-  return (
-    <div className="flex min-h-0 flex-1 flex-col overflow-y-auto py-2">
-      {children}
-    </div>
-  );
+  return <div className="flex min-h-0 flex-1 flex-col overflow-y-auto py-2">{children}</div>;
 }
 
 export function SidebarDivider() {
   return <div className="mx-4 my-2 h-px bg-foreground/[0.045]" />;
 }
 
-export function SidebarPillGroup({
-  children,
-  label,
-}: {
-  children: ReactNode;
-  label?: string;
-}) {
+export function SidebarPillGroup({ children, label }: { children: ReactNode; label?: string }) {
   return (
     <div className="px-4 py-3">
       {label ? (
@@ -56,12 +46,7 @@ export function SidebarPill({
     >
       {children}
       {typeof count === "number" ? (
-        <span
-          className={cn(
-            "font-mono tabular-nums",
-            active ? "opacity-60" : "opacity-40",
-          )}
-        >
+        <span className={cn("font-mono tabular-nums", active ? "opacity-60" : "opacity-40")}>
           {count}
         </span>
       ) : null}

@@ -89,13 +89,18 @@ dashboard categories:
 
 | Category   | What belongs here                                           |
 | ---------- | ----------------------------------------------------------- |
-| `identity` | User/account identify calls and account mapping             |
+| `identity` | User/account identify calls, signup, signin, and signout    |
 | `feedback` | Feedback submissions, comments, reactions, and votes        |
 | `source`   | GitHub/support/Slack/Discord/import source evidence         |
 | `agent`    | Proactive agent runs, reviews, and automation decisions     |
+| `project`  | Project creation and first-source connection                |
 | `roadmap`  | Roadmap creation, views, and roadmap votes                  |
 | `update`   | Changelog views, shipped feature usage, and seen updates    |
 | `delivery` | Planned or status-updated notification/delivery outbox work |
+
+The hosted web app also sends browser PostHog events for `sign up submitted`, `user signed up`,
+`sign in submitted`, `user signed in`, `user signed out`, `project created`, and
+`project source connected`. Use `user signed up` for welcome/onboarding workflows.
 
 When adding a feature that changes customer-visible product state, add or reuse a `loopEvent`
 literal, record it with `recordAnalyticsEvent`, and place it in `analyticsEventCategories`. That

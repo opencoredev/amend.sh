@@ -15,6 +15,7 @@ import {
   normalizeOptionalUrl,
   slugPart,
 } from "@/components/amend-dashboard-utils";
+import { capturePostHogEvent } from "@/lib/posthog";
 import { errorMessage, toast } from "@/lib/toast";
 
 const createWorkspaceProject = makeFunctionReference<"mutation">("amend:createProject");
@@ -96,6 +97,12 @@ export function useProjectSetupSaveActions({
         toast.success(
           connectionMode === "github" ? "Repository connected" : "Feedback board source saved",
         );
+        void capturePostHogEvent("project_source_connected", {
+          project_slug: project.id,
+          source_mode: connectionMode,
+          surface: "project_setup",
+          workspace_slug: workspace.id,
+        });
         setRepositoryInput("");
         onCreated(project.id, workspace.id);
       })
@@ -154,6 +161,13 @@ export function useProjectSetupSaveActions({
                 `Project "${name}" was created, but ${repositoryDraft.owner}/${repositoryDraft.repo} could not be connected. Open setup and reconnect the repository.`,
               ),
             });
+            void capturePostHogEvent("project_created", {
+              has_website_url: Boolean(normalizedWebsiteUrl),
+              project_slug: projectSlug,
+              source_mode: connectionMode,
+              visibility,
+              workspace_slug: createdProject.workspaceSlug ?? workspace.id,
+            });
             onCreated(projectSlug, createdProject.workspaceSlug);
             return;
           }
@@ -163,6 +177,19 @@ export function useProjectSetupSaveActions({
             ? "Project created and repository connected"
             : "Project created with feedback board source",
         );
+        void capturePostHogEvent("project_created", {
+          has_website_url: Boolean(normalizedWebsiteUrl),
+          project_slug: projectSlug,
+          source_mode: connectionMode,
+          visibility,
+          workspace_slug: createdProject.workspaceSlug ?? workspace.id,
+        });
+        void capturePostHogEvent("project_source_connected", {
+          project_slug: projectSlug,
+          source_mode: connectionMode,
+          surface: "project_setup",
+          workspace_slug: createdProject.workspaceSlug ?? workspace.id,
+        });
         onCreated(projectSlug, createdProject.workspaceSlug);
       })
       .catch((error: unknown) => {
