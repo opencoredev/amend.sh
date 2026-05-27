@@ -181,11 +181,22 @@ function sanitizeRefPart(value: string) {
 }
 
 function localWebUrl(worktreeNameValue: string) {
-  return `http://${sanitizeRefPart(worktreeNameValue)}.localhost:1355`;
+  return `http://${sanitizeLocalhostPart(worktreeNameValue)}.localhost:1355`;
 }
 
 function localDocsUrl(worktreeNameValue: string) {
-  return `http://docs.${sanitizeRefPart(worktreeNameValue)}.localhost:1355/docs`;
+  return `http://docs.${sanitizeLocalhostPart(worktreeNameValue)}.localhost:1355/docs`;
+}
+
+function sanitizeLocalhostPart(value: string) {
+  return (
+    value
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9-]+/g, "-")
+      .slice(0, 48)
+      .replace(/^-+|-+$/g, "") || "amend"
+  );
 }
 
 async function ensureConvexEnv(name: string, value: string) {

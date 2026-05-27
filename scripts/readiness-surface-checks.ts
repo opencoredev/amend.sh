@@ -26,7 +26,8 @@ import {
 export function runReadinessSurfaceChecks() {
   add(
     "normal dev is portless",
-    rootPackage.scripts?.dev === "WORKTREE_NAME=${WORKTREE_NAME:-$(basename $PWD)} turbo dev" &&
+    rootPackage.scripts?.dev ===
+      'WORKTREE_NAME=${WORKTREE_NAME:-$(basename "$PWD")} turbo dev' &&
       turboConfig.globalEnv?.includes("WORKTREE_NAME") === true &&
       webPackage.scripts?.dev === "portless ${WORKTREE_NAME:-amend} vite dev" &&
       docsPackage.scripts?.dev === "portless docs.${WORKTREE_NAME:-amend} next dev",

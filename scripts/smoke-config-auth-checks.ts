@@ -14,7 +14,8 @@ export async function runSmokeConfigAuthChecks() {
     };
 
     assert(
-      rootPackage.scripts?.dev === "WORKTREE_NAME=${WORKTREE_NAME:-$(basename $PWD)} turbo dev",
+      rootPackage.scripts?.dev ===
+        'WORKTREE_NAME=${WORKTREE_NAME:-$(basename "$PWD")} turbo dev',
       "root dev should pass the worktree name through Turbo",
     );
     assert(

@@ -96,8 +96,8 @@ function sanitizeLocalhostPart(value: string) {
     value
       .trim()
       .toLowerCase()
-      .replace(/[^a-z0-9._-]+/g, "-")
-      .replace(/^-+|-+$/g, "")
-      .slice(0, 48) || "amend"
+      .replace(/[^a-z0-9-]+/g, "-")
+      .slice(0, 48)
+      .replace(/^-+|-+$/g, "") || "amend"
   );
 }

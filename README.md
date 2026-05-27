@@ -52,7 +52,7 @@ bun run dev
 
 The web app's normal dev script uses portless. The main checkout serves at
 `http://amend.localhost:1355`; linked worktrees serve at
-`http://$(basename $PWD).localhost:1355` while Convex runs alongside them.
+`http://$(basename "$PWD").localhost:1355` while Convex runs alongside them.
 
 With `bun run dev` still running, run the product smoke gate:
 
@@ -173,7 +173,7 @@ completion audit, and next-steps report schema endpoints for `amend.sh` and `doc
 ## Convex Setup
 
 This project uses Convex as a backend. The default setup path is agent/worktree-friendly:
-each checkout gets its own cloud dev deployment named `dev/$USER/$(basename $PWD)` under the
+each checkout gets its own cloud dev deployment named `dev/$USER/$(basename "$PWD")` under the
 selected Convex project, auto-expiring in 3 days, and then copied into the web app env.
 
 ```bash
@@ -183,7 +183,7 @@ bun run dev:setup
 The selected command is:
 
 ```bash
-bunx convex deployment create --type dev --select dev/$USER/$(basename $PWD) \
+bunx convex deployment create --type dev --select dev/$USER/$(basename "$PWD") \
   --expiration "in 3 days"
 ```
 
@@ -219,7 +219,7 @@ Set local Convex auth environment variables:
 
 ```bash
 bunx convex env set BETTER_AUTH_SECRET "$(openssl rand -base64 32)"
-bunx convex env set SITE_URL http://amend.localhost:1355
+bunx convex env set SITE_URL http://$(basename "$PWD").localhost:1355
 bunx convex env set GITHUB_WEBHOOK_SECRET "replace-with-your-github-webhook-secret"
 bunx convex env set AMEND_API_TOKEN "$(openssl rand -base64 32)"
 bunx convex env set POSTHOG_API_KEY "phc_BCb25jVTo59jtEMPysgGUvgt85bUYGwN8XBNA2oMNLY7"
@@ -232,12 +232,12 @@ Then, run the development server:
 bun run dev
 ```
 
-Open `http://$(basename $PWD).localhost:1355` in your browser to see the web application.
-Open `http://docs.$(basename $PWD).localhost:1355` for the Fumadocs site.
+Open `http://$(basename "$PWD").localhost:1355` in your browser to see the web application.
+Open `http://docs.$(basename "$PWD").localhost:1355` for the Fumadocs site.
 Your app will connect to the configured Convex deployment automatically.
 
 The normal `bun run dev`, `bun run dev:web`, and `bun run dev:docs` commands set
-`WORKTREE_NAME=${WORKTREE_NAME:-$(basename $PWD)}` and use portless. The web app reads
+`WORKTREE_NAME=${WORKTREE_NAME:-$(basename "$PWD")}` and use portless. The web app reads
 `VITE_DOCS_URL` for docs links. Local development defaults to the matching
 `http://docs.$WORKTREE_NAME.localhost:1355/docs`; this launch uses `https://docs.amend.sh/docs` in
 production.
@@ -293,7 +293,7 @@ amend/
 ## Available Scripts
 
 - `bun run dev`: Start all applications in development mode
-- `bun run dev:web`: Start the web app at `http://$(basename $PWD).localhost:1355`
+- `bun run dev:web`: Start the web app at `http://$(basename "$PWD").localhost:1355`
 - `bun run build`: Build all applications
 - `bun run build:size`: Check the largest built client chunk stays under the local size budget
 - `bun run smoke`: Verify the portless web app, portal, Convex REST API, SDK, and docs while `bun run dev` is running
