@@ -10,6 +10,10 @@ export async function joinWaitlistHandler(
   },
 ) {
   const email = args.email.trim().toLowerCase();
+  if (!email) {
+    throw new Error("Email is required to join the waitlist.");
+  }
+
   const now = Date.now();
   const existing = await ctx.db
     .query("waitlistEntries")
@@ -21,7 +25,6 @@ export async function joinWaitlistHandler(
     lastRequestedAt: now,
     name: cleanOptional(args.name),
     source: cleanOptional(args.source) ?? "sign-up",
-    status: "waitlisted" as const,
     updatedAt: now,
   };
 
@@ -38,6 +41,7 @@ export async function joinWaitlistHandler(
     createdAt: now,
     email,
     requestCount: 1,
+    status: "waitlisted" as const,
   });
   return { status: "created" as const };
 }

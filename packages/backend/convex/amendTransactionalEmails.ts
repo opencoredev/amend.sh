@@ -22,7 +22,7 @@ export async function sendTransactionalEmail({
   const resendApiKey = process.env.RESEND_API_KEY;
   const from = process.env.EMAIL_FROM;
   if (!resendApiKey || !from) {
-    throw new Error("Missing RESEND_API_KEY or EMAIL_FROM");
+    return undefined;
   }
 
   const response = await fetch("https://api.resend.com/emails", {
