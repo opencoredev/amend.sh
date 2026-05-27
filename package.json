@@ -20,7 +20,7 @@
   },
   "type": "module",
   "scripts": {
-    "dev": "turbo dev",
+    "dev": "WORKTREE_NAME=${WORKTREE_NAME:-$(basename \"$PWD\")} turbo dev",
     "build": "turbo build && bun scripts/build-size.ts",
     "check-types": "turbo check-types",
     "lint": "oxlint .",
@@ -53,10 +53,11 @@
     "source:size:report": "bun scripts/source-size-audit.ts --report",
     "readiness": "bun scripts/readiness.ts",
     "readiness:strict": "bun scripts/readiness.ts --strict",
-    "dev:web": "turbo -F web dev",
-    "dev:docs": "turbo -F fumadocs dev",
+    "dev:web": "WORKTREE_NAME=${WORKTREE_NAME:-$(basename \"$PWD\")} turbo -F web dev",
+    "dev:docs": "WORKTREE_NAME=${WORKTREE_NAME:-$(basename \"$PWD\")} turbo -F fumadocs dev",
     "dev:server": "turbo -F @amend/backend dev",
-    "dev:setup": "turbo -F @amend/backend dev:setup",
+    "dev:setup": "bun scripts/setup-agentic-convex.ts",
+    "dev:setup:local": "bun scripts/setup-agentic-convex.ts --local",
     "check": "bun run lint && bun run format:check && bun run check-types && bun run repo:hygiene && bun run source:size && bun run test",
     "fix": "oxlint --fix . && oxfmt ."
   },

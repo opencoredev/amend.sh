@@ -6,7 +6,7 @@
     "build": "vite build",
     "check-types": "tsc --noEmit",
     "serve": "vite preview",
-    "dev": "portless amend vite dev"
+    "dev": "portless ${WORKTREE_NAME:-amend} vite dev"
   },
   "dependencies": {
     "@amend/backend": "workspace:*",

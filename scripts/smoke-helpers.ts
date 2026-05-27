@@ -1,6 +1,7 @@
 import { readFile } from "node:fs/promises";
+import { basename } from "node:path";
 
-export const WEB_URL = process.env.AMEND_WEB_URL ?? "http://amend.localhost:1355";
+export const WEB_URL = process.env.AMEND_WEB_URL ?? `http://${localWorktreeName()}.localhost:1355`;
 export const API_BASE_URL = process.env.AMEND_API_BASE_URL ?? "http://127.0.0.1:3211/api/v1";
 const integrationDocPaths = [
   "docs/integration.md",
@@ -84,4 +85,19 @@ export function finishSmoke() {
   }
 
   console.log(`Smoke complete: ${checks.length} checks passed.`);
+}
+
+function localWorktreeName() {
+  return sanitizeLocalhostPart(process.env.WORKTREE_NAME ?? basename(process.cwd()));
+}
+
+function sanitizeLocalhostPart(value: string) {
+  return (
+    value
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9-]+/g, "-")
+      .slice(0, 48)
+      .replace(/^-+|-+$/g, "") || "amend"
+  );
 }
