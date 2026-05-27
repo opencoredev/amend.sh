@@ -36,6 +36,10 @@ Set these in the production Convex deployment or deployment platform:
 | `VITE_POSTHOG_TOKEN`       | Browser PostHog project token                                  |
 | `VITE_POSTHOG_HOST`        | Browser PostHog ingestion host                                 |
 | `VITE_POSTHOG_PROJECT_ID`  | Browser PostHog project ID                                     |
+| `POSTHOG_CLI_API_KEY`      | PostHog API key with error tracking write scope for sourcemaps |
+| `POSTHOG_CLI_HOST`         | PostHog app host for the CLI, e.g. `https://us.posthog.com`    |
+| `POSTHOG_CLI_PROJECT_ID`   | PostHog project ID for sourcemap uploads                       |
+| `POSTHOG_RELEASE_NAME`     | PostHog release name for web sourcemaps, defaults to amend-web |
 | `SITE_URL`                 | Hosted app origin and auth callbacks                           |
 | `BETTER_AUTH_SECRET`       | Better Auth session security                                   |
 | `GITHUB_WEBHOOK_SECRET`    | Signed GitHub webhook ingestion                                |

@@ -1,5 +1,6 @@
 import { ThemeProvider } from "next-themes";
 import { ConvexBetterAuthProvider } from "@convex-dev/better-auth/react";
+import { PostHogErrorBoundary, PostHogProvider } from "@posthog/react";
 import type { ConvexQueryClient } from "@convex-dev/react-query";
 import type { QueryClient } from "@tanstack/react-query";
 import {
@@ -12,6 +13,7 @@ import {
 } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { useEffect } from "react";
+import posthog from "posthog-js";
 import { Toaster } from "sileo";
 
 import { authClient } from "@/lib/auth-client";
@@ -125,9 +127,20 @@ function RootDocument() {
             enableSystem
             disableTransitionOnChange
           >
-            <div className="min-h-svh">
-              <Outlet />
-            </div>
+            <PostHogProvider client={posthog}>
+              <PostHogErrorBoundary
+                fallback={RootErrorFallback}
+                additionalProperties={() => ({
+                  app: "amend-web",
+                  path: window.location.href,
+                  surface: "root-react-boundary",
+                })}
+              >
+                <div className="min-h-svh">
+                  <Outlet />
+                </div>
+              </PostHogErrorBoundary>
+            </PostHogProvider>
             <Toaster
               position="top-right"
               offset={{ right: 18, top: 18 }}
@@ -148,5 +161,28 @@ function RootDocument() {
         </body>
       </html>
     </ConvexBetterAuthProvider>
+  );
+}
+
+function RootErrorFallback() {
+  return (
+    <main className="grid min-h-svh place-items-center bg-[#050505] px-6 text-white">
+      <section className="w-full max-w-md rounded-2xl border border-white/10 bg-[#111111] p-6 shadow-2xl shadow-black/40">
+        <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-white/45">
+          Amend recovered this view
+        </p>
+        <h1 className="mt-4 text-2xl font-semibold leading-tight">Something went wrong.</h1>
+        <p className="mt-3 text-sm leading-6 text-white/65">
+          The error was sent to PostHog. Refresh the page to reload the workspace.
+        </p>
+        <button
+          className="mt-6 rounded-lg bg-white px-4 py-2 text-sm font-semibold text-black transition-colors duration-150 ease-linear hover:bg-white/85 active:opacity-75"
+          type="button"
+          onClick={() => window.location.reload()}
+        >
+          Refresh
+        </button>
+      </section>
+    </main>
   );
 }

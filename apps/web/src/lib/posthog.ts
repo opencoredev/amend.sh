@@ -1,5 +1,6 @@
 import { env } from "@amend/env/web";
 import type posthog from "posthog-js";
+import type { PostHogConfig } from "posthog-js";
 
 const defaultPostHogHost = "https://us.i.posthog.com";
 const defaultPostHogProjectId = "441195";
@@ -44,23 +45,18 @@ function loadPostHog() {
   return clientPromise;
 }
 
-export async function initPostHog() {
-  if (initialized || typeof window === "undefined") {
-    return initialized;
-  }
+export function getPostHogToken() {
+  return env.VITE_POSTHOG_TOKEN ?? defaultPostHogToken;
+}
 
-  const token = env.VITE_POSTHOG_TOKEN ?? defaultPostHogToken;
-  if (!token) {
-    return false;
-  }
-
-  const posthog = await loadPostHog();
-
-  posthog.init(token, {
+export function getPostHogOptions(): Partial<PostHogConfig> {
+  return {
     api_host: env.VITE_POSTHOG_HOST ?? defaultPostHogHost,
     autocapture: true,
-    capture_pageview: false,
+    capture_exceptions: true,
     capture_pageleave: true,
+    capture_pageview: false,
+    defaults: "2026-01-30",
     person_profiles: "identified_only",
     persistence: "localStorage+cookie",
     loaded: (client) => {
@@ -69,7 +65,22 @@ export async function initPostHog() {
         app: "amend-web",
       });
     },
-  });
+  };
+}
+
+export async function initPostHog() {
+  if (initialized || typeof window === "undefined") {
+    return initialized;
+  }
+
+  const token = getPostHogToken();
+  if (!token) {
+    return false;
+  }
+
+  const posthog = await loadPostHog();
+
+  posthog.init(token, getPostHogOptions());
 
   initialized = true;
   return true;

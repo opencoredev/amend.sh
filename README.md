@@ -209,6 +209,9 @@ Convex CLI can also auto-create a local anonymous deployment in non-interactive 
 `bunx convex dev --once`; `bun run dev:setup:local` keeps Amend's web env sync on top of that.
 PostHog browser analytics defaults to the Amend US Cloud project token in code and can be
 overridden with `VITE_POSTHOG_TOKEN`, `VITE_POSTHOG_HOST`, and `VITE_POSTHOG_PROJECT_ID`.
+Browser exception autocapture and the root React error boundary also report to PostHog error
+tracking. Production and preview builds emit Vite sourcemaps, inject PostHog release metadata into
+the deployed Vercel assets, and upload sourcemaps when `POSTHOG_CLI_API_KEY` is set in CI.
 The web app emits explicit lifecycle events such as `user signed up`, `user signed in`,
 `user signed out`, `project created`, and `project source connected` so PostHog workflows can
 trigger on semantic product activity instead of autocaptured clicks.

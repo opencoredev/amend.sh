@@ -24,6 +24,10 @@ jobs:
       AMEND_PREVIEW_SEEDING_ENABLED: "true"
       BETTER_AUTH_SECRET: ${{ secrets.AMEND_PREVIEW_BETTER_AUTH_SECRET }}
       VITE_AMEND_PREVIEW_AUTH: "true"
+      POSTHOG_CLI_API_KEY: ${{ secrets.POSTHOG_CLI_API_KEY }}
+      POSTHOG_CLI_HOST: https://us.posthog.com
+      POSTHOG_CLI_PROJECT_ID: "441195"
+      POSTHOG_RELEASE_NAME: amend-web
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
