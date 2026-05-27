@@ -19,6 +19,7 @@ declare const process: {
 
 const siteUrl = process.env.SITE_URL ?? "http://amend.localhost:1355";
 const previewAuthEnabled = process.env.AMEND_PREVIEW_AUTH_ENABLED === "true";
+const localAuthEnabled = isLocalDevelopmentUrl(siteUrl);
 const gatedAuthEmails = allowedAuthEmails();
 
 export const authComponent = createClient<DataModel>(components.betterAuth);
@@ -30,7 +31,7 @@ function createAuth(ctx: GenericCtx<DataModel>) {
     database: authComponent.adapter(ctx),
     emailAndPassword: {
       enabled: true,
-      disableSignUp: !previewAuthEnabled,
+      disableSignUp: !previewAuthEnabled && !localAuthEnabled,
       requireEmailVerification: false,
     },
     hooks: gatedAuthEmails.size > 0
@@ -67,6 +68,12 @@ function trustedOriginsForRequest(request?: Request) {
   if (previewAuthEnabled && origin) {
     origins.add(origin);
   }
+  for (const localOrigin of localDevelopmentOrigins()) {
+    origins.add(localOrigin);
+  }
+  if (origin && isLocalDevelopmentOrigin(origin)) {
+    origins.add(origin);
+  }
   return [...origins];
 }
 
@@ -100,6 +107,38 @@ function allowedAuthEmails() {
       .map((email) => email.trim().toLowerCase())
       .filter(Boolean),
   );
+}
+
+function localDevelopmentOrigins() {
+  return [
+    "https://amend.localhost:1355",
+    "https://localhost:1355",
+    "https://127.0.0.1:1355",
+    "http://amend.localhost:1355",
+    "http://localhost:1355",
+    "http://127.0.0.1:1355",
+  ];
+}
+
+function isLocalDevelopmentOrigin(origin: string) {
+  try {
+    const url = new URL(origin);
+    return isLocalDevelopmentUrl(url);
+  } catch {
+    return false;
+  }
+}
+
+function isLocalDevelopmentUrl(value: string | URL) {
+  try {
+    const url = typeof value === "string" ? new URL(value) : value;
+    return (url.protocol === "http:" || url.protocol === "https:") &&
+      (url.hostname === "localhost" ||
+        url.hostname === "127.0.0.1" ||
+        url.hostname.endsWith(".localhost"));
+  } catch {
+    return false;
+  }
 }
 
 export const getCurrentUser = query({
