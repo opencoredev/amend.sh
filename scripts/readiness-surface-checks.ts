@@ -26,10 +26,11 @@ import {
 export function runReadinessSurfaceChecks() {
   add(
     "normal dev is portless",
-    rootPackage.scripts?.dev === "turbo dev" &&
-      webPackage.scripts?.dev === "portless amend vite dev" &&
-      docsPackage.scripts?.dev === "portless docs.amend next dev",
-    "bun dev -> turbo dev -> portless amend + docs.amend",
+    rootPackage.scripts?.dev === "WORKTREE_NAME=${WORKTREE_NAME:-$(basename $PWD)} turbo dev" &&
+      turboConfig.globalEnv?.includes("WORKTREE_NAME") === true &&
+      webPackage.scripts?.dev === "portless ${WORKTREE_NAME:-amend} vite dev" &&
+      docsPackage.scripts?.dev === "portless docs.${WORKTREE_NAME:-amend} next dev",
+    "bun dev -> worktree-scoped portless web + docs",
   );
   add(
     "read-only quality gate exists",

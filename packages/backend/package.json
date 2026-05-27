@@ -6,7 +6,8 @@
   "author": "",
   "scripts": {
     "dev": "convex dev",
-    "dev:setup": "convex dev --once --tail-logs disable",
+    "dev:setup": "bun ../../scripts/setup-agentic-convex.ts",
+    "dev:setup:local": "bun ../../scripts/setup-agentic-convex.ts --local",
     "check-types": "tsc -p convex/tsconfig.json --noEmit"
   },
   "dependencies": {
