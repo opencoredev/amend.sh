@@ -130,6 +130,7 @@ async function sendEmailDelivery(delivery: DeliveryRecord, dryRun: boolean) {
   try {
     const providerMessageId = await sendTransactionalEmail({
       html: emailHtml(delivery),
+      purpose: "notification_delivery",
       subject: String(delivery.payload.title ?? "Amend update"),
       text: emailText(delivery),
       to: delivery.recipient,
