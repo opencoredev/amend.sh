@@ -35,6 +35,9 @@ export const defaultIgnoredExtensions = new Set([
   ".lock",
   ".png",
   ".svg",
+  ".ttf",
+  ".woff",
+  ".woff2",
   ".webp",
 ]);
 
@@ -46,10 +49,14 @@ export const assetExtensions = new Set([
   ".jpg",
   ".png",
   ".svg",
+  ".ttf",
+  ".woff",
+  ".woff2",
   ".webp",
 ]);
 
 export const defaultAllowedLargeFiles = new Map<string, string>([
+  ["apps/web/src/lib/og-image.tsx", "static Open Graph image renderer template"],
   ["apps/web/public/images/project-setup-dashboard.webp", "binary product screenshot asset"],
   ["packages/api-spec/openapi.yaml", "public OpenAPI contract source of truth"],
   ["packages/sdk/src/openapi-types.ts", "generated from the OpenAPI contract"],

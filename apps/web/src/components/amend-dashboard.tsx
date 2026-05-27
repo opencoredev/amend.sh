@@ -2,6 +2,7 @@ import { cn } from "@amend/ui/lib/utils";
 
 import { AmendDashboardContent } from "@/components/amend-dashboard-content";
 import { roadmapStatusToComposerStatus } from "@/components/amend-dashboard-utils";
+import { AppToaster } from "@/components/app-toaster";
 import DashboardAuthShell from "@/components/dashboard-auth-shell";
 import { DashboardSidebarChrome } from "@/components/dashboard-sidebar-chrome";
 import { ComposerModal } from "@/components/post-composer-modal";
@@ -51,6 +52,7 @@ export default function AmendDashboard() {
         onClose={dashboard.closeComposer}
         onSubmit={dashboard.onComposerSubmit}
       />
+      <AppToaster />
     </main>
   );
 }

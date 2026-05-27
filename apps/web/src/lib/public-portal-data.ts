@@ -1,8 +1,8 @@
-import { env } from "@amend/env/web";
 import { ConvexHttpClient } from "convex/browser";
 import { makeFunctionReference } from "convex/server";
 
 import type { PortalData } from "@/components/public-portal-types";
+import { requiredClientEnv } from "@/lib/client-env";
 
 const publicPortalQuery = makeFunctionReference<"query">("amend:getPublicPortal");
 
@@ -15,11 +15,7 @@ export async function getPublicPortalData(workspaceSlug: string) {
 
 function getConvexClient() {
   if (!convexClient) {
-    const convexUrl = env.VITE_CONVEX_URL;
-    if (!convexUrl) {
-      throw new Error("VITE_CONVEX_URL is required to fetch public portal data.");
-    }
-    convexClient = new ConvexHttpClient(convexUrl);
+    convexClient = new ConvexHttpClient(requiredClientEnv("VITE_CONVEX_URL"));
   }
 
   return convexClient;

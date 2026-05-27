@@ -26,11 +26,24 @@ export default defineConfig({
             return "vendor-data-auth";
           }
 
+          if (id.includes("posthog-js")) {
+            return "vendor-analytics";
+          }
+
+          if (
+            id.includes("/zod/") ||
+            id.includes("@tanstack/form") ||
+            id.includes("/sileo/") ||
+            id.includes("framer-motion")
+          ) {
+            return;
+          }
+
           if (id.includes("lucide-react")) {
             return "vendor-icons";
           }
 
-          if (id.includes("/gsap/") || id.includes("/motion/") || id.includes("/sileo/")) {
+          if (id.includes("/gsap/") || id.includes("/motion/")) {
             return "vendor-motion";
           }
 

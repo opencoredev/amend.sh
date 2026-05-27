@@ -1,6 +1,5 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 
-import DashboardAuthShell from "@/components/dashboard-auth-shell";
 import { noIndexMeta } from "@/lib/seo";
 
 export const Route = createFileRoute("/sign-up")({
@@ -16,9 +15,4 @@ export const Route = createFileRoute("/sign-up")({
       });
     }
   },
-  component: SignUpRoute,
 });
-
-function SignUpRoute() {
-  return <DashboardAuthShell showSignIn={false} />;
-}
