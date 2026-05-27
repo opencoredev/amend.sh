@@ -5,6 +5,7 @@ import { roadmapStatusToComposerStatus } from "@/components/amend-dashboard-util
 import DashboardAuthShell from "@/components/dashboard-auth-shell";
 import { DashboardSidebarChrome } from "@/components/dashboard-sidebar-chrome";
 import { ComposerModal } from "@/components/post-composer-modal";
+import { ProjectSetupShell } from "@/components/project-setup-shell";
 import { useAmendDashboardController } from "@/components/use-amend-dashboard-controller";
 
 export default function AmendDashboard() {
@@ -12,6 +13,15 @@ export default function AmendDashboard() {
 
   if (!dashboard.sessionPending && !dashboard.hasSession) {
     return <DashboardAuthShell showSignIn />;
+  }
+
+  if (dashboard.activeView === "setup") {
+    return (
+      <ProjectSetupShell
+        onCreated={dashboard.onProjectCreated}
+        workspace={dashboard.workspace}
+      />
+    );
   }
 
   return (
