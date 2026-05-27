@@ -38,7 +38,8 @@ export const Route = createFileRoute("/api/og/portal/$slug")({
           });
         } catch (error) {
           console.error(`[og] portal image failed for ${params.slug}:`, error);
-          return new Response("OG image generation failed", { status: 500 });
+          const origin = new URL(request.url).origin;
+          return Response.redirect(`${origin}/og-image.png`, 307);
         }
       },
     },
