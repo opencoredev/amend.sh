@@ -70,3 +70,4 @@ export const revertAutomationDecision = mutation(mutations.revertAutomationDecis
 export const upsertChangelogEntry = mutation(mutations.upsertChangelogEntryDefinition);
 export const upsertRoadmapItem = mutation(mutations.upsertRoadmapItemDefinition);
 export const voteRoadmapItem = mutation(mutations.voteRoadmapItemDefinition);
+export const joinWaitlist = mutation(mutations.joinWaitlistDefinition);

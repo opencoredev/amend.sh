@@ -23,7 +23,7 @@ export function BrandGuidelinesHeader() {
 
         <Link
           to="/sign-in"
-          className="flex h-8 min-w-24 items-center justify-center border border-border px-3 text-xs text-muted-foreground transition-[border-color,color,background-color,scale] duration-200 hover:border-foreground hover:bg-foreground hover:text-background active:scale-[0.96] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground"
+          className="flex h-8 min-w-24 items-center justify-center border border-border px-3 text-xs text-muted-foreground transition-colors duration-150 ease-linear hover:border-foreground hover:bg-foreground hover:text-background active:opacity-75 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground"
         >
           Sign in
         </Link>

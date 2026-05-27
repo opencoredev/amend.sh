@@ -9,6 +9,8 @@
  */
 
 import type * as amend from "../amend.js";
+import type * as amendAccessFunctionArgs from "../amendAccessFunctionArgs.js";
+import type * as amendAccessMutationHandlers from "../amendAccessMutationHandlers.js";
 import type * as amendAgent from "../amendAgent.js";
 import type * as amendAgentDecisionNormalizer from "../amendAgentDecisionNormalizer.js";
 import type * as amendAgentFallback from "../amendAgentFallback.js";
@@ -91,6 +93,7 @@ import type * as amendSourceIngestRelations from "../amendSourceIngestRelations.
 import type * as amendSourceIngestShipped from "../amendSourceIngestShipped.js";
 import type * as amendSourceLinks from "../amendSourceLinks.js";
 import type * as amendSourceNotifications from "../amendSourceNotifications.js";
+import type * as amendTransactionalEmails from "../amendTransactionalEmails.js";
 import type * as amendTypes from "../amendTypes.js";
 import type * as amendUserUpdateReadHandlers from "../amendUserUpdateReadHandlers.js";
 import type * as amendValidators from "../amendValidators.js";
@@ -161,6 +164,8 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   amend: typeof amend;
+  amendAccessFunctionArgs: typeof amendAccessFunctionArgs;
+  amendAccessMutationHandlers: typeof amendAccessMutationHandlers;
   amendAgent: typeof amendAgent;
   amendAgentDecisionNormalizer: typeof amendAgentDecisionNormalizer;
   amendAgentFallback: typeof amendAgentFallback;
@@ -243,6 +248,7 @@ declare const fullApi: ApiFromModules<{
   amendSourceIngestShipped: typeof amendSourceIngestShipped;
   amendSourceLinks: typeof amendSourceLinks;
   amendSourceNotifications: typeof amendSourceNotifications;
+  amendTransactionalEmails: typeof amendTransactionalEmails;
   amendTypes: typeof amendTypes;
   amendUserUpdateReadHandlers: typeof amendUserUpdateReadHandlers;
   amendValidators: typeof amendValidators;

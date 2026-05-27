@@ -1,12 +1,16 @@
 import { inspectBuildSize } from "./build-size-core";
 import { collectBuildAssets, collectSearchableBuildFiles } from "./build-size-files";
 
-const assetsDir = new URL("../apps/web/dist/client/assets/", import.meta.url);
+const distAssetsDir = new URL("../apps/web/dist/client/assets/", import.meta.url);
 const distDir = new URL("../apps/web/dist/", import.meta.url);
+const outputAssetsDir = new URL("../apps/web/.output/public/assets/", import.meta.url);
+const outputDir = new URL("../apps/web/.output/", import.meta.url);
+const distAssets = await collectBuildAssets(distAssetsDir);
+const outputAssets = distAssets.length > 0 ? [] : await collectBuildAssets(outputAssetsDir);
 
 const inspection = inspectBuildSize({
-  assets: await collectBuildAssets(assetsDir),
-  files: await collectSearchableBuildFiles(distDir),
+  assets: distAssets.length > 0 ? distAssets : outputAssets,
+  files: await collectSearchableBuildFiles(distAssets.length > 0 ? distDir : outputDir),
 });
 
 if (!inspection.ok) {

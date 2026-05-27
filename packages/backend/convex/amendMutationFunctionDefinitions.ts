@@ -1,3 +1,5 @@
+import { joinWaitlistArgs } from "./amendAccessFunctionArgs";
+import { joinWaitlistHandler } from "./amendAccessMutationHandlers";
 import {
   upsertChangelogEntryHandler,
   upsertRoadmapItemHandler,
@@ -187,4 +189,9 @@ export const upsertRoadmapItemDefinition = {
 export const voteRoadmapItemDefinition = {
   args: voteRoadmapItemArgs,
   handler: voteRoadmapItemHandler,
+};
+
+export const joinWaitlistDefinition = {
+  args: joinWaitlistArgs,
+  handler: joinWaitlistHandler,
 };

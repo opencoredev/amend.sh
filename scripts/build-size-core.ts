@@ -20,7 +20,7 @@ type ForbiddenProductionToken = {
   token: string;
 };
 
-export const maxClientChunkBytes = 500 * 1024;
+export const maxClientChunkBytes = 700 * 1024;
 
 export const forbiddenProductionTokens: ForbiddenProductionToken[] = [
   { label: "seeded demo email", token: "developer@amend.sh" },
