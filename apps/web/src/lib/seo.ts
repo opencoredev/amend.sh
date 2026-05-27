@@ -122,7 +122,8 @@ export const productJsonLd = {
       name: "Builder",
       price: "19",
       priceCurrency: "USD",
-      description: "Hosted feedback, roadmap, and changelog workflow for founders and small projects",
+      description:
+        "Hosted feedback, roadmap, and changelog workflow for founders and small projects",
       url: `${siteUrl}/#pricing`,
     },
     {

@@ -30,13 +30,11 @@ export function RoadmapWorkspace({
       : ([activeStatus] as RoadmapStatus[]);
 
   return (
-    <DashboardWorkspaceSurface className="h-[calc(100svh-6.5rem)]" contentClassName="flex min-h-0 overflow-hidden">
-      <div
-        className={cn(
-          "flex min-h-0 flex-1 gap-3 p-3",
-          activeStatus !== "all" && "flex-col",
-        )}
-      >
+    <DashboardWorkspaceSurface
+      className="h-[calc(100svh-6.5rem)]"
+      contentClassName="flex min-h-0 overflow-hidden"
+    >
+      <div className={cn("flex min-h-0 flex-1 gap-3 p-3", activeStatus !== "all" && "flex-col")}>
         {visibleStatuses.map((columnStatus) => {
           const cards = entries.filter(
             (entry) => roadmapStatusToRoadmapStatus(entry.status) === columnStatus,
@@ -45,10 +43,7 @@ export function RoadmapWorkspace({
           return (
             <div
               key={columnStatus}
-              className={cn(
-                "min-w-0 flex-1",
-                activeStatus === "all" && "min-w-[160px]",
-              )}
+              className={cn("min-w-0 flex-1", activeStatus === "all" && "min-w-[160px]")}
             >
               <RoadmapColumn
                 cards={cards}

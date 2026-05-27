@@ -56,8 +56,7 @@
   --font-display: var(--font-montserrat), "Montserrat", sans-serif;
   --workspace-surface-background: #151518;
   --workspace-surface-ring: rgb(255 255 255 / 0.055);
-  --workspace-surface-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.045), 0 24px 80px rgb(0 0 0 / 0.18);
+  --workspace-surface-shadow: inset 0 1px 0 rgb(255 255 255 / 0.045), 0 24px 80px rgb(0 0 0 / 0.18);
   --radius: 0.85rem;
   --shadow-x: 0;
   --shadow-y: 1px;

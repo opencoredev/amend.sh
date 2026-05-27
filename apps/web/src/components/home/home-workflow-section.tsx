@@ -12,8 +12,8 @@ export function WorkflowSection() {
             A normal week, with less product archaeology.
           </h2>
           <p className="mt-6 max-w-md text-sm leading-6 text-muted-foreground">
-            Amend keeps working after setup. It watches selected sources, groups real demand, follows
-            GitHub and Linear, and helps the team update people when the work ships.
+            Amend keeps working after setup. It watches selected sources, groups real demand,
+            follows GitHub and Linear, and helps the team update people when the work ships.
           </p>
         </div>
 

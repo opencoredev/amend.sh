@@ -26,7 +26,10 @@ export function TopEventsPanel({ analytics }: { analytics?: AnalyticsOverview })
       {events.length ? (
         <div className="mt-3 grid gap-1.5">
           {events.slice(0, 8).map((event) => (
-            <div className="flex items-center gap-3 rounded-xl bg-background/65 px-3 py-2.5 ring-1 ring-white/[0.035]" key={event.event}>
+            <div
+              className="flex items-center gap-3 rounded-xl bg-background/65 px-3 py-2.5 ring-1 ring-white/[0.035]"
+              key={event.event}
+            >
               <div className="min-w-0 flex-1">
                 <div className="flex items-center justify-between gap-3 text-xs">
                   <span className="truncate font-medium">{formatState(event.event)}</span>
@@ -69,7 +72,9 @@ export function EventLedgerPanel({ analytics }: { analytics?: AnalyticsOverview 
             >
               <div className="flex items-center justify-between gap-3">
                 <span className="truncate font-medium">{formatState(event.event)}</span>
-                <span className="shrink-0 text-muted-foreground">{formatDate(event.createdAt)}</span>
+                <span className="shrink-0 text-muted-foreground">
+                  {formatDate(event.createdAt)}
+                </span>
               </div>
               <div className="flex min-w-0 gap-3 text-muted-foreground/70">
                 <span className="truncate">
@@ -100,7 +105,10 @@ export function CategoryPanel({ analytics }: { analytics?: AnalyticsOverview }) 
       {categories.length ? (
         <div className="mt-3 grid gap-1.5">
           {categories.map((category) => (
-            <div className="flex items-center gap-3 rounded-xl bg-background/65 px-3 py-2.5 ring-1 ring-white/[0.035]" key={category.category}>
+            <div
+              className="flex items-center gap-3 rounded-xl bg-background/65 px-3 py-2.5 ring-1 ring-white/[0.035]"
+              key={category.category}
+            >
               <div className="min-w-0 flex-1">
                 <div className="flex items-center justify-between gap-3 text-xs">
                   <span className="truncate font-medium">{formatState(category.category)}</span>
@@ -143,7 +151,10 @@ export function SourceHealthPanel({
       {channels.length ? (
         <div className="mt-3 grid gap-1.5">
           {channels.slice(0, 6).map((channel) => (
-            <div className="grid gap-1 rounded-xl bg-background/65 px-3 py-2.5 text-xs ring-1 ring-white/[0.035]" key={channel.id}>
+            <div
+              className="grid gap-1 rounded-xl bg-background/65 px-3 py-2.5 text-xs ring-1 ring-white/[0.035]"
+              key={channel.id}
+            >
               <div className="flex items-center justify-between gap-3">
                 <span className="truncate font-medium">{channel.label}</span>
                 <span
@@ -206,9 +217,14 @@ export function AgentOutputPanel({
       <SectionHeader eyebrow="Automation" icon={<Sparkles />} title="Agent output" />
       <div className="mt-3 grid grid-cols-3 gap-1.5">
         {rows.map(([label, value, icon]) => (
-          <div className="grid gap-1.5 rounded-xl bg-background/65 p-3 ring-1 ring-white/[0.035]" key={label}>
+          <div
+            className="grid gap-1.5 rounded-xl bg-background/65 p-3 ring-1 ring-white/[0.035]"
+            key={label}
+          >
             <div className="flex items-center justify-between gap-1 text-muted-foreground [&_svg]:size-3">
-              <span className="text-[0.6rem] font-semibold uppercase tracking-[0.1em]">{label}</span>
+              <span className="text-[0.6rem] font-semibold uppercase tracking-[0.1em]">
+                {label}
+              </span>
               {icon}
             </div>
             <span className="font-mono text-lg font-semibold tabular-nums">{value}</span>

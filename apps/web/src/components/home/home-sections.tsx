@@ -40,9 +40,7 @@ export function FounderProofSection() {
       <div className="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8 lg:py-36">
         <div className="grid gap-10 lg:grid-cols-[0.92fr_1.08fr] lg:items-end">
           <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-              What changes
-            </p>
+            <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">What changes</p>
             <h2 className="amend-display mt-5 max-w-4xl text-4xl font-medium leading-tight sm:text-5xl lg:text-6xl">
               The same request stops showing up as a brand new problem.
             </h2>

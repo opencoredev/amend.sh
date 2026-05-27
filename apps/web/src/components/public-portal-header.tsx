@@ -33,7 +33,10 @@ function PortalDesktopNav() {
 function PortalSectionNav({ className }: { className: string }) {
   return (
     <nav aria-label="Portal sections" className={className}>
-      <a href="#feedback" className="shrink-0 rounded-full border border-primary/35 bg-primary/10 px-4 py-2 text-foreground">
+      <a
+        href="#feedback"
+        className="shrink-0 rounded-full border border-primary/35 bg-primary/10 px-4 py-2 text-foreground"
+      >
         Feedback
       </a>
       <a

@@ -111,7 +111,10 @@ export const integrationRows = [
 export const approvalSteps = [
   ["Silent", "Watch selected channels and save product signal without posting anything."],
   ["Receipt", "React or reply when feedback is captured, so users know someone heard them."],
-  ["Teammate", "Let your team tag Amend in Slack or Discord and ask what changed, shipped, or needs follow-up."],
+  [
+    "Teammate",
+    "Let your team tag Amend in Slack or Discord and ask what changed, shipped, or needs follow-up.",
+  ],
 ] as const;
 
 export const sourceScenes = [

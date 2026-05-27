@@ -102,7 +102,10 @@ export function AnalyticsWorkspace({
   ];
 
   return (
-    <DashboardWorkspaceSurface className="min-h-0" contentClassName="min-h-[calc(100svh-8.5rem)] overflow-y-auto p-4 sm:p-5">
+    <DashboardWorkspaceSurface
+      className="min-h-0"
+      contentClassName="min-h-[calc(100svh-8.5rem)] overflow-y-auto p-4 sm:p-5"
+    >
       <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_21rem]">
         <section className="grid gap-4">
           <AnalyticsHero

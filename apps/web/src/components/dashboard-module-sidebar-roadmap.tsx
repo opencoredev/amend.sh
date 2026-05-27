@@ -50,9 +50,11 @@ export function RoadmapModuleSidebar({
           <SidebarPill
             key={status}
             active={activeStatus === status}
-            count={activeRoadmap.entries.filter(
-              (item) => roadmapStatusToRoadmapStatus(item.status) === status,
-            ).length}
+            count={
+              activeRoadmap.entries.filter(
+                (item) => roadmapStatusToRoadmapStatus(item.status) === status,
+              ).length
+            }
             onClick={() => onStatusChange(status as RoadmapStatus)}
           >
             {meta.label}
