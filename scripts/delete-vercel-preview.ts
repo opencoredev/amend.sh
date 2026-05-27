@@ -29,7 +29,9 @@ for (const deployment of matchingDeployments) {
   await deleteDeployment(deployment.uid, deployment.url);
 }
 
-console.log(`Deleted ${matchingDeployments.length} Vercel preview deployment(s) for ${previewName}.`);
+console.log(
+  `Deleted ${matchingDeployments.length} Vercel preview deployment(s) for ${previewName}.`,
+);
 
 type VercelDeployment = {
   meta?: Record<string, string | undefined>;
@@ -54,7 +56,9 @@ async function listDeployments() {
   });
 
   if (!response.ok) {
-    throw new Error(`Failed to list Vercel deployments: ${response.status} ${await response.text()}`);
+    throw new Error(
+      `Failed to list Vercel deployments: ${response.status} ${await response.text()}`,
+    );
   }
 
   const payload = (await response.json()) as { deployments?: VercelDeployment[] };

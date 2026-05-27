@@ -43,9 +43,7 @@ export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp?: ()
   function navigateAfterEmailSignIn() {
     if (portalRedirect) {
       const hash = portalRedirect.section ? `#${encodeURIComponent(portalRedirect.section)}` : "";
-      window.location.assign(
-        `/portal/${encodeURIComponent(portalRedirect.workspaceSlug)}${hash}`,
-      );
+      window.location.assign(`/portal/${encodeURIComponent(portalRedirect.workspaceSlug)}${hash}`);
       return;
     }
 
