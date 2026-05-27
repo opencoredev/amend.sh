@@ -1,6 +1,6 @@
 import { FieldGroup } from "@amend/ui/components/field";
 import { useForm } from "@tanstack/react-form";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { useMutation } from "convex/react";
 import { makeFunctionReference } from "convex/server";
 import { useState } from "react";
@@ -12,6 +12,7 @@ import {
   AuthSubmitButton,
   AuthTextField,
 } from "@/components/auth-form-primitives";
+import { authEmailSearch } from "@/lib/auth-email-search";
 import { authClient } from "@/lib/auth-client";
 import { authErrorMessage } from "@/lib/auth-errors";
 import { demoWorkspaceSlug } from "@/lib/demo-workspace";
@@ -32,11 +33,12 @@ export default function SignUpForm({ onSwitchToSignIn }: { onSwitchToSignIn?: ()
 function GatedSignUpForm({ onSwitchToSignIn }: { onSwitchToSignIn?: () => void }) {
   const [formError, setFormError] = useState("");
   const [submittedEmail, setSubmittedEmail] = useState("");
+  const search = useSearch({ from: "/sign-up" }) as { email?: string };
   const joinWaitlist = useMutation(joinWaitlistMutation);
   const form = useForm({
     defaultValues: {
       company: "",
-      email: "",
+      email: search.email ?? "",
       name: "",
     },
     onSubmit: async ({ value }) => {
@@ -78,20 +80,25 @@ function GatedSignUpForm({ onSwitchToSignIn }: { onSwitchToSignIn?: () => void }
         title="Join the Amend waitlist"
         description="Leave your email and we will let you know when production access opens."
         action={
-          <>
-            Already have an account?{" "}
-            <Link
-              to="/sign-in"
-              onClick={(event) => {
-                if (!onSwitchToSignIn) return;
-                event.preventDefault();
-                onSwitchToSignIn();
-              }}
-              className="font-medium text-foreground underline-offset-4 hover:underline"
-            >
-              Sign in
-            </Link>
-          </>
+          <form.Subscribe selector={(state) => state.values.email}>
+            {(email) => (
+              <>
+                Already have an account?{" "}
+                <Link
+                  to="/sign-in"
+                  search={authEmailSearch(email)}
+                  onClick={(event) => {
+                    if (!onSwitchToSignIn) return;
+                    event.preventDefault();
+                    onSwitchToSignIn();
+                  }}
+                  className="font-medium text-foreground underline-offset-4 hover:underline"
+                >
+                  Sign in
+                </Link>
+              </>
+            )}
+          </form.Subscribe>
         }
       />
 
@@ -177,9 +184,10 @@ function GatedSignUpForm({ onSwitchToSignIn }: { onSwitchToSignIn?: () => void }
 function PreviewSignUpForm({ onSwitchToSignIn }: { onSwitchToSignIn?: () => void }) {
   const [formError, setFormError] = useState("");
   const navigate = useNavigate({ from: "/" });
+  const search = useSearch({ from: "/sign-up" }) as { email?: string };
   const form = useForm({
     defaultValues: {
-      email: "",
+      email: search.email ?? "",
       name: "",
       password: "",
     },
@@ -248,20 +256,25 @@ function PreviewSignUpForm({ onSwitchToSignIn }: { onSwitchToSignIn?: () => void
         title="Create your Amend account"
         description="Start a workspace for feedback, roadmap, changelog, agent runs, and analytics."
         action={
-          <>
-            Already have an account?{" "}
-            <Link
-              to="/sign-in"
-              onClick={(event) => {
-                if (!onSwitchToSignIn) return;
-                event.preventDefault();
-                onSwitchToSignIn();
-              }}
-              className="font-medium text-foreground underline-offset-4 hover:underline"
-            >
-              Sign in
-            </Link>
-          </>
+          <form.Subscribe selector={(state) => state.values.email}>
+            {(email) => (
+              <>
+                Already have an account?{" "}
+                <Link
+                  to="/sign-in"
+                  search={authEmailSearch(email)}
+                  onClick={(event) => {
+                    if (!onSwitchToSignIn) return;
+                    event.preventDefault();
+                    onSwitchToSignIn();
+                  }}
+                  className="font-medium text-foreground underline-offset-4 hover:underline"
+                >
+                  Sign in
+                </Link>
+              </>
+            )}
+          </form.Subscribe>
         }
       />
 

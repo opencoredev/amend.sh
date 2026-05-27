@@ -1,9 +1,11 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 
+import { parseAuthEmailSearch } from "@/lib/auth-email-search";
 import { parsePortalRedirectTo } from "@/lib/auth-redirects";
 import { noIndexMeta } from "@/lib/seo";
 
 type SignInSearch = {
+  email?: string;
   redirectTo?: string;
 };
 
@@ -13,7 +15,11 @@ export const Route = createFileRoute("/sign-in")({
   }),
   validateSearch: (search: Record<string, unknown>): SignInSearch => {
     const portalRedirect = parsePortalRedirectTo(search.redirectTo);
-    return portalRedirect ? { redirectTo: portalRedirect.href } : {};
+    const email = parseAuthEmailSearch(search.email);
+    return {
+      ...(portalRedirect ? { redirectTo: portalRedirect.href } : {}),
+      ...(email ? { email } : {}),
+    };
   },
   beforeLoad: ({ context, search }) => {
     if (context.isAuthenticated) {
