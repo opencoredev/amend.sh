@@ -106,6 +106,8 @@ console.log(`Web env: ${relativePath(webEnvPath)}`);
 function parseArgs(args: string[]): SetupOptions {
   const optionValues = new Map<string, string>();
   const flags = new Set<string>();
+  const valueOptions = new Set(["expiration", "project-ref", "site-url", "worktree-name"]);
+  const booleanOptions = new Set(["dry-run", "local", "skip-default-env"]);
 
   for (let index = 0; index < args.length; index += 1) {
     const arg = args[index];
@@ -123,12 +125,7 @@ function parseArgs(args: string[]): SetupOptions {
     }
 
     const [name, inlineValue] = arg.slice(2).split("=", 2);
-    if (
-      name === "expiration" ||
-      name === "project-ref" ||
-      name === "site-url" ||
-      name === "worktree-name"
-    ) {
+    if (valueOptions.has(name)) {
       const value = inlineValue ?? args[index + 1];
       if (!value || value.startsWith("--")) {
         throw new Error(`--${name} requires a value`);
@@ -138,6 +135,12 @@ function parseArgs(args: string[]): SetupOptions {
       continue;
     }
 
+    if (!booleanOptions.has(name)) {
+      throw new Error(`Unknown option --${name}. Run with --help for usage.`);
+    }
+    if (inlineValue !== undefined) {
+      throw new Error(`--${name} does not accept a value`);
+    }
     flags.add(name);
   }
 
@@ -174,9 +177,9 @@ function sanitizeRefPart(value: string) {
     value
       .trim()
       .toLowerCase()
-      .replace(/[^a-z0-9._-]+/g, "-")
-      .replace(/^-+|-+$/g, "")
-      .slice(0, 48) || "worktree"
+      .replace(/[^a-z0-9-]+/g, "-")
+      .slice(0, 48)
+      .replace(/^-+|-+$/g, "") || "worktree"
   );
 }
 
