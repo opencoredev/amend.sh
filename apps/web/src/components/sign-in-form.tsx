@@ -326,13 +326,14 @@ function ForgotPasswordForm({
   onBack: () => void;
 }) {
   const [formError, setFormError] = useState("");
-  const [sentTo, setSentTo] = useState("");
+  const [resetRequested, setResetRequested] = useState(false);
   const form = useForm({
     defaultValues: {
       email: initialEmail,
     },
     onSubmit: async ({ value }) => {
       setFormError("");
+      setResetRequested(false);
       try {
         const response = await fetch("/api/auth/request-password-reset", {
           body: JSON.stringify({
@@ -350,8 +351,8 @@ function ForgotPasswordForm({
               : "The reset email could not be sent.",
           );
         }
-        setSentTo(value.email);
-        toast.success("Reset link sent");
+        setResetRequested(true);
+        toast.success("Reset requested");
       } catch (caught) {
         const message =
           caught instanceof Error ? caught.message : "The reset email could not send.";
@@ -373,7 +374,7 @@ function ForgotPasswordForm({
     <div className="w-full">
       <AuthFormHeader
         title="Reset your password"
-        description="Enter your account email and we will send a reset link."
+        description="Enter your account email and we will request a reset link."
         action={
           <button
             type="button"
@@ -385,9 +386,10 @@ function ForgotPasswordForm({
         }
       />
 
-      {sentTo ? (
+      {resetRequested ? (
         <div className="mb-6 border border-border bg-card/40 p-3 text-center text-sm text-muted-foreground">
-          Check <span className="text-foreground">{sentTo}</span> for the reset link.
+          If the address is registered and email delivery is available, a reset link will arrive
+          shortly.
         </div>
       ) : null}
 
