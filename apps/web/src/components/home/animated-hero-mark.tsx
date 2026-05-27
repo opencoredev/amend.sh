@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 
 import {
   createAmendPixelParticles,
@@ -10,7 +10,7 @@ export function AnimatedHeroMark() {
   const fieldRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const desktopQuery = window.matchMedia("(min-width: 1024px)");
 
     if (!desktopQuery.matches) {
@@ -30,13 +30,11 @@ export function AnimatedHeroMark() {
       return;
     }
 
-    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     let animationFrame = 0;
     let particles = createAmendPixelParticles(0, 0);
     let width = 0;
     let height = 0;
-    const startedAt = performance.now();
-    let previousTime = startedAt;
+    let previousTime = 0;
     const hover = { strength: 0, targetStrength: 0, x: 0, y: 0 };
 
     const handlePointerMove = (event: PointerEvent) => {
@@ -44,10 +42,12 @@ export function AnimatedHeroMark() {
       hover.x = event.clientX - bounds.left;
       hover.y = event.clientY - bounds.top;
       hover.targetStrength = 1;
+      startAnimation();
     };
 
     const handlePointerLeave = () => {
       hover.targetStrength = 0;
+      startAnimation();
     };
 
     const resize = () => {
@@ -62,29 +62,43 @@ export function AnimatedHeroMark() {
       drawParticles(context, particles, width, height, 0);
     };
 
-    let lastDrawAt = 0;
-
     const animate = (time: number): void => {
       if (document.visibilityState === "hidden") {
         animationFrame = requestAnimationFrame(animate);
         return;
       }
 
-      if (time - lastDrawAt < 42) {
+      if (previousTime === 0) {
+        previousTime = time;
+      }
+
+      if (time - previousTime < 42) {
         animationFrame = requestAnimationFrame(animate);
         return;
       }
 
-      lastDrawAt = time;
       const delta = Math.min((time - previousTime) / 1000, 0.05);
       previousTime = time;
 
-      const seconds = (time - startedAt) / 1000;
       hover.strength += (hover.targetStrength - hover.strength) * Math.min(1, delta * 9);
-      updateParticles(particles, delta, seconds, hover);
-      drawParticles(context, particles, width, height, seconds);
+      updateParticles(particles, delta, time / 1000, hover);
+      drawParticles(context, particles, width, height, 0);
+
+      if (hover.targetStrength === 0 && hover.strength < 0.01) {
+        hover.strength = 0;
+        animationFrame = 0;
+        previousTime = 0;
+        return;
+      }
 
       animationFrame = requestAnimationFrame(animate);
+    };
+
+    const startAnimation = () => {
+      if (animationFrame === 0) {
+        previousTime = 0;
+        animationFrame = requestAnimationFrame(animate);
+      }
     };
 
     const resizeObserver = new ResizeObserver(resize);
@@ -92,10 +106,6 @@ export function AnimatedHeroMark() {
     resizeObserver.observe(field);
     field.addEventListener("pointermove", handlePointerMove, { passive: true });
     field.addEventListener("pointerleave", handlePointerLeave, { passive: true });
-
-    if (!prefersReducedMotion) {
-      animationFrame = requestAnimationFrame(animate);
-    }
 
     return () => {
       cancelAnimationFrame(animationFrame);

@@ -1,6 +1,7 @@
 import { FieldGroup } from "@amend/ui/components/field";
 import { useForm } from "@tanstack/react-form";
 import { Link, useSearch } from "@tanstack/react-router";
+import { useConvex } from "convex/react";
 import { lazy, Suspense, useState } from "react";
 import z from "zod";
 
@@ -30,6 +31,7 @@ export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp?: ()
   const [showPasswordReset, setShowPasswordReset] = useState(false);
   const search = useSearch({ from: "/sign-in" }) as { redirectTo?: string };
   const portalRedirect = parsePortalRedirectTo(search.redirectTo);
+  const convex = useConvex();
 
   function navigateToDashboardAfterSignIn(workspace = demoWorkspaceSlug) {
     window.location.assign(`/dashboard/proactivation?workspace=${encodeURIComponent(workspace)}`);
@@ -76,6 +78,20 @@ export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp?: ()
     });
   }
 
+  async function joinPreviewWorkspace(email: string) {
+    if (!previewAuthEnabled) {
+      return;
+    }
+
+    const { joinSeededDemoWorkspaceMutation } = await import("@/components/dev-demo-sign-in-model");
+
+    await convex.mutation(joinSeededDemoWorkspaceMutation, {
+      email,
+      name: previewNameFromEmail(email),
+      workspaceSlug: demoWorkspaceSlug,
+    });
+  }
+
   const form = useForm({
     defaultValues: {
       email: "",
@@ -104,6 +120,7 @@ export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp?: ()
                 surface: portalRedirect ? "portal_redirect" : "sign_in_page",
               },
             });
+            await joinPreviewWorkspace(value.email);
             navigateAfterEmailSignIn();
             toast.success("Sign in successful");
           },
@@ -111,6 +128,7 @@ export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp?: ()
             if (previewAuthEnabled) {
               const signUpResult = await createPreviewAccount(value);
               if (signUpResult.ok) {
+                await joinPreviewWorkspace(value.email);
                 void identifyAndCapturePostHogEvent({
                   event: "user_signed_in",
                   identity: { email: value.email },

@@ -1,5 +1,4 @@
 @import "@amend/ui/globals.css";
-@import "sileo/styles.css";
 
 :root {
   --font-montserrat: "Montserrat", sans-serif;
@@ -9,6 +8,38 @@
 }
 
 @layer base {
+  @font-face {
+    font-family: "Geist";
+    src: url("/fonts/geist-sans-400.ttf") format("truetype");
+    font-display: swap;
+    font-style: normal;
+    font-weight: 400;
+  }
+
+  @font-face {
+    font-family: "Geist";
+    src: url("/fonts/geist-sans-700.ttf") format("truetype");
+    font-display: swap;
+    font-style: normal;
+    font-weight: 700;
+  }
+
+  @font-face {
+    font-family: "Geist Mono";
+    src: url("/fonts/geist-mono-400.woff2") format("woff2");
+    font-display: swap;
+    font-style: normal;
+    font-weight: 400;
+  }
+
+  @font-face {
+    font-family: "Geist Mono";
+    src: url("/fonts/geist-mono-700.woff2") format("woff2");
+    font-display: swap;
+    font-style: normal;
+    font-weight: 700;
+  }
+
   html {
     -webkit-font-smoothing: antialiased;
     scroll-behavior: smooth;
@@ -43,14 +74,6 @@
 .amend-hero {
   background: var(--background);
   color: var(--foreground);
-}
-
-.amend-hero-copy {
-  animation: amend-hero-in 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
-}
-
-.amend-hero-actions {
-  animation: amend-hero-in 0.6s ease-out 0.35s both;
 }
 
 .amend-marquee-viewport {
@@ -118,18 +141,6 @@
   }
 }
 
-@keyframes amend-hero-in {
-  0% {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
 @keyframes amend-marquee {
   0% {
     transform: translate3d(0, 0, 0);
@@ -150,8 +161,6 @@
     animation-iteration-count: 1 !important;
   }
 
-  .amend-hero-copy,
-  .amend-hero-actions,
   .amend-marquee-track {
     animation: none;
   }

@@ -63,7 +63,7 @@ export function FounderProofSection() {
                   {card.eyebrow}
                 </p>
                 <div>
-                  <h3 className="max-w-xl text-xl font-semibold leading-tight text-foreground transition-transform duration-700 ease-out group-hover:translate-x-1 sm:text-2xl">
+                  <h3 className="max-w-xl text-xl font-semibold leading-tight text-foreground transition-colors duration-150 ease-linear group-hover:text-foreground sm:text-2xl">
                     {card.title}
                   </h3>
                   <p className="mt-4 max-w-xl text-sm leading-6 text-muted-foreground">
@@ -155,7 +155,7 @@ export function IntegrationSection() {
                   data-amend-approval-card
                   className="group min-h-44 overflow-hidden bg-background p-5"
                 >
-                  <h3 className="text-lg font-semibold text-foreground transition-transform duration-700 ease-out group-hover:translate-x-1">
+                  <h3 className="text-lg font-semibold text-foreground transition-colors duration-150 ease-linear">
                     {title}
                   </h3>
                   <p data-amend-scrub className="mt-6 text-sm leading-6 text-muted-foreground">

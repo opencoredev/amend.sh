@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 
 import AmendLogo from "@/components/amend-logo";
+import { AppToaster } from "@/components/app-toaster";
 import SignInForm from "@/components/sign-in-form";
 import SignUpForm from "@/components/sign-up-form";
 
@@ -28,7 +29,7 @@ export default function DashboardAuthShell({
           </div>
         </div>
       </section>
-      <section className="relative hidden overflow-hidden bg-[#0a0a0a] lg:block">
+      <section className="relative hidden bg-white lg:block overflow-hidden">
         <img
           src="/auth-cover.svg"
           alt=""
@@ -36,6 +37,7 @@ export default function DashboardAuthShell({
           className="absolute inset-0 h-full w-full object-cover"
         />
       </section>
+      <AppToaster />
     </main>
   );
 }
