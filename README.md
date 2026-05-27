@@ -50,8 +50,9 @@ Run the normal dev command locally:
 bun run dev
 ```
 
-The web app's normal dev script uses portless, so it serves at
-`http://amend.localhost:1355` while Convex runs alongside it.
+The web app's normal dev script uses portless. The main checkout serves at
+`http://amend.localhost:1355`; linked worktrees serve at
+`http://$(basename $PWD).localhost:1355` while Convex runs alongside them.
 
 With `bun run dev` still running, run the product smoke gate:
 
@@ -171,22 +172,41 @@ completion audit, and next-steps report schema endpoints for `amend.sh` and `doc
 
 ## Convex Setup
 
-This project uses Convex as a backend. This repo is configured for a local Convex
-deployment by default:
+This project uses Convex as a backend. The default setup path is agent/worktree-friendly:
+each checkout gets its own cloud dev deployment named `leodev:amend:dev/$USER/$(basename $PWD)`,
+selected for the backend package, auto-expiring in 3 days, and then copied into the web app env.
 
 ```bash
 bun run dev:setup
 ```
 
-For first-time setup on a new machine, create/configure the local deployment from
-`packages/backend` with:
+The selected command is:
 
 ```bash
-bunx convex dev --configure new --dev-deployment local --project amend --once --tail-logs disable
+bunx convex deployment create --type dev --select leodev:amend:dev/$USER/$(basename $PWD) \
+  --expiration "in 3 days"
 ```
 
-Copy the generated `CONVEX_URL` and `CONVEX_SITE_URL` from `packages/backend/.env.local`
-into `apps/web/.env` as `VITE_CONVEX_URL` and `VITE_CONVEX_SITE_URL`.
+Override the project prefix or worktree naming when needed:
+
+```bash
+CONVEX_DEV_PROJECT_REF=team-slug:project-slug bun run dev:setup
+bun run dev:setup -- --expiration "in 2 days"
+bun run dev:setup -- --worktree-name my-feature
+```
+
+Then it runs `convex dev --once --tail-logs disable`, seeds safe default Convex env vars for the
+worktree-local URL, and writes `apps/web/.env` from the generated `packages/backend/.env.local`
+`CONVEX_URL` and `CONVEX_SITE_URL`.
+
+For local anonymous deployments instead of cloud dev deployments, run:
+
+```bash
+bun run dev:setup:local
+```
+
+Convex CLI can also auto-create a local anonymous deployment in non-interactive terminals with
+`bunx convex dev --once`; `bun run dev:setup:local` keeps Amend's web env sync on top of that.
 PostHog browser analytics defaults to the Amend US Cloud project token in code and can be
 overridden with `VITE_POSTHOG_TOKEN`, `VITE_POSTHOG_HOST`, and `VITE_POSTHOG_PROJECT_ID`.
 Backend product-loop events are stored in Convex `eventRecords`, forwarded through the Convex
@@ -212,13 +232,14 @@ Then, run the development server:
 bun run dev
 ```
 
-Open [http://amend.localhost:1355](http://amend.localhost:1355) in your browser to see the web application.
-Open [http://docs.amend.localhost:1355](http://docs.amend.localhost:1355) for the Fumadocs site.
+Open `http://$(basename $PWD).localhost:1355` in your browser to see the web application.
+Open `http://docs.$(basename $PWD).localhost:1355` for the Fumadocs site.
 Your app will connect to the configured Convex deployment automatically.
 
-The normal `bun run dev`, `bun run dev:web`, and `bun run dev:docs` commands use portless.
-The web app reads `VITE_DOCS_URL` for docs links. Local development defaults to
-`http://docs.amend.localhost:1355/docs`; this launch uses `https://docs.amend.sh/docs` in
+The normal `bun run dev`, `bun run dev:web`, and `bun run dev:docs` commands set
+`WORKTREE_NAME=${WORKTREE_NAME:-$(basename $PWD)}` and use portless. The web app reads
+`VITE_DOCS_URL` for docs links. Local development defaults to the matching
+`http://docs.$WORKTREE_NAME.localhost:1355/docs`; this launch uses `https://docs.amend.sh/docs` in
 production.
 
 ## UI Customization
@@ -272,7 +293,7 @@ amend/
 ## Available Scripts
 
 - `bun run dev`: Start all applications in development mode
-- `bun run dev:web`: Start the web app at `http://amend.localhost:1355`
+- `bun run dev:web`: Start the web app at `http://$(basename $PWD).localhost:1355`
 - `bun run build`: Build all applications
 - `bun run build:size`: Check the largest built client chunk stays under the local size budget
 - `bun run smoke`: Verify the portless web app, portal, Convex REST API, SDK, and docs while `bun run dev` is running

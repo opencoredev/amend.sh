@@ -5,7 +5,7 @@ const withMDX = createMDX();
 
 /** @type {import('next').NextConfig} */
 const config = {
-  allowedDevOrigins: ["docs.amend.localhost"],
+  allowedDevOrigins: ["docs.amend.localhost", "*.localhost"],
   serverExternalPackages: ["@takumi-rs/image-response"],
   reactStrictMode: true,
   turbopack: {

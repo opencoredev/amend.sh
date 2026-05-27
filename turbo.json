@@ -1,6 +1,7 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "ui": "tui",
+  "globalEnv": ["WORKTREE_NAME"],
   "globalDependencies": [
     "docs/agent-ready-production-report.schema.json",
     "docs/agent-ready-live-report.schema.json",

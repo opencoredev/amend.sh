@@ -14,18 +14,18 @@ export async function runSmokeConfigAuthChecks() {
     };
 
     assert(
-      rootPackage.scripts?.dev === "turbo dev",
-      "root dev should stay the normal monorepo dev",
+      rootPackage.scripts?.dev === "WORKTREE_NAME=${WORKTREE_NAME:-$(basename $PWD)} turbo dev",
+      "root dev should pass the worktree name through Turbo",
     );
     assert(
-      webPackage.scripts?.dev === "portless amend vite dev",
-      "web dev should be portless amend vite dev",
+      webPackage.scripts?.dev === "portless ${WORKTREE_NAME:-amend} vite dev",
+      "web dev should be worktree-scoped portless",
     );
     assert(
-      docsPackage.scripts?.dev === "portless docs.amend next dev",
-      "docs dev should be portless docs.amend next dev",
+      docsPackage.scripts?.dev === "portless docs.${WORKTREE_NAME:-amend} next dev",
+      "docs dev should be worktree-scoped portless",
     );
-    return "bun dev -> turbo dev -> portless amend + docs.amend";
+    return "bun dev -> worktree-scoped portless web + docs";
   });
 
   await check("product links use configurable docs URLs", async () => {
