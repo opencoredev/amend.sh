@@ -224,9 +224,25 @@ export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp?: ()
               )}
             </form.Subscribe>
           ) : (
-            <>
-              No account? <span className="text-foreground">Production access is private.</span>
-            </>
+            <form.Subscribe selector={(state) => state.values.email}>
+              {(email) => (
+                <>
+                  No account?{" "}
+                  <Link
+                    to="/sign-up"
+                    search={authEmailSearch(email)}
+                    onClick={(event) => {
+                      if (!onSwitchToSignUp) return;
+                      event.preventDefault();
+                      onSwitchToSignUp();
+                    }}
+                    className="font-medium text-foreground underline-offset-4 hover:underline"
+                  >
+                    Join the waitlist
+                  </Link>
+                </>
+              )}
+            </form.Subscribe>
           )
         }
       />
