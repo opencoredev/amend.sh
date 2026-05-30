@@ -20,7 +20,7 @@ export function FeedbackDetailWorkspace({
   const [activeTab, setActiveTab] = useState<"comments" | "details" | "sources">("comments");
 
   return (
-    <div className="t-panel-slide min-h-svh bg-card/40" data-open="true">
+    <div className="min-h-svh bg-card/40">
       <FeedbackDetailHeader onBack={onBack} post={post} />
 
       <div className="grid gap-0 lg:grid-cols-[minmax(0,1fr)_20rem]">

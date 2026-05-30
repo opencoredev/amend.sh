@@ -62,7 +62,7 @@ export function ChangelogEditorWorkspace({
   }
 
   return (
-    <div className="t-panel-slide min-h-svh bg-card/40" data-open="true">
+    <div className="min-h-svh bg-card/40">
       <form
         className="grid min-h-svh grid-rows-[auto_minmax(0,1fr)]"
         onKeyDown={(event: ReactKeyboardEvent<HTMLFormElement>) => {

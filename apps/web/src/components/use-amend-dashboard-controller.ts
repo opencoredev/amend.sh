@@ -166,6 +166,7 @@ export function useAmendDashboardController() {
       onOpenSetup: navigation.openSetup,
       onProjectCreated: navigation.projectCreated,
       onSearchChange: navigation.changeSearch,
+      onSettingsSectionChange: uiState.setActiveSettingsSection,
       onStatusChange: navigation.changeStatus,
       onVoteRoadmapItem: dashboardActions.voteRoadmapListItem,
       onVoteSelectedRoadmap: dashboardActions.voteSelectedRoadmapItem,

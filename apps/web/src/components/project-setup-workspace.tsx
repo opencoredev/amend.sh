@@ -33,9 +33,8 @@ export function OnboardingWorkspace({
       className={cn(
         setup.isFirstRun
           ? "w-full"
-          : "t-panel-slide grid min-h-[calc(100svh-5.5rem)] place-items-center p-4 md:p-6",
+          : "grid min-h-[calc(100svh-5.5rem)] place-items-center p-4 md:p-6",
       )}
-      data-open="true"
     >
       <section
         className={cn(

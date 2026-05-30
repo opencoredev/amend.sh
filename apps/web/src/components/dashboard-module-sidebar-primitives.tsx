@@ -75,16 +75,13 @@ export function SidebarNavItem({
     <button
       type="button"
       className={cn(
-        "relative flex min-h-10 items-center justify-between gap-2.5 rounded-xl px-3 text-left text-sm transition-colors duration-150 ease-linear active:opacity-75 [&_svg]:size-4 [&_svg]:shrink-0",
+        "flex min-h-10 items-center justify-between gap-2.5 rounded-xl px-3.5 text-left text-sm transition-colors duration-150 ease-linear active:opacity-75 [&_svg]:size-4 [&_svg]:shrink-0",
         active
-          ? "bg-foreground/[0.075] font-semibold text-foreground [&_svg]:text-foreground"
+          ? "bg-[#1d1d20] font-semibold text-foreground shadow-[inset_0_1px_0_rgb(255_255_255/0.045)] ring-1 ring-white/[0.055] [&_svg]:text-foreground"
           : "font-medium text-muted-foreground hover:bg-foreground/[0.045] hover:text-foreground",
       )}
       onClick={onClick}
     >
-      {active && (
-        <span className="absolute left-1.5 top-1/2 h-4 w-0.5 -translate-y-1/2 rounded-full bg-foreground" />
-      )}
       <span className="flex min-w-0 items-center gap-2.5">
         {icon}
         <span className="truncate">{label}</span>

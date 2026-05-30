@@ -35,7 +35,7 @@ export function PostComposerHeader({
           <button
             type="button"
             className={cn(
-              "flex h-8 items-center gap-2 border border-border bg-muted px-3 text-xs font-semibold text-muted-foreground transition-[background-color,color,border-color,scale]",
+              "flex h-8 items-center gap-2 border border-border bg-muted px-3 text-xs font-semibold text-muted-foreground transition-colors duration-150 ease-linear",
               panel === "board" && "border-foreground bg-foreground text-background",
             )}
             onClick={() => onPanelToggle("board")}

@@ -17,7 +17,7 @@ export function ProactivationWorkspace({
   const proactivation = useProactivationController({ dashboard, workspace });
 
   return (
-    <div className="t-panel-slide" data-open="true">
+    <div>
       <div className="flex h-[calc(100svh-5.5rem)] min-w-0 overflow-hidden">
         <div className="min-w-0 flex-1 overflow-y-auto">
           <ProactivationMainPanel

@@ -28,7 +28,7 @@ export function RoadmapDetailWorkspace({
   const [voting, setVoting] = useState(false);
 
   return (
-    <div className="t-panel-slide min-h-svh bg-card/40" data-open="true">
+    <div className="min-h-svh bg-card/40">
       <div className="border-b border-border bg-background/70 px-4 py-4 backdrop-blur md:px-6">
         <button
           type="button"

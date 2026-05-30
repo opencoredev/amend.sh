@@ -30,11 +30,11 @@ export function WorkspaceSwitcher({
     <div ref={menuRef} className="relative px-3 py-3">
       <button
         type="button"
-        className="flex min-h-12 w-full items-center gap-3 rounded-xl bg-[#151518] px-2.5 text-left shadow-[inset_0_1px_0_rgb(255_255_255/0.035)] ring-1 ring-white/[0.055] transition-colors duration-150 ease-linear hover:bg-[#1a1a1d] active:opacity-75"
+        className="flex min-h-14 w-full items-center gap-3 rounded-2xl bg-[#151518] px-3 text-left shadow-[inset_0_1px_0_rgb(255_255_255/0.035)] ring-1 ring-white/[0.055] transition-colors duration-150 ease-linear hover:bg-[#1a1a1d] active:opacity-75"
         aria-expanded={open}
         onClick={() => onOpenChange(!open)}
       >
-        <span className="grid size-9 shrink-0 place-items-center overflow-hidden rounded-lg bg-background/75 text-xs font-semibold ring-1 ring-white/[0.055]">
+        <span className="grid size-9 shrink-0 place-items-center overflow-hidden rounded-xl bg-background/75 text-xs font-semibold ring-1 ring-white/[0.055]">
           {project.logoUrl ? (
             <img alt="" className="size-full object-cover" src={project.logoUrl} />
           ) : (
@@ -52,7 +52,7 @@ export function WorkspaceSwitcher({
 
       {open ? (
         <div
-          className="t-dropdown is-open absolute left-2 right-2 top-[calc(100%-0.25rem)] z-40 rounded-xl bg-popover p-2 shadow-[0_18px_60px_rgb(0_0_0/0.55)] ring-1 ring-white/[0.06]"
+          className="t-dropdown is-open absolute left-2 right-2 top-[calc(100%-0.25rem)] z-40 rounded-2xl bg-popover p-2 shadow-[0_18px_60px_rgb(0_0_0/0.55)] ring-1 ring-white/[0.06]"
           data-origin="top-left"
         >
           <label className="relative block">
