@@ -1,5 +1,5 @@
 const DEFAULT_DEV_DOCS_URL = "http://docs.amend.localhost:1355/docs";
-const DEFAULT_PRODUCTION_DOCS_URL = "https://docs.amend.sh/docs";
+const DEFAULT_PRODUCTION_DOCS_URL = "https://amend.sh/docs";
 
 function trimSlashes(value: string) {
   return value.replace(/^\/+|\/+$/g, "");

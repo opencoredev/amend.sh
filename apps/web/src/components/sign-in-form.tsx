@@ -2,6 +2,7 @@ import { FieldGroup } from "@amend/ui/components/field";
 import { useForm } from "@tanstack/react-form";
 import { Link, useSearch } from "@tanstack/react-router";
 import { useConvex } from "convex/react";
+import { makeFunctionReference } from "convex/server";
 import { lazy, Suspense, useState } from "react";
 import z from "zod";
 
@@ -26,6 +27,13 @@ const DevDemoSignInButton = import.meta.env.DEV
   : null;
 
 const previewAuthEnabled = import.meta.env.VITE_AMEND_PREVIEW_AUTH === "true";
+const previewJoinSeededDemoWorkspaceMutationName = ["amend", "joinSeededDemoWorkspace"].join(
+  ":",
+) as "amend:joinSeededDemoWorkspace";
+const joinSeededDemoWorkspaceMutation = makeFunctionReference<"mutation">(
+  previewJoinSeededDemoWorkspaceMutationName,
+);
+const localDemoWorkspaceSlug = demoWorkspaceSlug;
 
 export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp?: () => void }) {
   const [formError, setFormError] = useState("");
@@ -84,12 +92,10 @@ export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp?: ()
       return;
     }
 
-    const { joinSeededDemoWorkspaceMutation } = await import("@/components/dev-demo-sign-in-model");
-
     await convex.mutation(joinSeededDemoWorkspaceMutation, {
       email,
       name: previewNameFromEmail(email),
-      workspaceSlug: demoWorkspaceSlug,
+      workspaceSlug: localDemoWorkspaceSlug,
     });
   }
 

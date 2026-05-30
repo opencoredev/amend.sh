@@ -27,9 +27,36 @@ export async function read(path: string) {
   }
 }
 
+function isMissingFile(error: unknown) {
+  return (
+    error &&
+    typeof error === "object" &&
+    "code" in error &&
+    (error as NodeJS.ErrnoException).code === "ENOENT"
+  );
+}
+
+export async function readFirst(paths: string[]) {
+  const missing: string[] = [];
+  for (const path of paths) {
+    try {
+      return await read(path);
+    } catch (error) {
+      if (isMissingFile(error)) {
+        missing.push(path);
+        continue;
+      }
+      throw error;
+    }
+  }
+  throw new Error(
+    `Missing one of ${missing.join(", ")}. Run \`bun run build\` before \`bun run agent-ready:built\`.`,
+  );
+}
+
 export async function readBundleContaining(directory: string, marker: string) {
   const entries = await readdir(new URL(directory, root));
-  for (const entry of entries.filter((entry) => entry.endsWith(".js"))) {
+  for (const entry of entries.filter((entry) => /\.(?:mjs|js)$/.test(entry))) {
     const path = `${directory}/${entry}`;
     const content = await read(path);
     if (content.includes(marker)) {
@@ -38,6 +65,27 @@ export async function readBundleContaining(directory: string, marker: string) {
   }
   throw new Error(
     `Missing built bundle in ${directory} containing ${marker}. Run \`bun run build\`.`,
+  );
+}
+
+export async function readBundleContainingAny(directories: string[], marker: string) {
+  const missing: string[] = [];
+  for (const directory of directories) {
+    try {
+      return await readBundleContaining(directory, marker);
+    } catch (error) {
+      if (isMissingFile(error)) {
+        missing.push(directory);
+        continue;
+      }
+      if (error instanceof Error && error.message.includes("Missing built bundle")) {
+        continue;
+      }
+      throw error;
+    }
+  }
+  throw new Error(
+    `Missing built bundle in ${directories.join(", ")} containing ${marker}. Run \`bun run build\`.`,
   );
 }
 
@@ -103,11 +151,39 @@ export const docsPages = [
     path: "/docs/quickstart",
   },
   {
-    copy: "Connect Amend to your portal",
+    copy: "Integrate Amend from the outside in",
     html: "apps/fumadocs/.next/server/app/docs/integration.html",
-    markdownCopy: "Integrate Amend from the outside in",
+    markdownCopy: "Use the SDK when your product needs an update panel",
     markdown: "apps/fumadocs/.next/server/app/llms.mdx/docs/integration/content.md.body",
     path: "/docs/integration",
+  },
+  {
+    copy: "Wire customer identity",
+    html: "apps/fumadocs/.next/server/app/docs/customer-surfaces.html",
+    markdownCopy: "Customer surfaces are the parts of Amend",
+    markdown: "apps/fumadocs/.next/server/app/llms.mdx/docs/customer-surfaces/content.md.body",
+    path: "/docs/customer-surfaces",
+  },
+  {
+    copy: "Import GitHub",
+    html: "apps/fumadocs/.next/server/app/docs/source-events.html",
+    markdownCopy: "Source events are the evidence side",
+    markdown: "apps/fumadocs/.next/server/app/llms.mdx/docs/source-events/content.md.body",
+    path: "/docs/source-events",
+  },
+  {
+    copy: "Configure Mostly Auto rules",
+    html: "apps/fumadocs/.next/server/app/docs/automation.html",
+    markdownCopy: "Automation should start review-first",
+    markdown: "apps/fumadocs/.next/server/app/llms.mdx/docs/automation/content.md.body",
+    path: "/docs/automation",
+  },
+  {
+    copy: "Beta REST and SDK contract",
+    html: "apps/fumadocs/.next/server/app/docs/api-reference.html",
+    markdownCopy: "The REST API is served by Convex HTTP actions",
+    markdown: "apps/fumadocs/.next/server/app/llms.mdx/docs/api-reference/content.md.body",
+    path: "/docs/api-reference",
   },
   {
     copy: "The evidence chain",
@@ -124,6 +200,13 @@ export const docsPages = [
     path: "/docs/self-hosting",
   },
   {
+    copy: "Make docs work from docs.amend.sh",
+    html: "apps/fumadocs/.next/server/app/docs/production-routing.html",
+    markdownCopy: "The canonical docs app runs on",
+    markdown: "apps/fumadocs/.next/server/app/llms.mdx/docs/production-routing/content.md.body",
+    path: "/docs/production-routing",
+  },
+  {
     copy: "Production launch checklist",
     html: "apps/fumadocs/.next/server/app/docs/launch.html",
     markdownCopy: "bun run agent-ready:live",
@@ -135,12 +218,12 @@ export const docsPages = [
 export const webPublicPages = [
   {
     copy: [
-      "Close the loop between",
-      "feedback and shipped code.",
-      "Collect requests from the channels people already use.",
-      "Customer feedback should not die in Slack.",
+      "Users asked. You shipped.",
+      "Amend closes the loop.",
+      "Amend watches selected Discord, Slack, GitHub, Linear, support, and in-app sources",
+      "Open source and self-hostable",
     ],
-    marker: "Close the loop between",
+    marker: "Users asked. You shipped.",
     path: "/",
   },
   {

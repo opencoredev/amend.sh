@@ -1,0 +1,94 @@
+---
+title: API Reference
+description: Beta REST and SDK contract for portal reads, customer writes, owner mutations, and webhooks.
+---
+
+The REST API is served by Convex HTTP actions under `/api/v1`. The SDK wraps the same route
+families and keeps the workspace slug in the `project` option.
+
+```ts
+import { Amend } from "@amend/sdk";
+
+const amend = new Amend({
+  project: "amend-labs",
+  apiBaseUrl: "http://127.0.0.1:3211/api/v1",
+  token: process.env.AMEND_API_TOKEN,
+});
+```
+
+The beta OpenAPI contract lives in `packages/api-spec/openapi.yaml`.
+
+## Authentication
+
+When `AMEND_API_TOKEN` is configured, owner-level mutations require:
+
+```http
+Authorization: Bearer <AMEND_API_TOKEN>
+```
+
+Public portal reads, feedback submissions, identity mapping, event tracking, unsubscribes, and
+signed provider webhooks remain callable without the owner token where appropriate.
+
+## Public Reads
+
+| Method | Endpoint                        | SDK method                    |
+| ------ | ------------------------------- | ----------------------------- |
+| `GET`  | `/api/v1/version`               | `amend.version()`             |
+| `GET`  | `/api/v1/:workspace/portal`     | `amend.portal()`              |
+| `GET`  | `/api/v1/:workspace/roadmap`    | `amend.roadmap()`             |
+| `GET`  | `/api/v1/:workspace/changelog`  | `amend.changelog()`           |
+| `GET`  | `/api/v1/:workspace/updates`    | `amend.updatesForUser()`      |
+| `GET`  | `/api/v1/:workspace/github-app` | `amend.githubApp()`           |
+| `GET`  | `/api/v1/:workspace/plans`      | `amend.plans()`               |
+| `GET`  | `/api/v1/_/domains`             | `amend.resolveCustomDomain()` |
+
+## Customer Writes
+
+| Method | Endpoint                          | SDK method                             |
+| ------ | --------------------------------- | -------------------------------------- |
+| `POST` | `/api/v1/:workspace/identity`     | `amend.identify()`                     |
+| `POST` | `/api/v1/:workspace/feedback`     | `amend.submitRequest()`                |
+| `POST` | `/api/v1/:workspace/interactions` | `amend.vote()`, `comment()`, `react()` |
+| `POST` | `/api/v1/:workspace/events`       | `amend.track()`                        |
+| `POST` | `/api/v1/:workspace/preferences`  | `amend.setNotificationPreference()`    |
+
+## Owner Reads
+
+| Method | Endpoint                           | SDK method                    |
+| ------ | ---------------------------------- | ----------------------------- |
+| `GET`  | `/api/v1/:workspace/settings`      | `amend.settings()`            |
+| `GET`  | `/api/v1/:workspace/decisions`     | `amend.automationDecisions()` |
+| `GET`  | `/api/v1/:workspace/source-events` | `amend.sourceEvents()`        |
+| `GET`  | `/api/v1/:workspace/build-briefs`  | `amend.buildBriefs()`         |
+| `GET`  | `/api/v1/:workspace/agent-runs`    | `amend.agentRuns()`           |
+| `GET`  | `/api/v1/:workspace/deliveries`    | `amend.deliveryOutbox()`      |
+| `GET`  | `/api/v1/:workspace/projects`      | `amend.projects()`            |
+
+## Owner Mutations
+
+| Method | Endpoint                             | SDK method                                   |
+| ------ | ------------------------------------ | -------------------------------------------- |
+| `POST` | `/api/v1/:workspace/projects`        | `amend.createProject()`                      |
+| `POST` | `/api/v1/:workspace/repositories`    | `amend.connectRepository()`                  |
+| `POST` | `/api/v1/:workspace/source-events`   | `amend.importSourceEvent()`                  |
+| `POST` | `/api/v1/:workspace/drafts`          | `amend.draftChangelog()`                     |
+| `POST` | `/api/v1/:workspace/changelog`       | `amend.upsertChangelog()`                    |
+| `POST` | `/api/v1/:workspace/roadmap`         | `amend.upsertRoadmapItem()`                  |
+| `POST` | `/api/v1/:workspace/rules`           | `amend.updateAutomationRules()`              |
+| `POST` | `/api/v1/:workspace/members`         | `amend.upsertWorkspaceMember()`              |
+| `POST` | `/api/v1/:workspace/integrations`    | `amend.upsertIntegration()`                  |
+| `POST` | `/api/v1/:workspace/portal-settings` | `amend.updatePortalSettings()`               |
+| `POST` | `/api/v1/:workspace/domains`         | `amend.registerCustomDomain()`               |
+| `POST` | `/api/v1/:workspace/deliveries`      | `amend.planDeliveries()`, `sendDeliveries()` |
+| `POST` | `/api/v1/:workspace/plans`           | `amend.updatePlan()`                         |
+| `POST` | `/api/v1/:workspace/checkout`        | `amend.createCheckoutSession()`              |
+
+## Webhooks
+
+| Method | Endpoint                    | Verification                                       |
+| ------ | --------------------------- | -------------------------------------------------- |
+| `POST` | `/api/v1/:workspace/github` | `X-Hub-Signature-256` with `GITHUB_WEBHOOK_SECRET` |
+| `POST` | `/api/v1/:workspace/stripe` | Stripe webhook secret and raw body                 |
+
+Use the OpenAPI file for schema-level details and generated client types. Use this page for the
+route/auth map when wiring product surfaces.

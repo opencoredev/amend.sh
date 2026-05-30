@@ -1,0 +1,83 @@
+---
+title: Production Routing
+description: Make docs work from docs.amend.sh and the main-site /docs entry point on Vercel.
+---
+
+The canonical docs app runs on `https://docs.amend.sh`. The main product should also open docs from
+`https://amend.sh/docs`, so customers and agents can start from the primary domain without learning
+the docs subdomain first.
+
+## Target Routes
+
+| Route                               | Behavior                                    |
+| ----------------------------------- | ------------------------------------------- |
+| `https://docs.amend.sh`             | Fumadocs landing page                       |
+| `https://docs.amend.sh/docs`        | Canonical docs index                        |
+| `https://amend.sh/docs`             | Vercel proxy to the canonical docs index    |
+| `https://amend.sh/docs/:path*`      | Vercel proxy to the matching canonical page |
+| `https://docs.amend.sh/llms.txt`    | LLM-readable docs map                       |
+| `https://docs.amend.sh/schemas/...` | Agent-ready JSON Schema endpoints           |
+
+## Web App Configuration
+
+Product links are controlled by `VITE_DOCS_URL`:
+
+```bash
+VITE_DOCS_URL=https://amend.sh/docs
+```
+
+That keeps app links on the main product origin. The canonical docs origin remains
+`https://docs.amend.sh` for sitemap, metadata, `llms.txt`, and schema endpoints.
+
+## Vercel Rewrite
+
+The root Vercel deployment uses an external rewrite/proxy for `/docs` routes. Because the web app
+build is copied into `.vercel/output`, the production build script injects the equivalent Build
+Output API routes into `.vercel/output/config.json`.
+
+This lets Vercel serve:
+
+```txt
+https://amend.sh/docs
+https://amend.sh/docs/quickstart
+https://amend.sh/docs/integration
+```
+
+from the docs deployment without changing the visible URL.
+
+## Docs Assets
+
+The docs app sets a production asset prefix to `https://docs.amend.sh`. That prevents proxied docs
+pages from asking the web deployment for docs JavaScript, CSS, fonts, and Open Graph assets.
+
+If the canonical docs origin changes, update:
+
+- `apps/fumadocs/next.config.mjs`
+- `apps/fumadocs/src/app/layout.tsx`
+- `apps/fumadocs/src/app/robots.txt/route.ts`
+- `apps/fumadocs/src/app/sitemap.xml/route.ts`
+- `apps/fumadocs/src/app/docs/[[...slug]]/page.tsx`
+- `apps/web/src/lib/docs-url.ts`
+- `.env.production.example`
+- the agent-ready docs and validator expectations
+
+## Verification
+
+After production deploys are attached to their domains, verify both origins:
+
+```bash
+curl -I https://docs.amend.sh/docs
+curl -I https://amend.sh/docs
+curl -fsS https://docs.amend.sh/llms.txt
+curl -fsS https://docs.amend.sh/schemas/agent-ready-live-report.schema.json
+```
+
+Then run:
+
+```bash
+bun run agent-ready:built
+bun run agent-ready:live
+```
+
+The live gate is the source of truth for DNS, crawler access, metadata, sitemaps, `llms.txt`, and
+schema endpoints.

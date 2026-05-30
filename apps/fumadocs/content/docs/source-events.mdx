@@ -1,0 +1,82 @@
+---
+title: Source Events
+description: Import GitHub, support, Slack, Discord, Linear, email, CLI, and custom agent evidence.
+---
+
+Source events are the evidence side of the loop. They tell Amend what work happened and give the
+reviewer a chain from customer demand to shipped source work.
+
+## When To Use Source Events
+
+Use source events when evidence comes from anything other than a customer request:
+
+| Provider examples          | Typical kind                                             |
+| -------------------------- | -------------------------------------------------------- |
+| GitHub PR, issue, release  | `pull_request`, `issue`, `release`, `label`, `milestone` |
+| Slack, Discord, support    | `customer_signal`, `support_ticket`                      |
+| Linear or custom project   | `issue`, `customer_signal`, `import_record`              |
+| CLI, SDK, warehouse import | `usage_event`, `import_record`, `customer_signal`        |
+
+## Idempotency
+
+`externalId` is required and acts as the idempotency key. Replaying the same import updates the
+existing record instead of duplicating evidence.
+
+```ts
+await amend.importSourceEvent({
+  provider: "slack",
+  kind: "customer_signal",
+  externalId: "slack:C123:1700000000.000100",
+  title: "Enterprise customer asked for digest controls",
+  url: "https://slack.com/app_redirect?channel=C123",
+  labels: ["enterprise", "notifications"],
+  projectSlug: "web-app",
+});
+```
+
+## GitHub Webhooks
+
+Signed GitHub webhook ingestion uses the same source-event pipeline. Configure the webhook secret in
+the Convex environment:
+
+```bash
+bunx convex env set GITHUB_WEBHOOK_SECRET "replace-with-your-github-webhook-secret"
+```
+
+Then send GitHub events to:
+
+```txt
+POST /api/v1/:workspace/github
+```
+
+The request must include `X-GitHub-Event`, `X-GitHub-Delivery`, and
+`X-Hub-Signature-256` when the secret is configured.
+
+## CLI Imports
+
+The local CLI supports direct imports and file-based imports:
+
+```bash
+bun packages/cli/src/index.ts source import \
+  --provider slack \
+  --kind customer_signal \
+  --external-id slack:feedback:123 \
+  --title "Request from #feedback" \
+  --url "https://slack.com/app_redirect?channel=C123"
+
+bun packages/cli/src/index.ts source import --file source-events.json
+bun packages/cli/src/index.ts source import --file source-events.csv
+```
+
+CSV imports use the first row as headers. Supported columns include `provider`, `kind`,
+`external_id`, `title`, `url`, `labels`, `state`, `number`, `author`, `owner`, `repo`,
+`project_slug`, `observed_at`, `source_created_at`, and `source_updated_at`.
+
+## Review Output
+
+A good source event lets a reviewer answer:
+
+- what shipped or changed
+- where the source evidence lives
+- which project or repository it belongs to
+- whether it can close feedback, move roadmap status, draft changelog copy, or notify users

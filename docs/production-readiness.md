@@ -28,38 +28,38 @@ process. It does not print secret values.
 
 Set these in the production Convex deployment or deployment platform:
 
-| Variable                   | Purpose                                                        |
-| -------------------------- | -------------------------------------------------------------- |
-| `VITE_CONVEX_URL`          | Production web Convex client URL                               |
-| `VITE_CONVEX_SITE_URL`     | Production web Convex HTTP actions URL                         |
-| `VITE_DOCS_URL`            | Public docs root, `https://docs.amend.sh/docs` for this launch |
-| `VITE_POSTHOG_TOKEN`       | Browser PostHog project token                                  |
-| `VITE_POSTHOG_HOST`        | Browser PostHog ingestion host                                 |
-| `VITE_POSTHOG_PROJECT_ID`  | Browser PostHog project ID                                     |
-| `POSTHOG_CLI_API_KEY`      | PostHog API key with error tracking write scope for sourcemaps |
-| `POSTHOG_CLI_HOST`         | PostHog app host for the CLI, e.g. `https://us.posthog.com`    |
-| `POSTHOG_CLI_PROJECT_ID`   | PostHog project ID for sourcemap uploads                       |
-| `POSTHOG_RELEASE_NAME`     | PostHog release name for web sourcemaps, defaults to amend-web |
-| `SITE_URL`                 | Hosted app origin and auth callbacks                           |
-| `BETTER_AUTH_SECRET`       | Better Auth session security                                   |
-| `GITHUB_WEBHOOK_SECRET`    | Signed GitHub webhook ingestion                                |
-| `GITHUB_APP_ID`            | GitHub App installation identity                               |
-| `GITHUB_APP_SLUG`          | GitHub App public install URL                                  |
-| `GITHUB_APP_CLIENT_ID`     | GitHub App install/OAuth entrypoint                            |
-| `GITHUB_APP_CLIENT_SECRET` | GitHub App OAuth callback exchange                             |
-| `GITHUB_APP_PRIVATE_KEY`   | GitHub App installation token signing                          |
-| `AMEND_API_TOKEN`          | Owner-level REST mutation protection                           |
-| `POSTHOG_API_KEY`          | Convex backend analytics event capture                         |
-| `POSTHOG_HOST`             | PostHog ingestion host, e.g. `https://us.i.posthog.com`        |
-| `OPENAI_API_KEY`           | Provider-backed changelog drafting                             |
-| `OPENAI_MODEL`             | Model used for changelog drafting                              |
-| `CROF_API_KEY`             | Crof/Kimi proactive agent provider key                         |
-| `CROF_MODEL`               | Proactive agent model, e.g. `kimi-k2.6`                        |
-| `CROF_BASE_URL`            | Crof OpenAI-compatible API base URL                            |
-| `RESEND_API_KEY`           | Real email delivery                                            |
-| `EMAIL_FROM`               | Verified sender identity                                       |
-| `STRIPE_SECRET_KEY`        | Billing checkout and plan changes                              |
-| `STRIPE_WEBHOOK_SECRET`    | Billing webhook verification                                   |
+| Variable                   | Purpose                                                              |
+| -------------------------- | -------------------------------------------------------------------- |
+| `VITE_CONVEX_URL`          | Production web Convex client URL                                     |
+| `VITE_CONVEX_SITE_URL`     | Production web Convex HTTP actions URL                               |
+| `VITE_DOCS_URL`            | Public app docs entry point, `https://amend.sh/docs` for this launch |
+| `VITE_POSTHOG_TOKEN`       | Browser PostHog project token                                        |
+| `VITE_POSTHOG_HOST`        | Browser PostHog ingestion host                                       |
+| `VITE_POSTHOG_PROJECT_ID`  | Browser PostHog project ID                                           |
+| `POSTHOG_CLI_API_KEY`      | PostHog API key with error tracking write scope for sourcemaps       |
+| `POSTHOG_CLI_HOST`         | PostHog app host for the CLI, e.g. `https://us.posthog.com`          |
+| `POSTHOG_CLI_PROJECT_ID`   | PostHog project ID for sourcemap uploads                             |
+| `POSTHOG_RELEASE_NAME`     | PostHog release name for web sourcemaps, defaults to amend-web       |
+| `SITE_URL`                 | Hosted app origin and auth callbacks                                 |
+| `BETTER_AUTH_SECRET`       | Better Auth session security                                         |
+| `GITHUB_WEBHOOK_SECRET`    | Signed GitHub webhook ingestion                                      |
+| `GITHUB_APP_ID`            | GitHub App installation identity                                     |
+| `GITHUB_APP_SLUG`          | GitHub App public install URL                                        |
+| `GITHUB_APP_CLIENT_ID`     | GitHub App install/OAuth entrypoint                                  |
+| `GITHUB_APP_CLIENT_SECRET` | GitHub App OAuth callback exchange                                   |
+| `GITHUB_APP_PRIVATE_KEY`   | GitHub App installation token signing                                |
+| `AMEND_API_TOKEN`          | Owner-level REST mutation protection                                 |
+| `POSTHOG_API_KEY`          | Convex backend analytics event capture                               |
+| `POSTHOG_HOST`             | PostHog ingestion host, e.g. `https://us.i.posthog.com`              |
+| `OPENAI_API_KEY`           | Provider-backed changelog drafting                                   |
+| `OPENAI_MODEL`             | Model used for changelog drafting                                    |
+| `CROF_API_KEY`             | Crof/Kimi proactive agent provider key                               |
+| `CROF_MODEL`               | Proactive agent model, e.g. `kimi-k2.6`                              |
+| `CROF_BASE_URL`            | Crof OpenAI-compatible API base URL                                  |
+| `RESEND_API_KEY`           | Real email delivery                                                  |
+| `EMAIL_FROM`               | Verified sender identity                                             |
+| `STRIPE_SECRET_KEY`        | Billing checkout and plan changes                                    |
+| `STRIPE_WEBHOOK_SECRET`    | Billing webhook verification                                         |
 
 ## External Setup
 

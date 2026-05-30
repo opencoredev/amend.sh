@@ -1,0 +1,112 @@
+---
+title: Customer Surfaces
+description: Wire customer identity, feedback, update feeds, and the embedded Amend panel.
+---
+
+Customer surfaces are the parts of Amend that live inside your product or public portal. Start with
+identity, then feedback, then the update feed. The source-linked automation only becomes useful
+after Amend knows who asked for what.
+
+## Identity
+
+Use IDs from your application database. Email helps notification delivery and support lookup, but it
+should not be the only stable identifier.
+
+```ts
+import { Amend } from "@amend/sdk";
+
+const amend = new Amend({
+  project: "amend-labs",
+  apiBaseUrl: "http://127.0.0.1:3211/api/v1",
+});
+
+await amend.identify({
+  externalUserId: user.id,
+  accountId: workspace.id,
+  email: user.email,
+  name: user.name,
+  traits: { plan: workspace.plan },
+});
+
+await amend.identifyAccount(workspace.id, {
+  plan: workspace.plan,
+  seats: workspace.seats,
+});
+```
+
+## Feedback
+
+Customer feedback should carry enough context to become useful source work later:
+
+```ts
+await amend.submitRequest({
+  title: "Show the merged PR on shipped requests",
+  body: "Our admins want to audit which change closed each request.",
+  authorEmail: user.email,
+  authorName: user.name,
+  labels: ["admin", "audit"],
+  sourceUrl: "https://app.example.com/feedback/123",
+});
+```
+
+Use interactions to keep demand and notification eligibility connected:
+
+```ts
+await amend.vote("feedback-show-shipping-pr", user.id);
+await amend.comment("feedback-show-shipping-pr", "This would help our admins.", user.id);
+await amend.react("feedback-show-shipping-pr", "heart", user.id);
+```
+
+## Update Feed
+
+Use `updatesForUser` or `updatesForContact` when your app has enough identity to filter shipped
+updates for a person:
+
+```ts
+const updates = await amend.updatesForContact({
+  userId: user.id,
+  email: user.email,
+});
+
+await amend.markUpdateSeen("changelog-reviewable-publishing", user.id);
+await amend.trackShippedFeature("roadmap-source-linked-portal", user.id);
+```
+
+## Embedded Panel
+
+Use the embedded panel when you want a working request/update surface before building custom UI:
+
+```ts
+import { createAmendPanel } from "@amend/sdk/embed";
+
+createAmendPanel({
+  project: "amend-labs",
+  apiBaseUrl: "http://127.0.0.1:3211/api/v1",
+});
+```
+
+In local development, open the browser demo at:
+
+```txt
+http://amend.localhost:1355/embed-demo
+```
+
+## Notification Preferences
+
+Notification preferences are part of the customer surface because they decide who can receive
+targeted shipped updates.
+
+```ts
+await amend.setNotificationPreference({
+  externalUserId: user.id,
+  email: user.email,
+  mode: "digest",
+  digestDay: "friday",
+  digestHour: 16,
+});
+
+await amend.unsubscribe({ email: user.email });
+```
+
+Unsubscribe writes remain available even when owner-level writes are protected by
+`AMEND_API_TOKEN`.

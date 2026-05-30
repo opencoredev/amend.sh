@@ -52,14 +52,10 @@ export async function runSmokeConfigAuthChecks() {
     ].join("\n");
 
     assertIncludes(webEnvExample, "VITE_DOCS_URL=http://docs.amend.localhost:1355/docs", "web env");
-    assertIncludes(
-      productionEnvExample,
-      "VITE_DOCS_URL=https://docs.amend.sh/docs",
-      "production env",
-    );
+    assertIncludes(productionEnvExample, "VITE_DOCS_URL=https://amend.sh/docs", "production env");
     assertIncludes(docsUrlHelper, "DEFAULT_DEV_DOCS_URL", "docs URL helper");
     assertIncludes(docsUrlHelper, "DEFAULT_PRODUCTION_DOCS_URL", "docs URL helper");
-    assertIncludes(docsUrlHelper, "https://docs.amend.sh/docs", "docs URL helper");
+    assertIncludes(docsUrlHelper, "https://amend.sh/docs", "docs URL helper");
     assertIncludes(buildSizeGuard, "forbiddenProductionTokens", "production build dev-auth guard");
     assertIncludes(
       buildSizeGuard,

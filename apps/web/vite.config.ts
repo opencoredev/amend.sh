@@ -47,6 +47,31 @@ export default defineConfig({
             return "vendor-motion";
           }
 
+          if (id.includes("/zod/")) {
+            return "vendor-zod";
+          }
+
+          if (id.includes("posthog-js")) {
+            return "vendor-analytics";
+          }
+
+          if (
+            id.includes("/satori/") ||
+            id.includes("@resvg/") ||
+            id.includes("opentype") ||
+            id.includes("linebreak")
+          ) {
+            return "vendor-og";
+          }
+
+          if (id.includes("@radix-ui")) {
+            return "vendor-radix";
+          }
+
+          if (id.includes("react-grab")) {
+            return "vendor-embed";
+          }
+
           return "vendor";
         },
       },

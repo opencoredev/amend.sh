@@ -40,11 +40,22 @@ Choose one docs route before shipping public links:
 | Pattern            | `VITE_DOCS_URL`                       |
 | ------------------ | ------------------------------------- |
 | Same app proxy     | `/docs`                               |
+| Main-site proxy    | `https://amend.sh/docs`               |
 | Docs subdomain     | `https://docs.amend.sh/docs`          |
 | Separate docs host | `https://amend-docs.example.com/docs` |
 
 If the route changes later, update the environment variable and redeploy the web app. Product code
 should not need edits.
+
+## API Base URL
+
+Customer-owned products should point SDK and server calls at the Convex HTTP action origin:
+
+```bash
+AMEND_API_BASE_URL=https://your-production-convex.convex.site/api/v1
+```
+
+Use `AMEND_API_TOKEN` only in trusted server code, CLI automation, or owner tools.
 
 ## Provider keys
 

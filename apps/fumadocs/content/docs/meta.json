@@ -1,4 +1,16 @@
 {
   "title": "Amend.sh Docs",
-  "pages": ["index", "quickstart", "source-trace", "integration", "self-hosting", "launch"]
+  "pages": [
+    "index",
+    "quickstart",
+    "source-trace",
+    "integration",
+    "customer-surfaces",
+    "source-events",
+    "automation",
+    "api-reference",
+    "self-hosting",
+    "production-routing",
+    "launch"
+  ]
 }

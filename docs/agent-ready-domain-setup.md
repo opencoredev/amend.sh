@@ -34,7 +34,7 @@ Expected current failure until the domain is registered:
 6. Set production environment values for the deployments. The minimum app/domain values are:
    - `VITE_CONVEX_URL`
    - `VITE_CONVEX_SITE_URL`
-   - `VITE_DOCS_URL=https://docs.amend.sh/docs`
+   - `VITE_DOCS_URL=https://amend.sh/docs`
    - `SITE_URL=https://amend.sh`
 7. Load the remaining production provider secrets required by `bun run readiness:strict`:
    - `BETTER_AUTH_SECRET`
