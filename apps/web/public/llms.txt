@@ -15,8 +15,13 @@
 - [Docs index](https://docs.amend.sh/docs): Documentation index for Amend.sh.
 - [Quickstart](https://docs.amend.sh/docs/quickstart): Prove a source-linked product update loop in local development.
 - [Source trace](https://docs.amend.sh/docs/source-trace): How feedback, source work, releases, and customer updates stay connected.
-- [Integration](https://docs.amend.sh/docs/integration): SDK, REST API, portal, GitHub, identity, and event integration surfaces.
+- [Integration](https://docs.amend.sh/docs/integration): Choose the right path for portal, SDK, REST, source imports, and automation.
+- [Customer surfaces](https://docs.amend.sh/docs/customer-surfaces): Customer identity, feedback, update feeds, and embedded panel setup.
+- [Source events](https://docs.amend.sh/docs/source-events): GitHub, support, Slack, Discord, Linear, email, CLI, and custom evidence imports.
+- [Automation](https://docs.amend.sh/docs/automation): Mostly Auto rules, AI drafting, proactive agent runs, and delivery safety.
+- [API reference](https://docs.amend.sh/docs/api-reference): Beta REST and SDK contract by route family and auth level.
 - [Self-hosting](https://docs.amend.sh/docs/self-hosting): Run Amend with your own deployment and provider keys.
+- [Production routing](https://docs.amend.sh/docs/production-routing): Canonical docs host and main-site /docs Vercel routing.
 - [Launch](https://docs.amend.sh/docs/launch): Production launch checklist and readiness gates.
 
 ## Machine-readable Contracts

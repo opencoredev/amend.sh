@@ -28,13 +28,13 @@ export async function runProductionReadinessChecks() {
     hasLine(productionEnvExample, "VITE_DOCS_URL"),
   );
   add(
-    "production docs URL points to docs.amend.sh",
-    productionEnvExample.includes("VITE_DOCS_URL=https://docs.amend.sh/docs") &&
+    "production docs URL points to amend.sh/docs",
+    productionEnvExample.includes("VITE_DOCS_URL=https://amend.sh/docs") &&
       (await read("apps/web/src/lib/docs-url.ts")).includes(
-        'DEFAULT_PRODUCTION_DOCS_URL = "https://docs.amend.sh/docs"',
+        'DEFAULT_PRODUCTION_DOCS_URL = "https://amend.sh/docs"',
       ) &&
-      readme.includes("https://docs.amend.sh/docs") &&
-      productionReadiness.includes("https://docs.amend.sh/docs"),
+      readme.includes("https://amend.sh/docs") &&
+      productionReadiness.includes("https://amend.sh/docs"),
   );
   add(
     "production handoff uses Amend.sh launch origins",
@@ -42,7 +42,7 @@ export async function runProductionReadinessChecks() {
       productionEnvExample.includes("EMAIL_FROM=Amend <updates@amend.sh>") &&
       launchRunbook.includes('bunx convex env set SITE_URL "https://amend.sh"') &&
       launchRunbook.includes('bunx convex env set EMAIL_FROM "Amend <updates@amend.sh>"') &&
-      launchRunbook.includes("VITE_DOCS_URL=https://docs.amend.sh/docs") &&
+      launchRunbook.includes("VITE_DOCS_URL=https://amend.sh/docs") &&
       docsLaunchPage.includes("bunx convex env set SITE_URL https://amend.sh") &&
       docsLaunchPage.includes("https://amend.sh/portal/acme") &&
       !productionEnvExample.includes("SITE_URL=https://updates.example.com"),

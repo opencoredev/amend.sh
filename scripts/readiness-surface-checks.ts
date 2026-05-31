@@ -192,10 +192,10 @@ export function runReadinessSurfaceChecks() {
       docsLaunchPage.includes("A/AAAA or CNAME DNS records"),
   );
   add(
-    "docs launch page uses docs.amend.sh as the public docs host",
+    "docs launch page names canonical docs host and main-site proxy",
     docsLaunchPage.includes("Use the dedicated docs host for this launch") &&
       docsLaunchPage.includes("https://docs.amend.sh/docs") &&
-      !docsLaunchPage.includes("https://amend.sh/docs` or"),
+      docsLaunchPage.includes("https://amend.sh/docs"),
   );
   add(
     "docs agent-ready structured data exists",
@@ -213,6 +213,6 @@ export function runReadinessSurfaceChecks() {
       agentReadyTest.includes("aiAccessUserAgents") &&
       agentReadyTest.includes("web robots and sitemap") &&
       agentReadyTest.includes("docs host") &&
-      agentReadyTest.includes('DEFAULT_PRODUCTION_DOCS_URL = "https://docs.amend.sh/docs"'),
+      agentReadyTest.includes('DEFAULT_PRODUCTION_DOCS_URL = "https://amend.sh/docs"'),
   );
 }

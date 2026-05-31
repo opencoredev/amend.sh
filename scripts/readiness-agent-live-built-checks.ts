@@ -93,9 +93,10 @@ export function runReadinessAgentLiveBuiltChecks() {
   );
   add(
     "agent-ready built artifact validator checks generated web and docs outputs",
-    agentReadyBuilt.includes("apps/web/dist/client/robots.txt") &&
-      agentReadyBuilt.includes("apps/web/dist/client/sitemap.xml") &&
-      agentReadyBuilt.includes("apps/web/dist/client/llms.txt") &&
+    agentReadyBuilt.includes("apps/web/.output/public/robots.txt") &&
+      agentReadyBuilt.includes("apps/web/.output/public/sitemap.xml") &&
+      agentReadyBuilt.includes("apps/web/.output/public/llms.txt") &&
+      agentReadyBuilt.includes("apps/web/.output/server/_ssr") &&
       agentReadyBuilt.includes("apps/fumadocs/.next/server/app/robots.txt.body") &&
       agentReadyBuilt.includes("apps/fumadocs/.next/server/app/robots.txt.meta") &&
       agentReadyBuilt.includes("apps/fumadocs/.next/server/app/sitemap.xml.body") &&

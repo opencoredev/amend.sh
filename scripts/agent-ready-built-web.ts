@@ -8,24 +8,29 @@ import {
   includesAll,
   locsStayOnOrigin,
   read,
-  readBundleContaining,
+  readBundleContainingAny,
+  readFirst,
   webPublicPages,
 } from "./agent-ready-built-utils";
 
 export async function checkBuiltWebArtifacts() {
-  const webRobots = await read("apps/web/dist/client/robots.txt");
-  const webSitemap = await read("apps/web/dist/client/sitemap.xml");
-  const webLlms = await read("apps/web/dist/client/llms.txt");
+  const webRobots = await readFirst([
+    "apps/web/.output/public/robots.txt",
+    "apps/web/dist/client/robots.txt",
+  ]);
+  const webSitemap = await readFirst([
+    "apps/web/.output/public/sitemap.xml",
+    "apps/web/dist/client/sitemap.xml",
+  ]);
+  const webLlms = await readFirst([
+    "apps/web/.output/public/llms.txt",
+    "apps/web/dist/client/llms.txt",
+  ]);
   const webSitemapLocs = extractSitemapLocs(webSitemap);
   const webLlmsLinks = extractMarkdownLinks(webLlms);
-  const webSeoBundle = await readBundleContaining(
-    "apps/web/dist/server/assets",
-    "SoftwareApplication",
-  );
-  const webRouterBundle = await readBundleContaining(
-    "apps/web/dist/server/assets",
-    'canonicalLink("/")',
-  );
+  const webServerBundleDirs = ["apps/web/.output/server/_ssr", "apps/web/dist/server/assets"];
+  const webSeoBundle = await readBundleContainingAny(webServerBundleDirs, "SoftwareApplication");
+  const webRouterBundle = await readBundleContainingAny(webServerBundleDirs, 'canonicalLink("/")');
 
   add(
     "built web robots keeps maximum-visibility policy",
@@ -108,7 +113,7 @@ export async function checkBuiltWebArtifacts() {
   );
 
   for (const page of webPublicPages) {
-    const bundle = await readBundleContaining("apps/web/dist/server/assets", page.marker);
+    const bundle = await readBundleContainingAny(webServerBundleDirs, page.marker);
     add(
       `built web route bundle exposes crawlable copy for ${page.path}`,
       includesAll(bundle, page.copy) && !bundle.includes("noindex, nofollow"),

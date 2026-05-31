@@ -28,6 +28,11 @@ export async function checkLiveDocsSurface({ add, docsOrigin }: LiveSurfaceConte
       `<loc>${docsOrigin}/schemas/agent-ready-status-report.schema.json</loc>`,
       `<loc>${docsOrigin}/schemas/agent-ready-completion-audit-report.schema.json</loc>`,
       `${docsOrigin}/docs/quickstart`,
+      `${docsOrigin}/docs/customer-surfaces`,
+      `${docsOrigin}/docs/source-events`,
+      `${docsOrigin}/docs/automation`,
+      `${docsOrigin}/docs/api-reference`,
+      `${docsOrigin}/docs/production-routing`,
       "<lastmod>",
       "<changefreq>",
       "<priority>",
@@ -81,8 +86,24 @@ export async function checkLiveDocsSurface({ add, docsOrigin }: LiveSurfaceConte
       path: "/docs/quickstart",
     },
     {
-      copy: "Connect Amend to your portal",
+      copy: "Choose the right integration path",
       path: "/docs/integration",
+    },
+    {
+      copy: "Wire customer identity",
+      path: "/docs/customer-surfaces",
+    },
+    {
+      copy: "Import GitHub",
+      path: "/docs/source-events",
+    },
+    {
+      copy: "Configure Mostly Auto rules",
+      path: "/docs/automation",
+    },
+    {
+      copy: "Beta REST and SDK contract",
+      path: "/docs/api-reference",
     },
     {
       copy: "The evidence chain",
@@ -91,6 +112,10 @@ export async function checkLiveDocsSurface({ add, docsOrigin }: LiveSurfaceConte
     {
       copy: "Run Amend with your own deployment",
       path: "/docs/self-hosting",
+    },
+    {
+      copy: "Make docs work from docs.amend.sh",
+      path: "/docs/production-routing",
     },
     {
       copy: "Production launch checklist",

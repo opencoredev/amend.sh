@@ -40,8 +40,13 @@ export function registerAgentReadyWebSurfaceTests(read: ReadText) {
       "https://docs.amend.sh/docs",
       "https://docs.amend.sh/docs/quickstart",
       "https://docs.amend.sh/docs/integration",
+      "https://docs.amend.sh/docs/customer-surfaces",
+      "https://docs.amend.sh/docs/source-events",
+      "https://docs.amend.sh/docs/automation",
+      "https://docs.amend.sh/docs/api-reference",
       "https://docs.amend.sh/docs/self-hosting",
       "https://docs.amend.sh/docs/source-trace",
+      "https://docs.amend.sh/docs/production-routing",
       "https://docs.amend.sh/docs/launch",
       "https://docs.amend.sh/schemas/agent-ready-production-report.schema.json",
       "https://docs.amend.sh/schemas/agent-ready-live-report.schema.json",
@@ -78,9 +83,9 @@ export function registerAgentReadyWebSurfaceTests(read: ReadText) {
     expect(seo).toContain('"@type": "Organization"');
     expect(seo).toContain('name: "robots", content: "noindex, nofollow"');
     expect(seo).toContain("twitter:card");
-    expect(docsUrlHelper).toContain('DEFAULT_PRODUCTION_DOCS_URL = "https://docs.amend.sh/docs"');
+    expect(docsUrlHelper).toContain('DEFAULT_PRODUCTION_DOCS_URL = "https://amend.sh/docs"');
     expect(docsUrlHelper).not.toContain('DEFAULT_PRODUCTION_DOCS_URL = "/docs"');
-    expect(productionEnvExample).toContain("VITE_DOCS_URL=https://docs.amend.sh/docs");
+    expect(productionEnvExample).toContain("VITE_DOCS_URL=https://amend.sh/docs");
     expect(productionEnvExample).toContain("SITE_URL=https://amend.sh");
     expect(productionEnvExample).toContain("EMAIL_FROM=Amend <updates@amend.sh>");
     expect(productionEnvExample).not.toContain("VITE_DOCS_URL=/docs");

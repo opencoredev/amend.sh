@@ -63,14 +63,14 @@ export function addProductionArtifactChecks(
   add(
     "production launch handoff uses Amend.sh origins",
     includesAll(context.productionEnvExample, [
-      "VITE_DOCS_URL=https://docs.amend.sh/docs",
+      "VITE_DOCS_URL=https://amend.sh/docs",
       "SITE_URL=https://amend.sh",
       "EMAIL_FROM=Amend <updates@amend.sh>",
     ]) &&
       includesAll(context.launchRunbook, [
         'bunx convex env set SITE_URL "https://amend.sh"',
         'bunx convex env set EMAIL_FROM "Amend <updates@amend.sh>"',
-        "VITE_DOCS_URL=https://docs.amend.sh/docs",
+        "VITE_DOCS_URL=https://amend.sh/docs",
       ]) &&
       includesAll(context.docsLaunchPage, [
         "bunx convex env set SITE_URL https://amend.sh",

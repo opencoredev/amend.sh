@@ -6,7 +6,7 @@ description: Production launch checklist for provider setup, DNS, deployment, an
 Launch is the point where local wiring becomes public infrastructure. Keep this page boring and
 strict: it exists to prevent "works locally" from becoming a production surprise.
 
-## Preflight
+## 1. Local Preflight
 
 Run these before touching production:
 
@@ -22,7 +22,7 @@ If the dev stack is already running, add the smoke gate:
 bun run smoke
 ```
 
-## Provider inputs
+## 2. Provider Inputs
 
 Collect these before strict readiness:
 
@@ -34,13 +34,13 @@ Collect these before strict readiness:
 | Billing  | Stripe secret key, webhook secret, product and price IDs            |
 | Hosting  | Web app URL, docs URL, Convex deployment, DNS records               |
 
-## Convex environment
+## 3. Convex Environment
 
 Set production server-side values in the backend environment. Keep client-exposed values limited to
 `VITE_` variables.
 
 ```bash
-bunx convex env set SITE_URL https://amend.sh
+bunx convex env set SITE_URL "https://amend.sh"
 bunx convex env set BETTER_AUTH_SECRET "<generated-secret>"
 bunx convex env set GITHUB_WEBHOOK_SECRET "<webhook-secret>"
 bunx convex env set AMEND_API_TOKEN "<owner-token>"
@@ -56,7 +56,7 @@ VITE_POSTHOG_HOST=https://us.i.posthog.com
 VITE_POSTHOG_PROJECT_ID=441195
 ```
 
-## Domains
+## 4. Domains
 
 Use the dedicated docs host for this launch:
 
@@ -70,12 +70,15 @@ Use the dedicated docs host for this launch:
 Set `VITE_DOCS_URL` to the final docs root so every landing, footer, setup, and dashboard link goes
 to the same place.
 
-## Final gate
+The main site also proxies `/docs` through Vercel so `https://amend.sh/docs` opens the docs index.
+See [Production routing](production-routing.mdx) for the routing contract.
+
+## 5. Final Gate
 
 Before announcing:
 
 - sign in from the deployed web app
-- open docs from the deployed landing page
+- open docs from `https://amend.sh/docs` and `https://docs.amend.sh/docs`
 - confirm `amend.sh` and `docs.amend.sh` resolve through A/AAAA or CNAME DNS records
 - send a signed GitHub webhook to production
 - submit feedback through the portal
@@ -85,3 +88,9 @@ Before announcing:
 - rerun `bun run readiness:strict`
 - rerun `bun run agent-ready:built`
 - rerun `bun run agent-ready:live`
+
+Use the production wrapper only when production secrets and DNS are expected to be ready:
+
+```bash
+bun run agent-ready:production
+```

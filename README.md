@@ -103,15 +103,6 @@ The artifact includes a `$schema` field documented in `docs/agent-ready-status-r
 validate a saved status artifact with
 `bun run agent-ready:status:validate-report agent-ready-status.json`; add `--require-ok` when CI
 should fail unless the no-secret status is blocker-free.
-Use `bun run agent-ready:next-steps` when an operator needs the same no-secret env, deployment,
-and DNS blockers as a short checklist. Use
-`bun --silent scripts/agent-ready-next-steps.ts --json --json-file agent-ready-next-steps.json`
-when CI needs that checklist as an artifact. The artifact keeps the flat env list, records safe
-public production values, groups missing values into web deployment and Convex deployment steps, and includes deploy/host-attachment steps
-before DNS wiring. It includes a `$schema` field documented in
-`docs/agent-ready-next-steps-report.schema.json`; validate a saved checklist with
-`bun run agent-ready:next-steps:validate-report agent-ready-next-steps.json`; add `--require-ok`
-when CI should fail unless the checklist is blocker-free.
 
 If you only need to recheck the already-deployed public hosts, run:
 
@@ -139,8 +130,8 @@ Use `bun run agent-ready:refresh-report` when CI should refresh the saved report
 timestamps, validate the artifact, run the completion audit in production-blocker-tolerant mode, and
 still exit red while production blockers remain. Use `bun run agent-ready:final-gate` after
 production env and DNS are ready to regenerate the saved reports, run the strict completion audit,
-refresh and validate the no-secret status and next-steps reports, require the production, live,
-status, completion audit, and next-steps reports to be green, and verify synced audit evidence. Use
+refresh and validate the no-secret status report, require the production, live, status, and
+completion audit reports to be green, and verify synced audit evidence. Use
 `bun run agent-ready:completion-audit` as the
 strict prompt-to-artifact gate; it exits non-zero until strict readiness, production env, the live
 validator, and the saved production report are all green. Use
@@ -153,8 +144,8 @@ schema endpoint. Validate it with
 add `--require-ok` when CI should fail unless the completion audit is fully green.
 After saving a report, run `bun run agent-ready:sync-audit agent-ready-production-report.json` to
 sync the launch audit timestamps, then `bun run agent-ready:audit:check` to validate the saved
-production, live, status, completion audit, and next-steps reports and confirm the audits are
-synced to the production report.
+production, live, status, and completion audit reports and confirm the audits are synced to the
+production report.
 
 The live gate checks registration, DNS delegation, A/AAAA/CNAME DNS records, final response origin,
 `robots.txt`, `sitemap.xml`, unique on-origin sitemap locs, `llms.txt` links aligned to the matching
@@ -168,7 +159,7 @@ metadata and
 parseable JSON-LD, crawlable canonical/Open Graph HTML for every web sitemap page, private-route
 `noindex`, docs root canonical/Open Graph/parseable WebSite JSON-LD HTML, and docs index
 canonical/Open Graph/parseable TechArticle JSON-LD HTML plus the production, live, status,
-completion audit, and next-steps report schema endpoints for `amend.sh` and `docs.amend.sh`.
+and completion audit report schema endpoints for `amend.sh` and `docs.amend.sh`.
 
 ## Convex Setup
 
@@ -245,8 +236,8 @@ Your app will connect to the configured Convex deployment automatically.
 The normal `bun run dev`, `bun run dev:web`, and `bun run dev:docs` commands set
 `WORKTREE_NAME=${WORKTREE_NAME:-$(basename "$PWD")}` and use portless. The web app reads
 `VITE_DOCS_URL` for docs links. Local development defaults to the matching
-`http://docs.$WORKTREE_NAME.localhost:1355/docs`; this launch uses `https://docs.amend.sh/docs` in
-production.
+`http://docs.$WORKTREE_NAME.localhost:1355/docs`; this launch uses `https://amend.sh/docs` for
+product links in production while `https://docs.amend.sh` remains the canonical docs origin.
 
 ## UI Customization
 

@@ -1,0 +1,96 @@
+---
+title: Automation
+description: Configure Mostly Auto rules, AI drafting, proactive agent runs, and delivery safety.
+---
+
+Automation should start review-first, then become more automatic where the source evidence is strong.
+Amend stores decisions with source context so teams can inspect why something changed before it
+becomes public.
+
+## Rules
+
+Use Mostly Auto when safe status updates can apply automatically, but public copy and high-impact
+notifications still require review.
+
+```ts
+await amend.updateAutomationRules({
+  mode: "mostly_auto",
+  autoDraftChangelog: true,
+  autoPublishChangelog: false,
+  autoNotifyUsers: false,
+  autoUpdateFeedbackStatus: true,
+  requireReviewBelowConfidence: 0.82,
+  requireReviewForHighImpact: true,
+  requireReviewForPublicCopy: true,
+});
+```
+
+## Changelog Drafting
+
+Local dry-runs do not require provider credentials:
+
+```ts
+await amend.draftChangelog({
+  title: "Webhook retry status",
+  kind: "pull_request",
+  dryRun: true,
+});
+```
+
+Production AI drafting requires provider keys in the Convex environment. Keep model policy
+server-side:
+
+```bash
+bunx convex env set OPENAI_API_KEY "replace-with-provider-key"
+bunx convex env set OPENAI_MODEL "gpt-5.1-mini"
+```
+
+The proactive agent can also use Crof/Kimi-compatible settings:
+
+```bash
+bunx convex env set CROF_API_KEY "replace-with-crof-key"
+bunx convex env set CROF_MODEL "kimi-k2.6"
+bunx convex env set CROF_BASE_URL "https://crof.ai/v1"
+```
+
+If the provider is missing or returns invalid output, the backend records a local fallback decision
+instead of inventing source links.
+
+## Decisions And Build Briefs
+
+The SDK exposes the agent-readable review queues:
+
+```ts
+const decisions = await amend.automationDecisions();
+const runs = await amend.agentRuns({ projectSlug: "web-app" });
+const briefs = await amend.buildBriefs({ status: "in_review" });
+```
+
+Use these records to build reviewer workflows or hand a coding agent a demand-backed brief.
+
+## Delivery Outbox
+
+Plan deliveries before sending them. Keep `dryRun: true` until email, Slack, or webhook credentials
+are verified.
+
+```ts
+await amend.planDeliveries({
+  channel: "email",
+  notificationKey: "notification-changelog-review-ready",
+});
+
+await amend.sendDeliveries({
+  channel: "email",
+  dryRun: true,
+  limit: 10,
+});
+```
+
+Real email sends require `RESEND_API_KEY` and `EMAIL_FROM` in Convex.
+
+## Safety Bar
+
+- Public copy should stay reviewable until the workspace explicitly allows auto-publish.
+- Low-confidence source matches should suggest investigation, not publish.
+- Delivery sends should start as dry-runs and move to production only after a test recipient works.
+- Every automated action should leave enough source evidence for a reviewer to reverse or edit it.

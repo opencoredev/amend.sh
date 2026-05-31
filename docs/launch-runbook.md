@@ -74,7 +74,7 @@ Set the production web deployment values:
 ```bash
 VITE_CONVEX_URL=https://<convex-deployment>.convex.cloud
 VITE_CONVEX_SITE_URL=https://<convex-site>.convex.site
-VITE_DOCS_URL=https://docs.amend.sh/docs
+VITE_DOCS_URL=https://amend.sh/docs
 VITE_POSTHOG_TOKEN=phc_BCb25jVTo59jtEMPysgGUvgt85bUYGwN8XBNA2oMNLY7
 VITE_POSTHOG_HOST=https://us.i.posthog.com
 VITE_POSTHOG_PROJECT_ID=441195
