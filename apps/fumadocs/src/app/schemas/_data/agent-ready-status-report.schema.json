@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://docs.amend.sh/schemas/agent-ready-status-report.schema.json",
+  "title": "Amend Agent-Ready Status Report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "blockers",
+    "checkedAt",
+    "dns",
+    "nextGates",
+    "ok",
+    "origins",
+    "productionEnv"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "const": "https://docs.amend.sh/schemas/agent-ready-status-report.schema.json"
+    },
+    "blockers": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "checkedAt": { "type": "string", "format": "date-time" },
+    "dns": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["docs", "web"],
+      "properties": {
+        "docs": { "$ref": "#/$defs/dnsHost" },
+        "web": { "$ref": "#/$defs/dnsHost" }
+      }
+    },
+    "nextGates": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "prefixItems": [
+        { "type": "string", "const": "bun run agent-ready:production" },
+        { "type": "string", "const": "bun run agent-ready:final-gate" }
+      ],
+      "items": false
+    },
+    "ok": { "type": "boolean" },
+    "origins": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["docs", "web"],
+      "properties": {
+        "docs": { "type": "string", "format": "uri" },
+        "web": { "type": "string", "format": "uri" }
+      }
+    },
+    "productionEnv": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["missing", "passed", "total"],
+      "properties": {
+        "missing": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "passed": { "type": "integer", "minimum": 0 },
+        "total": { "type": "integer", "minimum": 0 }
+      }
+    }
+  },
+  "$defs": {
+    "dnsHost": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["delegated", "host", "records", "registered"],
+      "properties": {
+        "delegated": { "type": "boolean" },
+        "host": { "type": "string", "minLength": 1 },
+        "records": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "registered": { "type": "boolean" }
+      }
+    }
+  }
+}

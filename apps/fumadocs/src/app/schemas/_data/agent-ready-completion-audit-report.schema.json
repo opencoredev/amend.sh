@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://docs.amend.sh/schemas/agent-ready-completion-audit-report.schema.json",
+  "title": "Amend Agent-Ready Completion Audit Report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "allowProductionBlockers",
+    "checkedAt",
+    "checks",
+    "completionOk",
+    "missingOrBlocked",
+    "ok",
+    "productionBlockersOnly",
+    "productionReportPath",
+    "summary"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "const": "https://docs.amend.sh/schemas/agent-ready-completion-audit-report.schema.json"
+    },
+    "allowProductionBlockers": { "type": "boolean" },
+    "checkedAt": { "type": "string", "format": "date-time" },
+    "checks": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/check" }
+    },
+    "completionOk": { "type": "boolean" },
+    "missingOrBlocked": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/check" }
+    },
+    "ok": { "type": "boolean" },
+    "productionBlockersOnly": { "type": "boolean" },
+    "productionReportPath": { "type": "string", "minLength": 1 },
+    "summary": { "$ref": "#/$defs/summary" }
+  },
+  "$defs": {
+    "check": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "ok"],
+      "properties": {
+        "detail": { "type": "string" },
+        "name": { "type": "string", "minLength": 1 },
+        "ok": { "type": "boolean" }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["failed", "passed", "total"],
+      "properties": {
+        "failed": { "type": "integer", "minimum": 0 },
+        "passed": { "type": "integer", "minimum": 0 },
+        "total": { "type": "integer", "minimum": 0 }
+      }
+    }
+  }
+}

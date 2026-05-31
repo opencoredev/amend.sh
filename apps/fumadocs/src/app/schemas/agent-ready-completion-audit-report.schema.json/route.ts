@@ -1,4 +1,4 @@
-import schema from "../../../../../../docs/agent-ready-completion-audit-report.schema.json";
+import schema from "../_data/agent-ready-completion-audit-report.schema.json";
 
 export const revalidate = false;
 
