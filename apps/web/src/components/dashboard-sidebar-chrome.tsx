@@ -39,16 +39,13 @@ function SidebarMainNavButton({
     <button
       type="button"
       className={cn(
-        "relative flex min-h-10 items-center gap-3 rounded-xl px-3 text-sm transition-colors duration-150 ease-linear active:opacity-75 [&_svg]:size-4 [&_svg]:shrink-0",
+        "flex min-h-10 items-center gap-3 rounded-xl px-3.5 text-sm transition-colors duration-150 ease-linear active:opacity-75 [&_svg]:size-4 [&_svg]:shrink-0",
         active
-          ? "bg-foreground/[0.075] font-semibold text-foreground"
+          ? "bg-[#1d1d20] font-semibold text-foreground shadow-[inset_0_1px_0_rgb(255_255_255/0.045)] ring-1 ring-white/[0.055]"
           : "font-medium text-muted-foreground hover:bg-foreground/[0.045] hover:text-foreground",
       )}
       onClick={onClick}
     >
-      {active && (
-        <span className="absolute left-1.5 top-1/2 h-4 w-0.5 -translate-y-1/2 rounded-full bg-foreground" />
-      )}
       {icon}
       {label}
     </button>
@@ -145,6 +142,7 @@ export function DashboardSidebarChrome({
     projectMatches,
     query,
   };
+  const showContextSidebar = activeView !== "settings";
 
   return (
     <>
@@ -175,19 +173,21 @@ export function DashboardSidebarChrome({
             onClick={() => onViewChange("settings")}
           />
         </nav>
-        <div className="mx-4 h-px bg-foreground/[0.045]" />
+        {showContextSidebar ? <div className="mx-4 h-px bg-foreground/[0.045]" /> : null}
 
         {/* Context nav */}
-        <div className="min-h-0 flex-1 overflow-y-auto">
-          <ModuleSidebar {...sidebarProps} />
-        </div>
+        {showContextSidebar ? (
+          <div className="min-h-0 flex-1 overflow-y-auto">
+            <ModuleSidebar {...sidebarProps} />
+          </div>
+        ) : null}
       </aside>
 
       {/* Mobile header */}
       <div className="bg-background lg:hidden">
         <WorkspaceSwitcher menuRef={mobileWorkspaceMenuRef} {...switcherProps} />
         <MobileViewNav activeView={activeView} onViewChange={onViewChange} />
-        {!focusChangelogEditor ? (
+        {!focusChangelogEditor && showContextSidebar ? (
           <div className="max-h-[38svh] overflow-auto">
             <ModuleSidebar {...sidebarProps} />
           </div>

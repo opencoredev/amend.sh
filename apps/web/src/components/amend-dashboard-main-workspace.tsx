@@ -44,6 +44,7 @@ export function AmendDashboardMainWorkspace({
   onOpenRoadmapItem,
   onOpenSetup,
   onSearchChange,
+  onSettingsSectionChange,
   onStatusChange,
   onVoteRoadmapItem,
 }: DashboardContentProps) {
@@ -115,6 +116,7 @@ export function AmendDashboardMainWorkspace({
         <SettingsWorkspace
           activeProject={activeProject}
           activeSection={activeSettingsSection}
+          onSectionChange={onSettingsSectionChange}
           workspace={workspace}
         />
       ) : null}

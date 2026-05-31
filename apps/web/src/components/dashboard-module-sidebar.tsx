@@ -4,7 +4,6 @@ import {
   FeedbackModuleSidebar,
   ProactivationModuleSidebar,
   RoadmapModuleSidebar,
-  SettingsModuleSidebar,
   SetupModuleSidebar,
 } from "@/components/dashboard-module-sidebar-panels";
 import type { ModuleSidebarProps } from "@/components/dashboard-module-sidebar-types";
@@ -48,12 +47,7 @@ export function ModuleSidebar(props: ModuleSidebarProps) {
   }
 
   if (props.activeView === "settings") {
-    return (
-      <SettingsModuleSidebar
-        activeSettingsSection={props.activeSettingsSection}
-        onSettingsSectionChange={props.onSettingsSectionChange}
-      />
-    );
+    return null;
   }
 
   if (props.activeView === "proactivation") {

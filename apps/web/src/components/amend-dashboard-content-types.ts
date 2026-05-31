@@ -64,6 +64,7 @@ export type DashboardContentProps = {
   onOpenSetup: () => void;
   onProjectCreated: (projectSlug: string, workspaceSlug?: string) => void;
   onSearchChange: (query: string) => void;
+  onSettingsSectionChange: (section: SettingsSection) => void;
   onStatusChange: (status: RoadmapStatus | "all") => void;
   onVoteRoadmapItem: (item: DashboardRoadmap) => Promise<unknown>;
   onVoteSelectedRoadmap: (item: DashboardRoadmap) => Promise<unknown>;
