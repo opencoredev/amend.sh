@@ -33,7 +33,6 @@ const previewJoinSeededDemoWorkspaceMutationName = ["amend", "joinSeededDemoWork
 const joinSeededDemoWorkspaceMutation = makeFunctionReference<"mutation">(
   previewJoinSeededDemoWorkspaceMutationName,
 );
-const localDemoWorkspaceSlug = demoWorkspaceSlug;
 
 export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp?: () => void }) {
   const [formError, setFormError] = useState("");
@@ -95,7 +94,7 @@ export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp?: ()
     await convex.mutation(joinSeededDemoWorkspaceMutation, {
       email,
       name: previewNameFromEmail(email),
-      workspaceSlug: localDemoWorkspaceSlug,
+      workspaceSlug: demoWorkspaceSlug,
     });
   }
 

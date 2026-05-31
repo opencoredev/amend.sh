@@ -67,6 +67,8 @@ async function injectDocsProxyRoutes() {
     { src: "/llms.mdx/docs/(.*)", dest: `${docsOrigin}/llms.mdx/docs/$1` },
     { src: "/schemas/(.*)", dest: `${docsOrigin}/schemas/$1` },
     { src: "/fonts/(.*)", dest: `${docsOrigin}/fonts/$1` },
+    // Fumadocs' AI search client calls absolute /api/* paths from proxied docs pages.
+    // Keep these reserved for docs while /docs is served from the main app origin.
     { src: "/api/search", dest: `${docsOrigin}/api/search` },
     { src: "/api/chat", dest: `${docsOrigin}/api/chat` },
   ];

@@ -33,7 +33,11 @@ async function firstExistingDirectory(candidates: URL[]) {
     }
   }
 
-  return candidates[0];
+  throw new Error(
+    `Missing web build output. Run \`bun run build\` first. Checked: ${candidates
+      .map((candidate) => candidate.pathname)
+      .join(", ")}`,
+  );
 }
 
 async function isDirectory(url: URL) {

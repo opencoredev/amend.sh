@@ -4,39 +4,5 @@
     "deploymentEnabled": false
   },
   "installCommand": "bun install --frozen-lockfile",
-  "buildCommand": "bun scripts/vercel-preview-build.ts",
-  "rewrites": [
-    {
-      "source": "/docs",
-      "destination": "https://docs.amend.sh/docs"
-    },
-    {
-      "source": "/docs/:path*",
-      "destination": "https://docs.amend.sh/docs/:path*"
-    },
-    {
-      "source": "/llms.mdx/docs/:path*",
-      "destination": "https://docs.amend.sh/llms.mdx/docs/:path*"
-    },
-    {
-      "source": "/og/docs/:path*",
-      "destination": "https://docs.amend.sh/og/docs/:path*"
-    },
-    {
-      "source": "/schemas/:path*",
-      "destination": "https://docs.amend.sh/schemas/:path*"
-    },
-    {
-      "source": "/fonts/:path*",
-      "destination": "https://docs.amend.sh/fonts/:path*"
-    },
-    {
-      "source": "/api/search",
-      "destination": "https://docs.amend.sh/api/search"
-    },
-    {
-      "source": "/api/chat",
-      "destination": "https://docs.amend.sh/api/chat"
-    }
-  ]
+  "buildCommand": "bun scripts/vercel-preview-build.ts"
 }
