@@ -50,3 +50,10 @@ jobs:
 
       - name: Deploy Vercel production
         run: bunx vercel deploy --prebuilt --prod --yes --token "$VERCEL_TOKEN"
+
+      - name: Deploy docs production
+        env:
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_DOCS_PROJECT_ID }}
+        run: |
+          cd apps/fumadocs
+          bunx vercel deploy --prod --yes --token "$VERCEL_TOKEN"

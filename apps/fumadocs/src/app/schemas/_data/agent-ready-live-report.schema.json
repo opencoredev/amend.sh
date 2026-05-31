@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://docs.amend.sh/schemas/agent-ready-live-report.schema.json",
+  "title": "Amend Agent-Ready Live Report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["$schema", "blockers", "checkedAt", "checks", "ok", "origins", "passed", "total"],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "const": "https://docs.amend.sh/schemas/agent-ready-live-report.schema.json"
+    },
+    "blockers": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "checkedAt": { "type": "string", "format": "date-time" },
+    "checks": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/check" }
+    },
+    "ok": { "type": "boolean" },
+    "origins": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["docs", "web"],
+      "properties": {
+        "docs": { "type": "string", "format": "uri" },
+        "web": { "type": "string", "format": "uri" }
+      }
+    },
+    "passed": { "type": "integer", "minimum": 0 },
+    "total": { "type": "integer", "minimum": 0 }
+  },
+  "$defs": {
+    "check": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "ok"],
+      "properties": {
+        "detail": { "type": "string" },
+        "name": { "type": "string", "minLength": 1 },
+        "ok": { "type": "boolean" }
+      }
+    }
+  }
+}
