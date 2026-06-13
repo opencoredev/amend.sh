@@ -32,6 +32,8 @@ export async function initPostHog() {
     capture_pageleave: true,
     person_profiles: "identified_only",
     persistence: "localStorage+cookie",
+    // Don't record session replays while developing locally.
+    disable_session_recording: import.meta.env.DEV,
     loaded: (client) => {
       client.register({
         amend_project_id: env.VITE_POSTHOG_PROJECT_ID ?? defaultPostHogProjectId,
