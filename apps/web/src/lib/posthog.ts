@@ -58,7 +58,7 @@ export function getPostHogOptions(): Partial<PostHogConfig> {
     capture_pageleave: false,
     capture_pageview: false,
     defaults: "2026-01-30",
-    disable_session_recording: true,
+    disable_session_recording: import.meta.env.DEV,
     person_profiles: "identified_only",
     persistence: "localStorage+cookie",
     loaded: (client) => {
