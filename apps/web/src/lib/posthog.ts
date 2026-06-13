@@ -3,7 +3,7 @@ import type { PostHogConfig } from "posthog-js";
 
 import { optionalClientEnv } from "@/lib/client-env";
 
-const defaultPostHogHost = "https://us.i.posthog.com";
+const defaultPostHogHost = "https://a.amend.sh";
 const defaultPostHogProjectId = "441195";
 const defaultPostHogToken = "phc_BCb25jVTo59jtEMPysgGUvgt85bUYGwN8XBNA2oMNLY7";
 
@@ -53,6 +53,7 @@ export function getPostHogToken() {
 export function getPostHogOptions(): Partial<PostHogConfig> {
   return {
     api_host: optionalClientEnv("VITE_POSTHOG_HOST") ?? defaultPostHogHost,
+    ui_host: "https://us.posthog.com",
     autocapture: false,
     capture_exceptions: true,
     capture_pageleave: false,
@@ -94,10 +95,11 @@ export async function capturePostHogPageview(path: string) {
   }
 
   const posthog = await loadPostHog();
+  const safePath = analyticsPath(path);
 
   posthog.capture("$pageview", {
-    $current_url: window.location.href,
-    path,
+    $current_url: analyticsPath(window.location.href),
+    path: safePath,
   });
 }
 
@@ -133,6 +135,16 @@ export async function identifyAndCapturePostHogEvent({
   }
 
   posthog.capture(postHogEventNames[event], cleanProperties(properties));
+}
+
+export function analyticsPath(value: string) {
+  try {
+    const baseUrl = typeof window === "undefined" ? "https://amend.sh" : window.location.origin;
+    const url = new URL(value, baseUrl);
+    return url.pathname;
+  } catch {
+    return value.split(/[?#]/, 1)[0] ?? "/";
+  }
 }
 
 function cleanProperties(properties: PostHogEventProperties) {
