@@ -56,7 +56,10 @@ function HomeComponent() {
         type="application/ld+json"
         suppressHydrationWarning
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify([organizationJsonLd, productJsonLd, faqJsonLd]),
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@graph": [organizationJsonLd, productJsonLd, faqJsonLd],
+          }),
         }}
       />
       <HomeHeader />
