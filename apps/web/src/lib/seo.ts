@@ -54,7 +54,6 @@ export function openGraphMeta({
 export const noIndexMeta = [{ name: "robots", content: "noindex, nofollow" }] as const;
 
 export const faqJsonLd = {
-  "@context": "https://schema.org",
   "@type": "FAQPage",
   mainEntity: [
     {
@@ -101,7 +100,6 @@ export const faqJsonLd = {
 };
 
 export const productJsonLd = {
-  "@context": "https://schema.org",
   "@type": "SoftwareApplication",
   name: "Amend.sh",
   applicationCategory: "BusinessApplication",
@@ -154,7 +152,6 @@ export const productJsonLd = {
 };
 
 export const organizationJsonLd = {
-  "@context": "https://schema.org",
   "@type": "Organization",
   name: "Amend.sh",
   url: siteUrl,
