@@ -1,0 +1,32 @@
+---
+title: Changelog
+description: Write and publish shipped-work announcements that trace back to the feedback and roadmap behind them.
+---
+
+The changelog is the end of the loop: the public record of what you shipped. An entry is the announcement a customer reads, but because it carries the same source evidence as the roadmap item it came from, it is also the proof that a request actually got answered. Someone who asked for a thing can be told, by name, that it landed.
+
+<Screenshot caption="The changelog list: entries with a category, version, status, and publish date." />
+
+## What an entry holds
+
+Each entry has:
+
+- A `title` and `body`, plus a `summary` for the list view. The editor fills the summary from the first line of the body so you do not write it twice; over the API you pass `summary` yourself.
+- A category: `added` ("New"), `changed` ("Improved"), `fixed` ("Fixed"), or `removed` ("Removed").
+- A status that moves through `draft`, `in_review`, `scheduled`, and `published`.
+- An optional `version` like "2.4.0", plus free-form tags and the `sourceLinks` that tie it to the work.
+
+## How an entry travels
+
+An entry is a draft until you decide otherwise. You write it, set a category and maybe a version, then move it along: `in_review` when it needs a second set of eyes, `scheduled` if it should go out later, `published` when it is live. Publishing with the portal toggle on is what puts it in front of customers, and you can have publishing email your subscribers at the same time.
+
+## Where to go next
+
+<Cards>
+  <Card title="Writing and publishing" href="/docs/changelog/writing">
+    The editor, categories and versions, the draft-to-published path, and notifying subscribers.
+  </Card>
+  <Card title="AI drafting" href="/docs/changelog/ai-drafting">
+    Turn source evidence into a first-draft entry from the SDK, REST, or CLI.
+  </Card>
+</Cards>

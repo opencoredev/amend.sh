@@ -43,9 +43,9 @@ export function AmendLogo({
 }: AmendLogoProps) {
   return (
     <div
-      aria-label={showSuffix ? "Amend.sh" : "Amend"}
+      aria-label={showSuffix ? "amend.sh" : "Amend"}
       className={cn(
-        "inline-flex items-center whitespace-nowrap font-bold uppercase leading-none tracking-[0.13em]",
+        "inline-flex items-center whitespace-nowrap font-semibold leading-none tracking-[-0.01em]",
         logoSizeClasses[size],
         logoToneClasses[tone],
         className,
@@ -54,13 +54,8 @@ export function AmendLogo({
     >
       {showMark ? <BrandMark decorative size={logoMarkSizes[size]} variant={markVariant} /> : null}
       <span className="inline-flex items-baseline">
-        <span>AMEND</span>
-        {showSuffix ? (
-          <>
-            <span className="mx-[0.1em] inline-block size-[0.22em] translate-y-[-0.04em] bg-muted-foreground" />
-            <span className="text-muted-foreground">SH</span>
-          </>
-        ) : null}
+        <span>amend</span>
+        {showSuffix ? <span className="text-muted-foreground">.sh</span> : null}
       </span>
     </div>
   );

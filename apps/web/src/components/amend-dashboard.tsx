@@ -16,17 +16,22 @@ export default function AmendDashboard() {
     return <DashboardAuthShell showSignIn />;
   }
 
-  if (dashboard.activeView === "setup") {
+  if (dashboard.activeView === "setup" || dashboard.requiresProjectSetup) {
     return (
-      <ProjectSetupShell onCreated={dashboard.onProjectCreated} workspace={dashboard.workspace} />
+      <ProjectSetupShell
+        isFirstProject={dashboard.requiresProjectSetup}
+        onCreated={dashboard.onProjectCreated}
+        projectsReady={dashboard.projectsReady}
+        workspace={dashboard.workspace}
+      />
     );
   }
 
   return (
-    <main className="dark min-h-svh overflow-hidden bg-background p-3 font-sans text-foreground">
+    <main className="dark min-h-svh overflow-hidden bg-background p-3 font-sans text-foreground lg:h-svh">
       <div
         className={cn(
-          "grid min-h-[calc(100svh-1.5rem)] overflow-hidden rounded-2xl bg-background shadow-[0_24px_80px_rgb(0_0_0/0.32)] ring-1 ring-white/[0.035]",
+          "grid min-h-[calc(100svh-1.5rem)] overflow-hidden rounded-2xl bg-background shadow-[0_24px_80px_rgb(0_0_0/0.32)] ring-1 ring-white/[0.035] lg:h-[calc(100svh-1.5rem)] lg:min-h-0",
           dashboard.focusChangelogEditor
             ? "lg:grid-cols-[minmax(0,1fr)]"
             : "lg:grid-cols-[16rem_minmax(0,1fr)]",
@@ -34,7 +39,7 @@ export default function AmendDashboard() {
       >
         <DashboardSidebarChrome {...dashboard.sidebarProps} />
 
-        <section className="min-h-0 overflow-x-hidden overflow-y-auto">
+        <section className="flex min-h-0 flex-col overflow-x-hidden lg:overflow-hidden">
           <AmendDashboardContent {...dashboard.contentProps} />
         </section>
       </div>

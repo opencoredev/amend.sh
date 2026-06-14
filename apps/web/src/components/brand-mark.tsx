@@ -27,6 +27,15 @@ const markVariantClasses: Record<BrandMarkVariant, string> = {
   mono: "text-foreground",
 };
 
+// The closing dot completes the loop. Warm signal on the solid mark, otherwise
+// it stays monochrome so the logo reads cleanly on any surface.
+const dotFillClasses: Record<BrandMarkVariant, string> = {
+  solid: "fill-amend-warm",
+  soft: "fill-current",
+  ghost: "fill-current",
+  mono: "fill-current",
+};
+
 export function BrandMark({
   className,
   decorative = false,
@@ -57,26 +66,15 @@ export function BrandMark({
       {...props}
     >
       {decorative ? null : <title id={titleId}>{title}</title>}
+      {/* The loop: a ring left open, about to close. */}
       <path
-        d="M22 16H42M48 22V31H39M25 33H16V42"
+        d="M50.5 39.5A20 20 0 1 1 50.5 24.5"
         stroke="currentColor"
-        strokeLinecap="square"
-        strokeWidth="4"
-        className={cn(variant === "solid" || variant === "mono" ? "opacity-55" : "opacity-35")}
+        strokeLinecap="round"
+        strokeWidth="6"
       />
-      <rect
-        x="8"
-        y="8"
-        width="16"
-        height="16"
-        rx="2"
-        className={cn(variant === "ghost" ? "fill-transparent" : "fill-current")}
-        stroke="currentColor"
-        strokeWidth={variant === "ghost" ? 4 : 0}
-      />
-      <rect x="40" y="8" width="16" height="16" rx="2" stroke="currentColor" strokeWidth="4" />
-      <rect x="24" y="24" width="16" height="16" rx="2" className="fill-current opacity-80" />
-      <rect x="8" y="40" width="16" height="16" rx="2" stroke="currentColor" strokeWidth="4" />
+      {/* The signal returning to its origin, closing the loop. */}
+      <circle cx="52" cy="32" r="4.4" className={dotFillClasses[variant]} />
     </svg>
   );
 }

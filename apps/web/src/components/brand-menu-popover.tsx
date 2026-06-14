@@ -1,4 +1,4 @@
-import { Code2, Copy, Download, ExternalLink } from "lucide-react";
+import { Code2, Copy, Download, ExternalLink } from "@/lib/icons";
 
 import { copySvg, downloadBrandAssets } from "@/components/brand-menu-actions";
 import { amendMarkSvg, amendWordmarkSvg } from "@/lib/brand-assets";

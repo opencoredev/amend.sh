@@ -10,7 +10,7 @@ export function SettingsSaveButton({
 }) {
   return (
     <Button
-      className="h-9 bg-foreground text-xs text-background hover:bg-background hover:text-foreground"
+      className="h-9 rounded-lg bg-foreground px-3.5 text-xs text-background hover:bg-background hover:text-foreground"
       disabled={disabled}
       onClick={onClick}
     >

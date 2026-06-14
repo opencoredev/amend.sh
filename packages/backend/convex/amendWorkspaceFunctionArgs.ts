@@ -39,10 +39,13 @@ export const updatePortalSettingsArgs = {
   ...workspaceScopeArgs,
   accentColor: v.optional(v.string()),
   changelogVisibility: v.optional(portalVisibility),
+  customThemeCss: v.optional(v.string()),
   feedbackMode: v.optional(portalFeedbackMode),
   headline: v.optional(v.string()),
   intro: v.optional(v.string()),
   roadmapVisibility: v.optional(portalVisibility),
+  themeAppearance: v.optional(v.union(v.literal("light"), v.literal("dark"))),
+  themePreset: v.optional(v.string()),
 };
 
 export const updateWorkspaceArgs = {

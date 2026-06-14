@@ -83,10 +83,13 @@ export function useSettingsWorkspaceSaveActions({
     setSaving("portal");
     void updatePortal({
       changelogVisibility: "public",
+      customThemeCss: formState.customThemeCss,
       feedbackMode: "open",
       headline: formState.headline,
       intro: formState.intro,
       roadmapVisibility: "public",
+      themeAppearance: formState.themeAppearance,
+      themePreset: formState.themePreset,
       workspaceSlug: workspace.id,
     })
       .then(() => toast.success("Portal settings saved"))

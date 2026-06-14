@@ -1,9 +1,10 @@
 import { Input } from "@amend/ui/components/input";
 import { cn } from "@amend/ui/lib/utils";
-import { ChevronDown, Plus, Search } from "lucide-react";
+import { ChevronDown, Plus, Search } from "@/lib/icons";
 import type { RefObject } from "react";
 
 import type { ProjectMenuItem } from "@/components/amend-dashboard-types";
+import { useDisclosureTransition } from "@/components/use-disclosure-transition";
 
 export function WorkspaceSwitcher({
   menuRef,
@@ -26,6 +27,8 @@ export function WorkspaceSwitcher({
   projectMatches: ProjectMenuItem[];
   query: string;
 }) {
+  const transition = useDisclosureTransition(open, "top-left");
+
   return (
     <div ref={menuRef} className="relative px-3 py-3">
       <button
@@ -50,10 +53,13 @@ export function WorkspaceSwitcher({
         <ChevronDown className="size-4 shrink-0 text-muted-foreground" />
       </button>
 
-      {open ? (
+      {transition.mounted ? (
         <div
-          className="t-dropdown is-open absolute left-2 right-2 top-[calc(100%-0.25rem)] z-40 rounded-xl bg-popover p-2 shadow-[0_18px_60px_rgb(0_0_0/0.55)] ring-1 ring-white/[0.06]"
-          data-origin="top-left"
+          className={cn(
+            "absolute left-2 right-2 top-[calc(100%-0.25rem)] z-40 rounded-xl bg-popover p-2 shadow-[0_18px_60px_rgb(0_0_0/0.55)] ring-1 ring-white/[0.06]",
+            transition.className,
+          )}
+          data-origin={transition["data-origin"]}
         >
           <label className="relative block">
             <Search className="pointer-events-none absolute left-2.5 top-1/2 size-3 -translate-y-1/2 text-muted-foreground" />
@@ -62,7 +68,7 @@ export function WorkspaceSwitcher({
               value={query}
               onChange={(event) => onQueryChange(event.target.value)}
               placeholder="Search projects"
-              className="h-8 border-transparent bg-background/80 pl-7 text-xs ring-1 ring-white/[0.055]"
+              className="h-8 rounded-lg border-transparent bg-background/80 pl-7 text-xs ring-1 ring-white/[0.055]"
             />
           </label>
           <div className="mt-1.5 grid gap-0.5">

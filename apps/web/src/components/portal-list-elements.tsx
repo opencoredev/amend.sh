@@ -1,47 +1,28 @@
-import { cn } from "@amend/ui/lib/utils";
-import type { LucideIcon } from "lucide-react";
+import type { ComponentType } from "react";
 
 import AmendLogo from "@/components/amend-logo";
 
+/** Elevated content surface — pure shadcn tokens so any portal theme themes it. */
+export const PORTAL_SURFACE =
+  "rounded-xl border border-border bg-card text-card-foreground shadow-sm";
+
+/** Compact status chip built from theme tokens. */
+export const PORTAL_CHIP =
+  "shrink-0 rounded-md border border-border bg-muted px-2.5 py-1 text-xs font-medium capitalize text-muted-foreground";
+
 export function PortalSkeleton({ workspaceSlug }: { workspaceSlug: string }) {
   return (
-    <main className="min-h-svh bg-background px-4 py-5 text-foreground sm:px-6">
-      <div className="mx-auto max-w-5xl">
+    <main className="dark min-h-svh bg-background p-3 text-foreground">
+      <div className="min-h-[calc(100svh-1.5rem)] rounded-2xl border border-border bg-background px-5 py-6 shadow-2xl sm:px-8">
         <AmendLogo size="md" markVariant="soft" />
-        <div className="grid gap-4 py-20">
+        <div className="mx-auto grid max-w-3xl gap-4 py-16">
           <p className="text-sm text-muted-foreground">{workspaceSlug}.amend.sh</p>
-          <div className="h-10 max-w-md rounded-lg bg-muted" />
-          <div className="h-4 max-w-xl rounded-lg bg-muted" />
-          <div className="h-56 rounded-lg border bg-card" />
+          <div className="h-9 max-w-md animate-pulse rounded-lg bg-muted" />
+          <div className="h-4 max-w-xl animate-pulse rounded-lg bg-muted" />
+          <div className={`h-56 ${PORTAL_SURFACE}`} />
         </div>
       </div>
     </main>
-  );
-}
-
-export function BoardRow({
-  active,
-  count,
-  href,
-  label,
-}: {
-  active?: boolean;
-  count: number;
-  href: string;
-  label: string;
-}) {
-  return (
-    <a
-      href={href}
-      className={cn(
-        "flex items-center gap-2 rounded-md px-2 py-2 text-sm transition-colors duration-150 ease-linear hover:bg-muted/70 hover:text-foreground",
-        active ? "bg-primary/10 font-medium text-foreground" : "text-muted-foreground",
-      )}
-    >
-      <span className={cn("size-2 rounded-full", active ? "bg-primary" : "bg-muted-foreground")} />
-      <span className="min-w-0 flex-1 truncate">{label}</span>
-      <span className="rounded-full border bg-background px-2 text-xs">{count}</span>
-    </a>
   );
 }
 
@@ -50,17 +31,17 @@ export function EmptyState({
   text,
   title,
 }: {
-  icon: LucideIcon;
+  icon: ComponentType<{ className?: string }>;
   text: string;
   title: string;
 }) {
   return (
     <div className="grid place-items-center px-4 py-14 text-center">
-      <span className="grid size-16 place-items-center rounded-full border bg-muted/40">
-        <Icon className="size-8 text-muted-foreground" />
+      <span className="grid size-14 place-items-center rounded-2xl border border-border bg-muted">
+        <Icon className="size-6 text-muted-foreground" />
       </span>
-      <h3 className="mt-5 font-semibold">{title}</h3>
-      <p className="mt-2 max-w-sm text-sm leading-6 text-muted-foreground">{text}</p>
+      <h3 className="mt-5 text-sm font-semibold">{title}</h3>
+      <p className="mt-1.5 max-w-sm text-sm leading-6 text-muted-foreground">{text}</p>
     </div>
   );
 }

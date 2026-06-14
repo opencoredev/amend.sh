@@ -1,4 +1,4 @@
-import { DatabaseZap } from "lucide-react";
+import { DatabaseZap } from "@/lib/icons";
 
 import { BooleanRow, SettingsPanel } from "@/components/amend-dashboard-shared";
 import type { WorkspaceSettingsData } from "@/components/amend-dashboard-types";

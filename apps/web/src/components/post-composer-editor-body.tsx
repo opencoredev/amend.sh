@@ -1,5 +1,5 @@
 import { cn } from "@amend/ui/lib/utils";
-import { Bold, Code2, FileImage, Italic, Link2, List, Paperclip, Smile } from "lucide-react";
+import { Bold, Code2, FileImage, Italic, Link2, List, Paperclip, Smile } from "@/lib/icons";
 import type { RefObject } from "react";
 
 import { EditorToolPanel, SelectionToolbar, ToolbarButton } from "./post-composer-controls";
@@ -127,7 +127,7 @@ export function PostComposerEditorBody({
         ) : null}
       </div>
 
-      <div className="absolute bottom-3 left-4 flex items-center gap-0.5">
+      <div className="absolute bottom-2 left-3.5 flex items-center gap-0.5">
         <ToolbarButton label="Insert image" onClick={() => insertEditorText("[image]")}>
           <FileImage />
         </ToolbarButton>

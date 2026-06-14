@@ -1,5 +1,14 @@
 export type FeedbackMode = "authenticated" | "closed" | "open";
 
+/** Turn a display portal URL like `acme.amend.sh` into the routable workspace slug. */
+export function portalSlugFromUrl(portalUrl: string): string {
+  return portalUrl
+    .trim()
+    .replace(/^https?:\/\//i, "")
+    .replace(/\.amend\.sh.*$/i, "")
+    .replace(/\/.*$/, "");
+}
+
 export type PortalData = {
   changelog: PortalChangelog[];
   feedback: PortalFeedback[];
@@ -10,10 +19,13 @@ export type PortalData = {
     portalSettings?: {
       accentColor?: string;
       changelogVisibility: "private" | "public";
+      customThemeCss?: string;
       feedbackMode: FeedbackMode;
       headline?: string;
       intro?: string;
       roadmapVisibility: "private" | "public";
+      themeAppearance?: "dark" | "light";
+      themePreset?: string;
     };
     slug: string;
   };

@@ -47,8 +47,11 @@ export type SourceEventSeed = SourceLink & {
 export type PortalSettings = {
   accentColor?: string;
   changelogVisibility: "private" | "public";
+  customThemeCss?: string;
   feedbackMode: "authenticated" | "closed" | "open";
   headline?: string;
   intro?: string;
   roadmapVisibility: "private" | "public";
+  themeAppearance?: "dark" | "light";
+  themePreset?: string;
 };

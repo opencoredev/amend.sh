@@ -15,7 +15,7 @@ export function SettingsPanel({
   title: string;
 }) {
   return (
-    <section className="rounded-lg border border-border/80 bg-card shadow-sm shadow-black/10">
+    <section className="rounded-xl border border-border/80 bg-card shadow-sm shadow-black/10">
       <div className="flex items-center justify-between gap-3 border-b border-border/70 px-4 py-3">
         <div className="flex min-w-0 items-center gap-2.5">
           <span className="grid size-7 shrink-0 place-items-center rounded-md border border-border/80 bg-muted/60 text-muted-foreground [&_svg]:size-3.5">
@@ -32,7 +32,7 @@ export function SettingsPanel({
 
 export function StatusRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex min-h-9 items-center justify-between gap-3 rounded-md border border-border/70 bg-background/70 px-3">
+    <div className="flex min-h-9 items-center justify-between gap-3 rounded-lg border border-border/70 bg-background/70 px-3">
       <span className="text-xs font-medium text-muted-foreground">{label}</span>
       <span className="truncate text-right text-xs font-semibold">{value}</span>
     </div>
@@ -75,7 +75,7 @@ export function EmptyModule({
 
 export function BooleanRow({ checked, label }: { checked: boolean; label: string }) {
   return (
-    <div className="flex min-h-9 items-center justify-between gap-3 rounded-md border border-border/70 bg-background/70 px-3">
+    <div className="flex min-h-9 items-center justify-between gap-3 rounded-lg border border-border/70 bg-background/70 px-3">
       <span className="text-xs font-medium text-muted-foreground">{label}</span>
       <span
         className={cn(

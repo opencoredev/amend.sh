@@ -79,7 +79,6 @@ export function composerStatusToRoadmapStatus(status: ComposerSubmitPayload["sta
 }
 
 export function normalizeView(value?: string): DashboardView {
-  if (value === "agent") return "proactivation";
   if (value === "members") return "settings";
   if (value === "share" || value === "board") return "posts";
   return viewValues.includes(value as DashboardView) ? (value as DashboardView) : "posts";
@@ -119,8 +118,6 @@ export function viewTitle(view: DashboardView) {
     posts: "Feedback",
     roadmap: "Roadmap",
     changelog: "Changelog",
-    analytics: "Analytics",
-    proactivation: "Proactivation",
     settings: "Settings",
     setup: "Create project",
   };

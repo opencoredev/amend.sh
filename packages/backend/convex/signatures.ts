@@ -1,6 +1,7 @@
 export type SignatureResult = { error: string; ok: false } | { ok: true };
 
 type SignatureOptions = {
+  allowUnsigned?: boolean;
   nowMs?: number;
   toleranceSeconds?: number;
 };
@@ -47,9 +48,12 @@ export async function verifyGitHubWebhookSignature(
   rawBody: string,
   signatureHeader: string | null,
   secret: string | undefined,
+  options: SignatureOptions = {},
 ): Promise<SignatureResult> {
   if (!secret) {
-    return { ok: true };
+    return options.allowUnsigned
+      ? { ok: true }
+      : { error: "Missing GitHub webhook secret", ok: false };
   }
 
   if (!signatureHeader?.startsWith("sha256=")) {

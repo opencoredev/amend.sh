@@ -1,5 +1,5 @@
 import { cn } from "@amend/ui/lib/utils";
-import { Globe } from "lucide-react";
+import { Globe } from "@/lib/icons";
 import { useEffect, useMemo, useState } from "react";
 
 import { duckDuckGoFaviconUrl, googleFaviconUrl } from "@/components/amend-dashboard-utils";

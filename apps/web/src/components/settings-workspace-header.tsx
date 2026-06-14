@@ -14,7 +14,7 @@ export function SettingsWorkspaceHeader({
   return (
     <div className="mb-6 flex flex-col gap-4 border-b border-border pb-5 md:flex-row md:items-start md:justify-between">
       <div className="flex min-w-0 gap-4">
-        <span className="grid size-14 shrink-0 place-items-center overflow-hidden border border-border bg-card text-lg font-semibold">
+        <span className="grid size-14 shrink-0 place-items-center overflow-hidden rounded-xl bg-[#151518] text-lg font-semibold ring-1 ring-white/[0.06]">
           <ProjectLogo
             className="size-full"
             fallbackIconClassName="size-6"

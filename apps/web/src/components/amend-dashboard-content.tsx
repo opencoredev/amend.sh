@@ -5,5 +5,9 @@ import type { DashboardContentProps } from "@/components/amend-dashboard-content
 export function AmendDashboardContent(props: DashboardContentProps) {
   const detailView = getDashboardDetailView(props);
 
-  return detailView ?? <AmendDashboardMainWorkspace {...props} />;
+  if (detailView) {
+    return <div className="flex min-h-0 flex-1 flex-col lg:overflow-y-auto">{detailView}</div>;
+  }
+
+  return <AmendDashboardMainWorkspace {...props} />;
 }

@@ -1,4 +1,4 @@
-import { Code2, DatabaseZap, Globe } from "lucide-react";
+import { Code2, DatabaseZap, Globe } from "@/lib/icons";
 
 import { SettingsPanel, StatusRow } from "@/components/amend-dashboard-shared";
 import type { ProjectMenuItem, WorkspaceSettingsData } from "@/components/amend-dashboard-types";

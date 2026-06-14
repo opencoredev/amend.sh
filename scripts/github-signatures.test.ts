@@ -31,8 +31,17 @@ describe("GitHub webhook signatures", () => {
     });
   });
 
-  test("allows unsigned local webhooks when no secret is configured", async () => {
+  test("rejects unsigned webhooks when no secret is configured", async () => {
     await expect(verifyGitHubWebhookSignature(rawBody, null, undefined)).resolves.toEqual({
+      error: "Missing GitHub webhook secret",
+      ok: false,
+    });
+  });
+
+  test("allows unsigned local webhooks only with an explicit local option", async () => {
+    await expect(
+      verifyGitHubWebhookSignature(rawBody, null, undefined, { allowUnsigned: true }),
+    ).resolves.toEqual({
       ok: true,
     });
   });

@@ -11,10 +11,18 @@ import {
 } from "@/components/amend-dashboard-workspaces";
 import type { DashboardContentProps } from "@/components/amend-dashboard-content-types";
 import { changelogCategoryFilters } from "@/components/amend-dashboard-utils";
-import { AnalyticsWorkspace } from "@/components/analytics-workspace";
+import { ChangelogToolbar } from "@/components/changelog-toolbar";
 import { DashboardHeader } from "@/components/dashboard-navigation";
-import { ProactivationWorkspace } from "@/components/proactivation-workspace";
+import { FeedbackToolbar } from "@/components/feedback-toolbar";
+import { RoadmapToolbar } from "@/components/roadmap-toolbar";
+import { DashboardOnboardingChecklist } from "@/components/dashboard-onboarding-checklist";
+import {
+  computeOnboardingState,
+  type OnboardingStepAction,
+} from "@/components/dashboard-onboarding-model";
 import { SettingsWorkspace } from "@/components/settings-workspace";
+
+const ONBOARDING_VIEWS = new Set<DashboardView>(["posts", "roadmap", "changelog"]);
 
 export function AmendDashboardMainWorkspace({
   activeBoard,
@@ -27,6 +35,7 @@ export function AmendDashboardMainWorkspace({
   activeView,
   changelogEntries,
   dashboard,
+  feedbackPosts,
   scopedChangelogEntries,
   scopedPosts,
   scopedRoadmapEntries,
@@ -35,20 +44,53 @@ export function AmendDashboardMainWorkspace({
   onAddRoadmap,
   onChangelogCategoryChange,
   onChangelogStatusChange,
-  onConfigureAutomation,
   onCreate,
   onMoveRoadmapItem,
+  onNewChangelog,
   onOpenChangelog,
   onOpenFeedback,
-  onOpenProactivation,
   onOpenRoadmapItem,
+  onOpenSettingsSection,
   onOpenSetup,
+  onRoadmapChange,
   onSearchChange,
   onStatusChange,
   onVoteRoadmapItem,
+  roadmapViews,
 }: DashboardContentProps) {
+  const onboarding = computeOnboardingState({ activeProject, dashboard, workspace });
+  const showOnboarding =
+    Boolean(dashboard) && activeProject.id !== "new-project" && ONBOARDING_VIEWS.has(activeView);
+
+  const handleStepAction = (action: OnboardingStepAction) => {
+    switch (action.kind) {
+      case "setup":
+        onOpenSetup();
+        break;
+      case "compose":
+        if (activeView === "changelog") onNewChangelog();
+        else onCreate();
+        break;
+      case "settings":
+        onOpenSettingsSection(action.section);
+        break;
+      case "none":
+        break;
+    }
+  };
+
   return (
     <>
+      {showOnboarding ? (
+        <DashboardOnboardingChecklist
+          key={activeProject.id}
+          projectId={activeProject.id}
+          projectName={activeProject.name}
+          state={onboarding}
+          onStepAction={handleStepAction}
+        />
+      ) : null}
+
       <DashboardHeader
         activeBoard={activeBoard}
         activeChangelogCategory={activeChangelogCategory}
@@ -59,13 +101,13 @@ export function AmendDashboardMainWorkspace({
         changelogCategories={changelogCategoryFilters(changelogEntries)}
         itemCount={getHeaderItemCount({
           activeView,
-          dashboard,
           scopedChangelogEntries,
           scopedPosts,
           scopedRoadmapEntries,
         })}
         onSearchChange={onSearchChange}
         onCreate={onCreate}
+        onNewChangelog={onNewChangelog}
         onChangelogCategoryChange={onChangelogCategoryChange}
         onChangelogStatusChange={onChangelogStatusChange}
         onStatusChange={onStatusChange}
@@ -75,46 +117,60 @@ export function AmendDashboardMainWorkspace({
       />
 
       {activeView === "posts" ? (
-        <PostsWorkspace
-          activeBoard={activeBoard}
-          activeStatus={activeStatus}
-          onOpenFeedback={onOpenFeedback}
-          posts={scopedPosts}
-        />
+        <>
+          <FeedbackToolbar
+            activeStatus={activeStatus}
+            feedbackPosts={feedbackPosts}
+            onStatusChange={onStatusChange}
+          />
+          <PostsWorkspace
+            activeBoard={activeBoard}
+            activeStatus={activeStatus}
+            onOpenFeedback={onOpenFeedback}
+            posts={scopedPosts}
+          />
+        </>
       ) : null}
       {activeView === "roadmap" ? (
-        <RoadmapWorkspace
-          activeStatus={activeStatus}
-          entries={scopedRoadmapEntries}
-          onAdd={onAddRoadmap}
-          onMove={onMoveRoadmapItem}
-          onOpenItem={onOpenRoadmapItem}
-          onVote={onVoteRoadmapItem}
-        />
+        <>
+          <RoadmapToolbar
+            activeRoadmap={activeRoadmap}
+            activeStatus={activeStatus}
+            onRoadmapChange={onRoadmapChange}
+            onStatusChange={onStatusChange}
+            roadmapViews={roadmapViews}
+          />
+          <RoadmapWorkspace
+            activeStatus={activeStatus}
+            entries={scopedRoadmapEntries}
+            onAdd={onAddRoadmap}
+            onMove={onMoveRoadmapItem}
+            onOpenItem={onOpenRoadmapItem}
+            onVote={onVoteRoadmapItem}
+          />
+        </>
       ) : null}
       {activeView === "changelog" ? (
-        <ChangelogWorkspace entries={scopedChangelogEntries} onOpen={onOpenChangelog} />
-      ) : null}
-      {activeView === "analytics" ? (
-        <AnalyticsWorkspace
-          dashboard={dashboard}
-          workspace={workspace}
-          onOpenProactivation={onOpenProactivation}
-          onOpenSetup={onOpenSetup}
-        />
-      ) : null}
-      {activeView === "proactivation" ? (
-        <ProactivationWorkspace
-          dashboard={dashboard}
-          workspace={workspace}
-          onConfigureAutomation={onConfigureAutomation}
-          onOpenSetup={onOpenSetup}
-        />
+        <>
+          <ChangelogToolbar
+            activeChangelogCategory={activeChangelogCategory}
+            activeChangelogStatus={activeChangelogStatus}
+            changelogEntries={changelogEntries}
+            onChangelogCategoryChange={onChangelogCategoryChange}
+            onChangelogStatusChange={onChangelogStatusChange}
+          />
+          <ChangelogWorkspace
+            entries={scopedChangelogEntries}
+            onCreate={onNewChangelog}
+            onOpen={onOpenChangelog}
+          />
+        </>
       ) : null}
       {activeView === "settings" ? (
         <SettingsWorkspace
           activeProject={activeProject}
           activeSection={activeSettingsSection}
+          onSectionChange={onOpenSettingsSection}
           workspace={workspace}
         />
       ) : null}
@@ -127,10 +183,8 @@ function getHeaderItemCount({
   scopedChangelogEntries,
   scopedPosts,
   scopedRoadmapEntries,
-  dashboard,
 }: {
   activeView: DashboardView;
-  dashboard?: DashboardContentProps["dashboard"];
   scopedChangelogEntries: DashboardChangelog[];
   scopedPosts: Post[];
   scopedRoadmapEntries: DashboardRoadmap[];
@@ -138,6 +192,5 @@ function getHeaderItemCount({
   if (activeView === "posts") return scopedPosts.length;
   if (activeView === "roadmap") return scopedRoadmapEntries.length;
   if (activeView === "changelog") return scopedChangelogEntries.length;
-  if (activeView === "analytics") return dashboard?.analytics?.totalEvents ?? 0;
   return undefined;
 }

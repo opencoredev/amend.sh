@@ -47,6 +47,14 @@ export async function upsertChangelogEntryHandler(
   ctx: MutationCtx,
   args: UpsertChangelogEntryArgs,
 ) {
+  await requireDashboardUser(ctx);
+  return await trustedUpsertChangelogEntryHandler(ctx, args);
+}
+
+export async function trustedUpsertChangelogEntryHandler(
+  ctx: MutationCtx,
+  args: UpsertChangelogEntryArgs,
+) {
   const now = Date.now();
   const normalizedWorkspaceSlug = workspaceSlug(args.workspaceSlug);
   const workspace = await ensureBaseRecords(ctx, normalizedWorkspaceSlug);
@@ -103,6 +111,14 @@ export async function upsertChangelogEntryHandler(
 }
 
 export async function upsertRoadmapItemHandler(ctx: MutationCtx, args: UpsertRoadmapItemArgs) {
+  await requireDashboardUser(ctx);
+  return await trustedUpsertRoadmapItemHandler(ctx, args);
+}
+
+export async function trustedUpsertRoadmapItemHandler(
+  ctx: MutationCtx,
+  args: UpsertRoadmapItemArgs,
+) {
   const now = Date.now();
   const normalizedWorkspaceSlug = workspaceSlug(args.workspaceSlug);
   const workspace = await ensureBaseRecords(ctx, normalizedWorkspaceSlug);

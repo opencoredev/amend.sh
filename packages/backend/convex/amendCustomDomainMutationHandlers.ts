@@ -3,6 +3,7 @@ import type { MutationCtx } from "./_generated/server";
 import { slugPart, workspaceSlug } from "./amendBackendUtils";
 import { normalizeDomain } from "./amendNormalizers";
 import { ensureBaseRecords } from "./amendSeed";
+import { requireDashboardUser } from "./amendWorkspace";
 
 type RegisterCustomDomainArgs = {
   workspaceSlug?: string;
@@ -16,6 +17,14 @@ type UpdateCustomDomainStatusArgs = {
 };
 
 export async function registerCustomDomainHandler(
+  ctx: MutationCtx,
+  args: RegisterCustomDomainArgs,
+) {
+  await requireDashboardUser(ctx);
+  return await trustedRegisterCustomDomainHandler(ctx, args);
+}
+
+export async function trustedRegisterCustomDomainHandler(
   ctx: MutationCtx,
   args: RegisterCustomDomainArgs,
 ) {
@@ -49,6 +58,14 @@ export async function registerCustomDomainHandler(
 }
 
 export async function updateCustomDomainStatusHandler(
+  ctx: MutationCtx,
+  args: UpdateCustomDomainStatusArgs,
+) {
+  await requireDashboardUser(ctx);
+  return await trustedUpdateCustomDomainStatusHandler(ctx, args);
+}
+
+export async function trustedUpdateCustomDomainStatusHandler(
   ctx: MutationCtx,
   args: UpdateCustomDomainStatusArgs,
 ) {

@@ -11,7 +11,7 @@
     "lint": "bunx --yes @redocly/cli lint openapi.yaml"
   },
   "devDependencies": {
-    "openapi-fetch": "^0.15.0",
+    "openapi-fetch": "^0.17.0",
     "openapi-typescript": "^7.10.1"
   }
 }

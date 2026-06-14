@@ -1,5 +1,5 @@
 import { cn } from "@amend/ui/lib/utils";
-import { Users } from "lucide-react";
+import { Users } from "@/lib/icons";
 
 import type {
   GitHubInstallationAccount,

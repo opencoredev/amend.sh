@@ -1,6 +1,6 @@
 import { Input } from "@amend/ui/components/input";
 import { cn } from "@amend/ui/lib/utils";
-import { ExternalLink, Search } from "lucide-react";
+import { ExternalLink, Search } from "@/lib/icons";
 
 import type {
   GitHubInstallationAccount,

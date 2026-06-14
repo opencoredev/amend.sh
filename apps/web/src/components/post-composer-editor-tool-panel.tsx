@@ -1,4 +1,4 @@
-import { X } from "lucide-react";
+import { X } from "@/lib/icons";
 import type { RefObject } from "react";
 
 import type { EditorPanel } from "./post-composer-model";
@@ -37,17 +37,17 @@ export function EditorToolPanel({
   return (
     <div
       ref={panelRef}
-      className="absolute left-0 top-10 z-40 w-[min(26rem,calc(100vw-3rem))] border border-border bg-popover text-popover-foreground shadow-[0_18px_55px_rgb(0_0_0/0.5)] animate-in fade-in-0 zoom-in-95 slide-in-from-top-1 duration-150"
+      className="absolute left-0 top-10 z-40 w-[min(26rem,calc(100vw-3rem))] overflow-hidden rounded-xl bg-popover text-popover-foreground shadow-[0_18px_55px_rgb(0_0_0/0.5)] ring-1 ring-white/[0.07] animate-in fade-in-0 zoom-in-95 slide-in-from-top-1 duration-150"
       onMouseDown={(event) => event.stopPropagation()}
     >
-      <div className="flex items-center justify-between border-b border-border px-3 py-2">
+      <div className="flex items-center justify-between border-b border-white/[0.06] px-3.5 py-2">
         <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
           {panel === "link" ? "Insert link" : "Insert code"}
         </p>
         <button
           type="button"
           aria-label="Close tool panel"
-          className="grid size-7 place-items-center text-muted-foreground hover:bg-muted hover:text-foreground"
+          className="grid size-7 place-items-center rounded-lg text-muted-foreground transition-colors duration-150 ease-linear hover:bg-white/[0.06] hover:text-foreground active:opacity-75"
           onClick={onClose}
         >
           <X className="size-4" />
@@ -57,7 +57,7 @@ export function EditorToolPanel({
       {panel === "link" ? (
         <div className="grid gap-2 p-3">
           <input
-            className="h-9 border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-foreground"
+            className="h-9 rounded-lg bg-[#151518] px-3 text-sm text-foreground ring-1 ring-white/[0.055] placeholder:text-muted-foreground focus:outline-none focus:ring-white/[0.16]"
             placeholder="https://example.com"
             value={linkUrl}
             onChange={(event) => onLinkUrlChange(event.target.value)}
@@ -66,7 +66,7 @@ export function EditorToolPanel({
             }}
           />
           <input
-            className="h-9 border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-foreground"
+            className="h-9 rounded-lg bg-[#151518] px-3 text-sm text-foreground ring-1 ring-white/[0.055] placeholder:text-muted-foreground focus:outline-none focus:ring-white/[0.16]"
             placeholder="Optional label"
             value={linkText}
             onChange={(event) => onLinkTextChange(event.target.value)}
@@ -79,7 +79,7 @@ export function EditorToolPanel({
       ) : (
         <div className="grid gap-2 p-3">
           <select
-            className="h-9 border border-border bg-background px-3 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-foreground"
+            className="h-9 rounded-lg bg-[#151518] px-3 text-sm text-foreground ring-1 ring-white/[0.055] focus:outline-none focus:ring-white/[0.16]"
             value={codeLanguage}
             onChange={(event) => onCodeLanguageChange(event.target.value)}
           >
@@ -88,7 +88,7 @@ export function EditorToolPanel({
             <option value="sh">Shell</option>
           </select>
           <textarea
-            className="min-h-28 resize-none border border-border bg-background p-3 font-mono text-xs leading-5 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-foreground"
+            className="min-h-28 resize-none rounded-lg bg-[#151518] p-3 font-mono text-xs leading-5 text-foreground ring-1 ring-white/[0.055] placeholder:text-muted-foreground focus:outline-none focus:ring-white/[0.16]"
             placeholder={'const update = "shipped";'}
             value={codeValue}
             onChange={(event) => onCodeValueChange(event.target.value)}
@@ -113,14 +113,14 @@ function EditorToolActions({
     <div className="flex justify-end gap-2 pt-1">
       <button
         type="button"
-        className="h-8 border border-border px-3 text-xs font-semibold text-muted-foreground hover:bg-muted hover:text-foreground"
+        className="h-8 rounded-lg px-3 text-xs font-semibold text-muted-foreground ring-1 ring-white/[0.06] transition-colors duration-150 ease-linear hover:bg-white/[0.06] hover:text-foreground active:opacity-75"
         onClick={onCancel}
       >
         Cancel
       </button>
       <button
         type="button"
-        className="h-8 border border-foreground bg-foreground px-3 text-xs font-semibold text-background hover:bg-background hover:text-foreground"
+        className="h-8 rounded-lg border border-foreground bg-foreground px-3.5 text-xs font-semibold text-background transition-colors duration-150 ease-linear hover:bg-foreground/80 active:opacity-75"
         onClick={onSubmit}
       >
         {primaryLabel}

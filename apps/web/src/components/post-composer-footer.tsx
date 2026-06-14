@@ -1,6 +1,6 @@
 import { Button } from "@amend/ui/components/button";
 import { cn } from "@amend/ui/lib/utils";
-import { CalendarDays, Radio, Tag, UserRound } from "lucide-react";
+import { CalendarDays, Radio, Tag, UserRound } from "@/lib/icons";
 import type { RefObject } from "react";
 
 import { FooterControl, IconControl } from "./post-composer-controls";
@@ -41,7 +41,7 @@ export function PostComposerFooter({
   tag: TagItem | null;
 }) {
   return (
-    <footer className="relative z-20 grid min-w-0 gap-3 border-t border-border px-4 py-3 md:grid-cols-[minmax(0,1fr)_auto] md:items-center">
+    <footer className="relative z-20 grid min-w-0 gap-3 border-t border-white/[0.06] px-5 py-3.5 md:grid-cols-[minmax(0,1fr)_auto] md:items-center">
       <div className="grid min-w-0 grid-cols-[minmax(8.5rem,1fr)_repeat(3,2.25rem)] gap-2 sm:flex sm:flex-wrap">
         <FooterControl
           active={panel === "status"}
@@ -131,13 +131,13 @@ export function PostComposerFooter({
         >
           <span
             className={cn(
-              "relative h-5 w-9 shrink-0 border border-border bg-muted transition-[background-color,border-color]",
-              createMore && "border-foreground bg-foreground",
+              "relative h-5 w-9 shrink-0 rounded-full bg-[#151518] ring-1 ring-white/[0.08] transition-colors duration-200",
+              createMore && "bg-foreground ring-transparent",
             )}
           >
             <span
               className={cn(
-                "absolute left-1 top-1 size-3 bg-muted-foreground transition-transform duration-200",
+                "absolute left-1 top-1 size-3 rounded-full bg-muted-foreground transition-transform duration-200",
                 createMore && "translate-x-4 bg-background",
               )}
             />
@@ -146,7 +146,7 @@ export function PostComposerFooter({
         </button>
         <Button
           type="button"
-          className="h-8 border border-foreground bg-foreground px-3 text-xs font-semibold text-background hover:bg-background hover:text-foreground"
+          className="h-8 rounded-lg border border-foreground bg-foreground px-3.5 text-xs font-semibold text-background hover:bg-foreground/80"
           disabled={submitting}
           onClick={onSubmit}
         >

@@ -40,30 +40,30 @@ export function PortalMobileNav({ workspaceSlug }: { workspaceSlug: string }) {
   const isAuthenticated = Boolean(session.data?.user);
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-50 border-t bg-background/95 px-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-3 backdrop-blur sm:hidden">
+    <div className="fixed inset-x-0 bottom-0 z-50 border-t border-border bg-card/90 px-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-3 backdrop-blur lg:hidden">
       <nav aria-label="Portal sections" className="mx-auto grid max-w-md grid-cols-4 gap-2">
         <a
           href="#feedback"
-          className="flex h-10 items-center justify-center border border-border text-xs font-semibold text-muted-foreground transition-colors duration-150 ease-linear hover:border-foreground hover:text-foreground"
+          className="flex h-10 items-center justify-center rounded-xl border border-border bg-muted text-xs font-semibold text-muted-foreground transition-colors duration-150 ease-linear hover:text-foreground active:opacity-75"
         >
           Feedback
         </a>
         <a
           href="#roadmap"
-          className="flex h-10 items-center justify-center border border-border text-xs font-semibold text-muted-foreground transition-colors duration-150 ease-linear hover:border-foreground hover:text-foreground"
+          className="flex h-10 items-center justify-center rounded-xl border border-border bg-muted text-xs font-semibold text-muted-foreground transition-colors duration-150 ease-linear hover:text-foreground active:opacity-75"
         >
           Roadmap
         </a>
         <a
           href="#updates"
-          className="flex h-10 items-center justify-center border border-border text-xs font-semibold text-muted-foreground transition-colors duration-150 ease-linear hover:border-foreground hover:text-foreground"
+          className="flex h-10 items-center justify-center rounded-xl border border-border bg-muted text-xs font-semibold text-muted-foreground transition-colors duration-150 ease-linear hover:text-foreground active:opacity-75"
         >
           Updates
         </a>
         {isAuthenticated ? (
           <Link
             to="/dashboard"
-            className="flex h-10 items-center justify-center border border-primary bg-primary px-2 text-xs font-semibold text-primary-foreground transition-colors duration-150 ease-linear hover:bg-background hover:text-foreground"
+            className="flex h-10 items-center justify-center rounded-xl border border-foreground bg-foreground px-2 text-xs font-semibold text-background transition-colors duration-150 ease-linear hover:bg-foreground/80 active:opacity-75"
           >
             Dash
           </Link>
@@ -71,7 +71,7 @@ export function PortalMobileNav({ workspaceSlug }: { workspaceSlug: string }) {
           <Link
             to="/sign-in"
             search={{ redirectTo: portalRedirectTo(workspaceSlug) }}
-            className="flex h-10 items-center justify-center border border-primary bg-primary px-2 text-xs font-semibold text-primary-foreground transition-colors duration-150 ease-linear hover:bg-background hover:text-foreground"
+            className="flex h-10 items-center justify-center rounded-xl border border-foreground bg-foreground px-2 text-xs font-semibold text-background transition-colors duration-150 ease-linear hover:bg-foreground/80 active:opacity-75"
           >
             Sign in
           </Link>

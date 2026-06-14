@@ -14,7 +14,7 @@ export function ToolbarButton({
       type="button"
       title={label}
       aria-label={label}
-      className="grid size-9 place-items-center text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground [&_svg]:size-4"
+      className="grid size-8 place-items-center rounded-lg text-muted-foreground transition-colors duration-150 ease-linear hover:bg-white/[0.06] hover:text-foreground active:opacity-75 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/20 [&_svg]:size-4"
       onMouseDown={(event) => event.preventDefault()}
       onClick={onClick}
     >

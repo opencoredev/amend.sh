@@ -1,91 +1,327 @@
-import { Input } from "@amend/ui/components/input";
-import { ClipboardList, Globe } from "lucide-react";
-import type { RefObject } from "react";
+import { cn } from "@amend/ui/lib/utils";
+import { useEffect, useState } from "react";
+import type { ComponentType, ReactNode, RefObject } from "react";
 
-import { EditorButton } from "@/components/dashboard-detail-shared";
+import {
+  Bold,
+  ChevronDown,
+  Clock,
+  Code2,
+  FileText,
+  Heading1,
+  Heading2,
+  type IconProps,
+  Italic,
+  Link2,
+  List,
+  ListOrdered,
+  Plus,
+  Quote,
+  Strikethrough,
+  Tag,
+  Type,
+  Underline,
+  X,
+} from "@/lib/icons";
 
-export function ChangelogEditorMain({
-  body,
-  editorRef,
-  onBodyChange,
-  onEditorCommand,
-  onSummaryChange,
-  onTitleChange,
-  summary,
-  title,
+const CATEGORY_META: Record<string, { label: string; dot: string }> = {
+  added: { label: "New", dot: "bg-emerald-400" },
+  changed: { label: "Improved", dot: "bg-sky-400" },
+  fixed: { label: "Fixed", dot: "bg-amber-400" },
+  removed: { label: "Removed", dot: "bg-rose-400" },
+};
+
+const CATEGORY_ORDER = ["added", "changed", "fixed", "removed"] as const;
+
+type ToolCommand = {
+  command: string;
+  icon: ComponentType<IconProps>;
+  label: string;
+  value?: string;
+};
+
+const TOOL_GROUPS: ToolCommand[][] = [
+  [
+    { command: "bold", icon: Bold, label: "Bold" },
+    { command: "italic", icon: Italic, label: "Italic" },
+    { command: "underline", icon: Underline, label: "Underline" },
+    { command: "strikeThrough", icon: Strikethrough, label: "Strikethrough" },
+  ],
+  [
+    { command: "formatBlock", value: "<h1>", icon: Heading1, label: "Heading 1" },
+    { command: "formatBlock", value: "<h2>", icon: Heading2, label: "Heading 2" },
+  ],
+  [
+    { command: "insertUnorderedList", icon: List, label: "Bullet list" },
+    { command: "insertOrderedList", icon: ListOrdered, label: "Numbered list" },
+    { command: "formatBlock", value: "<blockquote>", icon: Quote, label: "Quote" },
+    { command: "formatBlock", value: "<pre>", icon: Code2, label: "Code block" },
+  ],
+];
+
+function ToolbarButton({
+  children,
+  label,
+  onClick,
 }: {
-  body: string;
-  editorRef: RefObject<HTMLDivElement | null>;
-  onBodyChange: (value: string) => void;
-  onEditorCommand: (command: string) => void;
-  onSummaryChange: (value: string) => void;
-  onTitleChange: (value: string) => void;
-  summary: string;
-  title: string;
+  children: ReactNode;
+  label: string;
+  onClick: () => void;
 }) {
   return (
-    <main className="min-w-0 border-b border-border p-4 md:p-6 lg:border-b-0 lg:border-r">
-      <div className="mx-auto grid max-w-5xl gap-6">
-        <button
-          type="button"
-          className="grid min-h-36 place-items-center border border-border bg-card/60 text-sm font-semibold text-muted-foreground transition-colors duration-150 ease-linear hover:border-foreground hover:bg-muted/20 hover:text-foreground active:opacity-75"
-        >
-          <span className="inline-flex items-center gap-2 rounded-md border border-border bg-background px-3 py-2">
-            <Globe className="size-4" />
-            Add featured image
-          </span>
-        </button>
+    <button
+      type="button"
+      aria-label={label}
+      title={label}
+      className="grid size-8 place-items-center rounded-md text-muted-foreground transition-colors duration-150 ease-linear hover:bg-foreground/[0.08] hover:text-foreground active:opacity-75 [&_svg]:size-4"
+      onMouseDown={(event) => event.preventDefault()}
+      onClick={onClick}
+    >
+      {children}
+    </button>
+  );
+}
+
+function CategoryPicker({
+  category,
+  onCategoryChange,
+}: {
+  category: string;
+  onCategoryChange: (value: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const meta = CATEGORY_META[category] ?? CATEGORY_META.added;
+
+  useEffect(() => {
+    if (!open) return;
+    function onKey(event: KeyboardEvent) {
+      if (event.key === "Escape") setOpen(false);
+    }
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [open]);
+
+  return (
+    <div className="relative">
+      <button
+        type="button"
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        className="inline-flex items-center gap-1.5 rounded-full bg-foreground/[0.06] py-1 pl-2.5 pr-2 text-xs font-semibold text-muted-foreground ring-1 ring-white/[0.05] transition-colors duration-150 ease-linear hover:text-foreground active:opacity-75"
+        onClick={() => setOpen((value) => !value)}
+      >
+        <span className={cn("size-1.5 rounded-full", meta.dot)} />
+        {meta.label}
+        <ChevronDown className="size-3 opacity-60" />
+      </button>
+      {open ? (
+        <>
+          <button
+            type="button"
+            aria-hidden
+            tabIndex={-1}
+            className="fixed inset-0 z-10 cursor-default"
+            onClick={() => setOpen(false)}
+          />
+          <div className="t-pop is-open absolute left-0 top-9 z-20 w-40 rounded-xl border border-white/[0.08] bg-card p-1 shadow-[0_18px_60px_rgb(0_0_0/0.5)]">
+            {CATEGORY_ORDER.map((value) => {
+              const item = CATEGORY_META[value];
+              return (
+                <button
+                  key={value}
+                  type="button"
+                  className={cn(
+                    "flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-left text-sm transition-colors hover:bg-foreground/[0.06]",
+                    value === category ? "text-foreground" : "text-muted-foreground",
+                  )}
+                  onClick={() => {
+                    onCategoryChange(value);
+                    setOpen(false);
+                  }}
+                >
+                  <span className={cn("size-1.5 rounded-full", item.dot)} />
+                  {item.label}
+                </button>
+              );
+            })}
+          </div>
+        </>
+      ) : null}
+    </div>
+  );
+}
+
+export function ChangelogEditorMain({
+  category,
+  charCount,
+  editorRef,
+  isEmpty,
+  onAddTag,
+  onBodyChange,
+  onCategoryChange,
+  onCommand,
+  onRemoveTag,
+  onTitleChange,
+  readMinutes,
+  tags,
+  title,
+  wordCount,
+}: {
+  category: string;
+  charCount: number;
+  editorRef: RefObject<HTMLDivElement | null>;
+  isEmpty: boolean;
+  onAddTag: (tag: string) => void;
+  onBodyChange: (value: string) => void;
+  onCategoryChange: (value: string) => void;
+  onCommand: (command: string, value?: string) => void;
+  onRemoveTag: (tag: string) => void;
+  onTitleChange: (value: string) => void;
+  readMinutes: number;
+  tags: string[];
+  title: string;
+  wordCount: number;
+}) {
+  const [tagDraft, setTagDraft] = useState("");
+  const [addingTag, setAddingTag] = useState(false);
+
+  function commitTag() {
+    const value = tagDraft.trim();
+    if (value) onAddTag(value);
+    setTagDraft("");
+    setAddingTag(false);
+  }
+
+  function insertLink() {
+    const url = window.prompt("Link URL");
+    if (!url) return;
+    const href = /^https?:\/\//i.test(url) ? url : `https://${url}`;
+    onCommand("createLink", href);
+  }
+
+  return (
+    <main className="relative flex min-h-0 flex-col overflow-y-auto bg-background">
+      <div className="sticky top-0 z-10 flex flex-wrap items-center gap-0.5 border-b border-white/[0.05] bg-background/85 px-3 py-1.5 backdrop-blur md:px-5">
+        {TOOL_GROUPS.map((group, index) => (
+          <div key={group[0].label} className="flex items-center gap-0.5">
+            {index > 0 ? <span className="mx-1 h-5 w-px bg-white/[0.07]" /> : null}
+            {group.map((tool) => (
+              <ToolbarButton
+                key={tool.label}
+                label={tool.label}
+                onClick={() => onCommand(tool.command, tool.value)}
+              >
+                <tool.icon />
+              </ToolbarButton>
+            ))}
+          </div>
+        ))}
+        <span className="mx-1 h-5 w-px bg-white/[0.07]" />
+        <ToolbarButton label="Link" onClick={insertLink}>
+          <Link2 />
+        </ToolbarButton>
+      </div>
+
+      <div className="mx-auto w-full max-w-3xl flex-1 px-5 pb-28 pt-7 md:px-8 md:pt-9">
+        <div className="flex flex-wrap items-center gap-2">
+          <CategoryPicker category={category} onCategoryChange={onCategoryChange} />
+
+          {tags.map((tag) => (
+            <span
+              key={tag}
+              className="group inline-flex items-center gap-1 rounded-full bg-foreground/[0.05] py-1 pl-2.5 pr-1.5 text-xs font-medium text-muted-foreground ring-1 ring-white/[0.05]"
+            >
+              <Tag className="size-3 opacity-60" />
+              {tag}
+              <button
+                type="button"
+                aria-label={`Remove ${tag}`}
+                className="grid size-4 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-foreground/10 hover:text-foreground"
+                onClick={() => onRemoveTag(tag)}
+              >
+                <X className="size-3" />
+              </button>
+            </span>
+          ))}
+
+          {addingTag ? (
+            <input
+              autoFocus
+              value={tagDraft}
+              className="h-7 w-28 rounded-full border border-white/[0.1] bg-background px-2.5 text-xs text-foreground outline-none placeholder:text-muted-foreground focus:border-foreground"
+              placeholder="Add tag…"
+              onBlur={commitTag}
+              onChange={(event) => setTagDraft(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter") {
+                  event.preventDefault();
+                  commitTag();
+                }
+                if (event.key === "Escape") {
+                  setTagDraft("");
+                  setAddingTag(false);
+                }
+              }}
+            />
+          ) : (
+            <button
+              type="button"
+              className="inline-flex h-7 items-center gap-1 rounded-full px-2.5 text-xs font-medium text-muted-foreground ring-1 ring-white/[0.06] transition-colors duration-150 ease-linear hover:bg-foreground/[0.05] hover:text-foreground active:opacity-75"
+              onClick={() => setAddingTag(true)}
+            >
+              <Plus className="size-3.5" />
+              Tag
+            </button>
+          )}
+        </div>
 
         <textarea
-          className="min-h-20 w-full resize-none bg-transparent text-balance text-3xl font-semibold leading-tight outline-none placeholder:text-muted-foreground md:text-4xl"
+          rows={1}
+          className="mt-6 min-h-[2.75rem] w-full resize-none bg-transparent text-3xl font-bold leading-tight tracking-tight text-foreground outline-none placeholder:text-muted-foreground/70 md:text-[2.5rem]"
           value={title}
+          placeholder="Enter a title"
           onChange={(event) => onTitleChange(event.target.value)}
-          placeholder="Changelog title"
+          onInput={(event) => {
+            const el = event.currentTarget;
+            el.style.height = "auto";
+            el.style.height = `${el.scrollHeight}px`;
+          }}
         />
 
-        <label className="grid gap-2">
-          <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-            Summary
-          </span>
-          <Input
-            className="h-11 border-border bg-background text-sm"
-            value={summary}
-            onChange={(event) => onSummaryChange(event.target.value)}
-            placeholder="Short user-facing summary"
+        <div className="relative mt-4">
+          <div
+            ref={editorRef}
+            aria-label="Changelog body"
+            className="amend-composer-editor min-h-[18rem] text-[0.95rem] leading-7 text-foreground/90 outline-none"
+            contentEditable
+            role="textbox"
+            spellCheck
+            onInput={(event) => onBodyChange(event.currentTarget.innerHTML ?? "")}
           />
-        </label>
+          {isEmpty ? (
+            <p className="pointer-events-none absolute left-0 top-0 text-[0.95rem] leading-7 text-muted-foreground/70">
+              Start writing…
+            </p>
+          ) : null}
+        </div>
+      </div>
 
-        <div className="border border-border bg-background">
-          <div className="flex flex-wrap items-center gap-1 border-b border-border p-2">
-            <EditorButton label="Bold" onClick={() => onEditorCommand("bold")}>
-              <strong>B</strong>
-            </EditorButton>
-            <EditorButton label="Italic" onClick={() => onEditorCommand("italic")}>
-              <em>I</em>
-            </EditorButton>
-            <EditorButton
-              label="Bullet list"
-              onClick={() => onEditorCommand("insertUnorderedList")}
-            >
-              <ClipboardList className="size-3.5" />
-            </EditorButton>
-          </div>
-          <div className="relative min-h-[30rem] p-4 md:p-6">
-            <div
-              ref={editorRef}
-              aria-label="Changelog body"
-              className="amend-composer-editor min-h-[27rem] text-base leading-8 text-foreground outline-none"
-              contentEditable
-              role="textbox"
-              spellCheck
-              onInput={(event) => onBodyChange(event.currentTarget.innerText ?? "")}
-            />
-            {!body.trim() ? (
-              <p className="pointer-events-none absolute left-4 top-4 text-sm text-muted-foreground">
-                Write the changelog body...
-              </p>
-            ) : null}
-          </div>
+      <div className="pointer-events-none sticky bottom-0 left-0 flex justify-start px-5 pb-4 md:px-8">
+        <div className="pointer-events-auto inline-flex items-center gap-3 rounded-lg border border-white/[0.07] bg-card/90 px-3 py-1.5 text-xs text-muted-foreground backdrop-blur">
+          <span className="inline-flex items-center gap-1.5">
+            <Type className="size-3.5 opacity-70" />
+            {charCount}
+          </span>
+          <span className="opacity-30">·</span>
+          <span className="inline-flex items-center gap-1.5">
+            <FileText className="size-3.5 opacity-70" />
+            {wordCount}
+          </span>
+          <span className="opacity-30">·</span>
+          <span className="inline-flex items-center gap-1.5">
+            <Clock className="size-3.5 opacity-70" />
+            {readMinutes < 1 ? "< 1 min" : `${readMinutes} min`}
+          </span>
         </div>
       </div>
     </main>

@@ -1,5 +1,5 @@
 import { cn } from "@amend/ui/lib/utils";
-import { Inbox, Plus } from "lucide-react";
+import { Inbox, Plus } from "@/lib/icons";
 
 import { statusMeta } from "@/components/amend-dashboard-status";
 import type { DashboardRoadmap, RoadmapStatus } from "@/components/amend-dashboard-types";

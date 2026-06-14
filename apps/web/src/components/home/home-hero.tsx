@@ -1,80 +1,64 @@
 import { Link } from "@tanstack/react-router";
 
-import { AnimatedHeroMark } from "@/components/home/animated-hero-mark";
-import { docsUrl } from "@/lib/docs-url";
-
-import { executiveRows } from "./home-content";
+import { BrandIcon } from "./brand-icons";
+import { heroListens } from "./home-content";
 
 export function HomeHero() {
   return (
-    <section className="amend-hero relative mx-auto grid min-h-[690px] max-w-7xl px-4 pt-16 sm:min-h-[740px] sm:px-6 lg:grid-cols-[minmax(0,1fr)_minmax(340px,0.56fr)] lg:items-center lg:gap-24 lg:px-8 xl:gap-32">
-      <div className="amend-hero-copy relative z-10 grid content-start pb-14 pt-24 sm:content-center sm:py-20 md:py-24 lg:pb-24 lg:pt-28">
-        <div className="mx-auto flex w-full max-w-4xl flex-col items-start gap-6 md:mx-0 lg:ml-[10%]">
-          <div>
-            <h1 className="amend-display text-[1.75rem] font-medium leading-[1.08] tracking-normal text-foreground sm:text-[2.75rem] md:text-5xl lg:text-6xl">
-              <span className="sm:whitespace-nowrap">Users asked. You shipped.</span>
-              <br />
-              <span className="text-muted-foreground sm:whitespace-nowrap">
-                Amend closes the loop.
-              </span>
-            </h1>
+    <section className="amend-hero relative isolate flex min-h-[100svh] w-full flex-col justify-center overflow-hidden">
+      <div className="amend-hero-photo" aria-hidden />
+      <div className="amend-hero-aura" aria-hidden />
+      <div className="amend-hero-veil" aria-hidden />
 
-            <p className="mt-6 max-w-prose text-sm leading-relaxed text-muted-foreground md:text-base">
-              Amend watches selected Discord, Slack, GitHub, Linear, support, and in-app sources,
-              groups repeated customer demand, follows the work through shipping, and updates the
-              people who asked.
-            </p>
-          </div>
+      <div className="mx-auto w-full max-w-7xl px-5 pb-16 pt-28 sm:px-6 lg:px-8 lg:pt-24">
+        <div className="amend-rise flex max-w-2xl flex-col items-start gap-7">
+          <h1 className="amend-h text-[2.6rem] text-foreground sm:text-5xl lg:text-[3.75rem]">
+            <span className="block">Users asked. You shipped.</span>
+            <span className="block">
+              Amend closes <span className="text-amend-warm">the loop</span>.
+            </span>
+          </h1>
 
-          <div className="amend-hero-actions flex w-full flex-col items-stretch gap-4 sm:w-auto sm:flex-row sm:items-start">
+          <p className="max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
+            Amend groups scattered requests into one tracked thread, follows them through GitHub and
+            Linear, and tells the people who asked the moment you ship.
+          </p>
+
+          <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
             <Link
               to="/sign-up"
-              className="group flex h-10 items-center justify-center gap-2 rounded-lg border border-transparent bg-foreground px-4 text-[13px] font-medium text-background shadow-sm transition-colors duration-150 ease-linear hover:bg-foreground/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground sm:justify-start"
+              className="group inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-foreground px-5 text-sm font-medium text-background shadow-sm transition-colors hover:bg-foreground/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amend-warm focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
               Request access
+              <span className="amend-link-arrow" aria-hidden>
+                &rarr;
+              </span>
             </Link>
             <a
               href="#workflow"
-              className="group flex h-10 items-center justify-center gap-2 rounded-lg border border-border bg-card/40 px-4 text-[13px] font-medium text-muted-foreground transition-colors duration-150 ease-linear hover:border-foreground/35 hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground sm:justify-start"
+              className="inline-flex h-11 items-center justify-center gap-2 rounded-lg border border-border bg-card/40 px-5 text-sm font-medium text-foreground/90 backdrop-blur-sm transition-colors hover:border-foreground/30 hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground"
             >
               How it works
               <span aria-hidden>-&gt;</span>
             </a>
           </div>
 
-          <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-muted-foreground">
-            <a
-              href="#workflow"
-              className="hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground"
-            >
-              How it works
-            </a>
-            <a
-              href={docsUrl()}
-              target="_blank"
-              rel="noreferrer"
-              className="hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground"
-            >
-              Docs
-            </a>
-            <span>Open source and self-hostable</span>
-          </div>
-
-          <div className="grid w-full max-w-2xl border-y text-xs text-muted-foreground sm:grid-cols-3">
-            {executiveRows.map(([label, value]) => (
-              <div
-                key={label}
-                className="border-b py-4 sm:border-b-0 sm:border-r sm:px-4 first:sm:pl-0 last:sm:border-r-0"
-              >
-                <p className="uppercase tracking-[0.18em] text-foreground">{label}</p>
-                <p className="mt-2 leading-5">{value}</p>
-              </div>
-            ))}
+          <div className="mt-3 flex flex-col gap-3 border-t border-border/70 pt-6">
+            <span className="amend-eyebrow">Works with</span>
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+              {heroListens.map((source) => (
+                <span
+                  key={source.label}
+                  className="flex items-center gap-2 text-sm text-muted-foreground"
+                >
+                  <BrandIcon name={source.brand} className="size-4 opacity-80" />
+                  {source.label}
+                </span>
+              ))}
+            </div>
           </div>
         </div>
       </div>
-
-      <AnimatedHeroMark />
     </section>
   );
 }

@@ -1,4 +1,4 @@
-import { ClipboardList } from "lucide-react";
+import { ClipboardList } from "@/lib/icons";
 
 import type { RoadmapStatus } from "@/components/amend-dashboard-types";
 import { statusMeta } from "@/components/amend-dashboard-status";

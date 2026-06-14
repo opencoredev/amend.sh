@@ -142,7 +142,7 @@ export async function handleWorkspaceRestPost(input: RestPostInput) {
         return json({ error: "Custom domain not found" }, 404);
       }
       const verified = await verifyDomainTxt(domain, customDomain.verificationToken);
-      const result = await ctx.runMutation(api.amend.updateCustomDomainStatus, {
+      const result = await ctx.runMutation(internal.amend.trustedUpdateCustomDomainStatus, {
         domain,
         status: verified ? "verified" : "failed",
       });
@@ -153,7 +153,7 @@ export async function handleWorkspaceRestPost(input: RestPostInput) {
       });
     }
 
-    const result = await ctx.runMutation(api.amend.registerCustomDomain, {
+    const result = await ctx.runMutation(internal.amend.trustedRegisterCustomDomain, {
       workspaceSlug,
       domain: requiredString(body.domain, "domain"),
       purpose: domainPurpose(body.purpose),
@@ -169,7 +169,7 @@ export async function handleWorkspaceRestPost(input: RestPostInput) {
       const result = await sendQueuedDeliveries(
         deliveries,
         async (deliveryId, patch) =>
-          await ctx.runMutation(api.amend.updateDeliveryStatus, {
+          await ctx.runMutation(internal.amend.trustedUpdateDeliveryStatus, {
             deliveryId,
             ...patch,
           }),
@@ -182,7 +182,7 @@ export async function handleWorkspaceRestPost(input: RestPostInput) {
       return json(result);
     }
 
-    const result = await ctx.runMutation(api.amend.planNotificationDeliveries, {
+    const result = await ctx.runMutation(internal.amend.trustedPlanNotificationDeliveries, {
       workspaceSlug,
       channel: deliveryChannel(body.channel),
       notificationKey: optionalString(body.notificationKey),

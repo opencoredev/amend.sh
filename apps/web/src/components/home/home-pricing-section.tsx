@@ -2,88 +2,129 @@ import { Link } from "@tanstack/react-router";
 
 import { docsUrl } from "@/lib/docs-url";
 
-import { plans } from "./home-content";
+import { plans, scaleLine } from "./home-content";
+
+function Check() {
+  return (
+    <svg
+      viewBox="0 0 16 16"
+      fill="none"
+      aria-hidden
+      className="mt-0.5 size-4 shrink-0 text-amend-warm"
+    >
+      <path
+        d="M3.5 8.5l3 3 6-7"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
 
 export function PricingSection() {
   return (
-    <section id="pricing" className="amend-deferred-section relative z-10 border-t">
-      <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
-        <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
-          <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Pricing</p>
-            <h2 className="amend-display mt-5 text-4xl font-medium leading-tight sm:text-5xl">
-              Friendly pricing. No credit meter.
-            </h2>
-          </div>
-          <p className="max-w-sm text-sm leading-6 text-muted-foreground">
-            The core loop is included on every hosted plan. Higher plans raise projects, seats,
-            signal volume, history, and processing priority.
+    <section id="pricing" className="relative z-10 border-t border-border">
+      <div className="mx-auto max-w-7xl px-5 py-24 sm:px-6 lg:px-8 lg:py-32">
+        <div className="max-w-2xl" data-reveal>
+          <h2 className="amend-h text-3xl text-foreground sm:text-4xl lg:text-5xl">
+            Start free. Pay when it pays off.
+          </h2>
+          <p className="mt-5 text-base leading-relaxed text-muted-foreground">
+            Self-host the whole thing for nothing, or let Amend run it. Every plan includes the full
+            loop. You only pay for more projects, seats, and signal volume.
           </p>
         </div>
 
-        <div className="mt-12 grid items-stretch gap-px border bg-border lg:grid-cols-3">
-          {plans.map((plan) => (
-            <article key={plan.name} className="relative flex min-h-72 flex-col bg-background p-6">
-              {"featured" in plan && plan.featured ? (
-                <span className="absolute right-4 top-4 rounded-md border border-amend-warm/20 bg-amend-warm px-2 py-0.5 text-[0.6rem] font-semibold uppercase tracking-[0.12em] text-amend-warm-foreground">
-                  Popular
-                </span>
-              ) : null}
+        <div className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-4" data-reveal>
+          {plans.map((plan) => {
+            const featured = "featured" in plan && plan.featured;
+            return (
+              <article
+                key={plan.name}
+                className={`relative flex flex-col rounded-2xl border border-border bg-card/30 p-6 ${
+                  featured ? "amend-plan-featured" : ""
+                }`}
+              >
+                <div className="flex h-6 items-center justify-between">
+                  <h3 className="text-base font-semibold text-foreground">{plan.name}</h3>
+                  {featured ? (
+                    <span className="amend-mono rounded-full bg-amend-warm px-2.5 py-1 text-[0.6rem] font-semibold uppercase tracking-[0.12em] text-amend-warm-foreground">
+                      Recommended
+                    </span>
+                  ) : null}
+                </div>
 
-              <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                {plan.name}
-              </p>
+                <div className="mt-5 flex items-baseline gap-1.5">
+                  <span className="amend-mono text-4xl font-medium tracking-tight text-foreground">
+                    {plan.price}
+                  </span>
+                  <span className="amend-mono text-xs text-muted-foreground">{plan.period}</span>
+                </div>
 
-              <div className="mt-5 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-                <p
-                  className={`font-mono font-medium text-foreground ${plan.price.startsWith("$") ? "text-4xl" : "text-3xl"}`}
-                >
-                  {plan.price}
+                <p className="mt-3 min-h-10 text-sm leading-6 text-muted-foreground">
+                  {plan.tagline}
                 </p>
-                <p className="text-xs uppercase tracking-[0.14em] text-muted-foreground">
-                  {plan.note}
-                </p>
-              </div>
 
-              <p className="mt-4 text-sm leading-6 text-muted-foreground">{plan.description}</p>
+                {plan.cta === "self-host" ? (
+                  <a
+                    href={docsUrl("self-hosting")}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mt-5 inline-flex h-10 items-center justify-center rounded-lg border border-border bg-card/40 px-4 text-sm font-medium text-foreground/90 transition-colors hover:border-foreground/30 hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground"
+                  >
+                    Self-host guide
+                  </a>
+                ) : (
+                  <Link
+                    to="/sign-up"
+                    className={`mt-5 inline-flex h-10 items-center justify-center rounded-lg px-4 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
+                      featured
+                        ? "bg-amend-warm text-amend-warm-foreground hover:bg-amend-warm/90 focus-visible:ring-amend-warm"
+                        : "border border-border bg-card/40 text-foreground/90 hover:border-foreground/30 hover:bg-accent focus-visible:ring-foreground"
+                    }`}
+                  >
+                    Request access
+                  </Link>
+                )}
 
-              <div className="min-h-6 flex-1" />
-
-              <ul className="border-t pt-5 text-xs text-muted-foreground">
-                {plan.points.map((point) => (
-                  <li key={point} className="mt-2.5 flex items-start gap-2 first:mt-0">
-                    <span className="mt-px shrink-0 opacity-35">—</span>
-                    <span>{point}</span>
-                  </li>
-                ))}
-              </ul>
-            </article>
-          ))}
+                <ul className="mt-6 space-y-3 border-t border-border pt-6 text-sm leading-6 text-muted-foreground">
+                  {plan.points.map((point) => (
+                    <li key={point} className="flex items-start gap-2.5">
+                      <Check />
+                      <span>{point}</span>
+                    </li>
+                  ))}
+                </ul>
+              </article>
+            );
+          })}
         </div>
 
-        <div className="mt-10 flex flex-col justify-between gap-5 border-y py-6 md:flex-row md:items-center">
-          <p className="max-w-2xl text-sm leading-6 text-muted-foreground">
-            Hosted plans count useful captured product signals, not raw messages or model tokens.
-            Noise is free. Self-hosted teams can run Amend with their own infrastructure and
-            provider keys.
+        {/* Enterprise / scale */}
+        <div
+          className="mt-4 flex flex-col gap-4 rounded-2xl border border-border bg-card/20 px-6 py-5 sm:flex-row sm:items-center sm:justify-between sm:gap-8"
+          data-reveal
+        >
+          <p className="text-sm leading-6 text-muted-foreground">
+            <span className="font-medium text-foreground">Scale.</span> {scaleLine}
           </p>
-          <div className="flex flex-col gap-3 sm:flex-row">
-            <Link
-              to="/sign-up"
-              className="inline-flex h-10 items-center justify-center rounded-lg border border-transparent bg-foreground px-4 text-[13px] font-medium text-background transition-colors duration-150 ease-linear hover:bg-foreground/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground"
-            >
-              Request access
-            </Link>
-            <a
-              href={docsUrl("self-hosting")}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex h-10 items-center justify-center rounded-lg border border-border bg-card/40 px-4 text-[13px] font-medium text-muted-foreground transition-colors duration-150 ease-linear hover:border-foreground/35 hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground"
-            >
-              Self-hosting notes
-            </a>
-          </div>
+          <Link
+            to="/sign-up"
+            className="group inline-flex shrink-0 items-center gap-2 text-sm font-medium text-foreground underline-offset-4 hover:underline"
+          >
+            Talk to us
+            <span className="amend-link-arrow" aria-hidden>
+              &rarr;
+            </span>
+          </Link>
         </div>
+
+        <p className="mt-8 max-w-2xl text-sm leading-6 text-muted-foreground" data-reveal>
+          Hosted plans count useful captured signals, not raw messages or model tokens. Noise is
+          free.
+        </p>
       </div>
     </section>
   );

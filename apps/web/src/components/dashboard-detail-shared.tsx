@@ -1,5 +1,5 @@
 import { cn } from "@amend/ui/lib/utils";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink } from "@/lib/icons";
 import type { ReactElement, ReactNode } from "react";
 
 import type { SourceLink } from "@/components/amend-dashboard-types";

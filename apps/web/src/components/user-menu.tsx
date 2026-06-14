@@ -8,7 +8,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@amend/ui/components/dropdown-menu";
-import { LogOut, UserRound } from "lucide-react";
+import { LogOut, UserRound } from "@/lib/icons";
 
 import { authClient } from "@/lib/auth-client";
 import { identifyAndCapturePostHogEvent } from "@/lib/posthog";

@@ -1,8 +1,41 @@
+import { existsSync, readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+
 import tailwindcss from "@tailwindcss/vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
 import { nitro } from "nitro/vite";
 import { defineConfig } from "vite";
+
+// The backend's .env.local tracks the Convex deployment currently selected by
+// `convex dev`, while apps/web/.env can go stale when a per-worktree dev
+// deployment expires or is recreated. In local dev, mirror the backend's
+// Convex URLs into process.env (which takes precedence over .env files) so
+// the web app always talks to the live deployment. Explicit shell exports
+// and production builds (no backend .env.local) are left untouched.
+syncConvexUrlsFromBackendEnv();
+
+function syncConvexUrlsFromBackendEnv() {
+  const backendEnvPath = join(
+    dirname(fileURLToPath(import.meta.url)),
+    "../../packages/backend/.env.local",
+  );
+  if (!existsSync(backendEnvPath)) return;
+
+  const backendEnv: Record<string, string> = {};
+  for (const line of readFileSync(backendEnvPath, "utf8").split(/\r?\n/)) {
+    const match = line.match(/^\s*([A-Z0-9_]+)\s*=\s*([^#\s]+)/);
+    if (match) backendEnv[match[1]] = match[2];
+  }
+
+  if (backendEnv.CONVEX_URL && !process.env.VITE_CONVEX_URL) {
+    process.env.VITE_CONVEX_URL = backendEnv.CONVEX_URL;
+  }
+  if (backendEnv.CONVEX_SITE_URL && !process.env.VITE_CONVEX_SITE_URL) {
+    process.env.VITE_CONVEX_SITE_URL = backendEnv.CONVEX_SITE_URL;
+  }
+}
 
 export default defineConfig({
   build: {

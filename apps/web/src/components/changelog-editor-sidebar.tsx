@@ -1,125 +1,126 @@
-import { Input } from "@amend/ui/components/input";
+import { cn } from "@amend/ui/lib/utils";
+import { useState } from "react";
 
-import type { DashboardChangelog } from "@/components/amend-dashboard-types";
-import { formatDate } from "@/components/amend-dashboard-utils";
-import { DetailStat, SourceEvidenceList } from "@/components/dashboard-detail-shared";
+import { CalendarClock, FileText, Plus, Send, Sparkles, Tag, Type } from "@/lib/icons";
 
-export function ChangelogEditorSidebar({
-  category,
-  entry,
-  onCategoryChange,
-  onSendEmailChange,
-  onShowPubliclyChange,
-  onStatusChange,
-  onVersionChange,
-  sendEmail,
-  showPublicly,
-  status,
-  version,
-}: {
-  category: string;
-  entry: DashboardChangelog;
-  onCategoryChange: (value: string) => void;
-  onSendEmailChange: (value: boolean) => void;
-  onShowPubliclyChange: (value: boolean) => void;
-  onStatusChange: (value: string) => void;
-  onVersionChange: (value: string) => void;
-  sendEmail: boolean;
-  showPublicly: boolean;
-  status: string;
-  version: string;
-}) {
+type RailMessage = { id: number; role: "assistant" | "user"; text: string };
+
+const QUICK_ACTIONS = [
+  { icon: Sparkles, label: "Improve writing", prompt: "Improve the writing in this changelog." },
+  { icon: FileText, label: "Add summary", prompt: "Write a one-line summary for this update." },
+  { icon: Type, label: "Fix formatting", prompt: "Clean up the formatting of this changelog." },
+  { icon: Tag, label: "Suggest tags", prompt: "Suggest tags for this changelog." },
+  { icon: CalendarClock, label: "Schedule post", prompt: "When should I publish this update?" },
+] as const;
+
+const GREETING: RailMessage = {
+  id: 0,
+  role: "assistant",
+  text: "Hello! How can I help you with your changelog today?",
+};
+
+export function ChangelogAssistantRail() {
+  const [messages, setMessages] = useState<RailMessage[]>([GREETING]);
+  const [draft, setDraft] = useState("");
+
+  function send(text: string) {
+    const value = text.trim();
+    if (!value) return;
+    setMessages((prev) => [
+      ...prev,
+      { id: prev.length, role: "user", text: value },
+      {
+        id: prev.length + 1,
+        role: "assistant",
+        text: "The AI assistant isn’t connected to a model yet — wire up a provider to enable suggestions.",
+      },
+    ]);
+    setDraft("");
+  }
+
   return (
-    <aside className="grid min-w-0 content-start gap-5 bg-card/35 p-4 md:p-6">
-      <section className="grid gap-3">
-        <h2 className="text-sm font-semibold">Publishing</h2>
-        <label className="grid gap-2">
-          <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-            Status
+    <aside className="hidden min-h-0 flex-col border-l border-white/[0.05] bg-card/30 lg:flex">
+      <div className="flex h-14 shrink-0 items-center justify-between gap-2 border-b border-white/[0.05] px-4">
+        <div className="flex items-center gap-2">
+          <span className="grid size-6 place-items-center rounded-md bg-foreground/[0.07] text-foreground ring-1 ring-white/[0.06]">
+            <Sparkles className="size-3.5" />
           </span>
-          <select
-            className="h-10 border border-border bg-background px-3 text-xs outline-none"
-            value={status}
-            onChange={(event) => onStatusChange(event.target.value)}
+          <h2 className="text-sm font-semibold">AI assistant</h2>
+        </div>
+        <button
+          type="button"
+          aria-label="New chat"
+          className="grid size-7 place-items-center rounded-lg text-muted-foreground transition-colors duration-150 ease-linear hover:bg-foreground/[0.06] hover:text-foreground active:opacity-75"
+          onClick={() => {
+            setMessages([GREETING]);
+            setDraft("");
+          }}
+        >
+          <Plus className="size-4" />
+        </button>
+      </div>
+
+      <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto px-4 py-4">
+        {messages.map((message) => (
+          <div
+            key={message.id}
+            className={cn(
+              "max-w-[85%] text-pretty rounded-2xl px-3 py-2 text-[0.82rem] leading-6",
+              message.role === "assistant"
+                ? "self-start bg-foreground/[0.05] text-foreground/90"
+                : "self-end bg-foreground text-background",
+            )}
           >
-            <option value="draft">Draft</option>
-            <option value="in_review">In review</option>
-            <option value="scheduled">Scheduled</option>
-            <option value="published">Published</option>
-          </select>
-        </label>
-        <label className="grid gap-2">
-          <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-            Category
-          </span>
-          <select
-            className="h-10 border border-border bg-background px-3 text-xs outline-none"
-            value={category}
-            onChange={(event) => onCategoryChange(event.target.value)}
+            {message.text}
+          </div>
+        ))}
+      </div>
+
+      <div className="shrink-0 space-y-2 border-t border-white/[0.05] px-4 py-3">
+        <div className="grid gap-1.5">
+          {QUICK_ACTIONS.map((action) => (
+            <button
+              key={action.label}
+              type="button"
+              className="flex items-center gap-2.5 rounded-lg border border-white/[0.06] bg-background/60 px-3 py-2 text-left text-[0.82rem] font-medium text-muted-foreground transition-colors duration-150 ease-linear hover:border-white/[0.12] hover:text-foreground active:opacity-75"
+              onClick={() => setDraft(action.prompt)}
+            >
+              <action.icon className="size-3.5 shrink-0 opacity-70" />
+              {action.label}
+            </button>
+          ))}
+        </div>
+
+        <form
+          className="relative"
+          onSubmit={(event) => {
+            event.preventDefault();
+            send(draft);
+          }}
+        >
+          <textarea
+            rows={2}
+            value={draft}
+            placeholder="Type your message…"
+            className="w-full resize-none rounded-xl border border-white/[0.08] bg-background/70 px-3 py-2.5 pr-11 text-[0.82rem] leading-6 text-foreground outline-none placeholder:text-muted-foreground focus:border-foreground/40"
+            onChange={(event) => setDraft(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === "Enter" && !event.shiftKey) {
+                event.preventDefault();
+                send(draft);
+              }
+            }}
+          />
+          <button
+            type="submit"
+            aria-label="Send message"
+            disabled={!draft.trim()}
+            className="absolute bottom-2.5 right-2.5 grid size-7 place-items-center rounded-lg bg-foreground text-background transition-opacity duration-150 ease-linear hover:opacity-85 active:opacity-75 disabled:opacity-30"
           >
-            <option value="added">New</option>
-            <option value="changed">Improved</option>
-            <option value="fixed">Fixed</option>
-            <option value="removed">Removed</option>
-          </select>
-        </label>
-        <label className="grid gap-2">
-          <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-            Version
-          </span>
-          <Input
-            className="h-10 border-border bg-background text-xs"
-            value={version}
-            onChange={(event) => onVersionChange(event.target.value)}
-            placeholder="Optional"
-          />
-        </label>
-        <DetailStat
-          label="Updated"
-          value={entry.publishedAt ? formatDate(entry.publishedAt) : formatDate(entry.updatedAt)}
-        />
-      </section>
-      <section className="grid gap-3">
-        <h2 className="text-sm font-semibold">Distribution</h2>
-        <label className="flex min-h-11 items-center gap-3 border border-border bg-background px-3 text-sm text-muted-foreground">
-          <input
-            checked={showPublicly}
-            className="size-4 accent-foreground"
-            type="checkbox"
-            onChange={(event) => onShowPubliclyChange(event.target.checked)}
-          />
-          <span>Show on portal and widgets</span>
-        </label>
-        <label className="flex min-h-11 items-center gap-3 border border-border bg-background px-3 text-sm text-muted-foreground">
-          <input
-            checked={sendEmail}
-            className="size-4 accent-foreground"
-            type="checkbox"
-            onChange={(event) => onSendEmailChange(event.target.checked)}
-          />
-          <span>Email subscribers on publish</span>
-        </label>
-        <label className="grid gap-2">
-          <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-            Audience
-          </span>
-          <select className="h-10 border border-border bg-background px-3 text-xs outline-none">
-            <option>Everyone</option>
-            <option>Voters and commenters</option>
-            <option>Admins only</option>
-          </select>
-        </label>
-      </section>
-      <section className="grid gap-3">
-        <h2 className="text-sm font-semibold">Source evidence</h2>
-        <SourceEvidenceList compact links={entry.sourceLinks} />
-      </section>
-      <section className="grid gap-3">
-        <h2 className="text-sm font-semibold">Review</h2>
-        <p className="text-pretty text-xs leading-5 text-muted-foreground">
-          Save drafts here before publishing updates to the public changelog.
-        </p>
-      </section>
+            <Send className="size-3.5" />
+          </button>
+        </form>
+      </div>
     </aside>
   );
 }

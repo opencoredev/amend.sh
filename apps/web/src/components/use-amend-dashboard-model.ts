@@ -23,6 +23,7 @@ import {
   roadmapStatusToRoadmapStatus,
   workspaceFromDashboard,
 } from "@/components/amend-dashboard-utils";
+import { BLANK_CHANGELOG, NEW_CHANGELOG_KEY } from "@/components/changelog-editor-types";
 
 export function useAmendDashboardModel({
   activeChangelogCategory,
@@ -31,7 +32,6 @@ export function useAmendDashboardModel({
   activeProjectSlug,
   activeRoadmapId,
   activeStatus,
-  activeView,
   dashboard,
   hasSession,
   projects,
@@ -95,10 +95,12 @@ export function useAmendDashboardModel({
   const selectedRoadmap =
     syncedRoadmapEntries.find((entry) => entry.stableKey === selectedRoadmapKey) ?? null;
   const selectedChangelog =
-    changelogEntries.find(
-      (entry) =>
-        entry.stableKey === selectedChangelogKey || entry.recordId === selectedChangelogKey,
-    ) ?? null;
+    selectedChangelogKey === NEW_CHANGELOG_KEY
+      ? BLANK_CHANGELOG
+      : (changelogEntries.find(
+          (entry) =>
+            entry.stableKey === selectedChangelogKey || entry.recordId === selectedChangelogKey,
+        ) ?? null);
   const projectItems = useMemo(
     () => projectsToMenuItems(projects, workspace),
     [projects, workspace],
@@ -158,7 +160,9 @@ export function useAmendDashboardModel({
     activeRoadmap,
     changelogEntries,
     feedbackPosts,
-    focusChangelogEditor: Boolean(selectedChangelog && activeView === "changelog"),
+    // The changelog editor stays embedded in the dashboard shell (sidebar kept),
+    // matching the feedback/roadmap detail views — no full-page takeover.
+    focusChangelogEditor: false,
     mutationScope,
     projectMatches,
     projectsReady,
