@@ -27,7 +27,16 @@ await amend.upsertRoadmapItem({
 });
 ```
 
-A note on status values: the board columns are `backlog`, `next`, `progress`, and `done`, but the API takes the backend names. `under_review` and `considering` land in Under Review, `planned` and `in_progress` map across to the active columns, and `shipped` or `closed` land in Done.
+A note on status values. The board columns and the API use different names. Pass one of the API `status` values below to `upsertRoadmapItem`, and the board places the item in the matching column:
+
+| API `status` | Board column |
+| --- | --- |
+| `under_review`, `considering`, `paused` | Under Review |
+| `planned` | Planned |
+| `in_progress` | In Progress |
+| `shipped`, `closed` | Done |
+
+The example above passes `planned`, so the item lands in the Planned column.
 
 ## Move it across
 

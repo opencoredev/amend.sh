@@ -11,12 +11,14 @@ The roadmap is the middle of the loop. Feedback tells you what people want; the 
 
 Items move left to right through the same four statuses you see on feedback:
 
-| Column | Status | Means |
+| Column | Column id | Means |
 | --- | --- | --- |
 | Under Review | `backlog` | On the table, not committed |
 | Planned | `next` | Committed, not started |
 | In Progress | `progress` | Being built now |
 | Done | `done` | Shipped |
+
+The column ids are what the board and its URL filters use. When you create items over the API you pass a different set of status values, which map onto these columns; see [managing the board](/docs/roadmap/managing) for that table.
 
 A card shows the title, a priority badge, a target if one is set, its vote count, and the first piece of source evidence. Behind each card, an item also carries a `priority` from P0 to P3, an `impact` note, a changelog link count, and the `sourceLinks` that connect it to real work.
 
