@@ -143,7 +143,7 @@ export function analyticsPath(value: string) {
     const url = new URL(value, baseUrl);
     return url.pathname;
   } catch {
-    return value.split(/[?#]/, 1)[0] ?? "/";
+    return value.split(/[?#]/, 1)[0] || "/";
   }
 }
 

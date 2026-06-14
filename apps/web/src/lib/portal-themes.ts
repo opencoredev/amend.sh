@@ -231,9 +231,12 @@ export type ResolvedPortalTheme = {
   vars: PortalThemeVars;
 };
 
-export function resolvePortalTheme(settings?: PortalThemeSettings): ResolvedPortalTheme {
+export function resolvePortalTheme(
+  settings?: PortalThemeSettings,
+  parsedCss?: { dark?: PortalThemeVars; light?: PortalThemeVars },
+): ResolvedPortalTheme {
   if (settings?.themePreset === CUSTOM_PORTAL_THEME_ID && settings.customThemeCss?.trim()) {
-    const parsed = parseThemeCss(settings.customThemeCss);
+    const parsed = parsedCss ?? parseThemeCss(settings.customThemeCss);
     const appearance =
       settings.themeAppearance ?? (parsed.dark && !parsed.light ? "dark" : "light");
     const vars =
@@ -277,13 +280,14 @@ function parseDeclarations(body: string): PortalThemeVars | undefined {
 
 /** Parse a tweakcn-style CSS export into light (`:root`) and dark (`.dark`) token maps. */
 export function parseThemeCss(css: string): { dark?: PortalThemeVars; light?: PortalThemeVars } {
-  // Strip block comments and `@media` wrappers first, so a commented-out or
-  // `prefers-color-scheme`-scoped duplicate can't shadow the canonical
-  // top-level `:root`/`.dark` blocks. `@layer` wrappers are left intact since
-  // shadcn exports nest the real tokens inside them.
+  // Strip block comments and conditional at-rule wrappers (@media / @supports /
+  // @container) first, so a commented-out or conditionally-scoped duplicate
+  // can't shadow the canonical top-level `:root`/`.dark` blocks. `@layer`
+  // wrappers are left intact since shadcn exports nest the real tokens inside
+  // them.
   const cleaned = css
     .replace(/\/\*[\s\S]*?\*\//g, "")
-    .replace(/@media[^{}]*\{(?:[^{}]*\{[^{}]*\})*[^{}]*\}/gi, "");
+    .replace(/@(?:media|supports|container)[^{}]*\{(?:[^{}]*\{[^{}]*\})*[^{}]*\}/gi, "");
   const root = cleaned.match(/:root\s*\{([\s\S]*?)\}/);
   const dark = cleaned.match(/\.dark\s*\{([\s\S]*?)\}/);
   return {

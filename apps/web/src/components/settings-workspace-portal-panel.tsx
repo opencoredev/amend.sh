@@ -50,8 +50,13 @@ export function PortalSettingsPanel({
   themePreset: string;
 }) {
   const isCustom = themePreset === CUSTOM_PORTAL_THEME_ID;
-  const preview = resolvePortalTheme({ customThemeCss, themeAppearance, themePreset });
+  // Parse the custom CSS once and share it with the preview resolver, instead
+  // of letting resolvePortalTheme re-parse the same string on every keystroke.
   const customParse = isCustom ? parseThemeCss(customThemeCss) : null;
+  const preview = resolvePortalTheme(
+    { customThemeCss, themeAppearance, themePreset },
+    customParse ?? undefined,
+  );
 
   function selectPreset(id: string) {
     setThemePreset(id);

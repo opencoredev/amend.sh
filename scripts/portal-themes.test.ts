@@ -57,6 +57,16 @@ describe("parseThemeCss", () => {
     expect(parseThemeCss(css).light).toEqual({ background: "white" });
   });
 
+  test("ignores a @supports-scoped :root that precedes the base :root", () => {
+    const css = `
+      @supports (color: oklch(0 0 0)) {
+        :root { --background: black; }
+      }
+      :root { --background: white; }
+    `;
+    expect(parseThemeCss(css).light).toEqual({ background: "white" });
+  });
+
   test("still reads tokens nested inside an @layer wrapper", () => {
     const css = `
       @layer base {
