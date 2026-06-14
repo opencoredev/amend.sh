@@ -4,6 +4,7 @@ import type {
   WorkspaceSettingsData,
 } from "@/components/amend-dashboard-types";
 import type { RefObject } from "react";
+import type { PortalThemeAppearance } from "@/lib/portal-themes";
 import { AccountsSettingsPanel } from "@/components/settings-workspace-accounts-panel";
 import { AutomationSettingsPanel } from "@/components/settings-workspace-automation-panel";
 import { GeneralSettingsPanel } from "@/components/settings-workspace-general-panel";
@@ -27,6 +28,7 @@ export function SettingsWorkspaceSections({
   activeProject,
   activeSection,
   canSave,
+  customThemeCss,
   description,
   headline,
   intro,
@@ -42,17 +44,23 @@ export function SettingsWorkspaceSections({
   saving,
   serviceRows,
   settings,
+  setCustomThemeCss,
   setDescription,
   setHeadline,
   setIntro,
   setLogoUrl,
   setName,
+  setThemeAppearance,
+  setThemePreset,
   setWebsiteUrl,
+  themeAppearance,
+  themePreset,
   websiteUrl,
 }: {
   activeProject: ProjectMenuItem;
   activeSection: SettingsSection;
   canSave: boolean;
+  customThemeCss: string;
   description: string;
   headline: string;
   intro: string;
@@ -68,12 +76,17 @@ export function SettingsWorkspaceSections({
   saving: SettingsSavingState;
   serviceRows: SettingsServiceRow[];
   settings: WorkspaceSettingsData | undefined;
+  setCustomThemeCss: (value: string) => void;
   setDescription: (value: string) => void;
   setHeadline: (value: string) => void;
   setIntro: (value: string) => void;
   setLogoUrl: (value: string) => void;
   setName: (value: string) => void;
+  setThemeAppearance: (value: PortalThemeAppearance) => void;
+  setThemePreset: (value: string) => void;
   setWebsiteUrl: (value: string) => void;
+  themeAppearance: PortalThemeAppearance;
+  themePreset: string;
   websiteUrl: string;
 }) {
   return (
@@ -104,12 +117,18 @@ export function SettingsWorkspaceSections({
       {activeSection === "portal" ? (
         <PortalSettingsPanel
           canSave={canSave}
+          customThemeCss={customThemeCss}
           headline={headline}
           intro={intro}
           onPortalSave={onPortalSave}
           saving={saving}
+          setCustomThemeCss={setCustomThemeCss}
           setHeadline={setHeadline}
           setIntro={setIntro}
+          setThemeAppearance={setThemeAppearance}
+          setThemePreset={setThemePreset}
+          themeAppearance={themeAppearance}
+          themePreset={themePreset}
         />
       ) : null}
 

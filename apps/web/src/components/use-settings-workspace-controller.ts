@@ -56,6 +56,7 @@ export function useSettingsWorkspaceController({
 
   return {
     canSave,
+    customThemeCss: formState.customThemeCss,
     description: formState.description,
     headline: formState.headline,
     intro: formState.intro,
@@ -75,12 +76,17 @@ export function useSettingsWorkspaceController({
     saving: actions.saving,
     serviceRows: settingsServiceRows(activeProject),
     settings,
+    setCustomThemeCss: formState.setCustomThemeCss,
     setDescription: formState.setDescription,
     setHeadline: formState.setHeadline,
     setIntro: formState.setIntro,
     setLogoUrl: formState.setLogoUrl,
     setName: formState.setName,
+    setThemeAppearance: formState.setThemeAppearance,
+    setThemePreset: formState.setThemePreset,
     setWebsiteUrl: formState.setWebsiteUrl,
+    themeAppearance: formState.themeAppearance,
+    themePreset: formState.themePreset,
     websiteUrl: formState.websiteUrl,
   };
 }

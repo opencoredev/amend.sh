@@ -76,8 +76,8 @@
   opacity: 0;
   pointer-events: none;
   transition:
-    transform var(--dropdown-close-dur) var(--dropdown-ease),
-    opacity var(--dropdown-close-dur) var(--dropdown-ease);
+    transform var(--dropdown-close-dur) var(--dropdown-close-ease),
+    opacity var(--dropdown-close-dur) var(--dropdown-close-ease);
 }
 
 .t-panel-slide {

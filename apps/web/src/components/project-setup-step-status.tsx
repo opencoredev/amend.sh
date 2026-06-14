@@ -1,4 +1,4 @@
-import { Check, CircleDashed } from "lucide-react";
+import { Check, CircleDashed } from "@/lib/icons";
 
 import type { WebsiteLookupStatus } from "@/components/amend-dashboard-types";
 

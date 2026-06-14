@@ -1,7 +1,7 @@
 import { Button } from "@amend/ui/components/button";
 import { createFileRoute } from "@tanstack/react-router";
 import { createAmendPanel, type AmendPanel } from "@amend/sdk/embed";
-import { ArrowRight, Bell, MessageSquareText, PanelRightOpen, Road } from "lucide-react";
+import { ArrowRight, Bell, MessageSquareText, PanelRightOpen, Road } from "@/lib/icons";
 import { useEffect, useRef, useState } from "react";
 
 import AmendLogo from "@/components/amend-logo";

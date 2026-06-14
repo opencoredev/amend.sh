@@ -36,28 +36,28 @@ export function FeedbackDetailWorkspace({
                   post.labels.map((label) => (
                     <span
                       key={label}
-                      className="rounded-full border border-border bg-muted/25 px-3 py-1 text-xs text-muted-foreground"
+                      className="rounded-full bg-white/[0.05] px-3 py-1 text-xs text-muted-foreground ring-1 ring-white/[0.06]"
                     >
                       {label}
                     </span>
                   ))
                 ) : (
-                  <span className="rounded-full border border-border bg-muted/25 px-3 py-1 text-xs text-muted-foreground">
+                  <span className="rounded-full bg-white/[0.05] px-3 py-1 text-xs text-muted-foreground ring-1 ring-white/[0.06]">
                     No tags
                   </span>
                 )}
               </div>
             </section>
 
-            <div className="border-b border-border">
+            <div className="border-b border-white/[0.06] pb-2">
               <div className="flex flex-wrap gap-1">
                 {(["comments", "details", "sources"] as const).map((tab) => (
                   <button
                     key={tab}
                     type="button"
                     className={cn(
-                      "min-h-10 px-3 text-sm font-semibold capitalize text-muted-foreground transition-colors duration-150 ease-linear hover:bg-muted/25 hover:text-foreground active:opacity-75",
-                      activeTab === tab && "bg-muted/30 text-foreground",
+                      "min-h-9 rounded-lg px-3 text-sm font-semibold capitalize text-muted-foreground transition-colors duration-150 ease-linear hover:bg-foreground/[0.055] hover:text-foreground active:opacity-75",
+                      activeTab === tab && "bg-foreground/[0.08] text-foreground",
                     )}
                     onClick={() => setActiveTab(tab)}
                   >

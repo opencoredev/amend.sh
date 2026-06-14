@@ -1,5 +1,5 @@
 import { cn } from "@amend/ui/lib/utils";
-import { ChevronDown, Sparkles } from "lucide-react";
+import { ChevronDown, Sparkles } from "@/lib/icons";
 import { useState } from "react";
 import type { DragEvent as ReactDragEvent } from "react";
 

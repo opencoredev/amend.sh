@@ -1,4 +1,4 @@
-import { action, internalQuery, mutation, query } from "./_generated/server";
+import { action, internalMutation, internalQuery, mutation, query } from "./_generated/server";
 import * as agent from "./amendAgentFunctionDefinitions";
 import * as dev from "./amendDevFunctionDefinitions";
 import * as mutations from "./amendMutationFunctionDefinitions";
@@ -57,17 +57,38 @@ export const upsertNotificationPreference = mutation(
   mutations.upsertNotificationPreferenceDefinition,
 );
 export const planNotificationDeliveries = mutation(mutations.planNotificationDeliveriesDefinition);
+export const trustedPlanNotificationDeliveries = internalMutation(
+  mutations.trustedPlanNotificationDeliveriesDefinition,
+);
 export const updateDeliveryStatus = mutation(mutations.updateDeliveryStatusDefinition);
+export const trustedUpdateDeliveryStatus = internalMutation(
+  mutations.trustedUpdateDeliveryStatusDefinition,
+);
 export const registerCustomDomain = mutation(mutations.registerCustomDomainDefinition);
+export const trustedRegisterCustomDomain = internalMutation(
+  mutations.trustedRegisterCustomDomainDefinition,
+);
 export const updateCustomDomainStatus = mutation(mutations.updateCustomDomainStatusDefinition);
+export const trustedUpdateCustomDomainStatus = internalMutation(
+  mutations.trustedUpdateCustomDomainStatusDefinition,
+);
 export const identifyExternalUser = mutation(mutations.identifyExternalUserDefinition);
 export const trackEvent = mutation(mutations.trackEventDefinition);
 export const recordFeedbackInteraction = mutation(mutations.recordFeedbackInteractionDefinition);
 export const ingestSourceEvent = mutation(mutations.ingestSourceEventDefinition);
+export const trustedIngestSourceEvent = internalMutation(
+  mutations.trustedIngestSourceEventDefinition,
+);
 export const createFeedback = mutation(mutations.createFeedbackDefinition);
 export const updateReviewStatus = mutation(mutations.updateReviewStatusDefinition);
 export const revertAutomationDecision = mutation(mutations.revertAutomationDecisionDefinition);
 export const upsertChangelogEntry = mutation(mutations.upsertChangelogEntryDefinition);
+export const trustedUpsertChangelogEntry = internalMutation(
+  mutations.trustedUpsertChangelogEntryDefinition,
+);
 export const upsertRoadmapItem = mutation(mutations.upsertRoadmapItemDefinition);
+export const trustedUpsertRoadmapItem = internalMutation(
+  mutations.trustedUpsertRoadmapItemDefinition,
+);
 export const voteRoadmapItem = mutation(mutations.voteRoadmapItemDefinition);
 export const joinWaitlist = mutation(mutations.joinWaitlistDefinition);

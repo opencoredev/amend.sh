@@ -20,8 +20,8 @@ function withDefaults(options: SileoOptions): SileoOptions {
   const { styles, ...rest } = options;
   return {
     duration: 5200,
-    fill: "#111111",
-    roundness: 12,
+    fill: "#202024",
+    roundness: 14,
     ...rest,
     styles: {
       ...defaultStyles,

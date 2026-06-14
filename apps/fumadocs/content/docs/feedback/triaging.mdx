@@ -1,0 +1,55 @@
+---
+title: Triaging the inbox
+description: Sort requests by board and status, read the evidence, and promote an ask to the roadmap without duplicating it.
+---
+
+Triage is the daily work of feedback: deciding what each request is, how far along it is, and whether it earns a spot on the roadmap. The inbox is built for that, not for storage.
+
+## Sort by board, then status
+
+The list groups posts by board, so feature requests, bug reports, and general feedback stay separate. Within that, filter by status to see where things stand:
+
+| Status     | Shown as     | Means                     |
+| ---------- | ------------ | ------------------------- |
+| `backlog`  | Under Review | New, not yet committed to |
+| `next`     | Planned      | Decided, not started      |
+| `progress` | In Progress  | Being built               |
+| `done`     | Done         | Shipped                   |
+
+The status pills sit in the sidebar and the toolbar. These are the same display columns the roadmap uses, so a post and its roadmap item line up visually. The roadmap's API uses its own status names underneath, which map onto these columns; see [managing the board](/docs/roadmap/managing) if you set roadmap status over the API.
+
+<Screenshot caption="The inbox with the board switcher and status filters." />
+
+## Open a request
+
+Clicking a post opens its detail workspace. Three tabs:
+
+- Comments — internal notes and replies. This is where the team talks through a request.
+- Details — the post's fields and its link counts.
+- Sources — the evidence chain: the GitHub PRs, issues, and other links tied to this ask.
+
+The sidebar shows how many roadmap and changelog items this request is connected to, plus the same source evidence, so you can judge a request without digging through other tools.
+
+<Screenshot
+  caption="A request open in detail, with the Comments, Details, and Sources tabs."
+  ratio="16 / 10"
+/>
+
+## Promote to the roadmap
+
+When a request is worth committing to, link it to a roadmap item instead of retyping it. The roadmap item keeps a reference back to the original post (its key is prefixed `roadmap-feedback-`), so the two stay joined.
+
+On the feedback side you will see `linkedRoadmapCount` go up, and the sidebar notes that the request "is available to the roadmap view without creating a duplicate post." That is the point: one ask, one record, visible from both places. From the roadmap item you can jump straight back to the feedback that started it.
+
+This is the first link in the chain that ends at a published changelog entry. The full model is in [source trace](/docs/source-trace); the next stop is the [roadmap](/docs/roadmap).
+
+## From the command line
+
+For quick checks or scripts, the CLI reads the same inbox:
+
+```bash
+amend feedback list
+amend requests search --query "export"
+```
+
+Both print JSON, so you can pipe them into whatever you already use.

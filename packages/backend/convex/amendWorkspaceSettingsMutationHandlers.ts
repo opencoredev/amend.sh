@@ -4,14 +4,19 @@ import { demoWorkspace } from "./amendDemoData";
 import { normalizeWorkspace } from "./amendNormalizers";
 import { ensureDashboardBaseRecords, requireDashboardUser } from "./amendWorkspace";
 
+type PortalSettingsDoc = NonNullable<Doc<"workspaces">["portalSettings"]>;
+
 type UpdatePortalSettingsArgs = {
   workspaceSlug?: string;
   accentColor?: string;
-  changelogVisibility?: NonNullable<Doc<"workspaces">["portalSettings"]>["changelogVisibility"];
-  feedbackMode?: NonNullable<Doc<"workspaces">["portalSettings"]>["feedbackMode"];
+  changelogVisibility?: PortalSettingsDoc["changelogVisibility"];
+  customThemeCss?: string;
+  feedbackMode?: PortalSettingsDoc["feedbackMode"];
   headline?: string;
   intro?: string;
-  roadmapVisibility?: NonNullable<Doc<"workspaces">["portalSettings"]>["roadmapVisibility"];
+  roadmapVisibility?: PortalSettingsDoc["roadmapVisibility"];
+  themeAppearance?: PortalSettingsDoc["themeAppearance"];
+  themePreset?: string;
 };
 
 type UpdateWorkspaceArgs = {
@@ -31,10 +36,13 @@ export async function updatePortalSettingsHandler(
   const next = {
     accentColor: args.accentColor ?? current.accentColor,
     changelogVisibility: args.changelogVisibility ?? current.changelogVisibility,
+    customThemeCss: args.customThemeCss ?? current.customThemeCss,
     feedbackMode: args.feedbackMode ?? current.feedbackMode,
     headline: args.headline ?? current.headline,
     intro: args.intro ?? current.intro,
     roadmapVisibility: args.roadmapVisibility ?? current.roadmapVisibility,
+    themeAppearance: args.themeAppearance ?? current.themeAppearance,
+    themePreset: args.themePreset ?? current.themePreset,
   };
 
   await ctx.db.patch(workspace._id, {

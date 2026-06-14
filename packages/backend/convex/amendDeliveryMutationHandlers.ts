@@ -5,6 +5,7 @@ import { compact, workspaceSlug } from "./amendBackendUtils";
 import { normalizeDelivery } from "./amendNormalizers";
 import { defaultDeliveryProvider, deliveryRecipients } from "./amendNotifications";
 import { ensureBaseRecords } from "./amendSeed";
+import { requireDashboardUser } from "./amendWorkspace";
 
 type PlanNotificationDeliveriesArgs = {
   workspaceSlug?: string;
@@ -22,6 +23,14 @@ type UpdateDeliveryStatusArgs = {
 };
 
 export async function planNotificationDeliveriesHandler(
+  ctx: MutationCtx,
+  args: PlanNotificationDeliveriesArgs,
+) {
+  await requireDashboardUser(ctx);
+  return await trustedPlanNotificationDeliveriesHandler(ctx, args);
+}
+
+export async function trustedPlanNotificationDeliveriesHandler(
   ctx: MutationCtx,
   args: PlanNotificationDeliveriesArgs,
 ) {
@@ -147,6 +156,14 @@ export async function planNotificationDeliveriesHandler(
 }
 
 export async function updateDeliveryStatusHandler(
+  ctx: MutationCtx,
+  args: UpdateDeliveryStatusArgs,
+) {
+  await requireDashboardUser(ctx);
+  return await trustedUpdateDeliveryStatusHandler(ctx, args);
+}
+
+export async function trustedUpdateDeliveryStatusHandler(
   ctx: MutationCtx,
   args: UpdateDeliveryStatusArgs,
 ) {

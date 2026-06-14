@@ -1,5 +1,5 @@
 import { Button } from "@amend/ui/components/button";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown } from "@/lib/icons";
 import { useState } from "react";
 
 import { DetailStat, SourceEvidenceList } from "@/components/dashboard-detail-shared";
@@ -41,7 +41,7 @@ export function RoadmapDetailWorkspace({
         <div className="mt-4 flex flex-wrap items-start justify-between gap-4">
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-              <span className="border border-border bg-muted/25 px-2.5 py-0.5 font-semibold">
+              <span className="rounded-md bg-white/[0.05] px-2.5 py-0.5 font-semibold ring-1 ring-white/[0.06]">
                 {statusTitle(roadmapStatusToRoadmapStatus(item.status))}
               </span>
               <span>{priorityLabel(item.priority)}</span>
@@ -53,7 +53,7 @@ export function RoadmapDetailWorkspace({
           </div>
           <button
             type="button"
-            className="flex min-h-10 items-center gap-2 border border-border bg-background px-3 text-sm text-muted-foreground transition-colors duration-150 ease-linear hover:border-foreground hover:text-foreground active:opacity-75"
+            className="flex min-h-10 items-center gap-2 rounded-xl bg-[#151518] px-3 text-sm text-muted-foreground ring-1 ring-white/[0.055] transition-colors duration-150 ease-linear hover:bg-[#1a1a1d] hover:text-foreground active:opacity-75"
             disabled={voting}
             onClick={() => {
               setVoting(true);
@@ -106,7 +106,7 @@ export function RoadmapDetailWorkspace({
             <h2 className="text-sm font-semibold">Linked feedback</h2>
             {feedbackKey ? (
               <Button
-                className="h-10 border border-foreground bg-foreground px-3 text-xs font-semibold text-background transition-colors duration-150 ease-linear hover:bg-background hover:text-foreground active:opacity-75"
+                className="h-10 rounded-xl border border-foreground bg-foreground px-4 text-xs font-semibold text-background transition-colors duration-150 ease-linear hover:bg-foreground/80 active:opacity-75"
                 type="button"
                 onClick={() => onOpenFeedback(feedbackKey)}
               >

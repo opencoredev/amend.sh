@@ -9,9 +9,17 @@ import {
   type IngestSourceEventArgs,
 } from "./amendSourceIngestModel";
 import { handleShippedSourceEvent } from "./amendSourceIngestShipped";
-import { getWritableDashboardProject } from "./amendWorkspace";
+import { getWritableDashboardProject, requireDashboardUser } from "./amendWorkspace";
 
 export async function ingestSourceEventHandler(ctx: MutationCtx, args: IngestSourceEventArgs) {
+  await requireDashboardUser(ctx);
+  return await trustedIngestSourceEventHandler(ctx, args);
+}
+
+export async function trustedIngestSourceEventHandler(
+  ctx: MutationCtx,
+  args: IngestSourceEventArgs,
+) {
   const now = Date.now();
   const observedAt = args.observedAt ?? now;
   const provider = args.provider ?? "github";

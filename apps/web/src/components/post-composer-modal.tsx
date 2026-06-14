@@ -29,7 +29,7 @@ export function ComposerModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 grid place-items-center bg-background/72 p-4 backdrop-blur-[3px] animate-in fade-in-0 duration-300"
+      className="fixed inset-0 z-50 grid place-items-center bg-background/75 p-4 backdrop-blur-[4px] animate-in fade-in-0 duration-300"
       role="presentation"
       onPointerDown={(event) => {
         if (event.target === event.currentTarget) {
@@ -41,7 +41,7 @@ export function ComposerModal({
         role="dialog"
         aria-modal="true"
         aria-label="Create post"
-        className="t-modal is-open relative grid h-[min(68vh,30rem)] w-full max-w-[56rem] grid-rows-[auto_minmax(0,1fr)_auto] overflow-visible rounded-xl border border-border bg-card text-card-foreground shadow-[0_22px_90px_rgb(0_0_0/0.55)]"
+        className="t-modal is-open relative grid h-[min(68vh,30rem)] w-full max-w-[56rem] grid-rows-[auto_minmax(0,1fr)_auto] overflow-visible rounded-2xl bg-popover text-popover-foreground shadow-[inset_0_1px_0_rgb(255_255_255/0.04),0_30px_90px_rgb(0_0_0/0.6)] ring-1 ring-white/[0.07]"
         onPointerDown={(event) => event.stopPropagation()}
         onPointerDownCapture={(event) => {
           if (composer.panel && !composer.panelRef.current?.contains(event.target as Node)) {

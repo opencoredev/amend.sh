@@ -1,4 +1,5 @@
 import type { DashboardChangelog, RoadmapStatus } from "@/components/amend-dashboard-types";
+import { NEW_CHANGELOG_KEY } from "@/components/changelog-editor-types";
 import { authClient } from "@/lib/auth-client";
 import { useAmendDashboardActions } from "@/components/use-amend-dashboard-actions";
 import { useAmendDashboardData } from "@/components/use-amend-dashboard-data";
@@ -118,6 +119,7 @@ export function useAmendDashboardController() {
     hasSession,
     onComposerSubmit: dashboardActions.handleComposerSubmit,
     onProjectCreated: navigation.projectCreated,
+    projectsReady,
     requiresProjectSetup,
     roadmapCreateStatus: uiState.roadmapCreateStatus,
     sessionPending: session.isPending,
@@ -134,6 +136,7 @@ export function useAmendDashboardController() {
       activeView,
       changelogEntries,
       dashboard: effectiveDashboard,
+      feedbackPosts,
       scopedChangelogEntries,
       scopedPosts,
       scopedRoadmapEntries,
@@ -154,19 +157,21 @@ export function useAmendDashboardController() {
       onChangelogCategoryChange: uiState.setActiveChangelogCategory,
       onChangelogSave: dashboardActions.saveChangelogEntry,
       onChangelogStatusChange: uiState.setActiveChangelogStatus,
-      onConfigureAutomation: () => navigation.openSettingsSection("automation"),
       onCreate: () => uiState.setComposerOpen(true),
       onMoveRoadmapItem: dashboardActions.moveRoadmapItem,
+      onNewChangelog: () => uiState.setSelectedChangelogKey(NEW_CHANGELOG_KEY),
       onOpenChangelog: (entry: DashboardChangelog) =>
         uiState.setSelectedChangelogKey(entry.stableKey),
       onOpenFeedback: dashboardActions.openFeedbackPost,
       onOpenFeedbackKey: dashboardActions.openFeedbackFromRoadmap,
-      onOpenProactivation: () => navigation.changeView("proactivation"),
       onOpenRoadmapItem: dashboardActions.openRoadmapItem,
+      onOpenSettingsSection: navigation.openSettingsSection,
       onOpenSetup: navigation.openSetup,
       onProjectCreated: navigation.projectCreated,
+      onRoadmapChange: navigation.changeRoadmap,
       onSearchChange: navigation.changeSearch,
       onStatusChange: navigation.changeStatus,
+      roadmapViews,
       onVoteRoadmapItem: dashboardActions.voteRoadmapListItem,
       onVoteSelectedRoadmap: dashboardActions.voteSelectedRoadmapItem,
     },

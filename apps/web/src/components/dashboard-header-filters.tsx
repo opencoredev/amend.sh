@@ -1,5 +1,5 @@
 import { cn } from "@amend/ui/lib/utils";
-import { BookOpen, CalendarClock, Circle, CircleDashed, Radio, Tag as TagIcon } from "lucide-react";
+import { BookOpen, CalendarClock, Circle, CircleDashed, Radio, Tag as TagIcon } from "@/lib/icons";
 import type { ReactElement } from "react";
 
 import type {
@@ -8,6 +8,7 @@ import type {
   RoadmapStatus,
 } from "@/components/amend-dashboard-types";
 import { statusMeta } from "@/components/amend-dashboard-status";
+import { useDisclosureTransition } from "@/components/use-disclosure-transition";
 import { formatState } from "@/components/amend-dashboard-utils";
 
 export function FilterMenu({
@@ -18,7 +19,9 @@ export function FilterMenu({
   categories,
   onChangelogCategoryChange,
   onChangelogStatusChange,
+  onClose,
   onStatusChange,
+  open,
 }: {
   activeChangelogCategory: string;
   activeChangelogStatus: ChangelogStatusFilter;
@@ -27,8 +30,12 @@ export function FilterMenu({
   categories: string[];
   onChangelogCategoryChange: (category: string) => void;
   onChangelogStatusChange: (status: ChangelogStatusFilter) => void;
+  onClose: () => void;
   onStatusChange: (status: RoadmapStatus | "all") => void;
+  open: boolean;
 }) {
+  const transition = useDisclosureTransition(open, "top-right");
+
   const changelogStatuses: Array<[ChangelogStatusFilter, string, ReactElement]> = [
     ["all", "All changelogs", <CircleDashed key="all" />],
     ["published", "Published", <Radio key="published" />],
@@ -37,68 +44,82 @@ export function FilterMenu({
     ["scheduled", "Scheduled", <CalendarClock key="scheduled" />],
   ];
 
+  if (!transition.mounted) return null;
+
   return (
-    <div
-      className="t-dropdown is-open absolute right-0 top-[calc(100%+0.5rem)] z-40 w-72 rounded-xl bg-popover p-2 shadow-[0_18px_60px_rgb(0_0_0/0.45)] ring-1 ring-white/[0.06]"
-      data-origin="top-right"
-    >
-      {activeView === "changelog" ? (
-        <div className="grid gap-2">
-          <p className="px-2 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-            Status
-          </p>
-          {changelogStatuses.map(([status, label, icon]) => (
+    <>
+      <button
+        type="button"
+        aria-hidden
+        tabIndex={-1}
+        className="fixed inset-0 z-30 cursor-default"
+        onClick={onClose}
+      />
+      <div
+        className={cn(
+          "absolute right-0 top-[calc(100%+0.5rem)] z-40 w-72 rounded-xl bg-popover p-2 shadow-[0_18px_60px_rgb(0_0_0/0.45)] ring-1 ring-white/[0.06]",
+          transition.className,
+        )}
+        data-origin={transition["data-origin"]}
+      >
+        {activeView === "changelog" ? (
+          <div className="grid gap-2">
+            <p className="px-2 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+              Status
+            </p>
+            {changelogStatuses.map(([status, label, icon]) => (
+              <FilterMenuItem
+                key={status}
+                active={activeChangelogStatus === status}
+                icon={icon}
+                label={label}
+                onClick={() => onChangelogStatusChange(status)}
+              />
+            ))}
+            <div className="my-1 h-px bg-foreground/[0.045]" />
+            <p className="px-2 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+              Category
+            </p>
             <FilterMenuItem
-              key={status}
-              active={activeChangelogStatus === status}
-              icon={icon}
-              label={label}
-              onClick={() => onChangelogStatusChange(status)}
+              active={activeChangelogCategory === "all"}
+              icon={<CircleDashed />}
+              label="All categories"
+              onClick={() => onChangelogCategoryChange("all")}
             />
-          ))}
-          <div className="my-1 h-px bg-foreground/[0.045]" />
-          <p className="px-2 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-            Category
-          </p>
-          <FilterMenuItem
-            active={activeChangelogCategory === "all"}
-            icon={<CircleDashed />}
-            label="All categories"
-            onClick={() => onChangelogCategoryChange("all")}
-          />
-          {categories.map((category) => (
+            {categories.map((category) => (
+              <FilterMenuItem
+                key={category}
+                active={activeChangelogCategory === category}
+                icon={<TagIcon />}
+                label={formatState(category)}
+                onClick={() => onChangelogCategoryChange(category)}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="grid gap-2">
+            <p className="px-2 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+              Status
+            </p>
             <FilterMenuItem
-              key={category}
-              active={activeChangelogCategory === category}
-              icon={<TagIcon />}
-              label={formatState(category)}
-              onClick={() => onChangelogCategoryChange(category)}
+              active={activeStatus === "all"}
+              icon={<CircleDashed />}
+              label={activeView === "roadmap" ? "All columns" : "All feedback"}
+              onClick={() => onStatusChange("all")}
             />
-          ))}
-        </div>
-      ) : (
-        <div className="grid gap-2">
-          <p className="px-2 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-            Status
-          </p>
-          <FilterMenuItem
-            active={activeStatus === "all"}
-            icon={<CircleDashed />}
-            label={activeView === "roadmap" ? "All columns" : "All feedback"}
-            onClick={() => onStatusChange("all")}
-          />
-          {Object.entries(statusMeta).map(([status, meta]) => (
-            <FilterMenuItem
-              key={status}
-              active={activeStatus === status}
-              icon={meta.icon}
-              label={meta.label}
-              onClick={() => onStatusChange(status as RoadmapStatus)}
-            />
-          ))}
-        </div>
-      )}
-    </div>
+            {Object.entries(statusMeta).map(([status, meta]) => (
+              <FilterMenuItem
+                key={status}
+                active={activeStatus === status}
+                icon={meta.icon}
+                label={meta.label}
+                onClick={() => onStatusChange(status as RoadmapStatus)}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    </>
   );
 }
 

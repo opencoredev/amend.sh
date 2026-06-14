@@ -7,7 +7,23 @@ Amend connects four things teams usually keep apart: customer asks, source evide
 and shipped updates. These docs are for the person wiring that loop into a real product, with enough
 detail for a maintainer or coding agent to verify what is actually running.
 
-## Start Here
+## The three products
+
+Most of what you do in Amend happens in one of three places. They are the same loop seen from three angles: what people asked for, what you committed to, and what you shipped.
+
+<Cards>
+  <Card title="Feedback" href="/docs/feedback">
+    Collect customer requests, triage them on boards, and link each to the work that answers it.
+  </Card>
+  <Card title="Roadmap" href="/docs/roadmap">
+    A board of what you are building, tied back to the feedback that asked for it.
+  </Card>
+  <Card title="Changelog" href="/docs/changelog">
+    Publish shipped-work announcements that trace back to the roadmap and feedback behind them.
+  </Card>
+</Cards>
+
+## Set up and integrate
 
 <Cards>
   <Card title="Quickstart" href="/docs/quickstart">
@@ -24,9 +40,6 @@ detail for a maintainer or coding agent to verify what is actually running.
   </Card>
   <Card title="Self-hosting" href="/docs/self-hosting">
     Bring your own Convex deployment, provider keys, domains, and model policy.
-  </Card>
-  <Card title="Production routing" href="/docs/production-routing">
-    Serve docs from `docs.amend.sh` and make `amend.sh/docs` work through Vercel.
   </Card>
   <Card title="Launch" href="/docs/launch">
     Check provider credentials, DNS, Convex, email, billing, and final gates.

@@ -11,7 +11,9 @@ import {
   optionalSourceProvider,
   optionalString,
   requiredString,
+  requiresGetApiToken,
   restRoute,
+  verifyApiToken,
 } from "./httpRuntime";
 
 export const restGet = httpAction(async (ctx, request) => {
@@ -22,6 +24,13 @@ export const restGet = httpAction(async (ctx, request) => {
 
   const { resource, workspaceSlug } = route;
   const search = new URL(request.url).searchParams;
+
+  if (requiresGetApiToken(resource)) {
+    const auth = verifyApiToken(request);
+    if (!auth.ok) {
+      return json({ error: auth.error }, 401);
+    }
+  }
 
   if (workspaceSlug === "_" && resource === "domains") {
     const domain = requiredString(search.get("domain"), "domain");

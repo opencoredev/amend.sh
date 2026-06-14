@@ -1,12 +1,5 @@
 import { cn } from "@amend/ui/lib/utils";
-import {
-  ChartNoAxesCombined,
-  ClipboardList,
-  Inbox,
-  Megaphone,
-  Settings,
-  Sparkles,
-} from "lucide-react";
+import { Map, MessageSquareText, Newspaper, Settings } from "@/lib/icons";
 import type { ReactElement, RefObject } from "react";
 
 import type {
@@ -20,6 +13,7 @@ import type {
   RoadmapViewId,
   SettingsSection,
 } from "@/components/amend-dashboard-types";
+import DashboardUserMenu from "@/components/dashboard-user-menu";
 import { MobileViewNav } from "@/components/dashboard-view-nav";
 import { ModuleSidebar } from "@/components/dashboard-module-sidebar";
 import { WorkspaceSwitcher } from "@/components/dashboard-workspace-switcher";
@@ -46,9 +40,6 @@ function SidebarMainNavButton({
       )}
       onClick={onClick}
     >
-      {active && (
-        <span className="absolute left-1.5 top-1/2 h-4 w-0.5 -translate-y-1/2 rounded-full bg-foreground" />
-      )}
       {icon}
       {label}
     </button>
@@ -56,11 +47,9 @@ function SidebarMainNavButton({
 }
 
 const NAV_ITEMS: Array<[DashboardView, ReactElement, string]> = [
-  ["posts", <Inbox />, "Feedback"],
-  ["roadmap", <ClipboardList />, "Roadmap"],
-  ["changelog", <Megaphone />, "Changelog"],
-  ["analytics", <ChartNoAxesCombined />, "Analytics"],
-  ["proactivation", <Sparkles />, "Proactivation"],
+  ["posts", <MessageSquareText />, "Feedback"],
+  ["roadmap", <Map />, "Roadmap"],
+  ["changelog", <Newspaper />, "Changelog"],
 ];
 
 export function DashboardSidebarChrome({
@@ -170,7 +159,7 @@ export function DashboardSidebarChrome({
           ))}
           <SidebarMainNavButton
             active={activeView === "settings"}
-            icon={<Settings className="size-3.5" />}
+            icon={<Settings />}
             label="Settings"
             onClick={() => onViewChange("settings")}
           />
@@ -180,6 +169,11 @@ export function DashboardSidebarChrome({
         {/* Context nav */}
         <div className="min-h-0 flex-1 overflow-y-auto">
           <ModuleSidebar {...sidebarProps} />
+        </div>
+
+        {/* Account */}
+        <div className="border-t border-foreground/[0.045] p-3">
+          <DashboardUserMenu onOpenSettings={() => onViewChange("settings")} />
         </div>
       </aside>
 
@@ -192,6 +186,9 @@ export function DashboardSidebarChrome({
             <ModuleSidebar {...sidebarProps} />
           </div>
         ) : null}
+        <div className="border-t border-foreground/[0.045] p-3">
+          <DashboardUserMenu onOpenSettings={() => onViewChange("settings")} />
+        </div>
       </div>
     </>
   );

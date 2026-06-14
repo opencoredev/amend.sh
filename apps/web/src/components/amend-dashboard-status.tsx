@@ -1,4 +1,4 @@
-import { CalendarClock, Check, Circle, Radio } from "lucide-react";
+import { CalendarClock, Check, Circle, Radio } from "@/lib/icons";
 import type { ReactElement } from "react";
 
 import type { RoadmapStatus } from "@/components/amend-dashboard-types";

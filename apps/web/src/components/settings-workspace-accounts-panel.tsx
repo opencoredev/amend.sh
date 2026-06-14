@@ -1,4 +1,4 @@
-import { Users } from "lucide-react";
+import { Users } from "@/lib/icons";
 
 import { SettingsPanel, StatusRow } from "@/components/amend-dashboard-shared";
 import type { WorkspaceSettingsData } from "@/components/amend-dashboard-types";

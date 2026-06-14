@@ -1,4 +1,4 @@
-import { MessageSquareText } from "lucide-react";
+import { MessageSquareText } from "@/lib/icons";
 import { makeFunctionReference } from "convex/server";
 
 import type { Board } from "@/components/amend-dashboard-types";

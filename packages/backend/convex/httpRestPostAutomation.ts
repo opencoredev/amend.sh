@@ -1,4 +1,4 @@
-import { api } from "./_generated/api";
+import { api, internal } from "./_generated/api";
 import type { RestPostInput } from "./httpRestPostTypes";
 import {
   automationMode,
@@ -48,7 +48,7 @@ export async function handleAutomationRestPost(input: RestPostInput) {
   }
 
   if (resource === "changelog") {
-    const result = await ctx.runMutation(api.amend.upsertChangelogEntry, {
+    const result = await ctx.runMutation(internal.amend.trustedUpsertChangelogEntry, {
       workspaceSlug,
       body: requiredString(body.body, "body"),
       category: changelogCategory(body.category),
@@ -65,7 +65,7 @@ export async function handleAutomationRestPost(input: RestPostInput) {
   }
 
   if (resource === "roadmap") {
-    const result = await ctx.runMutation(api.amend.upsertRoadmapItem, {
+    const result = await ctx.runMutation(internal.amend.trustedUpsertRoadmapItem, {
       workspaceSlug,
       description: requiredString(body.description, "description"),
       impact: optionalString(body.impact),

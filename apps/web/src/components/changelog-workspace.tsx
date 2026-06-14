@@ -1,4 +1,4 @@
-import { Megaphone } from "lucide-react";
+import { Megaphone } from "@/lib/icons";
 
 import { EmptyModule } from "@/components/amend-dashboard-shared";
 import type { DashboardChangelog } from "@/components/amend-dashboard-types";
@@ -7,9 +7,11 @@ import { DashboardWorkspaceSurface } from "@/components/dashboard-workspace-surf
 
 export function ChangelogWorkspace({
   entries,
+  onCreate,
   onOpen,
 }: {
   entries: DashboardChangelog[];
+  onCreate: () => void;
   onOpen: (entry: DashboardChangelog) => void;
 }) {
   return (
@@ -53,8 +55,10 @@ export function ChangelogWorkspace({
         {entries.length === 0 ? (
           <div className="w-full">
             <EmptyModule
+              action="Write changelog"
               copy="Use this when a shipped update needs review, targeting, and subscriber delivery."
               icon={<Megaphone />}
+              onAction={onCreate}
               title="Publish the first reviewed update"
             />
           </div>

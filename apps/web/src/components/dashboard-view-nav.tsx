@@ -1,13 +1,5 @@
 import { cn } from "@amend/ui/lib/utils";
-import {
-  ClipboardList,
-  ChartNoAxesCombined,
-  GitPullRequestArrow,
-  Inbox,
-  Megaphone,
-  Settings,
-  Sparkles,
-} from "lucide-react";
+import { GitPullRequestArrow, Map, MessageSquareText, Newspaper, Settings } from "@/lib/icons";
 import type { ReactElement } from "react";
 
 import type { DashboardView } from "@/components/amend-dashboard-types";
@@ -21,11 +13,9 @@ export function IconRail({
   onViewChange: (view: DashboardView) => void;
 }) {
   const railItems: Array<[DashboardView, ReactElement, string]> = [
-    ["posts", <Inbox />, "Feedback"],
-    ["roadmap", <ClipboardList />, "Roadmap"],
-    ["changelog", <Megaphone />, "Changelog"],
-    ["analytics", <ChartNoAxesCombined />, "Analytics"],
-    ["proactivation", <Sparkles />, "Proactivation"],
+    ["posts", <MessageSquareText />, "Feedback"],
+    ["roadmap", <Map />, "Roadmap"],
+    ["changelog", <Newspaper />, "Changelog"],
   ];
 
   return (
@@ -69,11 +59,9 @@ export function MobileViewNav({
   onViewChange: (view: DashboardView) => void;
 }) {
   const items: Array<[DashboardView, ReactElement, string]> = [
-    ["posts", <Inbox />, "Feedback"],
-    ["roadmap", <ClipboardList />, "Roadmap"],
-    ["changelog", <Megaphone />, "Changelog"],
-    ["analytics", <ChartNoAxesCombined />, "Analytics"],
-    ["proactivation", <Sparkles />, "Proactivation"],
+    ["posts", <MessageSquareText />, "Feedback"],
+    ["roadmap", <Map />, "Roadmap"],
+    ["changelog", <Newspaper />, "Changelog"],
     ["settings", <Settings />, "Settings"],
     ["setup", <GitPullRequestArrow />, "Setup"],
   ];
@@ -125,9 +113,6 @@ function RailButton({
       )}
       onClick={onClick}
     >
-      {active && (
-        <span className="absolute left-1 top-1/2 h-4 w-0.5 -translate-y-1/2 rounded-full bg-foreground" />
-      )}
       {icon}
       <span className="pointer-events-none absolute left-[calc(100%+0.75rem)] top-1/2 z-50 -translate-y-1/2 whitespace-nowrap rounded-lg bg-popover px-2.5 py-1.5 text-xs font-semibold text-foreground opacity-0 shadow-[0_8px_32px_rgb(0_0_0/0.4)] ring-1 ring-white/[0.06] transition-opacity duration-150 ease-linear group-hover:opacity-100">
         {label}

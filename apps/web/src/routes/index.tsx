@@ -3,17 +3,11 @@ import { createFileRoute } from "@tanstack/react-router";
 import { HomeHeader } from "@/components/home/home-header";
 import { HomeHero } from "@/components/home/home-hero";
 import { Footer } from "@/components/home/home-footer";
-import {
-  FounderProofSection,
-  IntegrationSection,
-  MobileActionBar,
-} from "@/components/home/home-sections";
-import {
-  FeaturesSection,
-  MemorySection,
-  PricingSection,
-  WorkflowSection,
-} from "@/components/home/home-product-sections";
+import { MobileActionBar } from "@/components/home/home-sections";
+import { WorkflowSection } from "@/components/home/home-workflow-section";
+import { FeaturesSection } from "@/components/home/home-features-section";
+import { ConnectSection } from "@/components/home/home-connect-section";
+import { PricingSection } from "@/components/home/home-pricing-section";
 import { useLandingMotion } from "@/components/home/use-landing-motion";
 import {
   canonicalLink,
@@ -62,14 +56,13 @@ function HomeComponent() {
           }),
         }}
       />
+      <div className="amend-grain" aria-hidden />
       <HomeHeader />
       <MobileActionBar />
       <HomeHero />
-      <FeaturesSection />
-      <FounderProofSection />
-      <IntegrationSection />
-      <MemorySection />
       <WorkflowSection />
+      <FeaturesSection />
+      <ConnectSection />
       <PricingSection />
       <Footer />
     </main>

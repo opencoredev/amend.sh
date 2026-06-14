@@ -4,9 +4,10 @@ import { cn } from "@amend/ui/lib/utils";
 import { Link } from "@tanstack/react-router";
 import { useMutation } from "convex/react";
 import { makeFunctionReference } from "convex/server";
-import { Lightbulb } from "lucide-react";
+import { Lightbulb } from "@/lib/icons";
 import { useState, type FormEvent } from "react";
 
+import { PORTAL_SURFACE } from "@/components/portal-list-elements";
 import type { FeedbackMode } from "@/components/public-portal-types";
 import { portalRedirectTo } from "@/lib/auth-redirects";
 import { authClient } from "@/lib/auth-client";
@@ -60,7 +61,7 @@ export function FeedbackSubmissionPanel({
 
   if (feedbackMode === "closed") {
     return (
-      <section className="rounded-lg border bg-card p-4 text-sm text-muted-foreground">
+      <section className={cn(PORTAL_SURFACE, "p-4 text-sm text-muted-foreground")}>
         Feedback is closed for this workspace, but shipped records remain visible.
       </section>
     );
@@ -68,10 +69,10 @@ export function FeedbackSubmissionPanel({
 
   if (feedbackMode === "authenticated" && !isAuthenticated) {
     return (
-      <section className="rounded-lg border bg-card p-4">
+      <section className={cn(PORTAL_SURFACE, "p-4")}>
         <div className="flex items-center gap-2">
           <Lightbulb className="size-4 text-muted-foreground" />
-          <h2 className="font-semibold">Got an idea?</h2>
+          <h2 className="text-sm font-semibold">Got an idea?</h2>
         </div>
         <p className="mt-2 text-sm text-muted-foreground">
           Sign in to submit feedback and receive shipped updates.
@@ -88,10 +89,10 @@ export function FeedbackSubmissionPanel({
   }
 
   return (
-    <form onSubmit={submitFeedback} className="rounded-lg border bg-card p-4">
+    <form onSubmit={submitFeedback} className={cn(PORTAL_SURFACE, "p-4")}>
       <div className="flex items-center gap-2">
         <Lightbulb className="size-4 text-muted-foreground" />
-        <h2 className="font-semibold">Got an idea?</h2>
+        <h2 className="text-sm font-semibold">Got an idea?</h2>
       </div>
       <div className="mt-4 grid gap-2">
         <Input

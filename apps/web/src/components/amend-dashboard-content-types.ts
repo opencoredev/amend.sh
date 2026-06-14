@@ -9,6 +9,7 @@ import type {
   ProjectMenuItem,
   RoadmapStatus,
   RoadmapView,
+  RoadmapViewId,
   SettingsSection,
   Workspace,
 } from "@/components/amend-dashboard-types";
@@ -16,7 +17,7 @@ import type {
 export type ChangelogSavePayload = {
   body: string;
   category: string;
-  stableKey: string;
+  stableKey?: string;
   status: string;
   summary: string;
   tags: string[];
@@ -36,6 +37,7 @@ export type DashboardContentProps = {
   activeView: DashboardView;
   changelogEntries: DashboardChangelog[];
   dashboard?: DashboardOverview;
+  feedbackPosts: Post[];
   scopedChangelogEntries: DashboardChangelog[];
   scopedPosts: Post[];
   scopedRoadmapEntries: DashboardRoadmap[];
@@ -53,18 +55,20 @@ export type DashboardContentProps = {
   onChangelogCategoryChange: (category: string) => void;
   onChangelogSave: (payload: ChangelogSavePayload) => Promise<void>;
   onChangelogStatusChange: (status: ChangelogStatusFilter) => void;
-  onConfigureAutomation: () => void;
   onCreate: () => void;
   onMoveRoadmapItem: (item: DashboardRoadmap, status: RoadmapStatus) => void;
+  onNewChangelog: () => void;
   onOpenChangelog: (entry: DashboardChangelog) => void;
   onOpenFeedback: (post: Post) => void;
   onOpenFeedbackKey: (stableKey: string) => void;
-  onOpenProactivation: () => void;
   onOpenRoadmapItem: (item: DashboardRoadmap) => void;
+  onOpenSettingsSection: (section: SettingsSection) => void;
   onOpenSetup: () => void;
   onProjectCreated: (projectSlug: string, workspaceSlug?: string) => void;
+  onRoadmapChange: (roadmap: RoadmapViewId) => void;
   onSearchChange: (query: string) => void;
   onStatusChange: (status: RoadmapStatus | "all") => void;
+  roadmapViews: RoadmapView[];
   onVoteRoadmapItem: (item: DashboardRoadmap) => Promise<unknown>;
   onVoteSelectedRoadmap: (item: DashboardRoadmap) => Promise<unknown>;
 };

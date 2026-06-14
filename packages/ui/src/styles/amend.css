@@ -28,6 +28,27 @@
   list-style: decimal;
 }
 
+.amend-composer-editor h1 {
+  margin: 0.7rem 0 0.3rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.amend-composer-editor h2 {
+  margin: 0.55rem 0 0.25rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.amend-composer-editor blockquote {
+  margin: 0.45rem 0;
+  padding-left: 0.85rem;
+  border-left: 2px solid var(--border);
+  color: var(--muted-foreground);
+}
+
 .amend-composer-editor a {
   color: var(--foreground);
   text-decoration: underline;

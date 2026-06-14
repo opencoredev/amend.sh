@@ -22,8 +22,8 @@ export function FooterControl({
         type="button"
         title={label}
         className={cn(
-          "flex h-8 min-w-[8.75rem] items-center gap-2 border border-border bg-muted px-2.5 text-xs font-semibold text-muted-foreground transition-[background-color,border-color,color,scale] hover:border-foreground/60 hover:bg-accent hover:text-foreground",
-          active && "border-foreground/70 bg-accent text-foreground",
+          "flex h-8 min-w-[8.75rem] items-center gap-2 rounded-lg bg-[#151518] px-2.5 text-xs font-semibold text-muted-foreground ring-1 ring-white/[0.055] transition-colors duration-150 ease-linear hover:bg-[#1a1a1d] hover:text-foreground active:opacity-75",
+          active && "bg-accent text-foreground ring-white/[0.09]",
         )}
         onClick={onClick}
       >
@@ -57,8 +57,8 @@ export function IconControl({
         aria-label={label}
         title={label}
         className={cn(
-          "flex h-8 min-w-8 items-center justify-center gap-2 border border-border bg-muted px-2 text-xs font-semibold text-muted-foreground transition-[background-color,border-color,color,scale] hover:border-foreground/60 hover:bg-accent hover:text-foreground [&_svg]:size-4",
-          active && "border-foreground/70 bg-accent text-foreground",
+          "flex h-8 min-w-8 items-center justify-center gap-2 rounded-lg bg-[#151518] px-2 text-xs font-semibold text-muted-foreground ring-1 ring-white/[0.055] transition-colors duration-150 ease-linear hover:bg-[#1a1a1d] hover:text-foreground active:opacity-75 [&_svg]:size-4",
+          active && "bg-accent text-foreground ring-white/[0.09]",
         )}
         onClick={onClick}
       >

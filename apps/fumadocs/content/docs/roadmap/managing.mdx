@@ -1,0 +1,67 @@
+---
+title: Managing the board
+description: Create roadmap items, move them through statuses, set priority and targets, and read their evidence.
+---
+
+The board is where you run the roadmap day to day. Everything here also has an API equivalent, so you can drive it by hand or from automation.
+
+## Add an item
+
+Three ways an item shows up on the board:
+
+- A team member clicks the "+" on a column, which drops a new card into that status.
+- A feedback request gets promoted, carrying its link back to the original post.
+- The automation engine creates one from source evidence, like a GitHub PR that clearly maps to planned work.
+
+To create one from code, upsert it. The same call creates and updates, keyed on `stableKey`:
+
+```ts
+await amend.upsertRoadmapItem({
+  title: "Bulk CSV export",
+  description: "Export a month of reports in one download.",
+  status: "planned",
+  priority: "P1",
+  impact: "Top ask from reporting-heavy accounts.",
+  target: "Q3",
+  stableKey: "roadmap-bulk-export",
+});
+```
+
+A note on status values. The board columns and the API use different names. Pass one of the API `status` values below to `upsertRoadmapItem`, and the board places the item in the matching column:
+
+| API `status`                            | Board column |
+| --------------------------------------- | ------------ |
+| `under_review`, `considering`, `paused` | Under Review |
+| `planned`                               | Planned      |
+| `in_progress`                           | In Progress  |
+| `shipped`, `closed`                     | Done         |
+
+The example above passes `planned`, so the item lands in the Planned column.
+
+## Move it across
+
+Dragging a card to another column changes its status. That is the normal way work progresses: Under Review when you are deciding, Planned once you commit, In Progress while building, Done when it ships. Each move is the same status change you would make through `upsertRoadmapItem`, so the board and the API never disagree.
+
+<Screenshot caption="Dragging a card from Planned to In Progress." />
+
+## Priority and targets
+
+Two fields help you sort within a column:
+
+- Priority runs P0 to P3. P0 is critical, P1 high, P2 normal, P3 low.
+- Target is a free-form milestone or date, like "Q3" or "v2.4". It shows on the card so you can see commitments at a glance.
+
+## Read an item
+
+Open a card for the full picture. The detail view shows the description and impact, the vote count with an upvote button, and a stats row: status, priority, votes, changelog links, target, and last updated. Below that is the source evidence, the links to the PRs and issues this item is built on.
+
+<Screenshot
+  caption="A roadmap item open in detail, with stats and source evidence."
+  ratio="16 / 10"
+/>
+
+The sidebar is where the loop shows itself. "Linked feedback" takes you back to the request that started the item, and the changelog link count tells you whether the work has shipped yet.
+
+## Multiple views
+
+You can keep more than one named roadmap view, each with its own set of items. The default is "Main roadmap," which holds every item Amend knows about, tied back to feedback, GitHub source, and changelog evidence. Views show up in the sidebar with their item counts.

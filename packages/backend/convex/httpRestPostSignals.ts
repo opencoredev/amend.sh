@@ -1,4 +1,4 @@
-import { api } from "./_generated/api";
+import { api, internal } from "./_generated/api";
 import type { RestPostInput } from "./httpRestPostTypes";
 import {
   eventName,
@@ -78,7 +78,7 @@ export async function handleSignalRestPost(input: RestPostInput) {
       return json({ error: signature.error }, 401);
     }
 
-    const result = await ctx.runMutation(api.amend.ingestSourceEvent, {
+    const result = await ctx.runMutation(internal.amend.trustedIngestSourceEvent, {
       workspaceSlug,
       ...githubSourceEvent(request, body),
     });
@@ -86,7 +86,7 @@ export async function handleSignalRestPost(input: RestPostInput) {
   }
 
   if (resource === "source-events") {
-    const result = await ctx.runMutation(api.amend.ingestSourceEvent, {
+    const result = await ctx.runMutation(internal.amend.trustedIngestSourceEvent, {
       workspaceSlug,
       ...sourceEventFromBody(body),
     });

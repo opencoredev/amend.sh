@@ -82,9 +82,6 @@ export function SidebarNavItem({
       )}
       onClick={onClick}
     >
-      {active && (
-        <span className="absolute left-1.5 top-1/2 h-4 w-0.5 -translate-y-1/2 rounded-full bg-foreground" />
-      )}
       <span className="flex min-w-0 items-center gap-2.5">
         {icon}
         <span className="truncate">{label}</span>

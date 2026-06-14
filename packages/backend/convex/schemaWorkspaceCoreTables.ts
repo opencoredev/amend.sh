@@ -13,10 +13,13 @@ export const workspaceCoreTables = {
       v.object({
         accentColor: v.optional(v.string()),
         changelogVisibility: portalVisibility,
+        customThemeCss: v.optional(v.string()),
         feedbackMode: portalFeedbackMode,
         headline: v.optional(v.string()),
         intro: v.optional(v.string()),
         roadmapVisibility: portalVisibility,
+        themeAppearance: v.optional(v.union(v.literal("light"), v.literal("dark"))),
+        themePreset: v.optional(v.string()),
       }),
     ),
     createdAt: v.number(),

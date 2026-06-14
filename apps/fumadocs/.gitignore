@@ -4,11 +4,14 @@
 # generated content
 .source
 
-# test & build
-/coverage
-/.next/
-/out/
+# tanstack start / vite / nitro build output
+/.output
+/.nitro
+/.tanstack
+/dist
+/out
 /build
+/coverage
 *.tsbuildinfo
 
 # misc
@@ -23,4 +26,3 @@ yarn-error.log*
 # others
 .env*.local
 .vercel
-next-env.d.ts

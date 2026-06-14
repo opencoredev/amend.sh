@@ -1,0 +1,38 @@
+---
+title: Feedback
+description: Collect customer requests, triage them on boards, and trace each one to the work that answers it.
+---
+
+Feedback is where customer asks land before they become anything else. A request comes in from the portal, your app, an import, or someone on the team typing it in. From there it sits in a structured inbox you can sort, triage, and link to the roadmap and changelog, so the same ask never gets logged twice and nobody loses track of who wanted what.
+
+<Screenshot caption="The feedback inbox: posts grouped by board, each with a vote count, status, and source." />
+
+## What a post holds
+
+Every request is a single post. It carries:
+
+- A `title` and `body` (the ask itself).
+- A board: `feature`, `bug`, `changelog`, or `feedback`. Boards are fixed, so a post is always one of those four.
+- A status that matches the roadmap: `backlog` ("Under Review"), `next` ("Planned"), `progress` ("In Progress"), or `done` ("Done").
+- A `source` string saying where it came from, and `sourceLinks` for the hard evidence (a GitHub PR, an issue, an email).
+- A vote count, free-form labels, and an author.
+
+Two counters tie a post to the rest of the loop: `linkedRoadmapCount` and `linkedChangelogCount`. When a post is on the roadmap or shipped in a changelog entry, you see it on the post without leaving the inbox.
+
+## The two sides
+
+Customers and your team see different things.
+
+- Customers use the portal. They submit a request, and depending on your settings they can vote and comment on existing ones. After submitting they get a plain "Request sent for triage."
+- Your team uses the dashboard. You get the full list with vote counts, board and status filters, a composer for logging requests by hand, and a detail view with internal notes and the source evidence behind each ask.
+
+## Where to go next
+
+<Cards>
+  <Card title="Collecting feedback" href="/docs/feedback/collecting">
+    Every way a request gets in: the portal form, the SDK, the REST API, imports, and the composer.
+  </Card>
+  <Card title="Triaging the inbox" href="/docs/feedback/triaging">
+    Boards, statuses, internal notes, and linking a request to the roadmap.
+  </Card>
+</Cards>

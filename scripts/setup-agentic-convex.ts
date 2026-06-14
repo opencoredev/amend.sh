@@ -14,6 +14,7 @@ type SetupOptions = {
   projectRef?: string;
   siteUrl: string;
   skipDefaultEnv: boolean;
+  skipInstall: boolean;
   worktreeName: string;
 };
 
@@ -31,6 +32,11 @@ const options = parseArgs(process.argv.slice(2));
 if (options.dryRun) {
   const deploymentRef = deploymentReference(options);
   console.log(
+    options.skipInstall
+      ? "Would skip dependency installation."
+      : "Would install dependencies with bun install.",
+  );
+  console.log(
     options.local
       ? "Would set up a local anonymous Convex deployment."
       : `Would create/select Convex deployment ${deploymentRef} with expiration ${JSON.stringify(
@@ -40,15 +46,21 @@ if (options.dryRun) {
   process.exit(0);
 }
 
+if (!options.skipInstall) {
+  await run("bun", ["install"], {
+    cwd: repoRoot,
+    label: "Install Bun dependencies",
+  });
+}
+
 if (options.local) {
-  await run("bunx", ["convex", "dev", "--once", "--tail-logs", "disable"], {
+  await runBunx(["convex", "dev", "--once", "--tail-logs", "disable"], {
     cwd: backendDir,
     label: "Set up local Convex deployment",
   });
 } else {
   const deploymentRef = deploymentReference(options);
-  const created = await run(
-    "bunx",
+  const created = await runBunx(
     [
       "convex",
       "deployment",
@@ -71,7 +83,7 @@ if (options.local) {
     console.warn(
       `Could not create ${deploymentRef}; trying to select it in case it already exists.`,
     );
-    await run("bunx", ["convex", "deployment", "select", deploymentRef], {
+    await runBunx(["convex", "deployment", "select", deploymentRef], {
       cwd: backendDir,
       label: `Select existing Convex deployment ${deploymentRef}`,
     });
@@ -90,7 +102,7 @@ if (options.local) {
     }
   }
 
-  await run("bunx", ["convex", "dev", "--once", "--tail-logs", "disable"], {
+  await runBunx(["convex", "dev", "--once", "--tail-logs", "disable"], {
     cwd: backendDir,
     label: "Deploy Convex functions once",
   });
@@ -160,6 +172,10 @@ function parseArgs(args: string[]): SetupOptions {
       process.env.VITE_APP_URL ??
       localWebUrl(worktreeName),
     skipDefaultEnv: flags.has("skip-default-env"),
+    skipInstall:
+      flags.has("skip-install") ||
+      process.env.AMEND_SKIP_INSTALL === "1" ||
+      process.env.CI === "true",
     worktreeName,
   };
 }
@@ -202,7 +218,7 @@ function sanitizeLocalhostPart(value: string) {
 }
 
 async function ensureConvexEnv(name: string, value: string) {
-  const existing = await run("bunx", ["convex", "env", "get", name], {
+  const existing = await runBunx(["convex", "env", "get", name], {
     allowFailure: true,
     cwd: backendDir,
     label: `Check Convex env ${name}`,
@@ -213,7 +229,7 @@ async function ensureConvexEnv(name: string, value: string) {
     return;
   }
 
-  await run("bunx", ["convex", "env", "set", name, value], {
+  await runBunx(["convex", "env", "set", name, value], {
     cwd: backendDir,
     label: `Set Convex env ${name}`,
   });
@@ -285,6 +301,18 @@ function randomSecret() {
   return randomBytes(32).toString("base64url");
 }
 
+async function runBunx(
+  args: string[],
+  optionsValue: {
+    allowFailure?: boolean;
+    cwd: string;
+    label: string;
+    quiet?: boolean;
+  },
+): Promise<CommandResult> {
+  return run("bun", ["x", ...args], optionsValue);
+}
+
 async function run(
   cmd: string,
   args: string[],
@@ -345,6 +373,7 @@ Options:
   --worktree-name <name>  Override the deployment ref suffix. Default: repo directory name
   --site-url <url>        SITE_URL to set on new deployments. Default: worktree .localhost URL
   --skip-default-env      Do not seed default Convex env vars
+  --skip-install          Do not run bun install before Convex setup
   --local                 Use Convex local anonymous setup instead of cloud dev
   --dry-run               Print the target setup without creating a deployment
 `);

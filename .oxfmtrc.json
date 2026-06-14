@@ -1,3 +1,7 @@
 {
-  "ignorePatterns": ["apps/web/src/routeTree.gen.ts", "packages/backend/convex/_generated/**"]
+  "ignorePatterns": [
+    "apps/web/src/routeTree.gen.ts",
+    "apps/fumadocs/src/routeTree.gen.ts",
+    "packages/backend/convex/_generated/**"
+  ]
 }

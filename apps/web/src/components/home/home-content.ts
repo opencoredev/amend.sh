@@ -1,196 +1,153 @@
+import type { BrandName } from "./brand-icons";
+
 export const navItems = [
   ["01", "Product", "#features"],
   ["02", "Workflow", "#workflow"],
   ["03", "Pricing", "#pricing"],
 ] as const;
 
+/** Sources shown in the hero "listens to" strip. */
+export const heroListens: { brand: BrandName; label: string }[] = [
+  { brand: "discord", label: "Discord" },
+  { brand: "slack", label: "Slack" },
+  { brand: "github", label: "GitHub" },
+  { brand: "linear", label: "Linear" },
+  { brand: "intercom", label: "Intercom" },
+];
+
+/**
+ * The request, before and after. A real community message on one side and the
+ * shipped changelog entry on the other, with Amend closing the loop between
+ * them. Copy stays honest, no invented versions or counts.
+ */
+export const requestStory = {
+  ask: {
+    who: "a member of your community",
+    where: "#feature-requests",
+    when: "2 weeks ago",
+    message: "Any chance we can export invoices as CSV? Would save us hours every month.",
+    note: "Others kept asking for the same thing.",
+  },
+  shipped: {
+    label: "Changelog",
+    title: "Invoice CSV export is live",
+    note: "Everyone who asked hears back automatically, the moment it ships.",
+  },
+} as const;
+
 export const features = [
   {
-    label: "signals",
-    title: "Catch product demand where it already happens.",
-    copy: "Amend watches selected Discord, Slack, GitHub, support, portal, and in-app sources without turning every message into a task.",
+    index: "01",
+    title: "Catch demand where it already happens",
+    copy: "Discord, Slack, GitHub, support, portal, and in-app sources, watched without turning every message into a task.",
   },
   {
-    label: "threads",
-    title: "Turn scattered messages into demand threads.",
-    copy: "Repeated asks, bug reports, confused users, votes, and account context roll up into one source-linked record.",
+    index: "02",
+    title: "Scattered messages become demand threads",
+    copy: "Repeated asks, bug reports, votes, and account context roll up into one source-linked record you can act on.",
   },
   {
-    label: "shipping",
-    title: "Follow the work through GitHub and Linear.",
-    copy: "Issues, PRs, releases, labels, and Linear status changes show whether the team is planning, building, or shipping the request.",
+    index: "03",
+    title: "Follow the work through GitHub and Linear",
+    copy: "Issues, PRs, releases, labels, and Linear status changes show exactly where each request stands.",
   },
   {
-    label: "follow-up",
-    title: "Update the right people when it ships.",
-    copy: "Amend updates internal product history automatically, then queues public changelog, Discord, Slack, email, or widget updates by rule.",
+    index: "04",
+    title: "Update the right people when it ships",
+    copy: "Internal history updates itself, then changelog, Discord, Slack, email, and widget posts go out by your rules.",
   },
 ] as const;
 
-export const workflowTrace = [
+/** Integration board, grouped by the role each tool plays. */
+export const connectGroups: {
+  role: string;
+  caption: string;
+  items: { label: string; brand?: BrandName }[];
+}[] = [
   {
-    title: "A real message comes in",
-    source: "Discord, Slack, support, portal, widget",
-    output:
-      "Amend only watches the places you picked. A random chat thread does not become a roadmap item by accident.",
+    role: "Listen",
+    caption: "where users talk",
+    items: [
+      { label: "Discord", brand: "discord" },
+      { label: "Slack", brand: "slack" },
+      { label: "Intercom", brand: "intercom" },
+      { label: "Zendesk", brand: "zendesk" },
+      { label: "Portal" },
+      { label: "Widget" },
+      { label: "Email" },
+    ],
   },
   {
-    title: "Amend decides if it matters",
-    source: "requests, bugs, complaints, votes, confusion",
-    output:
-      "Noise gets dropped. Useful product signal keeps the original words, source link, customer, and account.",
+    role: "Build",
+    caption: "where work happens",
+    items: [
+      { label: "GitHub", brand: "github" },
+      { label: "Linear", brand: "linear" },
+      { label: "Issues" },
+      { label: "Releases" },
+    ],
   },
   {
-    title: "Similar asks become one thread",
-    source: "duplicates, GitHub issues, Linear issues, PRs",
-    output:
-      "Ten people asking for the same export turns into one demand thread with receipts, not ten separate chores.",
+    role: "Tell",
+    caption: "where updates land",
+    items: [
+      { label: "Changelog" },
+      { label: "Roadmap" },
+      { label: "Discord", brand: "discord" },
+      { label: "Slack", brand: "slack" },
+      { label: "Widget" },
+      { label: "Email" },
+    ],
   },
   {
-    title: "Shipping updates the people waiting",
-    source: "roadmap, changelog, email, Slack, Discord, widget",
-    output:
-      "When GitHub or Linear shows the work is done, Amend updates the record and follows your rules for public follow-up.",
-  },
-] as const;
-
-export const memoryRows = [
-  ["Original ask", "the message, issue, ticket, vote, or widget event that started it"],
-  ["Grouped demand", "the duplicate asks, source count, accounts, and people waiting"],
-  ["Build trail", "the GitHub PRs, releases, commits, labels, and Linear issues tied to it"],
-  ["Update rules", "where Amend can post, where it stays silent, and what needs approval"],
-  ["Follow-up", "who heard back after launch and who still needs a reply"],
-] as const;
-
-export const executiveRows = [
-  ["Signals", "what users keep asking for"],
-  ["Work", "what GitHub and Linear say is shipping"],
-  ["Loop", "who needs the update next"],
-] as const;
-
-export const founderProofCards = [
-  {
-    eyebrow: "The mess",
-    title: "A user asks in Discord. Another opens a GitHub issue. Support hears it again.",
-    copy: "Amend treats those as the same product signal when they are actually about the same thing.",
-    className: "lg:col-span-2",
-  },
-  {
-    eyebrow: "The thread",
-    title: "One demand thread keeps the ask, the evidence, and the people waiting.",
-    copy: "You can open a request and see who said it, where it came from, and whether work is already moving.",
-    className: "lg:col-span-2",
-  },
-  {
-    eyebrow: "In Slack",
-    title: "Tag Amend like a teammate.",
-    copy: "Ask what users want this week, capture a thread, or check whether a shipped PR needs an update.",
-    className: "lg:col-span-1",
-  },
-  {
-    eyebrow: "In GitHub",
-    title: "Merged work can move the product story.",
-    copy: "A PR or release can update internal history and prepare the right changelog, roadmap, or user follow-up.",
-    className: "lg:col-span-1",
-  },
-  {
-    eyebrow: "For users",
-    title: "The person who asked should hear when it ships.",
-    copy: "Amend can post quietly, react with a receipt, or wait for approval before anything public goes out.",
-    className: "lg:col-span-2",
+    role: "Weight",
+    caption: "who is asking",
+    items: [
+      { label: "Stripe", brand: "stripe" },
+      { label: "Notion", brand: "notion" },
+      { label: "Accounts" },
+      { label: "Plans" },
+      { label: "MRR" },
+    ],
   },
 ] as const;
 
-export const integrationRows = [
-  ["Listen", "Discord", "Slack", "Portal", "Widget", "SDK", "Email", "Support", "GitHub"],
-  ["Build", "GitHub", "Linear", "Issues", "PRs", "Releases", "Labels", "Commits"],
-  ["Tell", "Roadmap", "Changelog", "Widget", "Portal", "Discord", "Slack", "Email"],
-  ["Weight", "Accounts", "Plans", "MRR", "Stripe", "HubSpot", "CSV", "Webhooks"],
-] as const;
-
-export const approvalSteps = [
-  ["Silent", "Watch selected channels and save product signal without posting anything."],
-  ["Receipt", "React or reply when feedback is captured, so users know someone heard them."],
-  [
-    "Teammate",
-    "Let your team tag Amend in Slack or Discord and ask what changed, shipped, or needs follow-up.",
-  ],
-] as const;
-
-export const sourceScenes = [
-  {
-    label: "Request captured",
-    title: "Discord",
-    rows: ["Can we export invoices?", "Account: Northstar", "Thread: billing exports"],
-  },
-  {
-    label: "Work linked",
-    title: "GitHub",
-    rows: ["PR #428 billing export", "Linear: ENG-214", "Release: v1.4.0"],
-  },
-  {
-    label: "Update ready",
-    title: "Widget",
-    rows: ["Invoice export shipped", "12 users waiting", "Post allowed after review"],
-  },
-] as const;
-
+/** Plans, low to high. Open source is the $0 anchor; Builder is recommended. */
 export const plans = [
   {
-    name: "Open Source",
+    name: "Open source",
     price: "$0",
-    note: "self-hosted",
-    description:
-      "Run Amend on your own infrastructure with your own provider keys and update policy.",
-    points: [
-      "Portal, roadmap, changelog, widget, SDK, API, and CLI",
-      "BYO GitHub, Linear, AI, email, Slack, Discord, and Stripe keys",
-      "No hosted usage limits from Amend",
-    ],
+    period: "self-hosted",
+    tagline: "Run the whole thing yourself, free forever.",
+    points: ["Full loop, every surface", "Bring your own keys", "No seats or signal caps"],
+    cta: "self-host",
   },
   {
     name: "Builder",
     price: "$19",
-    note: "per month",
-    description: "For solo founders, open-source projects, and tiny teams shipping in public.",
-    points: [
-      "All core features, including GitHub, Linear, Discord, Slack, portal, widget, SDK, roadmap, and changelog",
-      "3 projects, 3 seats, and 10k captured product signals per month",
-      "AI processing counts useful signals, not raw noise or tokens",
-    ],
+    period: "/mo",
+    tagline: "For founders shipping in public.",
+    points: ["3 projects, 3 seats", "10k signals a month", "Every integration included"],
+    cta: "access",
     featured: true,
   },
   {
     name: "Team",
     price: "$49",
-    note: "per month",
-    description: "For small teams that need more projects, history, automation, and shared review.",
-    points: [
-      "Everything in Builder with 10 projects, 10 seats, and 75k captured signals per month",
-      "Higher automation volume, longer history, and priority processing",
-      "Team digest, Slack/Discord teammate mode, and review queue controls",
-    ],
+    period: "/mo",
+    tagline: "For small teams with shared review.",
+    points: ["10 projects, 10 seats", "75k signals a month", "Teammate mode and review queue"],
+    cta: "access",
   },
   {
     name: "Growth",
     price: "$99",
-    note: "per month",
-    description: "For teams with real customer volume across support, community, and product.",
-    points: [
-      "30 projects, 25 seats, and 300k captured signals per month",
-      "Support integrations, account context, advanced history, and audit trails",
-      "Stripe, HubSpot, Intercom, and Zendesk-ready workflows",
-    ],
-  },
-  {
-    name: "Scale",
-    price: "Custom",
-    note: "higher volume",
-    description: "For large communities, hosted platforms, or teams that need custom retention.",
-    points: [
-      "Custom signal volume, retention, processing, and white-label widget needs",
-      "Security review, migration planning, and priority support",
-      "Still built for modern teams, not Jira bureaucracy",
-    ],
+    period: "/mo",
+    tagline: "For real support and community volume.",
+    points: ["30 projects, 25 seats", "300k signals a month", "Account context and audit trails"],
+    cta: "access",
   },
 ] as const;
+
+export const scaleLine =
+  "Bigger community or a hosted platform of your own? Scale adds custom volume, retention, white-label widgets, security review, and migration help.";

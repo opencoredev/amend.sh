@@ -1,13 +1,15 @@
 import { PortalMobileNav } from "@/components/portal-account-actions";
 import { PortalFeedbackSection } from "@/components/public-portal-feedback-section";
-import { PortalHeader } from "@/components/public-portal-header";
+import { PortalTopBar } from "@/components/public-portal-header";
 import { PortalHero } from "@/components/public-portal-hero";
+import { PortalRail } from "@/components/public-portal-rail";
 import {
   PortalRoadmapSection,
   PortalUpdatesSection,
 } from "@/components/public-portal-roadmap-updates";
 import type { PortalData } from "@/components/public-portal-types";
-import { createPortalTheme, portalThemeStyle } from "@/lib/portal-theme";
+import { cn } from "@amend/ui/lib/utils";
+import { portalThemeStyleVars, resolvePortalTheme } from "@/lib/portal-themes";
 
 export function PublicPortalView({
   portal,
@@ -20,25 +22,45 @@ export function PublicPortalView({
   const roadmap = settings?.roadmapVisibility === "private" ? [] : portal.roadmap;
   const changelog = settings?.changelogVisibility === "private" ? [] : portal.changelog;
   const feedback = settings?.feedbackMode === "closed" ? [] : portal.feedback;
-  const theme = createPortalTheme(settings?.accentColor);
+  const theme = resolvePortalTheme(settings);
 
   return (
-    <main className="dark min-h-svh bg-background text-foreground" style={portalThemeStyle(theme)}>
-      <PortalHeader workspace={portal.workspace} />
-      <PortalMobileNav workspaceSlug={portal.workspace.slug} />
-
-      <section className="mx-auto grid max-w-5xl gap-7 px-4 pb-28 pt-8 sm:px-6 sm:pb-8">
-        <PortalHero portal={portal} settings={settings} />
-        <PortalFeedbackSection
-          changelogCount={changelog.length}
-          feedback={feedback}
-          feedbackMode={settings?.feedbackMode ?? "open"}
-          roadmapCount={roadmap.length}
-          workspaceSlug={workspaceSlug}
+    <main
+      className={cn(
+        "min-h-svh bg-background p-3 font-sans text-foreground lg:h-svh lg:overflow-hidden",
+        theme.isDark && "dark",
+      )}
+      style={portalThemeStyleVars(theme.vars)}
+    >
+      <div className="grid min-h-[calc(100svh-1.5rem)] overflow-hidden rounded-2xl border border-border bg-background shadow-2xl lg:h-[calc(100svh-1.5rem)] lg:min-h-0 lg:grid-cols-[16rem_minmax(0,1fr)]">
+        <PortalRail
+          counts={{
+            changelog: changelog.length,
+            feedback: feedback.length,
+            roadmap: roadmap.length,
+          }}
+          workspace={portal.workspace}
         />
-        <PortalRoadmapSection roadmap={roadmap} />
-        <PortalUpdatesSection changelog={changelog} />
-      </section>
+
+        <section className="flex min-h-0 flex-col lg:overflow-hidden">
+          <PortalTopBar feedbackCount={feedback.length} workspace={portal.workspace} />
+
+          <div className="t-panel-slide min-h-0 flex-1 lg:overflow-y-auto" data-open="true">
+            <div className="mx-auto grid w-full max-w-3xl gap-4 px-4 pb-28 pt-2 sm:px-6 lg:pb-6">
+              <PortalHero portal={portal} settings={settings} />
+              <PortalFeedbackSection
+                feedback={feedback}
+                feedbackMode={settings?.feedbackMode ?? "open"}
+                workspaceSlug={workspaceSlug}
+              />
+              <PortalRoadmapSection roadmap={roadmap} />
+              <PortalUpdatesSection changelog={changelog} />
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <PortalMobileNav workspaceSlug={portal.workspace.slug} />
     </main>
   );
 }

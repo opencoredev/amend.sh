@@ -186,9 +186,15 @@ bun run dev:setup -- --expiration "in 2 days"
 bun run dev:setup -- --worktree-name my-feature
 ```
 
-Then it runs `convex dev --once --tail-logs disable`, seeds safe default Convex env vars for the
-worktree-local URL, and writes `apps/web/.env` from the generated `packages/backend/.env.local`
-`CONVEX_URL` and `CONVEX_SITE_URL`.
+Then it runs `bun install`, `convex dev --once --tail-logs disable`, seeds safe default Convex env
+vars for the worktree-local URL, and writes `apps/web/.env` from the generated
+`packages/backend/.env.local` `CONVEX_URL` and `CONVEX_SITE_URL`.
+
+If dependencies are already installed and you only want to refresh the Convex selection/env, use:
+
+```bash
+bun run dev:setup -- --skip-install
+```
 
 For local anonymous deployments instead of cloud dev deployments, run:
 

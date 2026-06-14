@@ -1,6 +1,6 @@
 import { Button } from "@amend/ui/components/button";
 import { cn } from "@amend/ui/lib/utils";
-import { Plus } from "lucide-react";
+import { Plus } from "@/lib/icons";
 import { useState } from "react";
 
 import { ComposerModal } from "./post-composer-modal";

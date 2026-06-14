@@ -1,6 +1,6 @@
 import { FieldGroup } from "@amend/ui/components/field";
 import { useForm } from "@tanstack/react-form";
-import { Link, useSearch } from "@tanstack/react-router";
+import { Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { useConvex } from "convex/react";
 import { makeFunctionReference } from "convex/server";
 import { lazy, Suspense, useState } from "react";
@@ -37,12 +37,25 @@ const joinSeededDemoWorkspaceMutation = makeFunctionReference<"mutation">(
 export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp?: () => void }) {
   const [formError, setFormError] = useState("");
   const [passwordResetEmail, setPasswordResetEmail] = useState<string | null>(null);
+  const navigate = useNavigate({
+    from: "/",
+  });
   const search = useSearch({ from: "/sign-in" }) as { email?: string; redirectTo?: string };
   const portalRedirect = parsePortalRedirectTo(search.redirectTo);
   const convex = useConvex();
 
   function navigateToDashboardAfterSignIn(workspace = demoWorkspaceSlug) {
     window.location.assign(`/dashboard/proactivation?workspace=${encodeURIComponent(workspace)}`);
+  }
+
+  function navigateToFreshOnboarding() {
+    // No workspace param → the default (project-less) context, so the dashboard
+    // detects requiresProjectSetup and opens the first-run onboarding.
+    navigate({
+      params: { view: "setup" },
+      search: {},
+      to: "/dashboard/$view",
+    });
   }
 
   function navigateAfterEmailSignIn() {
@@ -254,7 +267,11 @@ export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp?: ()
 
       {DevDemoSignInButton ? (
         <Suspense fallback={null}>
-          <DevDemoSignInButton onError={setFormError} onSuccess={navigateToDashboardAfterSignIn} />
+          <DevDemoSignInButton
+            onError={setFormError}
+            onFreshOnboarding={navigateToFreshOnboarding}
+            onSuccess={navigateToDashboardAfterSignIn}
+          />
         </Suspense>
       ) : null}
 

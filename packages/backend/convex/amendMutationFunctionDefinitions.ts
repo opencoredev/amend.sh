@@ -1,6 +1,8 @@
 import { joinWaitlistArgs } from "./amendAccessFunctionArgs";
 import { joinWaitlistHandler } from "./amendAccessMutationHandlers";
 import {
+  trustedUpsertChangelogEntryHandler,
+  trustedUpsertRoadmapItemHandler,
   upsertChangelogEntryHandler,
   upsertRoadmapItemHandler,
   voteRoadmapItemHandler,
@@ -41,12 +43,16 @@ import {
 import {
   planNotificationDeliveriesHandler,
   registerCustomDomainHandler,
+  trustedPlanNotificationDeliveriesHandler,
+  trustedRegisterCustomDomainHandler,
+  trustedUpdateCustomDomainStatusHandler,
+  trustedUpdateDeliveryStatusHandler,
   updateCustomDomainStatusHandler,
   updateDeliveryStatusHandler,
   upsertNotificationPreferenceHandler,
 } from "./amendNotificationMutationHandlers";
 import { revertAutomationDecisionHandler, updateReviewStatusHandler } from "./amendReviewHandlers";
-import { ingestSourceEventHandler } from "./amendSourceIngest";
+import { ingestSourceEventHandler, trustedIngestSourceEventHandler } from "./amendSourceIngest";
 import {
   connectProjectRepositoryHandler,
   createProjectHandler,
@@ -126,9 +132,19 @@ export const planNotificationDeliveriesDefinition = {
   handler: planNotificationDeliveriesHandler,
 };
 
+export const trustedPlanNotificationDeliveriesDefinition = {
+  args: planNotificationDeliveriesArgs,
+  handler: trustedPlanNotificationDeliveriesHandler,
+};
+
 export const updateDeliveryStatusDefinition = {
   args: updateDeliveryStatusArgs,
   handler: updateDeliveryStatusHandler,
+};
+
+export const trustedUpdateDeliveryStatusDefinition = {
+  args: updateDeliveryStatusArgs,
+  handler: trustedUpdateDeliveryStatusHandler,
 };
 
 export const registerCustomDomainDefinition = {
@@ -136,9 +152,19 @@ export const registerCustomDomainDefinition = {
   handler: registerCustomDomainHandler,
 };
 
+export const trustedRegisterCustomDomainDefinition = {
+  args: registerCustomDomainArgs,
+  handler: trustedRegisterCustomDomainHandler,
+};
+
 export const updateCustomDomainStatusDefinition = {
   args: updateCustomDomainStatusArgs,
   handler: updateCustomDomainStatusHandler,
+};
+
+export const trustedUpdateCustomDomainStatusDefinition = {
+  args: updateCustomDomainStatusArgs,
+  handler: trustedUpdateCustomDomainStatusHandler,
 };
 
 export const identifyExternalUserDefinition = {
@@ -161,6 +187,11 @@ export const ingestSourceEventDefinition = {
   handler: ingestSourceEventHandler,
 };
 
+export const trustedIngestSourceEventDefinition = {
+  args: ingestSourceEventArgs,
+  handler: trustedIngestSourceEventHandler,
+};
+
 export const createFeedbackDefinition = {
   args: createFeedbackArgs,
   handler: createFeedbackHandler,
@@ -181,9 +212,19 @@ export const upsertChangelogEntryDefinition = {
   handler: upsertChangelogEntryHandler,
 };
 
+export const trustedUpsertChangelogEntryDefinition = {
+  args: upsertChangelogEntryArgs,
+  handler: trustedUpsertChangelogEntryHandler,
+};
+
 export const upsertRoadmapItemDefinition = {
   args: upsertRoadmapItemArgs,
   handler: upsertRoadmapItemHandler,
+};
+
+export const trustedUpsertRoadmapItemDefinition = {
+  args: upsertRoadmapItemArgs,
+  handler: trustedUpsertRoadmapItemHandler,
 };
 
 export const voteRoadmapItemDefinition = {

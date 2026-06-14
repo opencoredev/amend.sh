@@ -1,5 +1,5 @@
 import { cn } from "@amend/ui/lib/utils";
-import { Check, Lightbulb, Plus } from "lucide-react";
+import { Check, Lightbulb, Plus } from "@/lib/icons";
 
 import { boardItems } from "./post-composer-model";
 import type { BoardItem } from "./post-composer-model";
@@ -21,8 +21,8 @@ export function BoardPopover({
             type="button"
             key={item}
             className={cn(
-              "flex h-10 items-center justify-between px-3 text-sm font-semibold text-muted-foreground transition-[background-color,color] hover:bg-muted hover:text-foreground",
-              item === selected && "bg-muted text-foreground",
+              "flex h-9 items-center justify-between rounded-lg px-2.5 text-sm font-semibold text-muted-foreground transition-colors duration-150 ease-linear hover:bg-foreground/[0.06] hover:text-foreground active:opacity-75",
+              item === selected && "bg-foreground/[0.08] text-foreground",
             )}
             onClick={() => onSelect(item)}
           >
@@ -30,7 +30,7 @@ export function BoardPopover({
               {item === "Feature Request" ? (
                 <Lightbulb className="size-4" />
               ) : (
-                <span className="size-2 bg-muted-foreground" />
+                <span className="size-1.5 rounded-full bg-muted-foreground" />
               )}
               {item}
             </span>
@@ -38,10 +38,10 @@ export function BoardPopover({
           </button>
         ))}
       </div>
-      <div className="border-t border-border p-1.5">
+      <div className="border-t border-white/[0.06] p-1.5">
         <button
           type="button"
-          className="flex h-10 w-full items-center gap-2 px-3 text-sm font-semibold text-muted-foreground hover:bg-muted hover:text-foreground"
+          className="flex h-9 w-full items-center gap-2 rounded-lg px-2.5 text-sm font-semibold text-muted-foreground transition-colors duration-150 ease-linear hover:bg-foreground/[0.06] hover:text-foreground active:opacity-75"
         >
           <Plus className="size-4" />
           Create new board

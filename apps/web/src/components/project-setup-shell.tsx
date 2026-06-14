@@ -1,14 +1,19 @@
 import { Link } from "@tanstack/react-router";
+import { Loader2 } from "@/lib/icons";
 
 import AmendLogo from "@/components/amend-logo";
 import type { Workspace } from "@/components/amend-dashboard-types";
-import { OnboardingWorkspace } from "@/components/project-setup-workspace";
+import { OnboardingFlow } from "@/components/onboarding-flow";
 
 export function ProjectSetupShell({
+  isFirstProject = false,
   onCreated,
+  projectsReady = true,
   workspace,
 }: {
+  isFirstProject?: boolean;
   onCreated: (projectSlug: string, workspaceSlug?: string) => void;
+  projectsReady?: boolean;
   workspace: Workspace;
 }) {
   return (
@@ -20,8 +25,16 @@ export function ProjectSetupShell({
           </Link>
         </div>
         <div className="flex flex-1 items-center justify-center">
-          <div className="w-full max-w-xs">
-            <OnboardingWorkspace onCreated={onCreated} surface="first-run" workspace={workspace} />
+          <div className="w-full max-w-sm">
+            {projectsReady ? (
+              <OnboardingFlow
+                isFirstProject={isFirstProject}
+                onCreated={onCreated}
+                workspace={workspace}
+              />
+            ) : (
+              <OnboardingPreparing />
+            )}
           </div>
         </div>
       </section>
@@ -35,5 +48,14 @@ export function ProjectSetupShell({
         <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/35" />
       </section>
     </main>
+  );
+}
+
+function OnboardingPreparing() {
+  return (
+    <div className="flex items-center gap-3 text-sm text-muted-foreground">
+      <Loader2 className="size-4 animate-spin" />
+      Preparing your workspace…
+    </div>
   );
 }
