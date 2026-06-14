@@ -41,7 +41,6 @@ export function Screenshot({
           <span className="rounded-full border border-fd-border px-2.5 py-0.5 font-mono text-[0.7rem] uppercase tracking-wider text-fd-muted-foreground">
             {label}
           </span>
-          <span className="max-w-[42ch] px-6 text-sm text-fd-muted-foreground">{caption}</span>
         </div>
       )}
       <figcaption className="border-t border-fd-border px-4 py-2 text-center text-xs text-fd-muted-foreground">

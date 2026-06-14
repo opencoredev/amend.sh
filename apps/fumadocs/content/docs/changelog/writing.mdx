@@ -58,4 +58,4 @@ await amend.upsertChangelog({
 });
 ```
 
-The matching route is `POST /api/v1/your-workspace/changelog`. To draft an entry from source evidence instead of writing it cold, see [AI drafting](/docs/changelog/ai-drafting).
+The editor derives `summary` from your first line for you, but over the API you set it yourself, as shown above. The matching route is `POST /api/v1/your-workspace/changelog`. To draft an entry from source evidence instead of writing it cold, see [AI drafting](/docs/changelog/ai-drafting).

@@ -11,7 +11,7 @@ The changelog is the end of the loop: the public record of what you shipped. An 
 
 Each entry has:
 
-- A `title` and `body`. The `summary` is derived from the first line of the body, so the list view reads well without extra work.
+- A `title` and `body`, plus a `summary` for the list view. The editor fills the summary from the first line of the body so you do not write it twice; over the API you pass `summary` yourself.
 - A category: `added` ("New"), `changed` ("Improved"), `fixed` ("Fixed"), or `removed` ("Removed").
 - A status that moves through `draft`, `in_review`, `scheduled`, and `published`.
 - An optional `version` like "2.4.0", plus free-form tags and the `sourceLinks` that tie it to the work.
