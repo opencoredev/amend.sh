@@ -32,7 +32,13 @@ export function Screenshot({
   return (
     <figure className="my-6 overflow-hidden rounded-xl border border-fd-border bg-fd-card">
       {src ? (
-        <img src={src} alt={alt ?? caption} loading="lazy" className="block w-full" style={frameStyle} />
+        <img
+          src={src}
+          alt={alt ?? caption}
+          loading="lazy"
+          className="block w-full object-cover"
+          style={frameStyle}
+        />
       ) : (
         <div
           className="flex flex-col items-center justify-center gap-2 bg-[repeating-linear-gradient(45deg,transparent,transparent_10px,color-mix(in_oklab,white_3%,transparent)_10px,color-mix(in_oklab,white_3%,transparent)_20px)] text-center"
