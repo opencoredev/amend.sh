@@ -277,8 +277,15 @@ function parseDeclarations(body: string): PortalThemeVars | undefined {
 
 /** Parse a tweakcn-style CSS export into light (`:root`) and dark (`.dark`) token maps. */
 export function parseThemeCss(css: string): { dark?: PortalThemeVars; light?: PortalThemeVars } {
-  const root = css.match(/:root\s*\{([\s\S]*?)\}/);
-  const dark = css.match(/\.dark\s*\{([\s\S]*?)\}/);
+  // Strip block comments and `@media` wrappers first, so a commented-out or
+  // `prefers-color-scheme`-scoped duplicate can't shadow the canonical
+  // top-level `:root`/`.dark` blocks. `@layer` wrappers are left intact since
+  // shadcn exports nest the real tokens inside them.
+  const cleaned = css
+    .replace(/\/\*[\s\S]*?\*\//g, "")
+    .replace(/@media[^{}]*\{(?:[^{}]*\{[^{}]*\})*[^{}]*\}/gi, "");
+  const root = cleaned.match(/:root\s*\{([\s\S]*?)\}/);
+  const dark = cleaned.match(/\.dark\s*\{([\s\S]*?)\}/);
   return {
     light: root ? parseDeclarations(root[1]) : undefined,
     dark: dark ? parseDeclarations(dark[1]) : undefined,
