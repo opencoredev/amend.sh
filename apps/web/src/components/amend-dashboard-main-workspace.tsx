@@ -83,6 +83,7 @@ export function AmendDashboardMainWorkspace({
     <>
       {showOnboarding ? (
         <DashboardOnboardingChecklist
+          key={activeProject.id}
           projectId={activeProject.id}
           projectName={activeProject.name}
           state={onboarding}

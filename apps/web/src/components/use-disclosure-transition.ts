@@ -38,21 +38,29 @@ export function useDisclosureTransition(
   const [mounted, setMounted] = useState(open);
   const [phase, setPhase] = useState<"pre" | "open" | "closing">(open ? "open" : "closing");
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const previousOpen = useRef(open);
 
   useEffect(() => {
     let raf1 = 0;
     let raf2 = 0;
 
+    // Replay the entrance only on a real closed→open transition. When the
+    // element is already open on mount (e.g. pre-opened from URL state) the
+    // first render is already in the open phase; replaying would flash through
+    // the pre-state for two frames.
+    const justOpened = open && !previousOpen.current;
+    previousOpen.current = open;
+
     if (open) {
       if (closeTimer.current) clearTimeout(closeTimer.current);
       setMounted(true);
-      if (prefersReducedMotion()) {
-        setPhase("open");
-      } else {
+      if (justOpened && !prefersReducedMotion()) {
         setPhase("pre");
         raf1 = requestAnimationFrame(() => {
           raf2 = requestAnimationFrame(() => setPhase("open"));
         });
+      } else {
+        setPhase("open");
       }
       return () => {
         cancelAnimationFrame(raf1);
