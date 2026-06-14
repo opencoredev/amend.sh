@@ -56,7 +56,11 @@ export function useSettingsWorkspaceFormState({
     activeProject.logoUrl,
     activeProject.name,
     activeProject.websiteUrl,
-    workspace,
+    workspace.portalSettings?.headline,
+    workspace.portalSettings?.intro,
+    workspace.portalSettings?.themePreset,
+    workspace.portalSettings?.themeAppearance,
+    workspace.portalSettings?.customThemeCss,
   ]);
 
   return {

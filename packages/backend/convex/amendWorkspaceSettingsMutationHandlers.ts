@@ -4,6 +4,10 @@ import { demoWorkspace } from "./amendDemoData";
 import { normalizeWorkspace } from "./amendNormalizers";
 import { ensureDashboardBaseRecords, requireDashboardUser } from "./amendWorkspace";
 
+// Cap persisted custom portal CSS so a workspace owner can't store unbounded
+// (multi-megabyte) documents. Generous headroom over a real tweakcn-style export.
+const MAX_CUSTOM_THEME_CSS_LENGTH = 50_000;
+
 type PortalSettingsDoc = NonNullable<Doc<"workspaces">["portalSettings"]>;
 
 type UpdatePortalSettingsArgs = {
@@ -33,6 +37,12 @@ export async function updatePortalSettingsHandler(
   const user = await requireDashboardUser(ctx);
   const workspace = await ensureDashboardBaseRecords(ctx, user, args.workspaceSlug);
   const current = workspace.portalSettings ?? demoWorkspace.portalSettings;
+  if (
+    args.customThemeCss !== undefined &&
+    args.customThemeCss.length > MAX_CUSTOM_THEME_CSS_LENGTH
+  ) {
+    throw new Error(`Custom theme CSS exceeds the ${MAX_CUSTOM_THEME_CSS_LENGTH}-character limit`);
+  }
   const next = {
     accentColor: args.accentColor ?? current.accentColor,
     changelogVisibility: args.changelogVisibility ?? current.changelogVisibility,
