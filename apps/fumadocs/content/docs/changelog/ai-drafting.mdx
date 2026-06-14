@@ -15,10 +15,15 @@ The SDK turns input into a draft entry:
 
 ```ts
 const draft = await amend.draftChangelog({
-  title: "Bulk CSV export",
-  // plus the source evidence and context the model should summarize
+  title: "Bulk CSV export", // required
+  body: "Rough notes or context for the model to expand on.",
+  kind: "added",
+  sourceLinks: [{ url: "https://github.com/acme/app/pull/482" }],
+  dryRun: true, // preview without saving a draft
 });
 ```
+
+Only `title` is required. `body`, `kind`, and `sourceLinks` give the model more to work with, and `dryRun` returns the draft without persisting it.
 
 The matching REST route is `POST /api/v1/your-workspace/drafts`, which takes an owner token. Both return a draft you then review, adjust, and save through the normal [writing and publishing](/docs/changelog/writing) flow. Nothing is published automatically.
 
