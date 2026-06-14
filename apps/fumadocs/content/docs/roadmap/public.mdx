@@ -32,6 +32,8 @@ const planned = await amend.roadmap("planned"); // one column
 GET /api/v1/your-workspace/roadmap?status=planned
 ```
 
+The `status` filter takes an API status value like `planned`, `in_progress`, or `shipped`, not a board column id. The full set and how each maps to a column is in [managing the board](/docs/roadmap/managing).
+
 This is what you would call to render the roadmap inside your own product instead of the hosted portal, or to pull the current state into a status page. Reads of the public roadmap are tracked, so you can see how much attention it gets.
 
 For the embeddable panel that drops the roadmap and changelog into your own UI, see [customer surfaces](/docs/customer-surfaces).
