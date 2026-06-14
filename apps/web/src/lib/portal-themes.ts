@@ -266,9 +266,7 @@ const DECLARATION_RE = /--([a-z0-9-]+)\s*:\s*([^;]+);/gi;
 
 function parseDeclarations(body: string): PortalThemeVars | undefined {
   const vars: PortalThemeVars = {};
-  let match: RegExpExecArray | null;
-  DECLARATION_RE.lastIndex = 0;
-  while ((match = DECLARATION_RE.exec(body)) !== null) {
+  for (const match of body.matchAll(DECLARATION_RE)) {
     const [, name, value] = match;
     if ((APPLIED_TOKENS as readonly string[]).includes(name)) {
       vars[name] = value.trim();
