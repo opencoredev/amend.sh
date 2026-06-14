@@ -20,6 +20,16 @@
 
 Do not install `recharts` — it has CJS/ESM interop issues with this Vite + TanStack Start setup (causes `require_isUnsafeProperty is not a function` at runtime). Use pure CSS/SVG bar charts instead (see `proactivation-analytics-panel.tsx` for the pattern: flex columns with `height: pct%` + `bg-foreground`).
 
+## Documentation Sync
+
+**When you change a feature, update its docs in the same change.** The public docs live in `apps/fumadocs/content/docs/`. If your work changes what a user or integrating agent can observe — a customer-facing surface, an API route or SDK method, a CLI command, an automation rule, a config/env var, an auth scope, a setup or deploy step, or a workflow's behavior — the matching MDX page must be updated before the work is considered done.
+
+This applies to **content only**. Do not touch the Fumadocs framework, routing, or build config as part of feature work.
+
+- A pure internal refactor with no observable change does **not** require a docs edit.
+- If a feature has **no** owning doc page yet, add a page (and register it in `content/docs/meta.json`) or flag the gap in your summary — do not silently leave it undocumented.
+- The feature → doc-page map and detailed triggers live in `apps/fumadocs/AGENTS.md`. Read it before editing docs.
+
 ## SirPaul PR Workflow
 
 SirPaul story work must go through a pull request. Do not treat "ship it" or similar language as permission to bypass a PR for SirPaul work unless the user explicitly says not to make a PR in the current turn.

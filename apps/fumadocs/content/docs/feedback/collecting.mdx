@@ -1,0 +1,102 @@
+---
+title: Collecting feedback
+description: The five ways a customer request gets into Amend, with the code and settings for each.
+---
+
+A request can reach the inbox five ways. They all create the same kind of post, so you can mix them without ending up with two formats of the same thing.
+
+## The portal form
+
+The fastest path is the hosted portal. Customers see a submission panel with a title, email, and body, and what they can do is set by `feedbackMode` in your portal settings:
+
+- `open` — anyone can submit.
+- `authenticated` — they have to sign in first, otherwise they see a sign-in prompt.
+- `closed` — the form is hidden and reads "Feedback is closed."
+
+After a successful submit the customer sees "Request sent for triage." Nothing else is exposed to them at that point.
+
+<Screenshot caption="The portal submission panel a customer sees, in open mode." ratio="16 / 10" />
+
+## The SDK
+
+Use the SDK when you want to capture feedback from inside your own product, like a "Send feedback" widget. No token is required for customer-side writes.
+
+```ts
+import { Amend } from "@amend/sdk";
+
+const amend = new Amend({ project: "your-workspace", apiBaseUrl: "/api/v1" });
+
+await amend.submitRequest({
+  title: "Bulk export for reports",
+  body: "We need to pull a month of reports as CSV in one go.",
+  authorEmail: "casey@acme.com",
+  authorName: "Casey",
+  labels: ["reporting"],
+  sourceUrl: "https://app.acme.com/reports",
+});
+```
+
+The same client handles the interactions customers take on existing requests:
+
+```ts
+await amend.vote("request-key", userId);
+await amend.comment("request-key", "We'd use this weekly.", userId);
+await amend.react("request-key", "+1", userId);
+```
+
+If you want votes and updates attributed to a real person, identify them first:
+
+```ts
+await amend.identify({
+  externalUserId: "user_123",
+  email: "casey@acme.com",
+  name: "Casey",
+});
+```
+
+## The REST API
+
+If you are not on JavaScript, post directly. The routes live under `/api/v1/:workspace`.
+
+```http
+POST /api/v1/your-workspace/feedback
+Content-Type: application/json
+
+{
+  "title": "Bulk export for reports",
+  "body": "We need to pull a month of reports as CSV in one go.",
+  "authorEmail": "casey@acme.com"
+}
+```
+
+Votes, comments, and reactions go through one interactions route:
+
+```http
+POST /api/v1/your-workspace/interactions
+Content-Type: application/json
+
+{ "kind": "vote", "requestKey": "request-key", "userId": "user_123" }
+```
+
+See the [API reference](/docs/api-reference) for the full route and auth table.
+
+## Imports
+
+Moving off another tool, or sitting on a backlog in a spreadsheet? Import in bulk instead of one call per row. The SDK takes an array:
+
+```ts
+await amend.importFeedback([
+  { title: "Dark mode", body: "Please.", authorEmail: "a@acme.com" },
+  { title: "SSO", body: "Okta, ideally.", authorEmail: "b@acme.com" },
+]);
+```
+
+Imports are idempotent on the request key, so re-running a file does not duplicate posts.
+
+## The composer
+
+For the request that came in over a call or in Slack, log it by hand. The dashboard composer captures the title and body, plus the board, status, a priority tag, an assignee, and a due date, so a request you type in starts triaged instead of raw.
+
+<Screenshot caption="The composer for logging a request directly from the dashboard." />
+
+Once a request is in, it goes to the board. That is [triaging](/docs/feedback/triaging).

@@ -1,0 +1,40 @@
+---
+title: Roadmap
+description: A board of what you have committed to building, tied back to the feedback that asked for it.
+---
+
+The roadmap is the middle of the loop. Feedback tells you what people want; the changelog tells them what shipped; the roadmap is the part in between, where you say what you are actually going to build and how far along it is. It is a board, so the state of a thing is just which column it sits in.
+
+<Screenshot caption="The roadmap board: four columns of cards you can drag between statuses." />
+
+## Four columns
+
+Items move left to right through the same four statuses you see on feedback:
+
+| Column | Status | Means |
+| --- | --- | --- |
+| Under Review | `backlog` | On the table, not committed |
+| Planned | `next` | Committed, not started |
+| In Progress | `progress` | Being built now |
+| Done | `done` | Shipped |
+
+A card shows the title, a priority badge, a target if one is set, its vote count, and the first piece of source evidence. Behind each card, an item also carries a `priority` from P0 to P3, an `impact` note, a changelog link count, and the `sourceLinks` that connect it to real work.
+
+## Tied to feedback, not floating
+
+A roadmap item is not a fresh idea typed into a column. Most start as a feedback request that earned a commitment, and the item keeps a reference back to that post. Open an item and the sidebar either offers an "Open feedback" button to jump to the request that started it, or notes that it was created directly on the roadmap. Either way you can always answer "who asked for this?"
+
+## Public or private
+
+You decide whether customers see the roadmap at all. The `roadmapVisibility` setting is `private` or `public`. When it is public, customers can view item statuses and upvote the things they care about, which feeds the vote counts you triage by.
+
+## Where to go next
+
+<Cards>
+  <Card title="Managing the board" href="/docs/roadmap/managing">
+    Add items, drag them between columns, set priority and targets, and read an item's evidence.
+  </Card>
+  <Card title="The public roadmap" href="/docs/roadmap/public">
+    What customers see, how voting works, and how to read it over the API.
+  </Card>
+</Cards>

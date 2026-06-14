@@ -1,0 +1,37 @@
+---
+title: The public roadmap
+description: Show customers what you are building, let them vote, and read the roadmap over the API.
+---
+
+A public roadmap does two jobs at once. It tells customers you heard them and you are working on it, and it turns "which of these matters most?" into vote counts you can actually triage by.
+
+## Turn it on
+
+Visibility is one setting: `roadmapVisibility`, either `private` or `public`. While it is private, the roadmap lives only in your dashboard. Set it to public and the roadmap becomes readable through the portal and the API.
+
+```ts
+await amend.updatePortalSettings({ roadmapVisibility: "public" });
+```
+
+## What customers can do
+
+On a public roadmap, customers see the columns and the items in each, with their statuses. They can upvote the items they want, which is the signal you read back on the board: every vote bumps the count you sort by. They do not see internal fields like impact notes or your priority labels.
+
+<Screenshot caption="The public roadmap as a customer sees it, with upvote buttons." />
+
+## Read it over the API
+
+A public roadmap is available through the SDK and REST. Both can filter by status.
+
+```ts
+const items = await amend.roadmap();          // everything visible
+const planned = await amend.roadmap("planned"); // one column
+```
+
+```http
+GET /api/v1/your-workspace/roadmap?status=planned
+```
+
+This is what you would call to render the roadmap inside your own product instead of the hosted portal, or to pull the current state into a status page. Reads of the public roadmap are tracked, so you can see how much attention it gets.
+
+For the embeddable panel that drops the roadmap and changelog into your own UI, see [customer surfaces](/docs/customer-surfaces).

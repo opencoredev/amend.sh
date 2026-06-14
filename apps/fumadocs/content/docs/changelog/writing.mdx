@@ -1,0 +1,61 @@
+---
+title: Writing and publishing
+description: Use the changelog editor, set category and version, move an entry from draft to published, and notify subscribers.
+---
+
+The editor is a focused writing surface with the controls you need and not much else. You write in the middle, and the things that decide where the entry goes live in a settings popover.
+
+## Write the entry
+
+Start a new entry from "Write changelog" on the empty state or "New changelog" in the header. You get a blank draft, category `added`, status `draft`, ready to type into.
+
+The body is a rich-text editor with a toolbar. As you write, the summary is taken from the first line, and the editor shows word count, character count, and an estimated read time so you can keep entries tight.
+
+<Screenshot caption="The changelog editor, with the body on the left and settings to the right." ratio="16 / 10" />
+
+Saving is explicit. Cmd/Ctrl+S or the Save button writes the entry, and a small indicator tells you the state: an amber dot for unsaved changes, a green check once saved. If you try to close with unsaved edits, you get a "Discard unsaved changes?" prompt rather than losing the work.
+
+## Category and version
+
+Two fields shape how an entry reads in the list:
+
+- Category sorts the entry into New, Improved, Fixed, or Removed. Pick the one that matches the change.
+- Version is optional. Set something like "2.4.0" when an entry maps to a release; leave it blank when it does not.
+
+## Draft to published
+
+An entry's status is how you control its life:
+
+| Status | Use it when |
+| --- | --- |
+| `draft` | Still writing |
+| `in_review` | Ready for someone to check |
+| `scheduled` | Approved, going out later |
+| `published` | Live |
+
+You can set the status in the settings popover, or flip the quick toggle in the header between draft and published. Two checkboxes in that popover decide what publishing actually does:
+
+- Show on public portal — whether customers see the entry. A published entry with this on appears in the portal's changelog feed.
+- Email subscribers on publish — whether publishing also notifies the people subscribed to updates.
+
+Leave both off and a published entry is effectively an internal record. Turn them on and publishing becomes the customer-facing announcement.
+
+<Screenshot caption="The settings popover: status, category, version, and the publish toggles." ratio="4 / 3" />
+
+## Save from code
+
+If you generate entries elsewhere, upsert them directly. The call creates or updates on `stableKey`:
+
+```ts
+await amend.upsertChangelog({
+  title: "Bulk CSV export is live",
+  body: "You can now export a month of reports in one download.",
+  summary: "Export a month of reports in one download.",
+  category: "added",
+  status: "published",
+  version: "2.4.0",
+  stableKey: "changelog-bulk-export",
+});
+```
+
+The matching route is `POST /api/v1/your-workspace/changelog`. To draft an entry from source evidence instead of writing it cold, see [AI drafting](/docs/changelog/ai-drafting).

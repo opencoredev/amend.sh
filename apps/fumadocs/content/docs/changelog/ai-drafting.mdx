@@ -1,0 +1,41 @@
+---
+title: AI drafting
+description: Turn source evidence into a first-draft changelog entry from the SDK, REST, or CLI.
+---
+
+Writing a changelog entry from scratch is the part people skip, which is how shipped work goes unannounced. Drafting closes that gap: hand Amend the evidence for a change and get back a draft entry you can edit and publish, instead of a blank editor.
+
+## What you need first
+
+Drafting calls a language model, so it needs a provider key configured for the workspace. That is set up alongside the rest of your [automation](/docs/automation) settings. Without a key, the draft endpoints have nothing to call.
+
+## Draft from code
+
+The SDK turns input into a draft entry:
+
+```ts
+const draft = await amend.draftChangelog({
+  title: "Bulk CSV export",
+  // plus the source evidence and context the model should summarize
+});
+```
+
+The matching REST route is `POST /api/v1/your-workspace/drafts`, which takes an owner token. Both return a draft you then review, adjust, and save through the normal [writing and publishing](/docs/changelog/writing) flow. Nothing is published automatically.
+
+## Draft from the CLI
+
+The CLI is handy when you want a draft as part of a release script:
+
+```bash
+amend changelog draft --title "Bulk CSV export"
+```
+
+It prints the draft as JSON and supports a dry run, so you can see what you would get before anything is written.
+
+## The editor's assistant panel
+
+The changelog editor has an assistant rail down the right side with quick actions like improve writing, add a summary, and suggest tags. The panel is in place, but it needs a model provider wired up before it returns suggestions. Until then, use the drafting calls above, which run through the same provider configuration.
+
+## Where drafts fit
+
+Drafting does not replace the loop, it speeds up the last step of it. The strongest drafts come from entries that already have source evidence attached, since the model is summarizing real work rather than guessing. Connect the roadmap item to its PRs and issues, and the draft has something concrete to describe.
