@@ -32,7 +32,7 @@ export function ConnectSection() {
                 {group.items.map((item) => (
                   <span
                     key={item.label}
-                    className="amend-chip inline-flex items-center gap-2 rounded-lg border border-border bg-card/40 px-3 py-2 text-sm text-muted-foreground"
+                    className="inline-flex items-center gap-2 rounded-md border border-border px-2.5 py-1.5 text-sm text-muted-foreground transition-colors hover:border-foreground/30 hover:text-foreground"
                   >
                     {item.brand ? (
                       <BrandIcon name={item.brand} className="size-4 opacity-90" />

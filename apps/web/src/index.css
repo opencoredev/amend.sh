@@ -105,7 +105,7 @@
 }
 
 /* ----------------------------------------------------------------------------
-   Hero — full-bleed cinematic "closing the loop" composition
+   Hero — one calm "closing the loop" image, anchored right, text left
 ---------------------------------------------------------------------------- */
 .amend-hero {
   position: relative;
@@ -115,41 +115,20 @@
   overflow: hidden;
 }
 
-/* The generated warm-loop photograph, anchored to the right. Painted as a
-   background so a still-missing asset degrades cleanly to the CSS aura below
-   (no broken-image icon). */
+/* The warm-loop photograph, anchored to the right and held still. */
 .amend-hero-photo {
   position: absolute;
   inset: 0;
-  z-index: -3;
-  opacity: 0.9;
+  z-index: -2;
+  opacity: 0.92;
   background-image: url("/images/hero-loop.webp");
   background-size: cover;
-  background-position: 76% 44%;
+  background-position: 78% 42%;
   background-repeat: no-repeat;
-  animation: amend-hero-drift 24s ease-in-out infinite alternate;
 }
 
-/* CSS-built warm signal arc — enhances the photo, and stands alone as a
-   premium fallback if the asset is missing. */
-.amend-hero-aura {
-  position: absolute;
-  inset: -10% -5% -20% 20%;
-  z-index: -2;
-  pointer-events: none;
-  background:
-    radial-gradient(
-      60% 55% at 72% 38%,
-      rgb(var(--amend-glow) / 0.26) 0%,
-      rgb(var(--amend-glow) / 0.08) 38%,
-      transparent 68%
-    ),
-    radial-gradient(40% 60% at 88% 70%, rgb(var(--amend-glow) / 0.12) 0%, transparent 60%);
-  filter: blur(8px);
-  animation: amend-hero-pulse 9s ease-in-out infinite;
-}
-
-/* Legibility veil: keeps the left text column on calm darkness. */
+/* Legibility veil: dark under the left text column, clearing so the loop reads
+   on the right, with a soft fade into the next section along the bottom edge. */
 .amend-hero-veil {
   position: absolute;
   inset: 0;
@@ -159,42 +138,29 @@
     linear-gradient(
       90deg,
       var(--background) 0%,
-      rgb(13 13 15 / 0.92) 34%,
-      rgb(13 13 15 / 0.55) 58%,
-      transparent 92%
+      rgb(13 13 15 / 0.88) 30%,
+      rgb(13 13 15 / 0.4) 56%,
+      transparent 82%
     ),
-    linear-gradient(to top, var(--background) 2%, transparent 28%),
-    linear-gradient(to bottom, var(--background) 0%, transparent 22%);
+    linear-gradient(to bottom, transparent 62%, var(--background) 100%);
 }
 
 @media (max-width: 767px) {
   .amend-hero-photo {
-    object-position: 70% 30%;
-    opacity: 0.55;
+    opacity: 0.5;
+    background-position: 72% 30%;
   }
 
   .amend-hero-veil {
     background:
       linear-gradient(
         90deg,
-        var(--background) 8%,
-        rgb(13 13 15 / 0.86) 52%,
-        rgb(13 13 15 / 0.62) 100%
+        var(--background) 6%,
+        rgb(13 13 15 / 0.82) 50%,
+        rgb(13 13 15 / 0.5) 100%
       ),
-      linear-gradient(to top, var(--background) 4%, transparent 40%),
-      linear-gradient(to bottom, var(--background) 0%, transparent 30%);
+      linear-gradient(to bottom, transparent 55%, var(--background) 100%);
   }
-}
-
-/* fine film grain over the whole page, GPU-cheap (fixed, no repaint on scroll) */
-.amend-grain {
-  position: fixed;
-  inset: 0;
-  z-index: 30;
-  pointer-events: none;
-  opacity: 0.15;
-  mix-blend-mode: soft-light;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
 /* Hero entrance — staggered rise */
@@ -336,27 +302,6 @@
   }
 }
 
-@keyframes amend-hero-pulse {
-  0%,
-  100% {
-    opacity: 0.85;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.04);
-  }
-}
-
-@keyframes amend-hero-drift {
-  0% {
-    transform: scale(1.02) translateX(0);
-  }
-  100% {
-    transform: scale(1.08) translateX(-1.5%);
-  }
-}
-
 @keyframes amend-marquee {
   0% {
     transform: translate3d(0, 0, 0);
@@ -376,8 +321,6 @@
     animation-iteration-count: 1 !important;
   }
 
-  .amend-hero-photo,
-  .amend-hero-aura,
   .amend-rise > *,
   .amend-flowline,
   .amend-flowline-v,

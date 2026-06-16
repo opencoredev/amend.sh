@@ -56,7 +56,6 @@ function HomeComponent() {
           }),
         }}
       />
-      <div className="amend-grain" aria-hidden />
       <HomeHeader />
       <MobileActionBar />
       <HomeHero />

@@ -28,10 +28,11 @@ export function PricingSection() {
     <section id="pricing" className="relative z-10 border-t border-border">
       <div className="mx-auto max-w-7xl px-5 py-24 sm:px-6 lg:px-8 lg:py-32">
         <div className="max-w-2xl" data-reveal>
-          <h2 className="amend-h text-3xl text-foreground sm:text-4xl lg:text-5xl">
+          <p className="amend-eyebrow">Pricing</p>
+          <h2 className="amend-h mt-5 text-3xl text-foreground sm:text-4xl lg:text-5xl">
             Start free. Pay when it pays off.
           </h2>
-          <p className="mt-5 text-base leading-relaxed text-muted-foreground">
+          <p className="mt-6 text-base leading-relaxed text-muted-foreground">
             Self-host the whole thing for nothing, or let Amend run it. Every plan includes the full
             loop. You only pay for more projects, seats, and signal volume.
           </p>

@@ -7,11 +7,10 @@ export function HomeHero() {
   return (
     <section className="amend-hero relative isolate flex min-h-[100svh] w-full flex-col justify-center overflow-hidden">
       <div className="amend-hero-photo" aria-hidden />
-      <div className="amend-hero-aura" aria-hidden />
       <div className="amend-hero-veil" aria-hidden />
 
       <div className="mx-auto w-full max-w-7xl px-5 pb-16 pt-28 sm:px-6 lg:px-8 lg:pt-24">
-        <div className="amend-rise flex max-w-2xl flex-col items-start gap-7">
+        <div className="amend-rise flex max-w-2xl flex-col items-start gap-8">
           <h1 className="amend-h text-[2.6rem] text-foreground sm:text-5xl lg:text-[3.75rem]">
             <span className="block">Users asked. You shipped.</span>
             <span className="block">
