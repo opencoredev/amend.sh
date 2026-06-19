@@ -1,3 +1,4 @@
+import { internal } from "./_generated/api";
 import type { MutationCtx } from "./_generated/server";
 import { recordAnalyticsEvent } from "./amendAnalytics";
 import { slugPart, workspaceSlug } from "./amendBackendUtils";
@@ -76,6 +77,18 @@ export async function createFeedbackHandler(ctx: MutationCtx, args: CreateFeedba
     sourceLinks: [sourceLink],
     createdAt: now,
     updatedAt: now,
+  });
+
+  await ctx.scheduler.runAfter(0, internal.pipeline.processEvent, {
+    workspaceId: workspace._id,
+    externalId: sourceLink.externalId,
+    text: args.body,
+    title: args.title,
+    author: args.authorName ?? args.authorEmail ?? "Anonymous",
+    url: sourceLink.url,
+    provider: sourceLink.provider,
+    labels: args.labels ?? [],
+    email: args.authorEmail,
   });
 
   await recordAnalyticsEvent(ctx, {

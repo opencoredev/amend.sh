@@ -1,6 +1,8 @@
 import { cn } from "@amend/ui/lib/utils";
-import { Map, MessageSquareText, Newspaper, Settings } from "@/lib/icons";
+import { Brain, Inbox, LayoutGrid, Map, MessageSquareText, Newspaper, Settings } from "@/lib/icons";
 import type { ReactElement, RefObject } from "react";
+
+import { usePendingDrafts } from "@/lib/mock-amend";
 
 import type {
   ChangelogStatusFilter,
@@ -20,11 +22,13 @@ import { WorkspaceSwitcher } from "@/components/dashboard-workspace-switcher";
 
 function SidebarMainNavButton({
   active,
+  badge,
   icon,
   label,
   onClick,
 }: {
   active: boolean;
+  badge?: number;
   icon: ReactElement;
   label: string;
   onClick: () => void;
@@ -42,6 +46,11 @@ function SidebarMainNavButton({
     >
       {icon}
       {label}
+      {badge ? (
+        <span className="ml-auto inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-amend-warm/15 px-1.5 font-mono text-[0.66rem] font-semibold tabular-nums text-amend-warm">
+          {badge}
+        </span>
+      ) : null}
     </button>
   );
 }
@@ -51,6 +60,20 @@ const NAV_ITEMS: Array<[DashboardView, ReactElement, string]> = [
   ["roadmap", <Map />, "Roadmap"],
   ["changelog", <Newspaper />, "Changelog"],
 ];
+
+const AGENT_NAV_ITEMS: Array<[DashboardView, ReactElement, string]> = [
+  ["board", <LayoutGrid />, "Board"],
+  ["drafts", <Inbox />, "Drafts"],
+  ["memory", <Brain />, "Memory"],
+];
+
+function SidebarGroupLabel({ children }: { children: string }) {
+  return (
+    <p className="px-3 pb-1 pt-3 text-[0.62rem] font-semibold uppercase tracking-[0.14em] text-muted-foreground/45">
+      {children}
+    </p>
+  );
+}
 
 export function DashboardSidebarChrome({
   activeChangelogCategory,
@@ -107,6 +130,8 @@ export function DashboardSidebarChrome({
   roadmapViews: RoadmapView[];
   workspaceMenuRef: RefObject<HTMLDivElement | null>;
 }) {
+  const { data: pendingDrafts } = usePendingDrafts();
+  const pendingDraftCount = pendingDrafts?.length ?? 0;
   const sidebarProps = {
     activeChangelogCategory,
     activeChangelogStatus,
@@ -147,7 +172,7 @@ export function DashboardSidebarChrome({
         <WorkspaceSwitcher menuRef={workspaceMenuRef} {...switcherProps} />
 
         {/* Main section nav */}
-        <nav className="grid gap-1.5 px-3 py-3">
+        <nav className="grid gap-1 px-3 py-3">
           {NAV_ITEMS.map(([view, icon, label]) => (
             <SidebarMainNavButton
               key={view}
@@ -157,6 +182,20 @@ export function DashboardSidebarChrome({
               onClick={() => onViewChange(view)}
             />
           ))}
+
+          <SidebarGroupLabel>Agent</SidebarGroupLabel>
+          {AGENT_NAV_ITEMS.map(([view, icon, label]) => (
+            <SidebarMainNavButton
+              key={view}
+              active={activeView === view}
+              badge={view === "drafts" ? pendingDraftCount : undefined}
+              icon={icon}
+              label={label}
+              onClick={() => onViewChange(view)}
+            />
+          ))}
+
+          <div className="my-1.5 h-px bg-foreground/[0.045]" />
           <SidebarMainNavButton
             active={activeView === "settings"}
             icon={<Settings />}

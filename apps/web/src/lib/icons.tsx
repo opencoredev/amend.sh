@@ -8,6 +8,8 @@
  */
 import {
   Add01Icon,
+  AiMagicIcon,
+  Alert02Icon,
   ArrowDown01Icon,
   ArrowLeft01Icon,
   ArrowRight01Icon,
@@ -16,29 +18,40 @@ import {
   Attachment01Icon,
   BookOpen01Icon,
   BotIcon,
+  BrainIcon,
   Calendar01Icon,
   Calendar03Icon,
   Cancel01Icon,
+  ChartUpIcon,
   CheckmarkCircle02Icon,
   CircleIcon,
   Clock01Icon,
   Copy01Icon,
   DashedLineCircleIcon,
   Database01Icon,
+  DiscordIcon,
   Download04Icon,
   File01Icon,
+  FilterHorizontalIcon,
   Folder01Icon,
   FolderAddIcon,
   FolderOpenIcon,
+  GitCommitIcon,
+  GitMergeIcon,
   GitPullRequestIcon,
+  Github01Icon,
   GlobalIcon,
   Heading1Icon,
   Heading2Icon,
   Idea01Icon,
   Image02Icon,
   InboxIcon,
+  InformationCircleIcon,
+  KanbanIcon,
   Key01Icon,
+  LayoutGridIcon,
   LeftToRightListNumberIcon,
+  LifebuoyIcon,
   Link01Icon,
   LinkSquare02Icon,
   ListViewIcon,
@@ -53,16 +66,19 @@ import {
   MoreHorizontalIcon,
   News01Icon,
   Notification01Icon,
+  PencilEdit02Icon,
   PlusSignIcon,
   QuoteDownIcon,
   Radio01Icon,
   Road01Icon,
   Route01Icon,
   Search01Icon,
+  SecurityCheckIcon,
   SentIcon,
   Settings01Icon,
   Settings02Icon,
   SidebarRight01Icon,
+  SlidersHorizontalIcon,
   SmileIcon,
   SourceCodeIcon,
   SparklesIcon,
@@ -74,6 +90,7 @@ import {
   TextStrikethroughIcon,
   TextUnderlineIcon,
   Tick02Icon,
+  Undo02Icon,
   UnfoldMoreIcon,
   UserCircleIcon,
   UserGroupIcon,
@@ -95,10 +112,13 @@ function icon(svg: IconSvgElement, displayName: string) {
   return Icon;
 }
 
+export const AiMagic = icon(AiMagicIcon, "AiMagic");
+export const AlertCircle = icon(Alert02Icon, "AlertCircle");
 export const ArrowLeft = icon(ArrowLeft01Icon, "ArrowLeft");
 export const ArrowRight = icon(ArrowRight01Icon, "ArrowRight");
 export const ArrowUpRight = icon(ArrowUpRight01Icon, "ArrowUpRight");
 export const Bell = icon(Notification01Icon, "Bell");
+export const Brain = icon(BrainIcon, "Brain");
 export const Bold = icon(TextBoldIcon, "Bold");
 export const BookOpen = icon(BookOpen01Icon, "BookOpen");
 export const Bot = icon(BotIcon, "Bot");
@@ -167,3 +187,19 @@ export const Underline = icon(TextUnderlineIcon, "Underline");
 export const UserRound = icon(UserCircleIcon, "UserRound");
 export const Users = icon(UserGroupIcon, "Users");
 export const X = icon(Cancel01Icon, "X");
+
+// — Proactive-agent console additions —
+export const Discord = icon(DiscordIcon, "Discord");
+export const Filter = icon(FilterHorizontalIcon, "Filter");
+export const GitCommit = icon(GitCommitIcon, "GitCommit");
+export const GitMerge = icon(GitMergeIcon, "GitMerge");
+export const Github = icon(Github01Icon, "Github");
+export const Info = icon(InformationCircleIcon, "Info");
+export const Kanban = icon(KanbanIcon, "Kanban");
+export const LayoutGrid = icon(LayoutGridIcon, "LayoutGrid");
+export const LifeBuoy = icon(LifebuoyIcon, "LifeBuoy");
+export const ShieldCheck = icon(SecurityCheckIcon, "ShieldCheck");
+export const SlidersHorizontal = icon(SlidersHorizontalIcon, "SlidersHorizontal");
+export const SquarePen = icon(PencilEdit02Icon, "SquarePen");
+export const TrendingUp = icon(ChartUpIcon, "TrendingUp");
+export const Undo2 = icon(Undo02Icon, "Undo2");

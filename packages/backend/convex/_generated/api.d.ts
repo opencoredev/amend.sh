@@ -8,6 +8,7 @@
  * @module
  */
 
+import type * as agent from "../agent.js";
 import type * as amend from "../amend.js";
 import type * as amendAccessFunctionArgs from "../amendAccessFunctionArgs.js";
 import type * as amendAccessMutationHandlers from "../amendAccessMutationHandlers.js";
@@ -112,6 +113,11 @@ import type * as amendWorkspaceRecordNormalizers from "../amendWorkspaceRecordNo
 import type * as amendWorkspaceSettingsMutationHandlers from "../amendWorkspaceSettingsMutationHandlers.js";
 import type * as amendWorkspaceSettingsReadHandlers from "../amendWorkspaceSettingsReadHandlers.js";
 import type * as auth from "../auth.js";
+import type * as backfill from "../backfill.js";
+import type * as changelog from "../changelog.js";
+import type * as crons from "../crons.js";
+import type * as digest from "../digest.js";
+import type * as drafts from "../drafts.js";
 import type * as healthCheck from "../healthCheck.js";
 import type * as http from "../http.js";
 import type * as httpRestGet from "../httpRestGet.js";
@@ -135,13 +141,23 @@ import type * as httpRuntimeScalars from "../httpRuntimeScalars.js";
 import type * as httpRuntimeSourceEventInputs from "../httpRuntimeSourceEventInputs.js";
 import type * as httpRuntimeSourceEventTypes from "../httpRuntimeSourceEventTypes.js";
 import type * as httpRuntimeStripe from "../httpRuntimeStripe.js";
+import type * as ingest from "../ingest.js";
+import type * as memory from "../memory.js";
+import type * as needs from "../needs.js";
+import type * as pipeline from "../pipeline.js";
 import type * as posthog from "../posthog.js";
 import type * as privateData from "../privateData.js";
+import type * as proactiveArgs from "../proactiveArgs.js";
+import type * as proactiveClassifier from "../proactiveClassifier.js";
+import type * as proactiveProof from "../proactiveProof.js";
+import type * as proactiveShared from "../proactiveShared.js";
+import type * as proactiveValidators from "../proactiveValidators.js";
 import type * as projectWebsiteEnrichment from "../projectWebsiteEnrichment.js";
 import type * as projectWebsiteMetadata from "../projectWebsiteMetadata.js";
 import type * as projectWebsiteSuggestions from "../projectWebsiteSuggestions.js";
 import type * as projectWebsiteUrl from "../projectWebsiteUrl.js";
 import type * as projects from "../projects.js";
+import type * as schemaProactiveTables from "../schemaProactiveTables.js";
 import type * as schemaProductCommon from "../schemaProductCommon.js";
 import type * as schemaProductContentTables from "../schemaProductContentTables.js";
 import type * as schemaProductIdentityTables from "../schemaProductIdentityTables.js";
@@ -155,6 +171,7 @@ import type * as schemaWorkspaceIntegrationTables from "../schemaWorkspaceIntegr
 import type * as schemaWorkspaceSourceTables from "../schemaWorkspaceSourceTables.js";
 import type * as schemaWorkspaceTables from "../schemaWorkspaceTables.js";
 import type * as signatures from "../signatures.js";
+import type * as sources from "../sources.js";
 
 import type {
   ApiFromModules,
@@ -163,6 +180,7 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  agent: typeof agent;
   amend: typeof amend;
   amendAccessFunctionArgs: typeof amendAccessFunctionArgs;
   amendAccessMutationHandlers: typeof amendAccessMutationHandlers;
@@ -267,6 +285,11 @@ declare const fullApi: ApiFromModules<{
   amendWorkspaceSettingsMutationHandlers: typeof amendWorkspaceSettingsMutationHandlers;
   amendWorkspaceSettingsReadHandlers: typeof amendWorkspaceSettingsReadHandlers;
   auth: typeof auth;
+  backfill: typeof backfill;
+  changelog: typeof changelog;
+  crons: typeof crons;
+  digest: typeof digest;
+  drafts: typeof drafts;
   healthCheck: typeof healthCheck;
   http: typeof http;
   httpRestGet: typeof httpRestGet;
@@ -290,13 +313,23 @@ declare const fullApi: ApiFromModules<{
   httpRuntimeSourceEventInputs: typeof httpRuntimeSourceEventInputs;
   httpRuntimeSourceEventTypes: typeof httpRuntimeSourceEventTypes;
   httpRuntimeStripe: typeof httpRuntimeStripe;
+  ingest: typeof ingest;
+  memory: typeof memory;
+  needs: typeof needs;
+  pipeline: typeof pipeline;
   posthog: typeof posthog;
   privateData: typeof privateData;
+  proactiveArgs: typeof proactiveArgs;
+  proactiveClassifier: typeof proactiveClassifier;
+  proactiveProof: typeof proactiveProof;
+  proactiveShared: typeof proactiveShared;
+  proactiveValidators: typeof proactiveValidators;
   projectWebsiteEnrichment: typeof projectWebsiteEnrichment;
   projectWebsiteMetadata: typeof projectWebsiteMetadata;
   projectWebsiteSuggestions: typeof projectWebsiteSuggestions;
   projectWebsiteUrl: typeof projectWebsiteUrl;
   projects: typeof projects;
+  schemaProactiveTables: typeof schemaProactiveTables;
   schemaProductCommon: typeof schemaProductCommon;
   schemaProductContentTables: typeof schemaProductContentTables;
   schemaProductIdentityTables: typeof schemaProductIdentityTables;
@@ -310,6 +343,7 @@ declare const fullApi: ApiFromModules<{
   schemaWorkspaceSourceTables: typeof schemaWorkspaceSourceTables;
   schemaWorkspaceTables: typeof schemaWorkspaceTables;
   signatures: typeof signatures;
+  sources: typeof sources;
 }>;
 
 /**

@@ -1,5 +1,14 @@
 import { cn } from "@amend/ui/lib/utils";
-import { GitPullRequestArrow, Map, MessageSquareText, Newspaper, Settings } from "@/lib/icons";
+import {
+  Brain,
+  GitPullRequestArrow,
+  Inbox,
+  LayoutGrid,
+  Map,
+  MessageSquareText,
+  Newspaper,
+  Settings,
+} from "@/lib/icons";
 import type { ReactElement } from "react";
 
 import type { DashboardView } from "@/components/amend-dashboard-types";
@@ -62,6 +71,9 @@ export function MobileViewNav({
     ["posts", <MessageSquareText />, "Feedback"],
     ["roadmap", <Map />, "Roadmap"],
     ["changelog", <Newspaper />, "Changelog"],
+    ["board", <LayoutGrid />, "Board"],
+    ["drafts", <Inbox />, "Drafts"],
+    ["memory", <Brain />, "Memory"],
     ["settings", <Settings />, "Settings"],
     ["setup", <GitPullRequestArrow />, "Setup"],
   ];

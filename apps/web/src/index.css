@@ -311,6 +311,22 @@
   }
 }
 
+/* Proactive-agent console: one restrained route-enter so a navigation reads as
+   a view change. Reduced motion is handled by the global block below. */
+.amend-page-enter {
+  animation: amend-page-enter 0.22s var(--amend-ease) both;
+}
+@keyframes amend-page-enter {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 6px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   ::before,
@@ -325,7 +341,8 @@
   .amend-flowline,
   .amend-flowline-v,
   .amend-loop-dot,
-  .amend-marquee-track {
+  .amend-marquee-track,
+  .amend-page-enter {
     animation: none !important;
   }
 

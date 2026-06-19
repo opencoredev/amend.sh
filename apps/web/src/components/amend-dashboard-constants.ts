@@ -6,7 +6,16 @@ import type {
   Workspace,
 } from "@/components/amend-dashboard-types";
 
-export const viewValues: DashboardView[] = ["posts", "roadmap", "changelog", "settings", "setup"];
+export const viewValues: DashboardView[] = [
+  "posts",
+  "roadmap",
+  "changelog",
+  "board",
+  "drafts",
+  "memory",
+  "settings",
+  "setup",
+];
 export const boardValues: BoardId[] = ["feature", "bug", "changelog", "feedback"];
 export const statusValues: Array<RoadmapStatus | "all"> = [
   "all",

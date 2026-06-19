@@ -4,6 +4,9 @@ import type {
   DashboardView,
   Post,
 } from "@/components/amend-dashboard-types";
+import { AmendBoardScreen } from "@/components/amend-board-screen";
+import { AmendDraftsScreen } from "@/components/amend-drafts-screen";
+import { AmendMemoryScreen } from "@/components/amend-memory-screen";
 import {
   ChangelogWorkspace,
   PostsWorkspace,
@@ -58,6 +61,12 @@ export function AmendDashboardMainWorkspace({
   onVoteRoadmapItem,
   roadmapViews,
 }: DashboardContentProps) {
+  // The proactive-agent views are self-contained (their own header + scroll) and
+  // render on the mock layer, so they bypass the CRUD DashboardHeader entirely.
+  if (activeView === "board") return <AmendBoardScreen />;
+  if (activeView === "drafts") return <AmendDraftsScreen />;
+  if (activeView === "memory") return <AmendMemoryScreen />;
+
   const onboarding = computeOnboardingState({ activeProject, dashboard, workspace });
   const showOnboarding =
     Boolean(dashboard) && activeProject.id !== "new-project" && ONBOARDING_VIEWS.has(activeView);

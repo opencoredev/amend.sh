@@ -1,0 +1,187 @@
+===============================================================================
+AMEND — PROACTIVE AGENT · FRONTEND PLAN (v1)
+Stack: TanStack Start + React 19 + TanStack Query (apps/web). Tailwind v4 +
+       shadcn/ui (packages/ui). Icons via @/lib/icons (Hugeicons — NEVER lucide).
+Pairs with: BACKEND_PLAN.txt  (same CONTRACT block lives in both — keep in sync)
+===============================================================================
+
+-------------------------------------------------------------------------------
+COORDINATION PROTOCOL — READ FIRST (this is how the two plans don't collide)
+-------------------------------------------------------------------------------
+1. OWNERSHIP. Frontend touches ONLY `apps/web/**` (+ shared components in
+   `packages/ui` if needed). It never edits `packages/backend/convex/**`.
+   Backend never edits `apps/web/**`. The CONTRACT is the only shared seam.
+
+2. THE CONTRACT IS THE SEAM. Build every screen against the CONTRACT shapes
+   below — the Convex query/mutation names + their return types. Do not assume
+   anything about backend internals (tables, pipeline, LLM). If you need data
+   the CONTRACT doesn't expose, that's a CONTRACT change (rule 4), not a guess.
+
+3. NEVER BLOCKED ON BACKEND. Phase 0 builds a mock data layer returning fixtures
+   that match the CONTRACT exactly. Every screen is fully buildable + reviewable
+   against mocks before backend logic exists. You ship the whole UI on fixtures.
+
+4. CHANGING THE CONTRACT. If a screen needs a new field/function, update the
+   CONTRACT block in BOTH files in the same commit and tell backend. Never
+   render off a shape backend didn't agree to — that's the thing that desyncs.
+
+5. INTEGRATION HANDSHAKE. Once backend Phase 0 stubs are live, flip ONE data
+   hook per screen from the mock layer to `useQuery(api.x.y)`. Because the stub
+   returns the real shape, the swap is invisible to the component. One screen at
+   a time; the rest keep running on mocks until their backend function is ready.
+
+-------------------------------------------------------------------------------
+CONTRACT — the Convex API surface (IDENTICAL in BACKEND_PLAN.txt)
+-------------------------------------------------------------------------------
+RETURN shapes you render. Workspace is resolved server-side. These are
+load-bearing — render exactly these, nothing more.
+
+  Ghost = {
+    id, workspaceId, title,
+    status: "ghost" | "accepted" | "killed",
+    proof: {
+      people: number, payingPeople: number,
+      sources: { channel: "discord"|"support"|"github"|"embed", count: number }[],
+      strength: "thin" | "building" | "strong",     // render as a label/bar, never a number
+      growthPerWeek: number
+    },
+    sampleQuotes: { text, author, channel, url }[],  // max 3
+    firstSeen: number, lastSeen: number
+  }
+  Need = Ghost & { evidence: Evidence[], linkedShip?: ShipLink }
+  Evidence = { id, sourceChannel, author, text, url,
+               confidenceBucket: "clear"|"worth-a-look"|"unsure", promotedBy: "agent"|"human" }
+  ShipLink = { prNumber, sha, releaseTag?, mergedAt, url }
+  DraftProposal = { id, kind: "changelog"|"notify", needId, needTitle, draftText,
+                    recipients?: { handle, channel }[], status: "pending"|"approved"|"rejected" }
+  ChangelogEntry = { id, title, body, shippedAt, ship: ShipLink, published: boolean }
+  MemoryRule = { id, kind: "noise"|"dedupe"|"addressed"|"allowlist"|"pattern",
+                 text, taughtBy, taughtAt, blastRadius: number, enabled: boolean }
+  DigestPreview = { period:{from,to}, resolved:{needTitle,ship:ShipLink,peopleNotified}[],
+                    readyGhosts: Ghost[], handledSilently: number }
+
+  QUERIES (reactive reads):
+    needs.listGhosts({})  -> Ghost[]        needs.listAccepted({}) -> Need[]
+    needs.get({needId})   -> Need|null      drafts.listPending({}) -> DraftProposal[]
+    changelog.list({})    -> ChangelogEntry[]  memory.listRules({}) -> MemoryRule[]
+    digest.preview({})    -> DigestPreview   sources.status({})    -> {github,feedback}
+
+  MUTATIONS (user actions):
+    needs.acceptGhost({ghostId})   needs.keepGathering({ghostId})
+    needs.killGhost({ghostId,reason?})   drafts.approve({draftId})
+    drafts.reject({draftId,edits?})   memory.toggleRule({ruleId,enabled})
+    memory.undoRule({ruleId})   changelog.publish({entryId})
+    sources.connectGithub({repo,token})
+
+  INTERNAL (webhooks/cron) — the UI NEVER calls these. Do not reference them.
+
+===============================================================================
+DESIGN POSTURE (so it doesn't look AI-generated — match existing Amend theme)
+===============================================================================
+- Calm, premium, rounded surfaces + ring-1 white/low-opacity borders (the current
+  theme; square border-border is legacy). Compact sans; MONO for data/IDs/SHAs.
+- One restrained accent. Status color does semantic work (ghost=faint/dashed,
+  ready=accent, paying=warm).
+- NO confidence decimals ever. Render strength as Thin / Building / Strong + a
+  bar, with a plain because-line ("12 people, 3 paying, across 3 sources").
+- The board is a BRIEFING not an inbox: lead with what the agent handled, not a
+  pile of pending work. No marketing hero, no card-soup.
+- Every list has real loading (skeleton), empty, and error states.
+
+===============================================================================
+BUILD PHASES (every screen ships on mocks; swap to api.* per screen at the end)
+===============================================================================
+
+PHASE 0 — MOCK DATA LAYER + ROUTE SKELETON  (do first; zero backend needed)
+-------------------------------------------------------------------------------
+- `apps/web/src/lib/amend-contract.ts`: TS interfaces copied from the CONTRACT
+  (single source the components import). This is your typed seam.
+- `apps/web/src/lib/mock-amend.ts`: fixtures matching every CONTRACT return shape
+  (3 ghosts at different strengths, 2 accepted needs, 2 drafts, changelog, memory
+  rules, a digest). A `useAmend(queryName)` hook that returns mock data now and
+  will swap to `useQuery(api...)` later — keep the swap to ONE file.
+- Routes (TanStack Start file-based): /board, /board/$needId, /drafts,
+  /changelog, /memory, /settings.
+DELIVERABLE: app runs, all routes render fixtures, fully clickable. No backend.
+
+PHASE 1 — THE GHOST BOARD  (the hero screen — invest the most here)
+-------------------------------------------------------------------------------
+Route: /board. Consumes: needs.listGhosts, needs.listAccepted,
+       needs.acceptGhost, needs.keepGathering, needs.killGhost.
+- "Gathering proof" section: GHOST cards = faint, dashed border, ribbon
+  ("Just forming" vs pulsing "Ready when you are"). Each shows: title, the proof
+  line (people + payingPeople), source chips with counts, a strength bar
+  (thin/building/strong — NOT a %), growthPerWeek ("4 new this week"), one sample
+  quote. Actions: Add to board / Keep gathering / Not a thing.
+  -> "thin" strength = Add disabled (must earn it). optimistic update on accept.
+- "On the board" section: accepted Needs (solid), linkedShip badge if present.
+DELIVERABLE: the ghost board from the showcase, on real fixture data, with
+working accept/keep/kill (optimistic).
+
+PHASE 2 — NEED DETAIL / EVIDENCE TRAIL
+-------------------------------------------------------------------------------
+Route: /board/$needId. Consumes: needs.get.
+- SOURCES-FIRST (the differentiation — don't bury it). Headline = computed
+  synthesis ("9 people across Discord, GitHub, support — 3 paying — first raised
+  Mar 2, active this week"). Evidence grouped by source, collapsed, 2 quotes
+  inline. People (avatars) are the spine, not messages. linkedShip with the SHA.
+DELIVERABLE: click a ghost/need -> readable evidence brief.
+
+PHASE 3 — DRAFT-REVIEW LANE
+-------------------------------------------------------------------------------
+Route: /drafts. Consumes: drafts.listPending, drafts.approve, drafts.reject.
+- Each pending DraftProposal: kind (changelog/notify), the need it's for, the
+  draft text (editable), recipients for notify. Approve / Edit+approve / Reject.
+- Make clear nothing sends until Approve (the trust surface). Pre-send hold note.
+DELIVERABLE: review queue works on fixtures; approve/reject call mutations.
+
+PHASE 4 — PUBLIC CHANGELOG / PORTAL
+-------------------------------------------------------------------------------
+Route: /changelog. Consumes: changelog.list, changelog.publish.
+- Entries with title/body/shippedAt + the SHA proof link (the wedge made visible).
+  Published vs draft state. This is also the public-facing surface (themeable).
+DELIVERABLE: changelog renders; publish toggles state.
+
+PHASE 5 — MEMORY UI ("what Amend learned")
+-------------------------------------------------------------------------------
+Route: /memory. Consumes: memory.listRules, memory.toggleRule, memory.undoRule.
+- Browsable rules grouped by kind (noise/dedupe/addressed/allowlist/pattern), in
+  PLAIN LANGUAGE, each with who taught it, when, blastRadius ("hides ~212/mo"),
+  a toggle, undo. The teaching receipt toast (on kill/correct). The audit nudge
+  ("this rule hid 40 items in 3 weeks — still right?").
+DELIVERABLE: the memory showcase, on real fixture rules, toggles working.
+
+PHASE 6 — SETTINGS + DIGEST PREVIEW
+-------------------------------------------------------------------------------
+Routes: /settings (+ a digest preview block). Consumes: sources.status,
+        sources.connectGithub, digest.preview.
+- Connect GitHub (the cold-start entry point). Source status. Conservative/
+  Balanced/Aggressive presets (NO raw numeric thresholds in onboarding).
+- Digest preview: "3 asks resolved this week + proof; 1 ghost ready" — the thing
+  that gets pushed to Slack/email. (Sending is backend; this is the in-app view.)
+DELIVERABLE: settings + a preview of the weekly digest.
+
+PHASE 7 — INTEGRATION SWAP  (per screen, after backend P0+ lands)
+-------------------------------------------------------------------------------
+- For each screen whose backend function is implemented, flip `useAmend` from
+  mock to `useQuery(api.x.y)` / `useMutation`. Verify the shape matches (it will,
+  if both CONTRACT blocks agree). Keep un-ready screens on mocks.
+DELIVERABLE: screens go live one by one with zero component rewrites.
+
+-------------------------------------------------------------------------------
+VALIDATION
+-------------------------------------------------------------------------------
+- Typecheck + lint after every phase (oxlint). App runs on mocks end-to-end.
+- Screenshot review (desktop + mobile) against the design posture each screen —
+  reject card-soup, raw decimals, buried evidence, empty-looking board.
+- Phase 1 + 5 are the polish-critical screens; do an extra visual pass.
+
+-------------------------------------------------------------------------------
+DO / DON'T
+-------------------------------------------------------------------------------
+DO: build the whole UI on fixtures first; keep the mock->api swap in ONE hook;
+    render exactly the CONTRACT shapes; icons from @/lib/icons.
+DON'T: edit packages/backend/convex/**. DON'T import lucide-react. DON'T show
+    confidence decimals. DON'T add fields the CONTRACT doesn't define without
+    updating BACKEND_PLAN.txt in the same commit.
+===============================================================================
