@@ -57,3 +57,23 @@ export const publish = mutation({
     return { ok: true as const };
   },
 });
+
+export const unpublish = mutation({
+  args: changelogEntryIdArgs,
+  returns: okResult,
+  handler: async (ctx, args) => {
+    const workspace = await requireProactiveWorkspace(ctx, args);
+    const entryId = ctx.db.normalizeId("changelogEntries", args.entryId);
+    if (!entryId) return { ok: true as const };
+    const entry = await ctx.db.get(entryId);
+    if (!entry || entry.workspaceId !== workspace._id) return { ok: true as const };
+    // Keep publishedAt so the entry still appears (with its shippedAt) but reads
+    // as an unpublished draft — mirrors the optimistic mock's published:false.
+    await ctx.db.patch(entry._id, {
+      status: "draft",
+      reviewerStatus: "needs_review",
+      updatedAt: Date.now(),
+    });
+    return { ok: true as const };
+  },
+});

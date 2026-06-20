@@ -215,7 +215,6 @@ function PreviewSignUpForm({ onSwitchToSignIn }: { onSwitchToSignIn?: () => void
                 surface: "sign_up_page",
               },
             });
-            toast.success("Account created");
             navigate({
               params: { view: "setup" },
               search: { workspace: demoWorkspaceSlug },

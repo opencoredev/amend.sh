@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 
+import { fallbackWorkspace } from "@/components/amend-dashboard-constants";
 import {
   ChangelogEditorWorkspace,
   FeedbackDetailWorkspace,
@@ -11,20 +12,21 @@ export function getDashboardDetailView({
   activeView,
   selectedChangelog,
   selectedFeedback,
+  selectedChangelogKey,
   selectedRoadmap,
   onAddFeedbackNote,
   onBackFromChangelog,
-  onBackFromFeedback,
-  onBackFromRoadmap,
-  onChangelogSave,
+  onChangelogAutoSave,
+  onChangelogPublish,
   onOpenFeedbackKey,
+  onVoteFeedbackPost,
   onVoteSelectedRoadmap,
+  workspace,
 }: DashboardContentProps): ReactNode {
   if (selectedRoadmap && (activeView === "posts" || activeView === "roadmap")) {
     return (
       <RoadmapDetailWorkspace
         item={selectedRoadmap}
-        onBack={onBackFromRoadmap}
         onOpenFeedback={onOpenFeedbackKey}
         onVote={onVoteSelectedRoadmap}
       />
@@ -35,8 +37,8 @@ export function getDashboardDetailView({
     return (
       <FeedbackDetailWorkspace
         post={selectedFeedback}
-        onBack={onBackFromFeedback}
         onAddNote={onAddFeedbackNote}
+        onVote={onVoteFeedbackPost}
       />
     );
   }
@@ -44,9 +46,12 @@ export function getDashboardDetailView({
   if (selectedChangelog && activeView === "changelog") {
     return (
       <ChangelogEditorWorkspace
+        key={selectedChangelogKey ?? "changelog"}
         entry={selectedChangelog}
+        onAutoSave={onChangelogAutoSave}
         onClose={onBackFromChangelog}
-        onSave={onChangelogSave}
+        onPublish={onChangelogPublish}
+        workspaceSlug={workspace.id === fallbackWorkspace.id ? undefined : workspace.id}
       />
     );
   }

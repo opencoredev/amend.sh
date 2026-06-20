@@ -57,6 +57,39 @@ export async function getDashboardOverviewHandler(ctx: QueryCtx, args: GetDashbo
     sourceEvents,
   } = await loadDashboardOverviewRecords(ctx, workspace, project);
 
+  // Which feedback/roadmap items has the current viewer already upvoted? Powers the
+  // voted vs not-voted state of the upvote controls. Votes are stored under the
+  // dashboard user's id (externalUserId), so look both interaction tables up by it.
+  const [viewerFeedbackVotes, viewerRoadmapVotes] = await Promise.all([
+    ctx.db
+      .query("feedbackInteractions")
+      .withIndex("by_workspace_and_externalUserId", (q) =>
+        q.eq("workspaceId", workspace._id).eq("externalUserId", user.id),
+      )
+      .collect(),
+    ctx.db
+      .query("roadmapInteractions")
+      .withIndex("by_workspace_and_externalUserId", (q) =>
+        q.eq("workspaceId", workspace._id).eq("externalUserId", user.id),
+      )
+      .collect(),
+  ]);
+  const votedFeedbackKeys = new Set(
+    viewerFeedbackVotes.filter((vote) => vote.kind === "vote").map((vote) => vote.feedbackKey),
+  );
+  const votedRoadmapKeys = new Set(viewerRoadmapVotes.map((vote) => vote.roadmapKey));
+  const roadmapHasViewerVote = (item: (typeof roadmap)[number]) => {
+    if (votedRoadmapKeys.has(item.stableKey)) {
+      return true;
+    }
+    // Feedback-backed roadmap items record their vote against the feedback item.
+    const feedbackLink = item.sourceLinks.find((link) =>
+      link.externalId?.startsWith("feedback:"),
+    );
+    const feedbackKey = feedbackLink?.externalId?.slice("feedback:".length);
+    return feedbackKey ? votedFeedbackKeys.has(feedbackKey) : false;
+  };
+
   return {
     workspace: normalizeWorkspace(workspace),
     github: connection ? normalizeConnection(connection) : { ...demoConnection, recordId: null },
@@ -110,9 +143,24 @@ export async function getDashboardOverviewHandler(ctx: QueryCtx, args: GetDashbo
         .map(([category, count]) => ({ category, count }))
         .sort((a, b) => b.count - a.count || a.category.localeCompare(b.category)),
     },
-    recentChangelog: changelog.map(normalizeChangelog),
-    roadmap: roadmap.map(normalizeRoadmap),
-    feedback: feedback.map(normalizeFeedback),
+    recentChangelog: await Promise.all(
+      changelog.map(async (entry) => ({
+        ...normalizeChangelog(entry),
+        coverImageStorageId: entry.coverImageStorageId ?? null,
+        coverImageUrl: entry.coverImageStorageId
+          ? await ctx.storage.getUrl(entry.coverImageStorageId)
+          : null,
+        metaDescription: entry.metaDescription ?? null,
+      })),
+    ),
+    roadmap: roadmap.map((item) => ({
+      ...normalizeRoadmap(item),
+      viewerHasVoted: roadmapHasViewerVote(item),
+    })),
+    feedback: feedback.map((item) => ({
+      ...normalizeFeedback(item),
+      viewerHasVoted: votedFeedbackKeys.has(item.stableKey),
+    })),
     notifications: notifications.map(normalizeNotification),
     reviewQueue: reviews.map(normalizeReview),
     buildBriefs: buildBriefs.map(normalizeBuildBrief),

@@ -72,7 +72,7 @@ export default defineConfig({
             return;
           }
 
-          if (id.includes("lucide-react")) {
+          if (id.includes("@hugeicons")) {
             return "vendor-icons";
           }
 

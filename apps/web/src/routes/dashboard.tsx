@@ -5,7 +5,7 @@ import { noIndexMeta } from "@/lib/seo";
 
 type DashboardSearch = {
   board?: string;
-  project?: string;
+  changelog?: string;
   q?: string;
   roadmap?: string;
   status?: string;
@@ -13,6 +13,9 @@ type DashboardSearch = {
 };
 
 export const Route = createFileRoute("/dashboard")({
+  // Client-only: see the note in dashboard.$view.tsx. SSR-ing this auth-gated,
+  // localStorage-driven shell only produces hydration mismatches.
+  ssr: false,
   head: () => ({
     meta: [{ title: "Dashboard - Amend.sh" }, ...noIndexMeta],
   }),
@@ -25,7 +28,7 @@ export const Route = createFileRoute("/dashboard")({
   validateSearch: (search: Record<string, unknown>): DashboardSearch => {
     const next: DashboardSearch = {};
     if (typeof search.board === "string") next.board = search.board;
-    if (typeof search.project === "string") next.project = search.project;
+    if (typeof search.changelog === "string") next.changelog = search.changelog;
     if (typeof search.q === "string") next.q = search.q;
     if (typeof search.roadmap === "string") next.roadmap = search.roadmap;
     if (typeof search.status === "string") next.status = search.status;

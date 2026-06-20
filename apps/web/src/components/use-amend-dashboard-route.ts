@@ -18,7 +18,9 @@ import {
 
 export type DashboardRoutePatch = Partial<{
   board: BoardId;
-  project: string;
+  changelog: string | null;
+  feedback: string | null;
+  item: string | null;
   q: string;
   roadmap: RoadmapViewId;
   replace: boolean;
@@ -37,7 +39,9 @@ export function useAmendDashboardRoute() {
   const params = useParams({ strict: false }) as { view?: string };
   const search = useSearch({ strict: false }) as {
     board?: string;
-    project?: string;
+    changelog?: string;
+    feedback?: string;
+    item?: string;
     q?: string;
     roadmap?: string;
     status?: string;
@@ -48,35 +52,41 @@ export function useAmendDashboardRoute() {
 
   const activeView = normalizeView(params.view ?? search.view);
   const activeBoardId = normalizeBoard(search.board);
-  const activeProjectId = search.project ?? "";
+  // The open changelog editor is identified by its entry uuid in the URL, so it is
+  // scoped to the changelog view: leaving the view drops the param (see setRoute),
+  // and returning shows the full list instead of the previously open editor.
+  const activeChangelogKey = search.changelog ?? null;
+  // The open feedback post / roadmap item details are likewise keyed by stableKey in
+  // the URL (scoped to the posts + roadmap views) so a detail is shareable, survives
+  // refresh, and the browser Back button closes it.
+  const activeFeedbackKey = search.feedback ?? null;
+  const activeRoadmapItemKey = search.item ?? null;
   const activeRoadmapId = normalizeRoadmapView(search.roadmap);
   const activeStatus = normalizeStatus(search.status);
   const searchQuery = search.q ?? "";
   const workspaceId = normalizeWorkspace(search.workspace);
-  const activeProjectSlug =
-    activeProjectId && activeProjectId !== "new-project" ? activeProjectId : undefined;
 
   const setRoute = useCallback(
     (next: DashboardRoutePatch) => {
       const nextView = next.view ?? activeView;
-      const nextProjectId = next.project ?? activeProjectId;
       const nextQuery = next.q ?? searchQuery;
       const nextBoardId = next.board ?? activeBoardId;
+      const nextChangelog = next.changelog !== undefined ? next.changelog : activeChangelogKey;
+      const nextFeedback = next.feedback !== undefined ? next.feedback : activeFeedbackKey;
+      const nextItem = next.item !== undefined ? next.item : activeRoadmapItemKey;
       const nextRoadmapId = next.roadmap ?? activeRoadmapId;
       const nextStatus = next.status ?? activeStatus;
       const nextWorkspaceId = next.workspace ?? workspaceId;
       const search: Partial<{
         board: BoardId;
-        project: string;
+        changelog: string;
+        feedback: string;
+        item: string;
         q: string;
         roadmap: RoadmapViewId;
         status: RoadmapStatus | "all";
         workspace: WorkspaceId;
       }> = {};
-
-      if (nextProjectId && nextProjectId !== "new-project") {
-        search.project = nextProjectId;
-      }
 
       if (nextWorkspaceId !== DEFAULT_WORKSPACE_ID) {
         search.workspace = nextWorkspaceId;
@@ -104,6 +114,21 @@ export function useAmendDashboardRoute() {
         }
       }
 
+      if (nextView === "changelog" && nextChangelog) {
+        search.changelog = nextChangelog;
+      }
+
+      // Feedback + roadmap-item details live on both the posts and roadmap views, so
+      // their keys survive switching between those two but drop on any other view.
+      if (nextView === "posts" || nextView === "roadmap") {
+        if (nextFeedback) {
+          search.feedback = nextFeedback;
+        }
+        if (nextItem) {
+          search.item = nextItem;
+        }
+      }
+
       // Typing in dashboard search should replace history; other patches should push by default.
       const replace = next.replace ?? (Object.keys(next).length === 1 && Object.hasOwn(next, "q"));
 
@@ -116,7 +141,9 @@ export function useAmendDashboardRoute() {
     },
     [
       activeBoardId,
-      activeProjectId,
+      activeChangelogKey,
+      activeFeedbackKey,
+      activeRoadmapItemKey,
       activeRoadmapId,
       activeStatus,
       activeView,
@@ -128,8 +155,9 @@ export function useAmendDashboardRoute() {
 
   return {
     activeBoardId,
-    activeProjectId,
-    activeProjectSlug,
+    activeChangelogKey,
+    activeFeedbackKey,
+    activeRoadmapItemKey,
     activeRoadmapId,
     activeStatus,
     activeView,

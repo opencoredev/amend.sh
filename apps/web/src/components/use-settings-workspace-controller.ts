@@ -11,6 +11,7 @@ import { fallbackWorkspace } from "@/components/amend-dashboard-utils";
 import { useSettingsWorkspaceFormState } from "@/components/settings-workspace-controller-state";
 import { useSettingsWorkspaceSaveActions } from "@/components/use-settings-workspace-save-actions";
 import { settingsServiceRows } from "@/components/settings-workspace-service-rows";
+import { combineAutoSaveStatus, useSettingsAutoSave } from "@/components/use-settings-autosave";
 
 const suggestFromWebsite = makeFunctionReference<"action">("projects:suggestFromWebsite");
 const workspaceSettingsQuery = makeFunctionReference<"query">("amend:getWorkspaceSettings");
@@ -40,42 +41,89 @@ export function useSettingsWorkspaceController({
   const updatePortal = useMutation(updatePortalSettingsMutation);
   const updateRules = useMutation(updateAutomationRulesMutation);
   const logoFileInputRef = useRef<HTMLInputElement | null>(null);
-  const formState = useSettingsWorkspaceFormState({ activeProject, workspace });
+  const formState = useSettingsWorkspaceFormState({
+    activeProject,
+    automationRules: settings?.automationRules,
+    workspace,
+  });
   const canSave = workspace.id !== fallbackWorkspace.id && activeProject.id !== "new-project";
   const actions = useSettingsWorkspaceSaveActions({
     activeProject,
     formState,
     generateLogoUploadUrl,
-    logoFileInputRef,
     suggestProject,
+    logoFileInputRef,
     updateAutomationRules: updateRules,
     updatePortal,
     updateProject,
     workspace,
   });
 
+  // Debounced auto-save per editable slice; the toolbar shows the merged status.
+  const identity = `${workspace.id}:${activeProject.id}`;
+  const projectSave = useSettingsAutoSave({
+    enabled: canSave,
+    identity,
+    save: async () => {
+      await actions.saveProject();
+    },
+    signature: JSON.stringify({
+      description: formState.description,
+      logoUrl: formState.logoUrl,
+      name: formState.name,
+      websiteUrl: formState.websiteUrl,
+    }),
+  });
+  const portalSave = useSettingsAutoSave({
+    enabled: canSave,
+    identity,
+    save: async () => {
+      await actions.savePortal();
+    },
+    signature: JSON.stringify({
+      customThemeCss: formState.customThemeCss,
+      headline: formState.headline,
+      intro: formState.intro,
+      themeAppearance: formState.themeAppearance,
+      themePreset: formState.themePreset,
+    }),
+  });
+  const automationSave = useSettingsAutoSave({
+    enabled: canSave,
+    // Keyed on the rules record (not just the project) so the async first load
+    // of automation rules re-baselines instead of looking like a user edit.
+    identity: formState.automationKey,
+    save: async () => {
+      await actions.saveAutomation(formState.automation);
+    },
+    signature: JSON.stringify(formState.automation),
+  });
+  const autoSave = combineAutoSaveStatus([projectSave, portalSave, automationSave]);
+
   return {
+    automation: formState.automation,
+    autoSaveStatus: autoSave.status,
     canSave,
     customThemeCss: formState.customThemeCss,
     description: formState.description,
     headline: formState.headline,
     intro: formState.intro,
+    isDirty: autoSave.isDirty,
+    lastSavedAt: autoSave.lastSavedAt,
     logoAction: actions.logoAction,
     logoFileInputRef,
     logoUrl: formState.logoUrl,
     name: formState.name,
-    onAutomationSave: actions.saveAutomationRules,
+    onRetrySave: autoSave.retry,
     onLoadLogoFromWebsite: () => {
       void actions.loadLogoFromWebsite();
     },
     onLogoFileChange: (file: File | undefined) => {
       void actions.uploadLogoFile(file);
     },
-    onPortalSave: actions.savePortalSettings,
-    onProjectSave: actions.saveProjectSettings,
-    saving: actions.saving,
     serviceRows: settingsServiceRows(activeProject),
     settings,
+    setAutomationRule: formState.setAutomationRule,
     setCustomThemeCss: formState.setCustomThemeCss,
     setDescription: formState.setDescription,
     setHeadline: formState.setHeadline,

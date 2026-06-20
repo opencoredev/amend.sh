@@ -19,6 +19,21 @@ export const upsertChangelogEntryArgs = {
   version: v.optional(v.string()),
   publishedAt: v.optional(v.number()),
   scheduledFor: v.optional(v.number()),
+  // null explicitly clears a cover; undefined leaves it untouched (autosave path).
+  coverImageStorageId: v.optional(v.union(v.id("_storage"), v.null())),
+  metaDescription: v.optional(v.string()),
+};
+
+export const generateChangelogCoverUploadUrlArgs = {
+  ...projectScopeArgs,
+};
+
+export const publishChangelogEntryArgs = {
+  ...projectScopeArgs,
+  stableKey: v.string(),
+  mode: v.union(v.literal("now"), v.literal("schedule")),
+  scheduledFor: v.optional(v.number()),
+  notifySubscribers: v.optional(v.boolean()),
 };
 
 export const upsertRoadmapItemArgs = {

@@ -1,4 +1,4 @@
-import { Activity, ChartNoAxesCombined, DatabaseZap, Sparkles, Users } from "lucide-react";
+import { Activity, ChartNoAxesCombined, DatabaseZap, Sparkles, Users } from "@/lib/icons";
 import type { ReactElement } from "react";
 
 import {

@@ -115,6 +115,7 @@ import type * as amendWorkspaceSettingsReadHandlers from "../amendWorkspaceSetti
 import type * as auth from "../auth.js";
 import type * as backfill from "../backfill.js";
 import type * as changelog from "../changelog.js";
+import type * as changelogScheduler from "../changelogScheduler.js";
 import type * as crons from "../crons.js";
 import type * as digest from "../digest.js";
 import type * as drafts from "../drafts.js";
@@ -172,6 +173,7 @@ import type * as schemaWorkspaceSourceTables from "../schemaWorkspaceSourceTable
 import type * as schemaWorkspaceTables from "../schemaWorkspaceTables.js";
 import type * as signatures from "../signatures.js";
 import type * as sources from "../sources.js";
+import type * as tags from "../tags.js";
 
 import type {
   ApiFromModules,
@@ -287,6 +289,7 @@ declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   backfill: typeof backfill;
   changelog: typeof changelog;
+  changelogScheduler: typeof changelogScheduler;
   crons: typeof crons;
   digest: typeof digest;
   drafts: typeof drafts;
@@ -344,6 +347,7 @@ declare const fullApi: ApiFromModules<{
   schemaWorkspaceTables: typeof schemaWorkspaceTables;
   signatures: typeof signatures;
   sources: typeof sources;
+  tags: typeof tags;
 }>;
 
 /**

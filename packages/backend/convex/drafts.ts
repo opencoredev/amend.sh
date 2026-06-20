@@ -3,7 +3,12 @@ import type { MutationCtx } from "./_generated/server";
 import type { Doc } from "./_generated/dataModel";
 import { v } from "convex/values";
 
-import { draftIdArgs, proactiveWorkspaceArgs, rejectDraftArgs } from "./proactiveArgs";
+import {
+  draftIdArgs,
+  proactiveWorkspaceArgs,
+  rejectDraftArgs,
+  updateDraftTextArgs,
+} from "./proactiveArgs";
 import { okResult, proactiveDraftProposal } from "./proactiveValidators";
 import { requireProactiveWorkspace } from "./proactiveShared";
 
@@ -79,6 +84,22 @@ export const reject = mutation({
       edits: args.edits,
       updatedAt: now,
     });
+    return { ok: true as const };
+  },
+});
+
+export const updateDraftText = mutation({
+  args: updateDraftTextArgs,
+  returns: okResult,
+  handler: async (ctx, args) => {
+    const workspace = await requireProactiveWorkspace(ctx, args);
+    const draftId = ctx.db.normalizeId("draftProposals", args.draftId);
+    if (!draftId) return { ok: true as const };
+    const draft = await ctx.db.get(draftId);
+    if (!draft || draft.workspaceId !== workspace._id || draft.status !== "pending") {
+      return { ok: true as const };
+    }
+    await ctx.db.patch(draft._id, { draftText: args.draftText, updatedAt: Date.now() });
     return { ok: true as const };
   },
 });

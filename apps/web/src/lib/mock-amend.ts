@@ -681,6 +681,14 @@ export function usePendingDrafts(): QueryResult<DraftProposal[]> {
   return resolve(s.override, () => s.drafts.filter((d) => d.status === "pending"), []);
 }
 
+/** Inbox badge — drafts held for approval + needs strong enough to schedule. */
+export function useInboxReviewCount(): number {
+  const drafts = usePendingDrafts();
+  const ghosts = useGhosts();
+  const ready = (ghosts.data ?? []).filter((g) => g.proof.strength === "strong").length;
+  return (drafts.data?.length ?? 0) + ready;
+}
+
 /** SWAP: useQuery(api.changelog.list, {}) */
 export function useChangelog(): QueryResult<ChangelogEntry[]> {
   const s = useAmendState();

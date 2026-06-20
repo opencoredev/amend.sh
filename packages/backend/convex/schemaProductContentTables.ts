@@ -9,6 +9,16 @@ import {
 } from "./schemaShared";
 
 export const productContentTables = {
+  workspaceTags: defineTable({
+    workspaceId: v.id("workspaces"),
+    name: v.string(),
+    color: v.string(),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_workspace", ["workspaceId"])
+    .index("by_workspace_and_name", ["workspaceId", "name"]),
+
   changelogEntries: defineTable({
     workspaceId: v.id("workspaces"),
     projectId: v.optional(v.id("projects")),
@@ -28,6 +38,8 @@ export const productContentTables = {
       v.literal("changes_requested"),
     ),
     authorName: v.string(),
+    coverImageStorageId: v.optional(v.id("_storage")),
+    metaDescription: v.optional(v.string()),
     scheduledFor: v.optional(v.number()),
     publishedAt: v.optional(v.number()),
     createdAt: v.number(),
@@ -38,7 +50,8 @@ export const productContentTables = {
     .index("by_workspace_and_stableKey", ["workspaceId", "stableKey"])
     .index("by_workspace_and_status", ["workspaceId", "status"])
     .index("by_workspace_and_publishedAt", ["workspaceId", "publishedAt"])
-    .index("by_workspace_and_createdAt", ["workspaceId", "createdAt"]),
+    .index("by_workspace_and_createdAt", ["workspaceId", "createdAt"])
+    .index("by_status_and_scheduledFor", ["status", "scheduledFor"]),
 
   roadmapItems: defineTable({
     workspaceId: v.id("workspaces"),

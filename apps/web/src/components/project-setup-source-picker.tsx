@@ -1,4 +1,4 @@
-import { cn } from "@amend/ui/lib/utils";
+import { Github, Inbox } from "@/lib/icons";
 
 import type {
   GitHubInstallationAccount,
@@ -6,6 +6,7 @@ import type {
   GitHubInstalledRepository,
   RepositoryDraft,
 } from "@/components/amend-dashboard-types";
+import { SelectableRow } from "@/components/onboarding-ui";
 import { GitHubRepositoryPicker } from "@/components/project-setup-github-repository-picker";
 
 export type ProjectSourceChoiceProps = {
@@ -46,51 +47,44 @@ export function ProjectSourceChoice({
     connectionMode === "github" && Boolean(repositoryTrimmed) && !repositoryDraft;
 
   return (
-    <div className="grid gap-3">
-      <div>
-        <span className="text-xs font-semibold text-muted-foreground">First source</span>
-        <div className="mt-2 grid grid-cols-2 border border-border">
-          {[
-            ["github", "GitHub repo"],
-            ["feedback", "Feedback board"],
-          ].map(([mode, label]) => (
-            <button
-              key={mode}
-              type="button"
-              className={cn(
-                "h-10 text-sm font-semibold transition-[background-color,color]",
-                connectionMode === mode
-                  ? "bg-foreground text-background"
-                  : "bg-background text-muted-foreground hover:text-foreground",
-              )}
-              onClick={() => onConnectionModeChange(mode as "feedback" | "github")}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
-      </div>
+    <div className="grid gap-2.5">
+      <SelectableRow
+        icon={Github}
+        title="GitHub repository"
+        description="Turn merged pull requests into updates."
+        selected={connectionMode === "github"}
+        onClick={() => onConnectionModeChange("github")}
+      />
+      <SelectableRow
+        icon={Inbox}
+        title="Feedback board"
+        description="Collect requests and let customers vote."
+        selected={connectionMode === "feedback"}
+        onClick={() => onConnectionModeChange("feedback")}
+      />
 
       {connectionMode === "github" ? (
-        <GitHubRepositoryPicker
-          directory={githubDirectory}
-          directoryError={githubDirectoryError}
-          directoryLoading={githubDirectoryLoading}
-          onLoadDirectory={onLoadGitHubDirectory}
-          onRepositoryInputChange={onRepositoryInputChange}
-          onRepositorySearchChange={onRepositorySearchChange}
-          onSelectRepository={onSelectGitHubRepository}
-          repositoryCount={repositoryCount}
-          repositoryDirectory={repositoryDirectory}
-          repositoryDraft={repositoryDraft}
-          repositoryInput={repositoryInput}
-          repositoryInvalid={repositoryInvalid}
-          repoSearch={repoSearch}
-        />
-      ) : (
-        <div className="border border-border bg-muted/20 p-3 text-xs leading-5 text-muted-foreground">
-          Feedback board will be the required first source. You can connect GitHub later from setup.
+        <div className="mt-1.5">
+          <GitHubRepositoryPicker
+            directory={githubDirectory}
+            directoryError={githubDirectoryError}
+            directoryLoading={githubDirectoryLoading}
+            onLoadDirectory={onLoadGitHubDirectory}
+            onRepositoryInputChange={onRepositoryInputChange}
+            onRepositorySearchChange={onRepositorySearchChange}
+            onSelectRepository={onSelectGitHubRepository}
+            repositoryCount={repositoryCount}
+            repositoryDirectory={repositoryDirectory}
+            repositoryDraft={repositoryDraft}
+            repositoryInput={repositoryInput}
+            repositoryInvalid={repositoryInvalid}
+            repoSearch={repoSearch}
+          />
         </div>
+      ) : (
+        <p className="mt-1 px-1 text-xs leading-5 text-muted-foreground">
+          Your feedback board becomes the first source. Connect GitHub later from settings.
+        </p>
       )}
     </div>
   );

@@ -28,6 +28,12 @@
   --border: #deded8;
   --input: #e9e9e5;
   --ring: oklch(0 0 0);
+  /* Console text hierarchy + surfaces. Light fallback here; dark holds the spec. */
+  --text-strong: #000000;
+  --text-default: #111113;
+  --text-subtle: #66666d;
+  --surface-selected: #ececeb;
+  --border-faint: rgb(0 0 0 / 0.055);
   --amend-warm: #f5c86b;
   --amend-warm-foreground: #15110a;
   --amend-success: #67e19f;
@@ -54,6 +60,14 @@
   --font-serif: "Lora", serif;
   --font-mono: "IBM Plex Mono", monospace;
   --font-display: var(--font-montserrat), "Montserrat", sans-serif;
+  /* Console font cascade: real SF Pro on Apple devices (the OS font — never self-hosted,
+     as Apple's license forbids serving it as a web font), then self-hosted Inter as the
+     look-alike fallback so every non-Apple OS shows one consistent SF-like face instead
+     of its own default (Segoe UI / Roboto / etc). Inter @font-face lives in
+     apps/web/src/index.css. Console only — marketing keeps Geist (--font-sans). */
+  --font-ui:
+    -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "SF Pro", "Inter",
+    system-ui, "Segoe UI", Roboto, sans-serif;
   --workspace-surface-background: #151518;
   --workspace-surface-ring: rgb(255 255 255 / 0.055);
   --workspace-surface-shadow: inset 0 1px 0 rgb(255 255 255 / 0.045), 0 24px 80px rgb(0 0 0 / 0.18);
@@ -148,6 +162,12 @@
   --border: #1f1f23;
   --input: #232327;
   --ring: oklch(0.9551 0 0);
+  /* Console text hierarchy + surfaces — canonical spec. */
+  --text-strong: #ffffff;
+  --text-default: #eeeeee;
+  --text-subtle: #b5b5b5;
+  --surface-selected: #212121;
+  --border-faint: rgb(255 255 255 / 0.04);
   --amend-warm: #f5c86b;
   --amend-warm-foreground: #15110a;
   --amend-success: #67e19f;
@@ -208,6 +228,14 @@
   --font-mono: var(--font-mono);
   --font-serif: var(--font-serif);
   --font-display: var(--font-display);
+  --font-ui: var(--font-ui);
+  /* Console text hierarchy → text-strong / text-default / text-subtle,
+     surface → bg-selected, hairline → border-faint. */
+  --color-strong: var(--text-strong);
+  --color-default: var(--text-default);
+  --color-subtle: var(--text-subtle);
+  --color-selected: var(--surface-selected);
+  --color-faint: var(--border-faint);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -221,4 +249,12 @@
   --shadow-xl: var(--shadow-xl);
   --shadow-2xl: var(--shadow-2xl);
   --tracking-normal: var(--tracking-normal);
+}
+
+/* Type scale — 12 / 13 / 14 / 16 / 18 / 24, base 13px.
+   12·14·16·18·24 already ship as Tailwind's text-xs/sm/base/lg/2xl; we add the
+   13px base step the console rests on (utility: text-13). */
+@theme {
+  --text-13: 0.8125rem;
+  --text-13--line-height: 1.4;
 }

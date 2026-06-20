@@ -1,23 +1,21 @@
 /**
  * PHASE 5 — Memory ("what Amend learned"). Polish-critical.
  *
- * Every rule is a plain-language sentence the agent now follows, grouped by what
- * it does (skips / merges / already-handled / always-surface / patterns). Each
- * shows who taught it, when, and its blast radius ("hides ~212/mo"), with a
- * toggle and an undo. High-blast filters get an audit nudge so a quiet rule
- * can't silently swallow the wrong things forever.
+ * Wears the same chrome as Feedback/Roadmap/Changelog: the full dashboard header
+ * bar, a toolbar of kind filters, then the shared workspace surface holding the
+ * rules as a clean divided list. Each row leads with the rule itself (the plain-
+ * language sentence the agent now follows); a quiet meta line carries its kind,
+ * who taught it, and when. Reach ("~212/mo", warm when high enough to re-check),
+ * the pause toggle, and a hover-only Forget sit on the right — the Canny/Linear
+ * rules pattern, not a wall of switches.
  */
 import { cn } from "@amend/ui/lib/utils";
-import { useState } from "react";
+import { type ReactNode, useState } from "react";
 
-import {
-  AgentMark,
-  EmptyState,
-  ErrorState,
-  IconButton,
-  SkeletonBar,
-} from "@/components/amend-agent-shared";
-import { PageHeader, PageScroll } from "@/components/amend-agent-chrome";
+import { EmptyState, ErrorState, IconButton, SkeletonBar } from "@/components/amend-agent-shared";
+import { DashboardWorkspaceSurface } from "@/components/dashboard-workspace-surface";
+import { ToolbarBar, ToolbarGroup, ToolbarPill } from "@/components/dashboard-toolbar";
+import { PageHeader } from "@/components/amend-agent-chrome";
 import type { MemoryRule, MemoryRuleKind } from "@/lib/amend-contract";
 import { relativeFromNow } from "@/lib/amend-agent-format";
 import { toggleRule, undoRule, useMemoryRules } from "@/lib/mock-amend";
@@ -29,6 +27,7 @@ import {
   Filter,
   Info,
   ShieldCheck,
+  Sparkles,
   Undo2,
   type LucideIcon,
 } from "@/lib/icons";
@@ -38,46 +37,22 @@ const KIND_ORDER: MemoryRuleKind[] = ["noise", "dedupe", "addressed", "allowlist
 
 const kindMeta: Record<
   MemoryRuleKind,
-  { label: string; hint: string; Icon: LucideIcon; verb: string }
+  { label: string; short: string; Icon: LucideIcon; verb: string }
 > = {
-  noise: {
-    label: "Noise it skips",
-    hint: "Signals the agent stays quiet about",
-    Icon: Filter,
-    verb: "hides",
-  },
-  dedupe: {
-    label: "Things it merges",
-    hint: "Different words, one need",
-    Icon: Copy,
-    verb: "merges",
-  },
-  addressed: {
-    label: "Already handled",
-    hint: "Won't resurface what you've shipped",
-    Icon: Check,
-    verb: "hides",
-  },
-  allowlist: {
-    label: "Always surface",
-    hint: "Never filtered, even a one-liner",
-    Icon: ShieldCheck,
-    verb: "always shows",
-  },
-  pattern: {
-    label: "Patterns it watches",
-    hint: "Tags and raises priority",
-    Icon: AiMagic,
-    verb: "tags",
-  },
+  noise: { label: "Noise it skips", short: "Noise", Icon: Filter, verb: "hides" },
+  dedupe: { label: "Things it merges", short: "Merges", Icon: Copy, verb: "merges" },
+  addressed: { label: "Already handled", short: "Handled", Icon: Check, verb: "hides" },
+  allowlist: { label: "Always surface", short: "Always", Icon: ShieldCheck, verb: "always shows" },
+  pattern: { label: "Patterns it watches", short: "Patterns", Icon: AiMagic, verb: "tags" },
 };
+
+const AUDIT_THRESHOLD = 150;
 
 function blastPhrase(rule: MemoryRule): string {
   return `${kindMeta[rule.kind].verb} ~${rule.blastRadius}/mo`;
 }
 
-const AUDIT_THRESHOLD = 150;
-
+/** Quiet right-aligned toggle — pause/resume a rule without a loud green anchor. */
 function Switch({
   checked,
   onChange,
@@ -96,7 +71,7 @@ function Switch({
       onClick={() => onChange(!checked)}
       className={cn(
         "relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors duration-150 ease-linear outline-none focus-visible:ring-2 focus-visible:ring-ring/45",
-        checked ? "bg-amend-success" : "bg-white/[0.14]",
+        checked ? "bg-amend-success" : "bg-white/[0.16]",
       )}
     >
       <span
@@ -109,45 +84,12 @@ function Switch({
   );
 }
 
-function AuditNudge({ rule }: { rule: MemoryRule }) {
-  const [dismissed, setDismissed] = useState(false);
-  if (dismissed) return null;
-  return (
-    <div className="mt-2 flex items-start gap-2 rounded-lg bg-amend-warm/[0.06] px-2.5 py-2 ring-1 ring-amend-warm/15 ring-inset">
-      <Info className="mt-px size-3.5 shrink-0 text-amend-warm" />
-      <p className="text-[0.7rem] leading-relaxed text-foreground/75">
-        This rule {kindMeta[rule.kind].verb}{" "}
-        <span className="font-mono font-semibold tabular-nums text-amend-warm">
-          ~{rule.blastRadius}
-        </span>{" "}
-        items a month — still right?
-      </p>
-      <button
-        type="button"
-        onClick={() => setDismissed(true)}
-        className="ml-auto shrink-0 text-[0.7rem] font-medium text-muted-foreground transition-colors hover:text-foreground"
-      >
-        It's right
-      </button>
-    </div>
-  );
-}
-
 function RuleRow({ rule }: { rule: MemoryRule }) {
+  const { short, label, Icon } = kindMeta[rule.kind];
   const needsAudit =
     rule.enabled && rule.blastRadius >= AUDIT_THRESHOLD && rule.kind !== "allowlist";
 
-  function onToggle(next: boolean) {
-    toggleRule(rule.id, next);
-    toast.info({
-      title: next ? "Rule on" : "Rule paused",
-      description: next
-        ? "The agent will apply it again."
-        : "The agent will stop applying it until you switch it back.",
-    });
-  }
-
-  function onUndo() {
+  function onForget() {
     undoRule(rule.id);
     toast.success({
       title: "Unlearned",
@@ -156,79 +98,131 @@ function RuleRow({ rule }: { rule: MemoryRule }) {
   }
 
   return (
-    <div className="flex items-start gap-3 py-3.5">
-      <div className="pt-0.5">
-        <Switch checked={rule.enabled} onChange={onToggle} label={`Toggle: ${rule.text}`} />
-      </div>
-      <div className="min-w-0 flex-1">
+    <article className="group grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4 px-5 py-3.5 transition-colors duration-150 ease-linear hover:bg-foreground/[0.04] md:px-6">
+      {/* The rule itself is the hero — lead with the sentence, not a control. */}
+      <div className="min-w-0">
         <p
           className={cn(
-            "text-sm leading-relaxed",
-            rule.enabled ? "text-foreground/90" : "text-muted-foreground",
+            "text-sm leading-snug",
+            rule.enabled ? "text-foreground/90" : "text-muted-foreground/55",
           )}
         >
           {rule.text}
         </p>
-        <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-[0.7rem] text-muted-foreground">
-          <span>
-            Taught by <span className="text-foreground/70">{rule.taughtBy}</span>
+        <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-muted-foreground">
+          {/* Bare kind glyph — no chip, no box. */}
+          <span className="inline-flex items-center gap-1.5" title={label}>
+            <Icon className="size-3.5 opacity-60" />
+            {short}
           </span>
-          <span className="opacity-40">·</span>
+          <span className="opacity-30">·</span>
+          <span>
+            taught by <span className="text-foreground/65">{rule.taughtBy}</span>
+          </span>
+          <span className="opacity-30">·</span>
           <span>{relativeFromNow(rule.taughtAt)}</span>
-          <span className="opacity-40">·</span>
-          <span className="font-mono tabular-nums text-foreground/60">{blastPhrase(rule)}</span>
-          {!rule.enabled ? (
-            <span className="rounded bg-white/[0.05] px-1.5 py-px text-[0.62rem] font-medium text-muted-foreground">
-              Off
-            </span>
-          ) : null}
         </div>
-        {needsAudit ? <AuditNudge rule={rule} /> : null}
       </div>
-      <IconButton
-        aria-label="Undo this rule"
-        title="Undo — make Amend forget this"
-        onClick={onUndo}
-      >
-        <Undo2 />
-      </IconButton>
+
+      {/* Right rail: impact stat, the quiet pause toggle, and a hover-only Forget. */}
+      <div className="flex shrink-0 items-center gap-3">
+        <span
+          className={cn(
+            "hidden items-center gap-1 font-mono text-xs tabular-nums sm:inline-flex",
+            needsAudit ? "text-amend-warm" : "text-muted-foreground/55",
+          )}
+          title={needsAudit ? "High reach — worth re-checking this still fits" : blastPhrase(rule)}
+        >
+          {needsAudit ? <Info className="size-3" /> : null}~{rule.blastRadius}
+          <span className="opacity-50">/mo</span>
+        </span>
+        <Switch
+          checked={rule.enabled}
+          onChange={(next) => toggleRule(rule.id, next)}
+          label={`${rule.enabled ? "Pause" : "Resume"} rule: ${rule.text}`}
+        />
+        <IconButton
+          className="opacity-0 transition-opacity duration-150 group-hover:opacity-100 focus-visible:opacity-100 [@media(hover:none)]:opacity-100"
+          aria-label="Forget this rule"
+          title="Forget — make Amend unlearn this"
+          onClick={onForget}
+        >
+          <Undo2 />
+        </IconButton>
+      </div>
+    </article>
+  );
+}
+
+/** Memory's domain signal — how much noise the active rules filter each month —
+ *  sits in the header actions slot, where Feedback/Roadmap keep Search + Sort. */
+function FilteringStat({ filteredPerMonth }: { filteredPerMonth: number }) {
+  if (filteredPerMonth <= 0) return null;
+  return (
+    <div className="hidden h-10 items-center gap-2 rounded-xl bg-[#151518] px-3.5 text-sm ring-1 ring-white/[0.055] sm:flex">
+      <Sparkles className="size-3.5 text-amend-success" />
+      <span className="text-muted-foreground">Filtering</span>
+      <span className="font-mono font-semibold tabular-nums text-foreground">
+        ~{filteredPerMonth}
+      </span>
+      <span className="text-muted-foreground">/ mo</span>
     </div>
   );
 }
 
-function RuleGroup({ kind, rules }: { kind: MemoryRuleKind; rules: MemoryRule[] }) {
-  const { label, hint, Icon } = kindMeta[kind];
+function MemoryToolbar({
+  activeKind,
+  onKindChange,
+  presentKinds,
+  rules,
+}: {
+  activeKind: MemoryRuleKind | "all";
+  onKindChange: (kind: MemoryRuleKind | "all") => void;
+  presentKinds: MemoryRuleKind[];
+  rules: MemoryRule[];
+}) {
   return (
-    <section>
-      <div className="mb-2 flex items-center gap-2.5">
-        <span className="inline-flex size-7 items-center justify-center rounded-lg bg-white/[0.04] text-muted-foreground ring-1 ring-white/[0.06] ring-inset [&_svg]:size-3.5">
-          <Icon />
-        </span>
-        <h2 className="text-sm font-semibold text-foreground">{label}</h2>
-        <span className="font-mono text-[0.7rem] tabular-nums text-muted-foreground/45">
-          {rules.length}
-        </span>
-        <span className="ml-1 hidden text-[0.72rem] text-muted-foreground/70 sm:inline">
-          {hint}
-        </span>
-      </div>
-      <div className="divide-y divide-white/[0.04] rounded-2xl bg-white/[0.015] px-4 ring-1 ring-white/[0.05] ring-inset">
-        {rules.map((rule) => (
-          <RuleRow key={rule.id} rule={rule} />
+    <ToolbarBar>
+      <ToolbarGroup>
+        <ToolbarPill
+          active={activeKind === "all"}
+          count={rules.length}
+          onClick={() => onKindChange("all")}
+        >
+          All
+        </ToolbarPill>
+        {presentKinds.map((kind) => (
+          <ToolbarPill
+            key={kind}
+            active={activeKind === kind}
+            count={rules.filter((rule) => rule.kind === kind).length}
+            onClick={() => onKindChange(kind)}
+          >
+            {kindMeta[kind].short}
+          </ToolbarPill>
         ))}
-      </div>
-    </section>
+      </ToolbarGroup>
+    </ToolbarBar>
   );
+}
+
+function CenteredSurface({ children }: { children: ReactNode }) {
+  return <div className="grid min-h-0 flex-1 place-items-center p-6">{children}</div>;
 }
 
 function MemorySkeleton() {
   return (
-    <div className="space-y-8">
-      <SkeletonBar className="h-20 rounded-2xl" />
-      {Array.from({ length: 2 }).map((_, i) => (
-        <div key={i} className="space-y-2">
-          <SkeletonBar className="h-4 w-40" />
-          <SkeletonBar className="h-28 rounded-2xl" />
+    <div className="grid divide-y divide-white/[0.045]">
+      {Array.from({ length: 5 }).map((_, i) => (
+        <div
+          key={i}
+          className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4 px-5 py-3.5 md:px-6"
+        >
+          <div className="space-y-2">
+            <SkeletonBar className="h-4 w-3/4" />
+            <SkeletonBar className="h-3 w-1/2" />
+          </div>
+          <SkeletonBar className="h-5 w-9 rounded-full" />
         </div>
       ))}
     </div>
@@ -237,6 +231,7 @@ function MemorySkeleton() {
 
 export function AmendMemoryScreen() {
   const { data, isLoading, isError } = useMemoryRules();
+  const [activeKind, setActiveKind] = useState<MemoryRuleKind | "all">("all");
   const rules = data ?? [];
 
   const enabled = rules.filter((r) => r.enabled);
@@ -244,51 +239,59 @@ export function AmendMemoryScreen() {
     .filter((r) => r.kind === "noise" || r.kind === "dedupe" || r.kind === "addressed")
     .reduce((sum, r) => sum + r.blastRadius, 0);
 
-  const groups = KIND_ORDER.map((kind) => ({
-    kind,
-    rules: rules.filter((r) => r.kind === kind),
-  })).filter((g) => g.rules.length > 0);
+  const presentKinds = KIND_ORDER.filter((kind) => rules.some((r) => r.kind === kind));
+  const effectiveKind =
+    activeKind !== "all" && presentKinds.includes(activeKind) ? activeKind : "all";
+  // Show in kind order so a filtered or "all" list always reads top-to-bottom the
+  // same way the toolbar pills do.
+  const visible = KIND_ORDER.flatMap((kind) =>
+    effectiveKind === "all" || effectiveKind === kind ? rules.filter((r) => r.kind === kind) : [],
+  );
+
+  const hasRules = !isLoading && !isError && rules.length > 0;
 
   return (
     <>
       <PageHeader
+        className="relative z-20 bg-background"
         icon={Brain}
         title="Memory"
-        subtitle="What Amend has learned from your decisions"
+        actions={<FilteringStat filteredPerMonth={filteredPerMonth} />}
+        filters={
+          hasRules ? (
+            <MemoryToolbar
+              activeKind={effectiveKind}
+              onKindChange={setActiveKind}
+              presentKinds={presentKinds}
+              rules={rules}
+            />
+          ) : undefined
+        }
       />
-      <PageScroll routeKey="memory" className="max-w-3xl space-y-8">
+
+      <DashboardWorkspaceSurface>
         {isError ? (
-          <ErrorState />
+          <CenteredSurface>
+            <ErrorState />
+          </CenteredSurface>
         ) : isLoading ? (
           <MemorySkeleton />
         ) : rules.length === 0 ? (
-          <EmptyState
-            icon={Brain}
-            title="Amend hasn't learned anything yet"
-            hint="Every time you kill a ghost or correct the agent, it remembers — and those rules show up here, in plain language, for you to audit."
-          />
+          <CenteredSurface>
+            <EmptyState
+              icon={Brain}
+              title="Amend hasn't learned anything yet"
+              hint="Every time you kill a ghost or correct the agent, it remembers — and those rules show up here, in plain language, for you to audit."
+            />
+          </CenteredSurface>
         ) : (
-          <>
-            <section className="rounded-2xl bg-white/[0.02] p-4 ring-1 ring-white/[0.05] ring-inset sm:p-5">
-              <div className="flex items-start gap-3">
-                <AgentMark />
-                <p className="text-sm leading-relaxed text-foreground/90">
-                  Amend is quietly filtering{" "}
-                  <span className="font-mono font-semibold tabular-nums">~{filteredPerMonth}</span>{" "}
-                  items a month so the board only shows what matters — from{" "}
-                  <span className="font-mono font-semibold tabular-nums">{enabled.length}</span>{" "}
-                  {enabled.length === 1 ? "rule" : "rules"} you taught it. Toggle or undo any of
-                  them.
-                </p>
-              </div>
-            </section>
-
-            {groups.map((g) => (
-              <RuleGroup key={g.kind} kind={g.kind} rules={g.rules} />
+          <div className="grid divide-y divide-white/[0.045]">
+            {visible.map((rule) => (
+              <RuleRow key={rule.id} rule={rule} />
             ))}
-          </>
+          </div>
         )}
-      </PageScroll>
+      </DashboardWorkspaceSurface>
     </>
   );
 }

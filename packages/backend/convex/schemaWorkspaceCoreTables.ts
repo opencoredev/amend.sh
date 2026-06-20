@@ -43,7 +43,9 @@ export const workspaceCoreTables = {
   })
     .index("by_workspace", ["workspaceId"])
     .index("by_workspace_and_stableKey", ["workspaceId", "stableKey"])
-    .index("by_workspace_and_slug", ["workspaceId", "slug"]),
+    .index("by_workspace_and_slug", ["workspaceId", "slug"])
+    // Public portal URLs are project slugs resolved without workspace context.
+    .index("by_slug", ["slug"]),
 
   plans: defineTable({
     workspaceId: v.id("workspaces"),

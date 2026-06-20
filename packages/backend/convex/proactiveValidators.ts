@@ -96,7 +96,7 @@ export const proactiveNeed = v.object({
   id: v.string(),
   workspaceId: v.string(),
   title: v.string(),
-  status: v.literal("accepted"),
+  status: proactiveStatusValue,
   proof: proactiveProof,
   sampleQuotes: v.array(proactiveQuote),
   firstSeen: v.number(),
@@ -152,6 +152,24 @@ export const proactiveDigestPreview = v.object({
   ),
   readyGhosts: v.array(proactiveGhost),
   handledSilently: v.number(),
+});
+
+export const proactiveSourcesStatus = v.object({
+  github: v.object({
+    connected: v.boolean(),
+    repo: v.optional(v.string()),
+    lastSync: v.optional(v.number()),
+  }),
+  feedback: v.object({
+    connected: v.boolean(),
+    channels: v.array(
+      v.object({
+        channel: proactiveSourceChannelValue,
+        connected: v.boolean(),
+        lastSignal: v.optional(v.number()),
+      }),
+    ),
+  }),
 });
 
 export const okResult = v.object({ ok: v.literal(true) });

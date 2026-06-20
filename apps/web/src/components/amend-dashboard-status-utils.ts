@@ -81,6 +81,8 @@ export function composerStatusToRoadmapStatus(status: ComposerSubmitPayload["sta
 export function normalizeView(value?: string): DashboardView {
   if (value === "members") return "settings";
   if (value === "share") return "posts";
+  // The agent's Board + Drafts folded into the Inbox — keep old deep links alive.
+  if (value === "board" || value === "drafts") return "inbox";
   return viewValues.includes(value as DashboardView) ? (value as DashboardView) : "posts";
 }
 
@@ -115,12 +117,12 @@ export function statusTitle(status: RoadmapStatus | "all") {
 
 export function viewTitle(view: DashboardView) {
   const titles: Record<DashboardView, string> = {
+    inbox: "Inbox",
     posts: "Feedback",
     roadmap: "Roadmap",
     changelog: "Changelog",
-    board: "The board",
-    drafts: "Drafts",
     memory: "Memory",
+    connections: "Connections",
     settings: "Settings",
     setup: "Create project",
   };

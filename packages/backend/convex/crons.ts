@@ -11,4 +11,11 @@ crons.weekly(
   {},
 );
 
+crons.interval(
+  "publish due scheduled changelog entries",
+  { minutes: 5 },
+  internal.changelogScheduler.publishDueScheduled,
+  {},
+);
+
 export default crons;

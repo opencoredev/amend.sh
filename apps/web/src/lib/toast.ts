@@ -1,33 +1,31 @@
-import { sileo, type SileoOptions } from "sileo";
+import { toast as sonnerToast } from "sonner";
 
-type ToastInput = string | SileoOptions;
+type ToastAction = { title: string; onClick: () => void };
 
-const defaultStyles = {
-  badge: "bg-white/10",
-  button: "bg-white/10 text-white hover:bg-white/15",
-  description: "text-white/70",
-  title: "text-white",
+type ToastOptions = {
+  title?: string;
+  description?: string;
+  duration?: number;
+  button?: ToastAction;
 };
 
-function normalizeToast(input: ToastInput, fallbackTitle: string): SileoOptions {
-  if (typeof input === "string") {
-    return { title: input || fallbackTitle };
-  }
-  return { title: fallbackTitle, ...input };
+type ToastInput = string | ToastOptions;
+
+function sonnerOptions(options: ToastOptions) {
+  return {
+    ...(options.description ? { description: options.description } : {}),
+    ...(options.duration ? { duration: options.duration } : {}),
+    ...(options.button
+      ? { action: { label: options.button.title, onClick: options.button.onClick } }
+      : {}),
+  };
 }
 
-function withDefaults(options: SileoOptions): SileoOptions {
-  const { styles, ...rest } = options;
-  return {
-    duration: 5200,
-    fill: "#202024",
-    roundness: 14,
-    ...rest,
-    styles: {
-      ...defaultStyles,
-      ...styles,
-    },
-  };
+function split(input: ToastInput, fallbackTitle: string) {
+  if (typeof input === "string") {
+    return { title: input || fallbackTitle, options: {} };
+  }
+  return { title: input.title ?? fallbackTitle, options: sonnerOptions(input) };
 }
 
 export function errorMessage(error: unknown, fallback: string) {
@@ -62,23 +60,22 @@ export function errorMessage(error: unknown, fallback: string) {
 
 export const toast = {
   success(input: ToastInput) {
-    return sileo.success(withDefaults(normalizeToast(input, "Done")));
+    const { title, options } = split(input, "Done");
+    return sonnerToast.success(title, options);
   },
   error(input: ToastInput) {
-    return sileo.error(
-      withDefaults({
-        duration: 8000,
-        ...normalizeToast(input, "Action failed"),
-      }),
-    );
+    const { title, options } = split(input, "Action failed");
+    return sonnerToast.error(title, { duration: 8000, ...options });
   },
   info(input: ToastInput) {
-    return sileo.info(withDefaults(normalizeToast(input, "Heads up")));
+    const { title, options } = split(input, "Heads up");
+    return sonnerToast.info(title, options);
   },
   warning(input: ToastInput) {
-    return sileo.warning(withDefaults(normalizeToast(input, "Needs attention")));
+    const { title, options } = split(input, "Needs attention");
+    return sonnerToast.warning(title, options);
   },
   clear() {
-    sileo.clear();
+    sonnerToast.dismiss();
   },
 };

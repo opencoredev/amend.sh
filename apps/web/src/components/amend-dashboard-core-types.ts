@@ -3,15 +3,21 @@ import type { ReactElement } from "react";
 export type RoadmapStatus = "backlog" | "next" | "progress" | "done";
 export type ChangelogStatusFilter = "all" | "draft" | "in_review" | "scheduled" | "published";
 export type DashboardView =
+  | "inbox"
   | "posts"
   | "roadmap"
   | "changelog"
-  | "board"
-  | "drafts"
   | "memory"
+  | "connections"
   | "settings"
   | "setup";
-export type SettingsSection = "accounts" | "automation" | "general" | "portal" | "services";
+export type SettingsSection =
+  | "accounts"
+  | "automation"
+  | "general"
+  | "portal"
+  | "services"
+  | "tags";
 export type BoardId = "feature" | "bug" | "changelog" | "feedback";
 export type WorkspaceId = string;
 export type RoadmapViewId = string;

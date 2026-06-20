@@ -15,14 +15,14 @@ import {
   Link2,
   List,
   ListOrdered,
-  Plus,
   Quote,
   Strikethrough,
-  Tag,
   Type,
   Underline,
-  X,
 } from "@/lib/icons";
+
+import { ChangelogTagInput } from "./changelog-tag-input";
+import type { WorkspaceTag } from "./changelog-tags";
 
 const CATEGORY_META: Record<string, { label: string; dot: string }> = {
   added: { label: "New", dot: "bg-emerald-400" },
@@ -152,6 +152,7 @@ function CategoryPicker({
 }
 
 export function ChangelogEditorMain({
+  availableTags,
   category,
   charCount,
   editorRef,
@@ -160,6 +161,7 @@ export function ChangelogEditorMain({
   onBodyChange,
   onCategoryChange,
   onCommand,
+  onCreateTag,
   onRemoveTag,
   onTitleChange,
   readMinutes,
@@ -167,6 +169,7 @@ export function ChangelogEditorMain({
   title,
   wordCount,
 }: {
+  availableTags: WorkspaceTag[];
   category: string;
   charCount: number;
   editorRef: RefObject<HTMLDivElement | null>;
@@ -175,6 +178,7 @@ export function ChangelogEditorMain({
   onBodyChange: (value: string) => void;
   onCategoryChange: (value: string) => void;
   onCommand: (command: string, value?: string) => void;
+  onCreateTag: (name: string, color: string) => void;
   onRemoveTag: (tag: string) => void;
   onTitleChange: (value: string) => void;
   readMinutes: number;
@@ -182,16 +186,6 @@ export function ChangelogEditorMain({
   title: string;
   wordCount: number;
 }) {
-  const [tagDraft, setTagDraft] = useState("");
-  const [addingTag, setAddingTag] = useState(false);
-
-  function commitTag() {
-    const value = tagDraft.trim();
-    if (value) onAddTag(value);
-    setTagDraft("");
-    setAddingTag(false);
-  }
-
   function insertLink() {
     const url = window.prompt("Link URL");
     if (!url) return;
@@ -200,8 +194,8 @@ export function ChangelogEditorMain({
   }
 
   return (
-    <main className="relative flex min-h-0 flex-col overflow-y-auto bg-background">
-      <div className="sticky top-0 z-10 flex flex-wrap items-center gap-0.5 border-b border-white/[0.05] bg-background/85 px-3 py-1.5 backdrop-blur md:px-5">
+    <main className="relative flex min-h-0 flex-1 flex-col overflow-y-auto bg-transparent">
+      <div className="sticky top-0 z-10 flex flex-wrap items-center gap-0.5 border-b border-white/[0.05] bg-[var(--workspace-surface-background)] px-3 py-1.5 md:px-5">
         {TOOL_GROUPS.map((group, index) => (
           <div key={group[0].label} className="flex items-center gap-0.5">
             {index > 0 ? <span className="mx-1 h-5 w-px bg-white/[0.07]" /> : null}
@@ -225,54 +219,13 @@ export function ChangelogEditorMain({
       <div className="mx-auto w-full max-w-3xl flex-1 px-5 pb-28 pt-7 md:px-8 md:pt-9">
         <div className="flex flex-wrap items-center gap-2">
           <CategoryPicker category={category} onCategoryChange={onCategoryChange} />
-
-          {tags.map((tag) => (
-            <span
-              key={tag}
-              className="group inline-flex items-center gap-1 rounded-full bg-foreground/[0.05] py-1 pl-2.5 pr-1.5 text-xs font-medium text-muted-foreground ring-1 ring-white/[0.05]"
-            >
-              <Tag className="size-3 opacity-60" />
-              {tag}
-              <button
-                type="button"
-                aria-label={`Remove ${tag}`}
-                className="grid size-4 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-foreground/10 hover:text-foreground"
-                onClick={() => onRemoveTag(tag)}
-              >
-                <X className="size-3" />
-              </button>
-            </span>
-          ))}
-
-          {addingTag ? (
-            <input
-              autoFocus
-              value={tagDraft}
-              className="h-7 w-28 rounded-full border border-white/[0.1] bg-background px-2.5 text-xs text-foreground outline-none placeholder:text-muted-foreground focus:border-foreground"
-              placeholder="Add tag…"
-              onBlur={commitTag}
-              onChange={(event) => setTagDraft(event.target.value)}
-              onKeyDown={(event) => {
-                if (event.key === "Enter") {
-                  event.preventDefault();
-                  commitTag();
-                }
-                if (event.key === "Escape") {
-                  setTagDraft("");
-                  setAddingTag(false);
-                }
-              }}
-            />
-          ) : (
-            <button
-              type="button"
-              className="inline-flex h-7 items-center gap-1 rounded-full px-2.5 text-xs font-medium text-muted-foreground ring-1 ring-white/[0.06] transition-colors duration-150 ease-linear hover:bg-foreground/[0.05] hover:text-foreground active:opacity-75"
-              onClick={() => setAddingTag(true)}
-            >
-              <Plus className="size-3.5" />
-              Tag
-            </button>
-          )}
+          <ChangelogTagInput
+            availableTags={availableTags}
+            tags={tags}
+            onAddTag={onAddTag}
+            onCreateTag={onCreateTag}
+            onRemoveTag={onRemoveTag}
+          />
         </div>
 
         <textarea

@@ -19,6 +19,29 @@ export async function ensureBaseRecords(ctx: MutationCtx, slug: string) {
   return workspace;
 }
 
+/**
+ * Resolve a public-portal slug to its workspace + project. Portal URLs are
+ * PROJECT slugs (each project has its own portal), so we resolve the project
+ * (and its workspace) first and fall back to a workspace slug for workspace-level
+ * portals + the demo. Mirrors getPublicPortal so portal writes land on the same
+ * project the reader sees.
+ */
+export async function resolvePublicScope(ctx: MutationCtx, slug: string) {
+  const project = await ctx.db
+    .query("projects")
+    .withIndex("by_slug", (q) => q.eq("slug", slug))
+    .first();
+  if (project) {
+    const workspace = await ctx.db.get(project.workspaceId);
+    if (workspace) {
+      await ensureWorkspacePlanAndRules(ctx, workspace._id);
+      await ensureChannelPlaceholders(ctx, workspace._id);
+      return { project, workspace };
+    }
+  }
+  return { project: null, workspace: await ensureBaseRecords(ctx, slug) };
+}
+
 export async function ensureGitHubConnection(
   ctx: MutationCtx,
   workspaceId: Id<"workspaces">,

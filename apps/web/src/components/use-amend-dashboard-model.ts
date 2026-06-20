@@ -23,7 +23,7 @@ import {
   roadmapStatusToRoadmapStatus,
   workspaceFromDashboard,
 } from "@/components/amend-dashboard-utils";
-import { BLANK_CHANGELOG, NEW_CHANGELOG_KEY } from "@/components/changelog-editor-types";
+import { BLANK_CHANGELOG } from "@/components/changelog-editor-types";
 
 export function useAmendDashboardModel({
   activeChangelogCategory,
@@ -35,6 +35,7 @@ export function useAmendDashboardModel({
   dashboard,
   hasSession,
   projects,
+  pendingChangelogKey,
   projectsReady,
   searchQuery,
   selectedChangelogKey,
@@ -52,6 +53,7 @@ export function useAmendDashboardModel({
   activeView: DashboardView;
   dashboard?: DashboardOverview;
   hasSession: boolean;
+  pendingChangelogKey: string | null;
   projects?: DashboardProject[];
   projectsReady: boolean;
   searchQuery: string;
@@ -94,13 +96,19 @@ export function useAmendDashboardModel({
     ) ?? null;
   const selectedRoadmap =
     syncedRoadmapEntries.find((entry) => entry.stableKey === selectedRoadmapKey) ?? null;
+  const existingChangelog = changelogEntries.find(
+    (entry) => entry.stableKey === selectedChangelogKey || entry.recordId === selectedChangelogKey,
+  );
+  // A pending key — a draft just minted this session — seeds a blank editor carrying
+  // that key as its stableKey, so the first save persists under it. A key that is
+  // merely absent from the loaded list (still loading, deleted, another project) falls
+  // back to the list; that is also what lets a cold refresh load the real entry once
+  // data arrives instead of getting stuck on a blank seed.
   const selectedChangelog =
-    selectedChangelogKey === NEW_CHANGELOG_KEY
-      ? BLANK_CHANGELOG
-      : (changelogEntries.find(
-          (entry) =>
-            entry.stableKey === selectedChangelogKey || entry.recordId === selectedChangelogKey,
-        ) ?? null);
+    existingChangelog ??
+    (selectedChangelogKey && selectedChangelogKey === pendingChangelogKey
+      ? { ...BLANK_CHANGELOG, stableKey: selectedChangelogKey }
+      : null);
   const projectItems = useMemo(
     () => projectsToMenuItems(projects, workspace),
     [projects, workspace],

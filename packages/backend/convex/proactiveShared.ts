@@ -37,7 +37,6 @@ export type ProactiveEvidence = {
 };
 
 export type ProactiveNeed = ProactiveGhost & {
-  status: "accepted";
   evidence: ProactiveEvidence[];
   linkedShip?: {
     prNumber: number;
@@ -83,7 +82,6 @@ export async function needToAcceptedNeed(
 
   return {
     ...needToGhost(need),
-    status: "accepted",
     evidence: evidenceDocs
       .sort((a, b) => b.createdAt - a.createdAt)
       .map((evidence) => ({

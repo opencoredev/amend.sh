@@ -1,5 +1,12 @@
 # Agent Guidelines — Amend
 
+## Vocab
+
+Shorthand for dashboard UI regions (React DevTools component → the name the user says):
+
+- **Page content** — `DashboardWorkspaceSurface` (`dashboard-workspace-surface.tsx`): the rounded, scrollable main content region rendered inside every dashboard view. It's on every page — when the user says "page content," this is it.
+- **Toolbar** — `ToolbarBar` (`dashboard-toolbar.tsx`) and its per-view wrappers (`RoadmapToolbar` / `FeedbackToolbar` / `ChangelogToolbar`): the full-width sub-nav/filter bar directly under the dashboard header.
+
 ## UI Interaction Animations
 
 **No scale transforms on interactive elements.** Do not use `active:scale-[0.96]`, `hover:scale-*`, or any geometry-changing transform on buttons, links, sidebar items, or nav elements. They feel jittery and distracting.
@@ -15,6 +22,10 @@
 **Layout-level animations are encouraged when they clarify state.** Use the transitions-dev classes in `packages/ui/src/styles/motion.css`: `.t-resize` for cards/panels that change size, `.t-dropdown` for anchored menus, `.t-modal` for modal surfaces, `.t-panel-slide` for workspace reveals, and `.t-icon-swap` for icon state changes. Keep reduced-motion guards intact.
 
 **Premium shell direction:** Amend should keep its own source-linked identity, but use a Tripwire-like level of refinement: near-black background, raised rounded app surfaces, soft borders, compact sans-serif body text, mono only for data/code, and small high-signal accents. Do not copy Tripwire one-for-one.
+
+## Icons
+
+We use **Hugeicons only** — never import `lucide-react` (it is not a dependency). Import icons from the lucide-compatible wrapper: `@/lib/icons` in `apps/web`, `@amend/ui/components/icons` in `packages/ui`. Add a new glyph by mapping a Hugeicons `*Icon` export to a lucide-style name inside the wrapper.
 
 ## Charting
 

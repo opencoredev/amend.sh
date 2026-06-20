@@ -141,7 +141,6 @@ export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp?: ()
             });
             await joinPreviewWorkspace(value.email);
             navigateAfterEmailSignIn();
-            toast.success("Sign in successful");
           },
           onError: async (error) => {
             if (previewAuthEnabled) {

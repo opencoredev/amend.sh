@@ -12,32 +12,32 @@ import type { LucideIcon } from "@/lib/icons";
 export function PageHeader({
   icon: Icon,
   title,
-  subtitle,
   actions,
+  filters,
+  className,
 }: {
   icon?: LucideIcon;
   title: ReactNode;
-  subtitle?: ReactNode;
   actions?: ReactNode;
+  /** Per-view filter/sub-nav row, rendered as the header's second line directly
+   *  above the content surface (keeps every page to header + surface). */
+  filters?: ReactNode;
+  className?: string;
 }) {
   return (
-    <header className="flex shrink-0 items-start justify-between gap-4 px-5 pb-3 pt-4 md:px-8 md:pt-5">
-      <div className="flex min-w-0 items-center gap-3">
-        {Icon ? (
-          <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-xl bg-white/[0.04] text-muted-foreground ring-1 ring-white/[0.06] ring-inset [&_svg]:size-4.5">
-            <Icon />
-          </span>
-        ) : null}
-        <div className="min-w-0">
-          <h1 className="truncate text-[0.95rem] font-semibold tracking-tight text-foreground">
-            {title}
-          </h1>
-          {subtitle ? (
-            <p className="mt-0.5 truncate text-xs text-muted-foreground">{subtitle}</p>
+    <header className={cn("flex shrink-0 flex-col", className)}>
+      <div className="flex min-h-16 items-center justify-between gap-4 px-5 md:px-8">
+        <div className="flex min-w-0 items-center gap-3">
+          {Icon ? (
+            <span className="flex shrink-0 items-center justify-center text-muted-foreground [&_svg]:size-5">
+              <Icon />
+            </span>
           ) : null}
+          <h1 className="truncate text-lg font-semibold tracking-tight text-foreground">{title}</h1>
         </div>
+        {actions ? <div className="flex shrink-0 items-center gap-2">{actions}</div> : null}
       </div>
-      {actions ? <div className="flex shrink-0 items-center gap-2">{actions}</div> : null}
+      {filters}
     </header>
   );
 }

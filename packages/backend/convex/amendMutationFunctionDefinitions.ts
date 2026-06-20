@@ -1,6 +1,9 @@
 import { joinWaitlistArgs } from "./amendAccessFunctionArgs";
 import { joinWaitlistHandler } from "./amendAccessMutationHandlers";
 import {
+  generateChangelogCoverUploadUrlHandler,
+  publishChangelogEntryHandler,
+  trustedPublishChangelogEntryHandler,
   trustedUpsertChangelogEntryHandler,
   trustedUpsertRoadmapItemHandler,
   upsertChangelogEntryHandler,
@@ -15,6 +18,8 @@ import {
   ingestSourceEventArgs,
   planNotificationDeliveriesArgs,
   projectKeyArgs,
+  generateChangelogCoverUploadUrlArgs,
+  publishChangelogEntryArgs,
   recordFeedbackInteractionArgs,
   registerCustomDomainArgs,
   revertAutomationDecisionArgs,
@@ -215,6 +220,21 @@ export const upsertChangelogEntryDefinition = {
 export const trustedUpsertChangelogEntryDefinition = {
   args: upsertChangelogEntryArgs,
   handler: trustedUpsertChangelogEntryHandler,
+};
+
+export const generateChangelogCoverUploadUrlDefinition = {
+  args: generateChangelogCoverUploadUrlArgs,
+  handler: generateChangelogCoverUploadUrlHandler,
+};
+
+export const publishChangelogEntryDefinition = {
+  args: publishChangelogEntryArgs,
+  handler: publishChangelogEntryHandler,
+};
+
+export const trustedPublishChangelogEntryDefinition = {
+  args: publishChangelogEntryArgs,
+  handler: trustedPublishChangelogEntryHandler,
 };
 
 export const upsertRoadmapItemDefinition = {

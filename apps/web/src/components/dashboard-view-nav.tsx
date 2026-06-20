@@ -3,7 +3,7 @@ import {
   Brain,
   GitPullRequestArrow,
   Inbox,
-  LayoutGrid,
+  Link2,
   Map,
   MessageSquareText,
   Newspaper,
@@ -22,6 +22,7 @@ export function IconRail({
   onViewChange: (view: DashboardView) => void;
 }) {
   const railItems: Array<[DashboardView, ReactElement, string]> = [
+    ["inbox", <Inbox />, "Inbox"],
     ["posts", <MessageSquareText />, "Feedback"],
     ["roadmap", <Map />, "Roadmap"],
     ["changelog", <Newspaper />, "Changelog"],
@@ -68,12 +69,12 @@ export function MobileViewNav({
   onViewChange: (view: DashboardView) => void;
 }) {
   const items: Array<[DashboardView, ReactElement, string]> = [
+    ["inbox", <Inbox />, "Inbox"],
     ["posts", <MessageSquareText />, "Feedback"],
     ["roadmap", <Map />, "Roadmap"],
     ["changelog", <Newspaper />, "Changelog"],
-    ["board", <LayoutGrid />, "Board"],
-    ["drafts", <Inbox />, "Drafts"],
     ["memory", <Brain />, "Memory"],
+    ["connections", <Link2 />, "Connections"],
     ["settings", <Settings />, "Settings"],
     ["setup", <GitPullRequestArrow />, "Setup"],
   ];
@@ -85,8 +86,9 @@ export function MobileViewNav({
           <button
             key={view}
             type="button"
+            aria-current={activeView === view ? "page" : undefined}
             className={cn(
-              "inline-flex h-9 items-center justify-center gap-2 rounded-lg px-2 text-xs font-semibold transition-colors duration-150 ease-linear active:opacity-75 [&_svg]:size-3.5",
+              "inline-flex min-h-11 items-center justify-center gap-2 rounded-lg px-2 text-xs font-semibold outline-none transition-colors duration-150 ease-linear focus-visible:ring-2 focus-visible:ring-white/20 active:opacity-75 [&_svg]:size-3.5",
               activeView === view
                 ? "bg-foreground/[0.075] text-foreground"
                 : "bg-foreground/[0.025] text-muted-foreground hover:bg-foreground/[0.06] hover:text-foreground",

@@ -1,5 +1,20 @@
 export type FeedbackMode = "authenticated" | "closed" | "open";
 
+/** The three public portal surfaces. `feedback` is the default (clean URL). */
+export type PortalView = "changelog" | "feedback" | "roadmap";
+
+export type PortalSearch = {
+  /** Open a changelog entry by its stableKey. */
+  entry?: string;
+  /** Open a feedback post by its stableKey. */
+  post?: string;
+  view?: PortalView;
+};
+
+export function normalizePortalView(value: unknown): PortalView {
+  return value === "roadmap" || value === "changelog" ? value : "feedback";
+}
+
 /** Turn a display portal URL like `acme.amend.sh` into the routable workspace slug. */
 export function portalSlugFromUrl(portalUrl: string): string {
   return portalUrl
@@ -15,6 +30,7 @@ export type PortalData = {
   roadmap: PortalRoadmap[];
   workspace: {
     description?: string;
+    logoUrl?: string | null;
     name: string;
     portalSettings?: {
       accentColor?: string;
@@ -43,6 +59,8 @@ export type SourceLink = {
 export type PortalChangelog = {
   body: string;
   category: string;
+  coverImageUrl?: string | null;
+  metaDescription?: string | null;
   publishedAt?: number;
   sourceLinks: SourceLink[];
   stableKey: string;
@@ -75,5 +93,6 @@ export type PortalFeedback = {
   stableKey: string;
   status: string;
   title: string;
+  updatedAt: number;
   votes: number;
 };

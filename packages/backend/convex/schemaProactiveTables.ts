@@ -155,6 +155,7 @@ export const proactiveTables = {
     taughtAt: v.number(),
     blastRadius: v.number(),
     enabled: v.boolean(),
+    sourceNeedId: v.optional(v.id("needs")),
     undoneAt: v.optional(v.number()),
     createdAt: v.number(),
     updatedAt: v.number(),

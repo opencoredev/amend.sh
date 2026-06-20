@@ -2,7 +2,6 @@ import { useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 
 import type { ProjectMenuItem } from "@/components/amend-dashboard-types";
-import type { DashboardRoutePatch } from "@/components/use-amend-dashboard-route";
 
 export function useAmendDashboardRedirects({
   activeProject,
@@ -11,7 +10,7 @@ export function useAmendDashboardRedirects({
   hasSession,
   projectsReady,
   sessionPending,
-  setRoute,
+  setActiveProject,
 }: {
   activeProject: ProjectMenuItem;
   activeProjectId: string;
@@ -19,7 +18,7 @@ export function useAmendDashboardRedirects({
   hasSession: boolean;
   projectsReady: boolean;
   sessionPending: boolean;
-  setRoute: (next: DashboardRoutePatch) => void;
+  setActiveProject: (id: string) => void;
 }) {
   const navigate = useNavigate();
 
@@ -31,9 +30,11 @@ export function useAmendDashboardRedirects({
     });
   }, [hasSession, navigate, sessionPending]);
 
+  // Seed the remembered project once projects load, so the fetched dashboard data and
+  // the project menu agree on a default. Persists to localStorage, not the URL.
   useEffect(() => {
     if (activeProjectId || !projectsReady || activeView === "setup") return;
     if (activeProject.id === "new-project") return;
-    setRoute({ project: activeProject.id, replace: true });
-  }, [activeProject.id, activeProjectId, activeView, projectsReady, setRoute]);
+    setActiveProject(activeProject.id);
+  }, [activeProject.id, activeProjectId, activeView, projectsReady, setActiveProject]);
 }

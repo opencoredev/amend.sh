@@ -158,3 +158,25 @@ export const organizationJsonLd = {
   description: defaultDescription,
   sameAs: [],
 };
+
+type ChangelogJsonLdEntry = {
+  title: string;
+  summary: string;
+  metaDescription?: string | null;
+  coverImageUrl?: string | null;
+  publishedAt?: number;
+  stableKey: string;
+};
+
+/** schema.org TechArticle graph for a portal's published changelog entries. */
+export function changelogJsonLd(entries: ChangelogJsonLdEntry[], workspaceSlug: string) {
+  const updatesUrl = `${siteUrl}/portal/${workspaceSlug}#updates`;
+  return entries.map((entry) => ({
+    "@type": "TechArticle",
+    headline: entry.title,
+    description: entry.metaDescription || entry.summary,
+    url: updatesUrl,
+    ...(entry.coverImageUrl ? { image: entry.coverImageUrl } : {}),
+    ...(entry.publishedAt ? { datePublished: new Date(entry.publishedAt).toISOString() } : {}),
+  }));
+}

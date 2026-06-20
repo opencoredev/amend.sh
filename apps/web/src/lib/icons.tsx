@@ -7,6 +7,7 @@
  * a lucide-style name to a Hugeicons `*Icon` export below.
  */
 import {
+  Activity03Icon,
   Add01Icon,
   AiMagicIcon,
   Alert02Icon,
@@ -22,6 +23,7 @@ import {
   Calendar01Icon,
   Calendar03Icon,
   Cancel01Icon,
+  ChartBarLineIcon,
   ChartUpIcon,
   CheckmarkCircle02Icon,
   CircleIcon,
@@ -36,6 +38,7 @@ import {
   Folder01Icon,
   FolderAddIcon,
   FolderOpenIcon,
+  GitBranchIcon,
   GitCommitIcon,
   GitMergeIcon,
   GitPullRequestIcon,
@@ -71,6 +74,7 @@ import {
   QuoteDownIcon,
   Radio01Icon,
   Road01Icon,
+  RssIcon,
   Route01Icon,
   Search01Icon,
   SecurityCheckIcon,
@@ -112,6 +116,7 @@ function icon(svg: IconSvgElement, displayName: string) {
   return Icon;
 }
 
+export const Activity = icon(Activity03Icon, "Activity");
 export const AiMagic = icon(AiMagicIcon, "AiMagic");
 export const AlertCircle = icon(Alert02Icon, "AlertCircle");
 export const ArrowLeft = icon(ArrowLeft01Icon, "ArrowLeft");
@@ -134,6 +139,7 @@ export const Circle = icon(CircleIcon, "Circle");
 export const CircleCheckBig = icon(CheckmarkCircle02Icon, "CircleCheckBig");
 export const Clock = icon(Clock01Icon, "Clock");
 export const CircleDashed = icon(DashedLineCircleIcon, "CircleDashed");
+export const ChartNoAxesCombined = icon(ChartBarLineIcon, "ChartNoAxesCombined");
 export const ClipboardList = icon(Task01Icon, "ClipboardList");
 export const Code2 = icon(SourceCodeIcon, "Code2");
 export const Copy = icon(Copy01Icon, "Copy");
@@ -145,6 +151,7 @@ export const FileText = icon(File01Icon, "FileText");
 export const FolderOpen = icon(FolderOpenIcon, "FolderOpen");
 export const Folder = icon(Folder01Icon, "Folder");
 export const FolderPlus = icon(FolderAddIcon, "FolderPlus");
+export const GitBranch = icon(GitBranchIcon, "GitBranch");
 export const GitPullRequestArrow = icon(GitPullRequestIcon, "GitPullRequestArrow");
 export const Globe = icon(GlobalIcon, "Globe");
 export const Heading1 = icon(Heading1Icon, "Heading1");
@@ -172,6 +179,7 @@ export const Plus = icon(PlusSignIcon, "Plus");
 export const PlusSquare = icon(Add01Icon, "PlusSquare");
 export const Quote = icon(QuoteDownIcon, "Quote");
 export const Radio = icon(Radio01Icon, "Radio");
+export const RadioTower = icon(RssIcon, "RadioTower");
 export const Road = icon(Road01Icon, "Road");
 export const Route = icon(Route01Icon, "Route");
 export const Search = icon(Search01Icon, "Search");

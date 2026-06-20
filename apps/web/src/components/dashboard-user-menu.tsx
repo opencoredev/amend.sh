@@ -60,7 +60,7 @@ export default function DashboardUserMenu({ onOpenSettings }: { onOpenSettings?:
         render={
           <button
             type="button"
-            className="flex w-full items-center gap-2.5 rounded-xl bg-[#151518] px-2 py-2 text-left ring-1 ring-white/[0.055] transition-colors duration-150 ease-linear hover:bg-[#1a1a1d] active:opacity-75 data-[popup-open]:bg-[#1a1a1d]"
+            className="flex w-full items-center gap-2.5 rounded-xl bg-[#151518] px-2 py-2 text-left outline-none ring-1 ring-white/[0.055] transition-colors duration-150 ease-linear hover:bg-[#1a1a1d] focus-visible:ring-2 focus-visible:ring-white/25 active:opacity-75 data-[popup-open]:bg-[#1a1a1d]"
           />
         }
       >
@@ -78,10 +78,10 @@ export default function DashboardUserMenu({ onOpenSettings }: { onOpenSettings?:
         align="center"
         side="top"
         sideOffset={8}
-        className="w-(--anchor-width) min-w-60 rounded-xl bg-popover p-1.5 shadow-[0_18px_60px_rgb(0_0_0/0.55)] ring-1 ring-white/[0.06]"
+        className="w-(--anchor-width) min-w-64 rounded-xl bg-popover p-1.5 shadow-[0_18px_60px_rgb(0_0_0/0.55)] ring-1 ring-white/[0.06]"
       >
-        <div className="flex items-center gap-2.5 px-2 py-2">
-          <AccountAvatar image={image} initials={initials} />
+        <div className="flex items-center gap-3 px-2 py-2">
+          <AccountAvatar className="size-10 text-sm" image={image} initials={initials} />
           <div className="min-w-0">
             <p className="truncate text-sm font-semibold leading-tight">{name}</p>
             <p className="mt-0.5 truncate text-[0.72rem] leading-tight text-muted-foreground">
@@ -101,6 +101,8 @@ export default function DashboardUserMenu({ onOpenSettings }: { onOpenSettings?:
             Project settings
           </DropdownMenuItem>
         ) : null}
+
+        <DropdownMenuSeparator className="my-1.5 bg-white/[0.06]" />
 
         <DropdownMenuItem
           variant="destructive"

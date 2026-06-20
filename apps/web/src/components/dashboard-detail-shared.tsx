@@ -4,6 +4,14 @@ import type { ReactElement, ReactNode } from "react";
 
 import type { SourceLink } from "@/components/amend-dashboard-types";
 
+export function DetailSectionLabel({ children }: { children: ReactNode }) {
+  return (
+    <h2 className="text-[0.7rem] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+      {children}
+    </h2>
+  );
+}
+
 export function SourceEvidenceList({
   compact = false,
   links,
@@ -58,15 +66,6 @@ export function EmptyInline({
         <h3 className="mt-3 text-sm font-semibold">{title}</h3>
         <p className="mt-2 max-w-sm text-pretty text-sm leading-6 text-muted-foreground">{copy}</p>
       </div>
-    </div>
-  );
-}
-
-export function DetailStat({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="grid gap-1 rounded-lg bg-foreground/[0.03] p-3">
-      <span className="text-xs text-muted-foreground">{label}</span>
-      <span className="truncate text-sm font-semibold">{value}</span>
     </div>
   );
 }

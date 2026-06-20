@@ -44,6 +44,7 @@ export function roadmapItemToPost(item: DashboardRoadmap): Post {
     title: item.title,
     updatedAt: item.updatedAt,
     voters: item.feedbackCount,
+    hasVoted: item.viewerHasVoted ?? false,
   };
 }
 
@@ -80,6 +81,7 @@ export function feedbackPostToRoadmapItem(post: Post): DashboardRoadmap {
     status: roadmapStatusToPortalStatus(post.status),
     title: post.title,
     updatedAt: post.updatedAt,
+    viewerHasVoted: post.hasVoted,
   };
 }
 
@@ -117,5 +119,6 @@ export function feedbackToPost(item: DashboardFeedback): Post {
     title: item.title,
     updatedAt: item.updatedAt,
     voters: item.votes,
+    hasVoted: item.viewerHasVoted ?? false,
   };
 }

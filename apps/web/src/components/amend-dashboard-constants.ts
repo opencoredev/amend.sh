@@ -7,12 +7,12 @@ import type {
 } from "@/components/amend-dashboard-types";
 
 export const viewValues: DashboardView[] = [
+  "inbox",
   "posts",
   "roadmap",
   "changelog",
-  "board",
-  "drafts",
   "memory",
+  "connections",
   "settings",
   "setup",
 ];

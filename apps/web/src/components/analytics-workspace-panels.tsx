@@ -8,7 +8,7 @@ import {
   RadioTower,
   Send,
   Sparkles,
-} from "lucide-react";
+} from "@/lib/icons";
 import type { ReactElement } from "react";
 
 import { formatDate, formatState } from "@/components/amend-dashboard-format";

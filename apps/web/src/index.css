@@ -42,18 +42,29 @@
     font-weight: 700;
   }
 
+  /* Inter — self-hosted, the look-alike *fallback* for non-Apple devices. Apple
+     devices resolve SF Pro first (see --font-ui) and never download this. */
+  @font-face {
+    font-family: "Inter";
+    src: url("/fonts/inter-400.woff2") format("woff2");
+    font-display: swap;
+    font-style: normal;
+    font-weight: 400;
+  }
+
+  @font-face {
+    font-family: "Inter";
+    src: url("/fonts/inter-500.woff2") format("woff2");
+    font-display: swap;
+    font-style: normal;
+    font-weight: 500;
+  }
+
   html {
     -webkit-font-smoothing: antialiased;
     scroll-behavior: smooth;
     scroll-padding-top: 5rem;
     text-rendering: geometricprecision;
-  }
-
-  /* Toast (sileo): lift the pill off the near-black canvas with a hairline
-     edge + deep shadow so it reads as an elevated surface, matching the
-     dashboard's rounded ring-1 surfaces. */
-  [data-sileo-toast] {
-    filter: drop-shadow(0 1px 0 rgb(255 255 255 / 0.05)) drop-shadow(0 16px 36px rgb(0 0 0 / 0.55));
   }
 
   h1,

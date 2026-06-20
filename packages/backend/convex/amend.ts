@@ -86,6 +86,13 @@ export const upsertChangelogEntry = mutation(mutations.upsertChangelogEntryDefin
 export const trustedUpsertChangelogEntry = internalMutation(
   mutations.trustedUpsertChangelogEntryDefinition,
 );
+export const generateChangelogCoverUploadUrl = mutation(
+  mutations.generateChangelogCoverUploadUrlDefinition,
+);
+export const publishChangelogEntry = mutation(mutations.publishChangelogEntryDefinition);
+export const trustedPublishChangelogEntry = internalMutation(
+  mutations.trustedPublishChangelogEntryDefinition,
+);
 export const upsertRoadmapItem = mutation(mutations.upsertRoadmapItemDefinition);
 export const trustedUpsertRoadmapItem = internalMutation(
   mutations.trustedUpsertRoadmapItemDefinition,

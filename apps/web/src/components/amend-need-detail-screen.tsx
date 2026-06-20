@@ -35,7 +35,7 @@ import {
   ChevronDown,
   Clock,
   ExternalLink,
-  LayoutGrid,
+  Inbox,
   Megaphone,
   Plus,
   X,
@@ -207,7 +207,7 @@ function ProofRail({ need, onBack }: { need: Need; onBack: () => void }) {
           </div>
           <Link
             to="/dashboard/$view"
-            params={{ view: "drafts" }}
+            params={{ view: "inbox" }}
             className={agentButtonClass("secondary", "sm", "mt-3 w-full")}
           >
             <Megaphone />
@@ -314,7 +314,7 @@ export function AmendNeedDetailScreen({ needId, onBack }: { needId: string; onBa
   return (
     <>
       <div className="flex shrink-0 items-center gap-2 px-5 pt-4 md:px-8">
-        <IconButton aria-label="Back to the board" onClick={onBack}>
+        <IconButton aria-label="Back to inbox" onClick={onBack}>
           <ArrowLeft />
         </IconButton>
         <nav className="flex items-center gap-1.5 text-xs text-muted-foreground">
@@ -323,7 +323,7 @@ export function AmendNeedDetailScreen({ needId, onBack }: { needId: string; onBa
             onClick={onBack}
             className="transition-colors hover:text-foreground"
           >
-            Board
+            Inbox
           </button>
           {need ? (
             <>
@@ -341,12 +341,12 @@ export function AmendNeedDetailScreen({ needId, onBack }: { needId: string; onBa
           <DetailSkeleton />
         ) : !need ? (
           <EmptyState
-            icon={LayoutGrid}
-            title="This need isn't on the board"
-            hint="It may have been killed or never existed. Head back to the board to see what's live."
+            icon={Inbox}
+            title="This need isn't here anymore"
+            hint="It may have been dismissed or never existed. Head back to your inbox to see what's live."
             action={
               <ActionButton variant="primary" size="sm" onClick={onBack}>
-                Back to the board
+                Back to inbox
               </ActionButton>
             }
           />

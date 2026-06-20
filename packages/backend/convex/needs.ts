@@ -54,7 +54,9 @@ export const get = query({
     const needId = ctx.db.normalizeId("needs", args.needId);
     if (!needId) return null;
     const need = await ctx.db.get(needId);
-    if (!need || need.workspaceId !== workspace._id || need.status !== "accepted") return null;
+    // The detail screen opens ghosts (to accept / keep / kill) as well as
+    // accepted needs, so return both; only killed or foreign needs are null.
+    if (!need || need.workspaceId !== workspace._id || need.status === "killed") return null;
     return await needToAcceptedNeed(ctx, need);
   },
 });
@@ -128,9 +130,38 @@ export const killGhost = mutation({
       taughtAt: now,
       blastRadius: Math.max(1, ghost.proofPeople),
       enabled: true,
+      sourceNeedId: ghost._id,
       createdAt: now,
       updatedAt: now,
     });
+    return { ok: true as const };
+  },
+});
+
+export const restoreGhost = mutation({
+  args: ghostIdArgs,
+  returns: okResult,
+  handler: async (ctx, args) => {
+    const workspace = await requireProactiveWorkspace(ctx, args);
+    const ghostId = ctx.db.normalizeId("needs", args.ghostId);
+    if (!ghostId) return { ok: true as const };
+    const ghost = await ctx.db.get(ghostId);
+    if (!ghost || ghost.workspaceId !== workspace._id) return { ok: true as const };
+    const now = Date.now();
+    await ctx.db.patch(ghost._id, {
+      status: "ghost",
+      updatedAt: now,
+      conditionFlags: { ...ghost.conditionFlags, readyForReview: true, digestEligible: true },
+    });
+    // Undo the noise rule that killing this ghost auto-created (kill -> memory
+    // loop is reversible from the teaching receipt).
+    const rules = await ctx.db
+      .query("memoryRules")
+      .withIndex("by_workspace", (q) => q.eq("workspaceId", workspace._id))
+      .collect();
+    for (const rule of rules.filter((rule) => rule.sourceNeedId === ghost._id)) {
+      await ctx.db.delete(rule._id);
+    }
     return { ok: true as const };
   },
 });

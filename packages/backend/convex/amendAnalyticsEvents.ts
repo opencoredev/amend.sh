@@ -15,6 +15,8 @@ export const analyticsEventCategories: Record<AnalyticsEventName, AnalyticsEvent
   account_identify: "identity",
   agent_run_completed: "agent",
   changelog_upserted: "update",
+  changelog_published: "update",
+  changelog_scheduled: "update",
   changelog_viewed: "update",
   comment_added: "feedback",
   delivery_planned: "delivery",

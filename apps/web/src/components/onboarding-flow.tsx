@@ -1,66 +1,100 @@
-import { useState } from "react";
+import type { KeyboardEvent as ReactKeyboardEvent } from "react";
+
+import { Loader2 } from "@/lib/icons";
 
 import type { Workspace } from "@/components/amend-dashboard-types";
-import { OnboardingShowcasePanel } from "@/components/onboarding-showcase-panel";
-import { OnboardingWelcomePanel } from "@/components/onboarding-welcome-panel";
-import { OnboardingWorkspace } from "@/components/project-setup-workspace";
-
-type OnboardingPhase = "welcome" | "setup" | "showcase";
-
-type CreatedProject = { name: string; slug: string; workspaceSlug?: string };
+import { OnboardingShell } from "@/components/onboarding-layout";
+import { SourceQuestion, WebsiteQuestion } from "@/components/project-setup-first-run-panel";
+import { ProjectSourceChoice } from "@/components/project-setup-source-picker";
+import { useProjectSetupController } from "@/components/use-project-setup-controller";
 
 /**
- * Wraps the first-run project setup in a guided arc for users with no projects
- * yet: a welcome that frames the product, the existing setup steps, then a
- * showcase of the surfaces they just unlocked before entering the dashboard.
- * Users adding a second project (isFirstProject=false) skip straight to setup.
+ * First-run setup as two clean steps — website → first source — styled like the
+ * dashboard's settings screens. After the project is created the user drops
+ * straight into the workspace, where the in-app onboarding checklist takes over.
  */
 export function OnboardingFlow({
   isFirstProject,
   onCreated,
+  projectsReady,
   workspace,
 }: {
   isFirstProject: boolean;
   onCreated: (projectSlug: string, workspaceSlug?: string) => void;
+  projectsReady: boolean;
   workspace: Workspace;
 }) {
-  const [phase, setPhase] = useState<OnboardingPhase>(isFirstProject ? "welcome" : "setup");
-  const [created, setCreated] = useState<CreatedProject | null>(null);
+  const setup = useProjectSetupController({ onCreated, surface: "first-run", workspace });
 
-  if (phase === "welcome") {
-    return <OnboardingWelcomePanel onStart={() => setPhase("setup")} />;
-  }
+  const onWebsiteStep = setup.setupStep === 0;
+  const canContinueWebsite =
+    !setup.saving &&
+    !setup.suggestionLoading &&
+    !(setup.websiteUrl.trim().length > 0 && !setup.suggestion);
+  const continueLabel = setup.suggestionLoading
+    ? "Checking…"
+    : setup.websiteUrl.trim()
+      ? "Continue"
+      : "Skip";
 
-  if (phase === "showcase" && created) {
-    return (
-      <OnboardingShowcasePanel
-        projectName={created.name}
-        onEnter={() => onCreated(created.slug, created.workspaceSlug)}
-      />
-    );
+  function handleKeyDown(event: ReactKeyboardEvent<HTMLDivElement>) {
+    if (event.key !== "Enter" || event.shiftKey) return;
+    if ((event.target as HTMLElement).tagName === "TEXTAREA") return;
+    if (onWebsiteStep) {
+      if (canContinueWebsite) {
+        event.preventDefault();
+        setup.continueFromWebsiteStep();
+      }
+      return;
+    }
+    if (setup.canCreate) {
+      event.preventDefault();
+      setup.saveProject();
+    }
   }
 
   return (
-    <OnboardingWorkspace
-      surface="first-run"
-      workspace={workspace}
-      onCreated={(slug, workspaceSlug) => {
-        if (!isFirstProject) {
-          onCreated(slug, workspaceSlug);
-          return;
-        }
-        setCreated({ name: humanizeSlug(slug), slug, workspaceSlug });
-        setPhase("showcase");
-      }}
-    />
+    <OnboardingShell
+      stepIndex={projectsReady ? setup.setupStep : 0}
+      stepCount={2}
+      onKeyDown={handleKeyDown}
+    >
+      <div
+        key={projectsReady ? (onWebsiteStep ? "website" : "source") : "preparing"}
+        className="motion-safe:animate-in motion-safe:fade-in-0 motion-safe:duration-300"
+      >
+        {!projectsReady ? (
+          <div className="flex items-center gap-3 text-sm text-muted-foreground">
+            <Loader2 className="size-4 animate-spin" />
+            Preparing your workspace…
+          </div>
+        ) : onWebsiteStep ? (
+          <WebsiteQuestion
+            canContinue={canContinueWebsite}
+            continueLabel={continueLabel}
+            message={setup.message}
+            onContinue={setup.continueFromWebsiteStep}
+            onWebsiteUrlChange={setup.setWebsiteUrl}
+            projectName={setup.projectName}
+            suggestion={setup.suggestion}
+            title={isFirstProject ? "Set up your first project" : "Add a project"}
+            websiteStatus={setup.websiteStatus}
+            websiteUrl={setup.websiteUrl}
+          />
+        ) : (
+          <SourceQuestion
+            canCreate={setup.canCreate}
+            onBack={setup.goBackToWebsiteStep}
+            onCreate={setup.saveProject}
+            onProjectNameChange={setup.updateProjectName}
+            projectName={setup.projectName}
+            saving={setup.saving}
+            sourceChoice={<ProjectSourceChoice {...setup.sourceChoiceProps} />}
+            suggestion={setup.suggestion}
+            websiteUrl={setup.websiteUrl}
+          />
+        )}
+      </div>
+    </OnboardingShell>
   );
-}
-
-function humanizeSlug(slug: string) {
-  const words = slug
-    .split(/[-_]+/)
-    .map((part) => part.trim())
-    .filter(Boolean)
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1));
-  return words.join(" ") || "Your project";
 }

@@ -29,6 +29,11 @@ export const rejectDraftArgs = {
   edits: v.optional(v.string()),
 };
 
+export const updateDraftTextArgs = {
+  ...draftIdArgs,
+  draftText: v.string(),
+};
+
 export const memoryRuleIdArgs = {
   ...proactiveWorkspaceArgs,
   ruleId: v.string(),
