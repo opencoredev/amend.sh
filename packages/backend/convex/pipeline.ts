@@ -1,10 +1,10 @@
 import { internalAction, internalMutation } from "./_generated/server";
-import type { Id } from "./_generated/dataModel";
+import type { Doc, Id } from "./_generated/dataModel";
 import type { MutationCtx } from "./_generated/server";
 import { v } from "convex/values";
 
 import { internal } from "./_generated/api";
-import { channelFromProvider, classifySignal } from "./proactiveClassifier";
+import { channelFromProvider, classifySignal, facetsCompatible } from "./proactiveClassifier";
 import { recomputeNeedProof, resolvePersonForEvidence } from "./proactiveProof";
 
 export const processEvent = internalAction({
@@ -91,7 +91,10 @@ export const commitProcessedEvent = internalMutation({
     });
 
     const need = await findCompatibleNeed(ctx, {
+      area: classification.area,
       clusterKey: classification.clusterKey,
+      platform: classification.platform,
+      verb: classification.verb,
       workspaceId: args.workspaceId,
     });
     const needId = need
@@ -161,14 +164,47 @@ async function isSuppressedByMemory(
 
 async function findCompatibleNeed(
   ctx: MutationCtx,
-  args: { clusterKey: string; workspaceId: Id<"workspaces"> },
+  args: {
+    area: string;
+    clusterKey: string;
+    platform: Doc<"evidence">["sourceChannel"];
+    verb: string;
+    workspaceId: Id<"workspaces">;
+  },
 ) {
-  return await ctx.db
+  const exact = await ctx.db
     .query("needs")
     .withIndex("by_workspace_and_clusterKey", (q) =>
       q.eq("workspaceId", args.workspaceId).eq("clusterKey", args.clusterKey),
     )
     .first();
+  if (exact) return exact;
+
+  const needs = await ctx.db
+    .query("needs")
+    .withIndex("by_workspace", (q) => q.eq("workspaceId", args.workspaceId))
+    .collect();
+  return (
+    needs.find((need) => {
+      const facets = facetsFromClusterKey(need.clusterKey);
+      return (
+        facets &&
+        facetsCompatible({ area: args.area, platform: args.platform, verb: args.verb }, facets)
+      );
+    }) ?? null
+  );
+}
+
+function facetsFromClusterKey(clusterKey: string) {
+  const [area, verb, platform] = clusterKey.split(":");
+  if (!area || !verb || !isSourceChannel(platform)) {
+    return null;
+  }
+  return { area, platform, verb };
+}
+
+function isSourceChannel(value: string | undefined): value is Doc<"evidence">["sourceChannel"] {
+  return value === "github" || value === "discord" || value === "support" || value === "embed";
 }
 
 function titleFromText(text: string) {

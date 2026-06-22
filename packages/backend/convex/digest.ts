@@ -55,12 +55,17 @@ export const sendWeekly = internalMutation({
       .withIndex("by_workspace", (q) => q.eq("workspaceId", workspace._id))
       .collect();
     let queued = 0;
-    for (const member of members.filter((member) => member.role === "owner" || member.role === "admin")) {
+    for (const member of members.filter(
+      (member) => member.role === "owner" || member.role === "admin",
+    )) {
+      const recipient = member.email.trim();
+      if (!recipient) continue;
+
       await ctx.db.insert("deliveryOutbox", {
         workspaceId: workspace._id,
         notificationId,
         channel: "email",
-        recipient: member.email,
+        recipient,
         status: "queued",
         provider: "weekly_digest",
         payload: digest,
@@ -73,7 +78,11 @@ export const sendWeekly = internalMutation({
   },
 });
 
-async function buildPreview(ctx: QueryCtx | MutationCtx, workspaceId: Id<"workspaces">, now: number) {
+async function buildPreview(
+  ctx: QueryCtx | MutationCtx,
+  workspaceId: Id<"workspaces">,
+  now: number,
+) {
   const needs = await ctx.db
     .query("needs")
     .withIndex("by_workspace", (q) => q.eq("workspaceId", workspaceId))
@@ -97,5 +106,7 @@ async function buildPreview(ctx: QueryCtx | MutationCtx, workspaceId: Id<"worksp
 function digestBody(digest: Awaited<ReturnType<typeof buildPreview>>) {
   const resolved = digest.resolved.map((item) => `Shipped: ${item.needTitle}`).join("\n");
   const ghosts = digest.readyGhosts.map((item) => `Ready: ${item.title}`).join("\n");
-  return [resolved, ghosts, `Handled silently: ${digest.handledSilently}`].filter(Boolean).join("\n\n");
+  return [resolved, ghosts, `Handled silently: ${digest.handledSilently}`]
+    .filter(Boolean)
+    .join("\n\n");
 }

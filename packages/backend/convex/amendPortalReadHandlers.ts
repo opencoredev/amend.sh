@@ -25,10 +25,7 @@ export async function getPublicPortalHandler(ctx: QueryCtx, args: PublicPortalAr
   // Portal URLs are PROJECT slugs — every project has its own public portal. Try
   // the project first and scope the portal to it; fall back to a workspace slug
   // for workspace-level portals and the demo.
-  const project = await ctx.db
-    .query("projects")
-    .withIndex("by_slug", (q) => q.eq("slug", requestedSlug))
-    .first();
+  const project = await getUniquePublicProject(ctx, requestedSlug);
   const workspace = project
     ? await ctx.db.get(project.workspaceId)
     : await getWorkspaceRecord(ctx, requestedSlug);
@@ -216,4 +213,12 @@ export async function getNotificationCenterHandler(ctx: QueryCtx, args: Workspac
     .order("desc")
     .take(50);
   return notifications.map(normalizeNotification);
+}
+
+async function getUniquePublicProject(ctx: QueryCtx, slug: string) {
+  const matches = await ctx.db
+    .query("projects")
+    .withIndex("by_slug", (q) => q.eq("slug", slug))
+    .take(2);
+  return matches.length === 1 ? matches[0] : null;
 }

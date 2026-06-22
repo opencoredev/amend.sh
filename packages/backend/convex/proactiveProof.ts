@@ -85,12 +85,21 @@ export async function recomputeNeedProof(ctx: MutationCtx, needId: Id<"needs">) 
   const sources = new Map<Doc<"evidence">["sourceChannel"], number>();
   let payingPeople = 0;
   const payingPersonIds = new Set<string>();
+  const peopleById = new Map(
+    (
+      await Promise.all(
+        [...new Set(evidence.flatMap((item) => (item.personId ? [item.personId] : [])))].map(
+          async (personId) => [personId, await ctx.db.get(personId)] as const,
+        ),
+      )
+    ).filter(([, person]) => Boolean(person)),
+  );
 
   for (const item of evidence) {
     sources.set(item.sourceChannel, (sources.get(item.sourceChannel) ?? 0) + 1);
     if (item.personId) {
       personIds.add(item.personId);
-      const person = await ctx.db.get(item.personId);
+      const person = peopleById.get(item.personId);
       if (person?.paying) payingPersonIds.add(item.personId);
     } else {
       anonymousKeys.add(`${item.sourceChannel}:${item.author}:${item.url}`);

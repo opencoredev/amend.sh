@@ -27,10 +27,7 @@ export async function ensureBaseRecords(ctx: MutationCtx, slug: string) {
  * project the reader sees.
  */
 export async function resolvePublicScope(ctx: MutationCtx, slug: string) {
-  const project = await ctx.db
-    .query("projects")
-    .withIndex("by_slug", (q) => q.eq("slug", slug))
-    .first();
+  const project = await getUniquePublicProject(ctx, slug);
   if (project) {
     const workspace = await ctx.db.get(project.workspaceId);
     if (workspace) {
@@ -40,6 +37,14 @@ export async function resolvePublicScope(ctx: MutationCtx, slug: string) {
     }
   }
   return { project: null, workspace: await ensureBaseRecords(ctx, slug) };
+}
+
+async function getUniquePublicProject(ctx: MutationCtx, slug: string) {
+  const matches = await ctx.db
+    .query("projects")
+    .withIndex("by_slug", (q) => q.eq("slug", slug))
+    .take(2);
+  return matches.length === 1 ? matches[0] : null;
 }
 
 export async function ensureGitHubConnection(
