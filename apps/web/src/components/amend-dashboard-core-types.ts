@@ -10,6 +10,7 @@ export type DashboardView =
   | "memory"
   | "connections"
   | "settings"
+  | "account"
   | "setup";
 export type SettingsSection =
   | "accounts"

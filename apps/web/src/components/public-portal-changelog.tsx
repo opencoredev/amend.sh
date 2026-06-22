@@ -19,7 +19,7 @@ export function PortalChangelogView({
     <div className="py-5">
       <h1 className="text-lg font-semibold tracking-tight">Updates</h1>
 
-      <PortalSurface className="mt-4 overflow-hidden">
+      <PortalSurface className="mt-4 min-h-[calc(100svh-11rem)] overflow-hidden">
         {changelog.length === 0 ? (
           <div className="grid place-items-center px-6 py-20 text-center">
             <Newspaper className="size-7 text-muted-foreground/30" />

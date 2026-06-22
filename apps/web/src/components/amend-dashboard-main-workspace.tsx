@@ -2,6 +2,7 @@ import { type ReactNode, useState } from "react";
 
 import { ArrowLeft, Map, MessageSquareText } from "@/lib/icons";
 
+import { AccountWorkspace } from "@/components/account-workspace";
 import { AmendConnectionsScreen } from "@/components/amend-connections-screen";
 import { AmendInboxScreen } from "@/components/amend-inbox-screen";
 import { AmendMemoryScreen } from "@/components/amend-memory-screen";
@@ -73,7 +74,8 @@ export function AmendDashboardMainWorkspace({
   // render on the mock layer, so they bypass the CRUD DashboardHeader entirely.
   if (activeView === "inbox") return <AmendInboxScreen />;
   if (activeView === "memory") return <AmendMemoryScreen />;
-  if (activeView === "connections") return <AmendConnectionsScreen />;
+  if (activeView === "connections") return <AmendConnectionsScreen workspaceId={workspace.id} />;
+  if (activeView === "account") return <AccountWorkspace />;
 
   const sortableView = asSortableView(activeView);
   const sortOptions = sortableView ? SORT_OPTIONS[sortableView] : [];
@@ -159,6 +161,7 @@ export function AmendDashboardMainWorkspace({
             <PostsWorkspace
               activeBoard={activeBoard}
               activeStatus={activeStatus}
+              onCreate={onCreate}
               onOpenFeedback={onOpenFeedback}
               onVote={onVoteFeedbackPost}
               posts={sortedPosts}

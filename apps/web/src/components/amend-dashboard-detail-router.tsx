@@ -7,14 +7,17 @@ import {
   RoadmapDetailWorkspace,
 } from "@/components/amend-dashboard-workspaces";
 import type { DashboardContentProps } from "@/components/amend-dashboard-content-types";
+import { roadmapSourceFeedbackKey } from "@/components/amend-dashboard-utils";
 
 export function getDashboardDetailView({
   activeView,
+  feedbackPosts,
   selectedChangelog,
   selectedFeedback,
   selectedChangelogKey,
   selectedRoadmap,
   onAddFeedbackNote,
+  onAddRoadmapNote,
   onBackFromChangelog,
   onChangelogAutoSave,
   onChangelogPublish,
@@ -24,6 +27,26 @@ export function getDashboardDetailView({
   workspace,
 }: DashboardContentProps): ReactNode {
   if (selectedRoadmap && (activeView === "posts" || activeView === "roadmap")) {
+    // A roadmap item synced from feedback is the same entity as its feedback post,
+    // so render the identical feedback detail — /roadmap?item=… then matches
+    // /posts?feedback=… exactly (status, tags, comments, source evidence, vote all
+    // resolve against the shared feedback record). This closes the direct-link gap
+    // that openRoadmapItem already covers for in-app navigation. Genuine roadmap
+    // items (no backing feedback) keep the roadmap detail.
+    const sourcePost = feedbackPosts.find(
+      (post) =>
+        !post.sourceRoadmapKey &&
+        post.stableKey === roadmapSourceFeedbackKey(selectedRoadmap),
+    );
+    if (sourcePost) {
+      return (
+        <FeedbackDetailWorkspace
+          post={sourcePost}
+          onAddNote={(note) => onAddRoadmapNote(selectedRoadmap, note)}
+          onVote={onVoteFeedbackPost}
+        />
+      );
+    }
     return (
       <RoadmapDetailWorkspace
         item={selectedRoadmap}

@@ -4,7 +4,7 @@ import { ArrowUpRight, Check, ChevronDown, Globe, Link2, Loader2, Plus, X } from
 import { useState } from "react";
 import type { KeyboardEvent, ReactNode, RefObject } from "react";
 
-import { portalSlugFromUrl } from "@/components/public-portal-types";
+import { portalPathUrl, portalSlugFromUrl } from "@/components/public-portal-types";
 
 import type { ProjectMenuItem, WorkspaceSettingsData } from "@/components/amend-dashboard-types";
 import { ProjectLogo } from "@/components/project-logo";
@@ -335,7 +335,7 @@ export function GeneralSettingsPanel({
       <SettingsSection description="Read-only build and limit details." title="System">
         <SettingsRow
           label="Public portal"
-          description={activeProject.portal}
+          description={portalPathUrl(activeProject.portal)}
           control={
             <Link
               to="/portal/$workspaceSlug"

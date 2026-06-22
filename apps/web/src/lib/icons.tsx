@@ -33,6 +33,7 @@ import {
   Database01Icon,
   DiscordIcon,
   Download04Icon,
+  DragDropVerticalIcon,
   File01Icon,
   FilterHorizontalIcon,
   Folder01Icon,
@@ -70,6 +71,7 @@ import {
   News01Icon,
   Notification01Icon,
   PencilEdit02Icon,
+  PlugSocketIcon,
   PlusSignIcon,
   QuoteDownIcon,
   Radio01Icon,
@@ -154,6 +156,7 @@ export const FolderPlus = icon(FolderAddIcon, "FolderPlus");
 export const GitBranch = icon(GitBranchIcon, "GitBranch");
 export const GitPullRequestArrow = icon(GitPullRequestIcon, "GitPullRequestArrow");
 export const Globe = icon(GlobalIcon, "Globe");
+export const GripVertical = icon(DragDropVerticalIcon, "GripVertical");
 export const Heading1 = icon(Heading1Icon, "Heading1");
 export const Heading2 = icon(Heading2Icon, "Heading2");
 export const Inbox = icon(InboxIcon, "Inbox");
@@ -175,6 +178,7 @@ export const MoreHorizontal = icon(MoreHorizontalIcon, "MoreHorizontal");
 export const Newspaper = icon(News01Icon, "Newspaper");
 export const PanelRightOpen = icon(SidebarRight01Icon, "PanelRightOpen");
 export const Paperclip = icon(Attachment01Icon, "Paperclip");
+export const PlugSocket = icon(PlugSocketIcon, "PlugSocket");
 export const Plus = icon(PlusSignIcon, "Plus");
 export const PlusSquare = icon(Add01Icon, "PlusSquare");
 export const Quote = icon(QuoteDownIcon, "Quote");

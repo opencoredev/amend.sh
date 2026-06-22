@@ -58,6 +58,7 @@ export type DashboardContentProps = {
   selectedRoadmap: DashboardRoadmap | null;
   workspace: Workspace;
   onAddFeedbackNote: (note: string) => Promise<void>;
+  onAddRoadmapNote: (item: DashboardRoadmap, note: string) => Promise<void>;
   onAddRoadmap: (status: RoadmapStatus) => void;
   onBackFromChangelog: () => void;
   onBackFromFeedback: () => void;

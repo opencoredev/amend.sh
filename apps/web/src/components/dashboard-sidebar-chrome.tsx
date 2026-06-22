@@ -5,10 +5,10 @@ import {
   Brain,
   Globe,
   Inbox,
-  Link2,
   Map,
   MessageSquareText,
   Newspaper,
+  PlugSocket,
   Plus,
   Settings,
 } from "@/lib/icons";
@@ -76,7 +76,7 @@ function ComposeButton({ label, onCompose }: { label: string; onCompose: () => v
     <button
       type="button"
       onClick={onCompose}
-      className="flex min-h-10 w-full items-center gap-2.5 rounded-xl bg-foreground/[0.06] px-3 text-sm font-semibold text-foreground outline-none ring-1 ring-white/[0.08] transition-colors duration-150 ease-linear hover:bg-foreground/[0.09] focus-visible:ring-2 focus-visible:ring-white/25 active:opacity-75 [&_svg]:size-4 [&_svg]:shrink-0"
+      className="flex min-h-10 w-full items-center gap-2.5 rounded-xl bg-amend-warm/[0.12] px-3 text-sm font-semibold text-amend-warm outline-none ring-1 ring-amend-warm/25 transition-colors duration-150 ease-linear hover:bg-amend-warm/[0.18] focus-visible:ring-2 focus-visible:ring-amend-warm/40 active:opacity-75 [&_svg]:size-4 [&_svg]:shrink-0"
     >
       <Plus />
       {label}
@@ -115,7 +115,7 @@ const NAV_GROUPS: Array<Array<[DashboardView, ReactElement, string]>> = [
   ],
   [
     ["memory", <Brain />, "Memory"],
-    ["connections", <Link2 />, "Connections"],
+    ["connections", <PlugSocket />, "Connections"],
   ],
   [["settings", <Settings />, "Settings"]],
 ];
@@ -217,7 +217,7 @@ export function DashboardSidebarChrome({
       {/* Desktop single sidebar */}
       <aside
         className={cn(
-          "hidden bg-background lg:flex lg:flex-col",
+          "amend-sidebar-warm hidden bg-background lg:flex lg:flex-col",
           focusChangelogEditor && "lg:hidden",
         )}
       >
@@ -268,7 +268,10 @@ export function DashboardSidebarChrome({
 
         {/* Account */}
         <div className="p-3">
-          <DashboardUserMenu onOpenSettings={() => onViewChange("settings")} />
+          <DashboardUserMenu
+            onOpenAccount={() => onViewChange("account")}
+            onOpenSettings={() => onViewChange("settings")}
+          />
         </div>
       </aside>
 
@@ -285,7 +288,10 @@ export function DashboardSidebarChrome({
           </div>
         ) : null}
         <div className="p-3">
-          <DashboardUserMenu onOpenSettings={() => onViewChange("settings")} />
+          <DashboardUserMenu
+            onOpenAccount={() => onViewChange("account")}
+            onOpenSettings={() => onViewChange("settings")}
+          />
         </div>
       </div>
     </>

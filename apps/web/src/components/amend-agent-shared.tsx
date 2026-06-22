@@ -397,7 +397,7 @@ export function EmptyState({
 }) {
   return (
     <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-white/[0.09] bg-white/[0.012] px-6 py-14 text-center">
-      <span className="mb-3 inline-flex size-11 items-center justify-center rounded-xl bg-white/[0.04] text-muted-foreground ring-1 ring-white/[0.07] ring-inset">
+      <span className="mb-3 inline-flex size-11 items-center justify-center rounded-xl bg-amend-warm/[0.08] text-amend-warm/85 ring-1 ring-amend-warm/20 ring-inset">
         <Icon className="size-5" />
       </span>
       <p className="text-sm font-semibold text-foreground">{title}</p>

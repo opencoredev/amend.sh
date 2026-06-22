@@ -21,7 +21,6 @@ import type {
   Ghost,
   MemoryRule,
   Need,
-  SourcesStatus,
   DigestPreview,
 } from "@/lib/amend-contract";
 import { AMEND_NOW } from "@/lib/amend-agent-format";
@@ -519,23 +518,6 @@ const MEMORY_RULES: MemoryRule[] = [
   },
 ];
 
-const SOURCES: SourcesStatus = {
-  github: {
-    connected: true,
-    repo: "amend-sh/amend",
-    lastSync: ago(12 * min),
-  },
-  feedback: {
-    connected: true,
-    channels: [
-      { channel: "discord", connected: true, lastSignal: ago(40 * min) },
-      { channel: "support", connected: true, lastSignal: ago(3 * hour) },
-      { channel: "embed", connected: true, lastSignal: ago(25 * min) },
-      { channel: "github", connected: true, lastSignal: ago(12 * min) },
-    ],
-  },
-};
-
 function buildDigest(needs: Need[]): DigestPreview {
   const find = (id: string) => needs.find((n) => n.id === id);
   const webhook = find("need_webhook_retries");
@@ -576,7 +558,6 @@ interface AmendState {
   drafts: DraftProposal[];
   changelog: ChangelogEntry[];
   rules: MemoryRule[];
-  sources: SourcesStatus;
   override: MockOverride;
 }
 
@@ -585,7 +566,6 @@ let state: AmendState = {
   drafts: DRAFTS,
   changelog: CHANGELOG,
   rules: MEMORY_RULES,
-  sources: SOURCES,
   override: null,
 };
 
@@ -712,12 +692,6 @@ export function useDigestPreview(): QueryResult<DigestPreview> {
   });
 }
 
-/** SWAP: useQuery(api.sources.status, {}) */
-export function useSourcesStatus(): QueryResult<SourcesStatus> {
-  const s = useAmendState();
-  return resolve(s.override, () => s.sources, s.sources);
-}
-
 // ---------------------------------------------------------------------------
 // Mutations — flip each to useMutation(api.x.y) at Phase 7. They mutate the
 // store optimistically (and immediately, since there's no network here).
@@ -803,15 +777,5 @@ export function publishChangelog(entryId: string) {
 export function unpublishChangelog(entryId: string) {
   setState({
     changelog: state.changelog.map((e) => (e.id === entryId ? { ...e, published: false } : e)),
-  });
-}
-
-export function connectGithub(repo: string, _token: string) {
-  void _token;
-  setState({
-    sources: {
-      ...state.sources,
-      github: { connected: true, repo, lastSync: AMEND_NOW },
-    },
   });
 }

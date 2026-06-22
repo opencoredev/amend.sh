@@ -176,6 +176,7 @@ export function useAmendDashboardController() {
       selectedRoadmap,
       workspace,
       onAddFeedbackNote: dashboardActions.addFeedbackNote,
+      onAddRoadmapNote: dashboardActions.addRoadmapNote,
       onAddRoadmap: (status: RoadmapStatus) => {
         uiState.setRoadmapCreateStatus(status);
         uiState.setComposerOpen(true);

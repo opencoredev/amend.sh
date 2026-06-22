@@ -67,7 +67,7 @@ export function WorkspaceSwitcher({
         type="button"
         className={cn(
           "flex min-h-12 w-full items-center gap-2.5 rounded-xl bg-[#151518] px-2 text-left shadow-[inset_0_1px_0_rgb(255_255_255/0.035)] outline-none ring-1 ring-white/[0.055] transition-colors duration-150 ease-linear hover:bg-[#1a1a1d] focus-visible:ring-2 focus-visible:ring-white/25 active:opacity-75",
-          open && "bg-[#1a1a1d]",
+          open && "bg-[#1a1a1d] ring-white/15",
         )}
         aria-expanded={open}
         aria-haspopup="menu"
@@ -86,7 +86,7 @@ export function WorkspaceSwitcher({
       {transition.mounted ? (
         <div
           className={cn(
-            "absolute left-2 right-2 top-[calc(100%-0.5rem)] z-40 rounded-xl bg-popover p-1.5 shadow-[0_18px_60px_rgb(0_0_0/0.55)] ring-1 ring-white/[0.06]",
+            "absolute left-2 right-2 top-full z-40 rounded-2xl bg-popover p-2 shadow-[0_24px_70px_-10px_rgb(0_0_0/0.7)] ring-1 ring-white/[0.08]",
             transition.className,
           )}
           data-origin={transition["data-origin"]}

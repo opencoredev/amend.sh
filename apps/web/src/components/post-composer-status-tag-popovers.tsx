@@ -1,6 +1,7 @@
 import { cn } from "@amend/ui/lib/utils";
 import { Check } from "@/lib/icons";
 
+import { tagColorByName } from "./changelog-tags";
 import { statusItems, tagItems } from "./post-composer-model";
 import type { StatusItem, TagItem } from "./post-composer-model";
 import { Popover, SearchRow } from "./post-composer-popover-primitives";
@@ -52,7 +53,7 @@ export function TagPopover({
         Public tags
       </p>
       <div className="grid gap-1 p-1.5">
-        {tagItems.map(([item, dot]) => (
+        {tagItems.map((item) => (
           <button
             type="button"
             key={item}
@@ -63,7 +64,7 @@ export function TagPopover({
             onClick={() => onSelect(item)}
           >
             <span className="flex items-center gap-3">
-              <span className={cn("size-1.5 rounded-full", dot)} />
+              <span className={cn("size-1.5 rounded-full", tagColorByName(item).dot)} />
               {item}
             </span>
             {item === selected ? <Check className="size-4" /> : null}

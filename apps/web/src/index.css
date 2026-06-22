@@ -6,7 +6,9 @@
   --amend-ease-fast: cubic-bezier(0.2, 0, 0, 1);
   --amend-state-dur: 180ms;
   /* warm signal accent, derived from --amend-warm */
-  --amend-glow: 245 200 107;
+  --amend-glow: 239 152 54;
+  /* warmer ember beneath the glow — the orange end of the hero's ember→gold field */
+  --amend-ember: 232 146 74;
 }
 
 @layer base {
@@ -116,7 +118,7 @@
 }
 
 /* ----------------------------------------------------------------------------
-   Hero — one calm "closing the loop" image, anchored right, text left
+   Hero — warm ember→gold gradient framing a calm dark core, content centered
 ---------------------------------------------------------------------------- */
 .amend-hero {
   position: relative;
@@ -126,52 +128,79 @@
   overflow: hidden;
 }
 
-/* The warm-loop photograph, anchored to the right and held still. */
-.amend-hero-photo {
+/* Saved ember→gold backdrop: glowing amber bars frame a dark center where the
+   headline sits. Full-bleed, held still. */
+.amend-hero-bg {
   position: absolute;
   inset: 0;
   z-index: -2;
-  opacity: 0.92;
-  background-image: url("/images/hero-loop.webp");
+  background-image: url("/images/bg-hero.webp");
   background-size: cover;
-  background-position: 78% 42%;
+  background-position: center;
   background-repeat: no-repeat;
 }
 
-/* Legibility veil: dark under the left text column, clearing so the loop reads
-   on the right, with a soft fade into the next section along the bottom edge. */
+/* Legibility veil, kept deliberately light so the warm bars stay rich: a soft
+   scrim beneath the nav, a gentle hold behind the headline, and a fade into the
+   next section along the bottom edge. */
 .amend-hero-veil {
   position: absolute;
   inset: 0;
   z-index: -1;
   pointer-events: none;
   background:
-    linear-gradient(
-      90deg,
-      var(--background) 0%,
-      rgb(13 13 15 / 0.88) 30%,
-      rgb(13 13 15 / 0.4) 56%,
-      transparent 82%
-    ),
-    linear-gradient(to bottom, transparent 62%, var(--background) 100%);
+    linear-gradient(to bottom, rgb(13 13 15 / 0.4) 0%, rgb(13 13 15 / 0) 22%),
+    radial-gradient(56% 46% at 50% 52%, rgb(13 13 15 / 0.34) 0%, rgb(13 13 15 / 0) 76%),
+    linear-gradient(to bottom, rgb(13 13 15 / 0) 74%, var(--background) 100%);
 }
 
 @media (max-width: 767px) {
-  .amend-hero-photo {
-    opacity: 0.5;
-    background-position: 72% 30%;
+  /* Phones can't fit both warm edges under `cover`, so frame the glow from the
+     top and let it settle into the page. */
+  .amend-hero-bg {
+    background-size: 150% auto;
+    background-position: center top;
   }
 
   .amend-hero-veil {
     background:
-      linear-gradient(
-        90deg,
-        var(--background) 6%,
-        rgb(13 13 15 / 0.82) 50%,
-        rgb(13 13 15 / 0.5) 100%
-      ),
-      linear-gradient(to bottom, transparent 55%, var(--background) 100%);
+      linear-gradient(to bottom, rgb(13 13 15 / 0.4) 0%, rgb(13 13 15 / 0) 20%),
+      radial-gradient(85% 42% at 50% 44%, rgb(13 13 15 / 0.32) 0%, rgb(13 13 15 / 0) 72%),
+      linear-gradient(to bottom, rgb(13 13 15 / 0) 64%, var(--background) 100%);
   }
+}
+
+/* ----------------------------------------------------------------------------
+   Console warmth — the hero's ember→gold field, carried into the app so the
+   dashboard shares the landing's warmth instead of reading as flat gray. The
+   glow is baked into each surface's own background (not a floating layer), so on
+   a scroll container the default background-attachment pins it to the panel's
+   top edge: a warm "dawn" stays at the top of every view as content scrolls.
+---------------------------------------------------------------------------- */
+.amend-workspace-surface {
+  background-color: var(--workspace-surface-background);
+  background-image:
+    radial-gradient(
+      120% 64% at 50% 0%,
+      rgb(var(--amend-glow) / 0.055) 0%,
+      rgb(var(--amend-glow) / 0) 58%
+    ),
+    radial-gradient(
+      86% 48% at 50% -6%,
+      rgb(var(--amend-ember) / 0.05) 0%,
+      rgb(var(--amend-ember) / 0) 54%
+    );
+  background-repeat: no-repeat;
+}
+
+/* The rail echoes the warmth at its very top, where the switcher + compose sit. */
+.amend-sidebar-warm {
+  background-image: radial-gradient(
+    150% 24% at 50% 0%,
+    rgb(var(--amend-glow) / 0.05) 0%,
+    rgb(var(--amend-glow) / 0) 72%
+  );
+  background-repeat: no-repeat;
 }
 
 /* Hero entrance — staggered rise */

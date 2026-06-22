@@ -102,6 +102,19 @@ export function sourceFeedbackKey(item: DashboardRoadmap) {
   return source?.externalId?.replace(/^feedback:/, "") ?? "";
 }
 
+/**
+ * The feedback post a synced roadmap item was minted from. Prefers the explicit
+ * `feedback:` source link, but falls back to the `roadmap-feedback-<key>` stableKey:
+ * a roadmap item persisted by a board move (see {@link persistedRoadmapKey}) drops
+ * its source links, yet the key still encodes the originating feedback post.
+ */
+export function roadmapSourceFeedbackKey(item: DashboardRoadmap): string {
+  const fromLinks = sourceFeedbackKey(item);
+  if (fromLinks) return fromLinks;
+  const prefix = "roadmap-feedback-";
+  return item.stableKey.startsWith(prefix) ? item.stableKey.slice(prefix.length) : "";
+}
+
 export function feedbackToPost(item: DashboardFeedback): Post {
   return {
     authorName: item.authorName,

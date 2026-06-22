@@ -67,7 +67,7 @@ export function PortalRoadmapView({ roadmap }: { roadmap: PortalRoadmap[] }) {
     return (
       <div className="py-5">
         <h1 className="text-lg font-semibold tracking-tight">Roadmap</h1>
-        <PortalSurface className="mt-4">
+        <PortalSurface className="mt-4 min-h-[calc(100svh-11rem)]">
           <div className="grid place-items-center px-6 py-20 text-center">
             <MapIcon className="size-7 text-muted-foreground/30" />
             <h3 className="mt-3 text-sm font-semibold">The roadmap is taking shape</h3>
@@ -118,7 +118,7 @@ export function PortalRoadmapView({ roadmap }: { roadmap: PortalRoadmap[] }) {
             <section
               key={status}
               className={cn(
-                "flex flex-col rounded-2xl bg-background/65 shadow-[inset_0_1px_0_rgb(255_255_255/0.03)] ring-1 ring-white/[0.04]",
+                "flex min-h-[calc(100svh-12rem)] flex-col rounded-2xl bg-background/65 shadow-[inset_0_1px_0_rgb(255_255_255/0.03)] ring-1 ring-white/[0.04]",
                 active === "all" ? "min-w-[240px] flex-1" : "w-full",
               )}
             >

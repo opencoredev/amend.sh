@@ -22,6 +22,11 @@ export const upsertRoadmapItemMutation =
   makeFunctionReference<"mutation">("amend:upsertRoadmapItem");
 export const voteRoadmapItemMutation = makeFunctionReference<"mutation">("amend:voteRoadmapItem");
 
+export const workspaceSettingsQuery = makeFunctionReference<"query">("amend:getWorkspaceSettings");
+export const upsertIntegrationConnectionMutation = makeFunctionReference<"mutation">(
+  "amend:upsertIntegrationConnection",
+);
+
 export const listWorkspaceTagsQuery = makeFunctionReference<"query">("tags:list");
 export const createWorkspaceTagMutation = makeFunctionReference<"mutation">("tags:create");
 export const updateWorkspaceTagMutation = makeFunctionReference<"mutation">("tags:update");

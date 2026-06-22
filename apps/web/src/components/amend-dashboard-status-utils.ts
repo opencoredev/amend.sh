@@ -124,6 +124,7 @@ export function viewTitle(view: DashboardView) {
     memory: "Memory",
     connections: "Connections",
     settings: "Settings",
+    account: "Account",
     setup: "Create project",
   };
   return titles[view];

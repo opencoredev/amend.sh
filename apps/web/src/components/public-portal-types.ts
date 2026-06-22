@@ -24,6 +24,18 @@ export function portalSlugFromUrl(portalUrl: string): string {
     .replace(/\/.*$/, "");
 }
 
+/**
+ * The public-portal URL that actually works in the current environment — the
+ * path route on the current host (dev: `amend.localhost:1355/portal/<slug>`,
+ * prod: `amend.sh/portal/<slug>`) — rather than the stored `<slug>.amend.sh`
+ * display field, which doesn't resolve in local dev.
+ */
+export function portalPathUrl(portalField: string): string {
+  const slug = portalSlugFromUrl(portalField);
+  const host = typeof window !== "undefined" ? window.location.host : "amend.sh";
+  return `${host}/portal/${slug}`;
+}
+
 export type PortalData = {
   changelog: PortalChangelog[];
   feedback: PortalFeedback[];

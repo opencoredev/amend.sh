@@ -37,7 +37,12 @@ export function useAmendDashboardNavigation({
     resetWorkspaceMenu();
   };
 
-  const changeView = (view: DashboardView) => setRoute({ feedback: null, item: null, view });
+  // Switching top-level views resets the status filter. The posts and roadmap views
+  // share a single `status` URL param, so without this a filter set on one (e.g.
+  // "In Progress" on the roadmap) silently carries into the other and makes the
+  // destination list look wrongly filtered — or empty — on arrival.
+  const changeView = (view: DashboardView) =>
+    setRoute({ feedback: null, item: null, status: "all", view });
   const changeSearch = (q: string) => setRoute({ q });
   // Touching a filter/sub-nav while a detail is open returns to the (filtered) list.
   const changeStatus = (status: RoadmapStatus | "all") =>

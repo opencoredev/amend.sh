@@ -64,6 +64,7 @@ export function useAmendDashboardActions({
 
   return {
     addFeedbackNote: saveActions.addFeedbackNote,
+    addRoadmapNote: saveActions.addRoadmapNote,
     autoSaveChangelogEntry: saveActions.autoSaveChangelogEntry,
     handleComposerSubmit: saveActions.handleComposerSubmit,
     moveRoadmapItem: saveActions.moveRoadmapItem,

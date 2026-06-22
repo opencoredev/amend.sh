@@ -5,30 +5,58 @@
  * page groups them by job — Listening (signal in), Ship tracking (what shipped),
  * Delivery (loop out). Each role is a compact grid of brand tiles (logos as the
  * star, not a long scroll); connected ones light up, the rest read as quiet
- * Connect targets so no category looks empty. Live state comes from the same
- * seam the agent reads (`useSourcesStatus` → `sources.status`); connect/manage
- * flows are the next build and are stubbed honestly for now.
+ * Connect targets so no category looks empty.
+ *
+ * Live state is REAL: it reads the workspace's `integrationConnections` straight
+ * from the backend (`amend:getWorkspaceSettings → integrations`) and Connect /
+ * Disconnect persist through the `amend:upsertIntegrationConnection` mutation.
+ * Providers the backend doesn't model yet render as honest "Planned" tiles
+ * rather than a dead button — no fake "coming soon".
  */
 import { cn } from "@amend/ui/lib/utils";
+import { useMutation, useQuery } from "convex/react";
 import { type ReactNode, useMemo, useState } from "react";
 
-import {
-  ErrorState,
-  SectionLabel,
-  SkeletonBar,
-  agentButtonClass,
-} from "@/components/amend-agent-shared";
+import { SectionLabel, SkeletonBar, agentButtonClass } from "@/components/amend-agent-shared";
 import { DashboardWorkspaceSurface } from "@/components/dashboard-workspace-surface";
 import { PageHeader } from "@/components/amend-agent-chrome";
 import { ToolbarBar, ToolbarGroup, ToolbarPill } from "@/components/dashboard-toolbar";
 import { BrandIcon, type BrandKey } from "@/components/brand-icons";
-import type { SourceChannel, SourcesStatus } from "@/lib/amend-contract";
-import { relativeFromNow } from "@/lib/amend-agent-format";
-import { useSourcesStatus } from "@/lib/mock-amend";
-import { Code2, Globe, LifeBuoy, Link2, Mail, Plus, Sparkles, type LucideIcon } from "@/lib/icons";
-import { toast } from "@/lib/toast";
+import {
+  upsertIntegrationConnectionMutation,
+  workspaceSettingsQuery,
+} from "@/components/amend-dashboard-data";
+import type { WorkspaceSettingsData } from "@/components/amend-dashboard-types";
+import { fallbackWorkspace } from "@/components/amend-dashboard-utils";
+import {
+  Code2,
+  Globe,
+  LifeBuoy,
+  Loader2,
+  Mail,
+  PlugSocket,
+  Plus,
+  Sparkles,
+  type LucideIcon,
+} from "@/lib/icons";
+import { errorMessage, toast } from "@/lib/toast";
 
 type Role = "listening" | "ships" | "delivery";
+
+/** The providers the backend can actually persist (`integrationProviderValue`). */
+type IntegrationProvider =
+  | "github"
+  | "linear"
+  | "slack"
+  | "discord"
+  | "x"
+  | "posthog"
+  | "databuddy"
+  | "support";
+
+type IntegrationDirection = "inbound" | "outbound" | "bidirectional";
+type IntegrationRecord = WorkspaceSettingsData["integrations"][number];
+type TileStatus = "connected" | "attention" | "disconnected" | "planned";
 
 interface Integration {
   id: string;
@@ -40,10 +68,8 @@ interface Integration {
   /** One-line job; per-role override when the same provider does two jobs. */
   blurb: string;
   blurbByRole?: Partial<Record<Role, string>>;
-  /** Maps to a live feedback channel in `sources.status`, when there is one. */
-  channel?: SourceChannel;
-  /** GitHub reads its richer connection record (repo + last sync). */
-  isGithub?: boolean;
+  /** Backend provider key. Absent → not yet persistable (renders as "Planned"). */
+  provider?: IntegrationProvider;
 }
 
 const ROLES: { key: Role; label: string; description: string }[] = [
@@ -65,13 +91,14 @@ const ROLES: { key: Role; label: string; description: string }[] = [
 ];
 
 // One entry per provider; bidirectional ones list multiple roles and surface in
-// each section (connect once, used in many).
+// each section (connect once, used in many). `provider` ties the tile to a real
+// backend connection record; entries without one are roadmapped, not wired.
 const CATALOG: Integration[] = [
   {
     id: "github",
     name: "GitHub",
     brand: "github",
-    isGithub: true,
+    provider: "github",
     roles: ["listening", "ships"],
     blurb: "Issues & discussions as signal",
     blurbByRole: { ships: "Pull requests & releases" },
@@ -80,7 +107,7 @@ const CATALOG: Integration[] = [
     id: "discord",
     name: "Discord",
     brand: "discord",
-    channel: "discord",
+    provider: "discord",
     roles: ["listening", "delivery"],
     blurb: "Watch community channels",
     blurbByRole: { delivery: "Post updates back to channels" },
@@ -89,6 +116,7 @@ const CATALOG: Integration[] = [
     id: "slack",
     name: "Slack",
     brand: "slack",
+    provider: "slack",
     roles: ["listening", "delivery"],
     blurb: "Read feedback from channels",
     blurbByRole: { delivery: "Notify requesters in-channel" },
@@ -97,10 +125,36 @@ const CATALOG: Integration[] = [
     id: "support-inbox",
     name: "Support inbox",
     glyph: LifeBuoy,
-    channel: "support",
+    provider: "support",
     roles: ["listening"],
     blurb: "Forward support@ to Amend",
   },
+  {
+    id: "linear",
+    name: "Linear",
+    brand: "linear",
+    provider: "linear",
+    roles: ["listening", "ships"],
+    blurb: "Requests triaged in Linear",
+    blurbByRole: { ships: "Completed issues & cycles" },
+  },
+  {
+    id: "posthog",
+    name: "PostHog",
+    brand: "posthog",
+    provider: "posthog",
+    roles: ["listening"],
+    blurb: "Surveys & feedback events",
+  },
+  {
+    id: "x",
+    name: "X",
+    brand: "x",
+    provider: "x",
+    roles: ["listening"],
+    blurb: "Mentions of your product",
+  },
+  // Roadmapped — visible, but the backend can't persist these yet.
   {
     id: "intercom",
     name: "Intercom",
@@ -119,31 +173,8 @@ const CATALOG: Integration[] = [
     id: "embed",
     name: "Embed widget",
     glyph: Globe,
-    channel: "embed",
     roles: ["listening"],
     blurb: "Drop-in in-app feedback button",
-  },
-  {
-    id: "linear",
-    name: "Linear",
-    brand: "linear",
-    roles: ["listening", "ships"],
-    blurb: "Requests triaged in Linear",
-    blurbByRole: { ships: "Completed issues & cycles" },
-  },
-  {
-    id: "posthog",
-    name: "PostHog",
-    brand: "posthog",
-    roles: ["listening"],
-    blurb: "Surveys & feedback events",
-  },
-  {
-    id: "x",
-    name: "X",
-    brand: "x",
-    roles: ["listening"],
-    blurb: "Mentions of your product",
   },
   {
     id: "vercel",
@@ -175,45 +206,119 @@ const CATALOG: Integration[] = [
   },
 ];
 
-interface ConnectionState {
-  connected: boolean;
-  detail?: string;
+const INBOUND_ROLES: Role[] = ["listening", "ships"];
+
+/** A provider's overall direction = the union of the jobs it does. */
+function directionFor(roles: Role[]): IntegrationDirection {
+  const hasInbound = roles.some((role) => INBOUND_ROLES.includes(role));
+  const hasOutbound = roles.includes("delivery");
+  return hasInbound && hasOutbound ? "bidirectional" : hasOutbound ? "outbound" : "inbound";
 }
 
-function statusFor(item: Integration, sources: SourcesStatus | undefined): ConnectionState {
-  if (!sources) return { connected: false };
-  if (item.isGithub) {
-    if (!sources.github.connected) return { connected: false };
-    const detail = [
-      sources.github.repo,
-      sources.github.lastSync ? `synced ${relativeFromNow(sources.github.lastSync)}` : null,
-    ]
-      .filter(Boolean)
-      .join(" · ");
-    return { connected: true, detail: detail || undefined };
+const STATUS_RANK: Record<TileStatus, number> = {
+  connected: 3,
+  attention: 2,
+  disconnected: 1,
+  planned: 0,
+};
+
+function tileStatusFor(item: Integration, byProvider: Map<string, IntegrationRecord>): TileStatus {
+  if (!item.provider) return "planned";
+  const record = byProvider.get(item.provider);
+  if (!record) return "disconnected";
+  if (record.state === "connected") return "connected";
+  if (record.state === "attention") return "attention";
+  // "disabled" / "planned" records read as re-connectable.
+  return "disconnected";
+}
+
+function StatusTag({ status }: { status: TileStatus }) {
+  if (status === "connected") {
+    return (
+      <span className="inline-flex items-center gap-1 text-[0.66rem] font-semibold text-amend-success">
+        <span className="size-1.5 rounded-full bg-amend-success" />
+        Live
+      </span>
+    );
   }
-  if (item.channel) {
-    const channel = sources.feedback.channels.find((c) => c.channel === item.channel);
-    if (!channel?.connected) return { connected: false };
-    return {
-      connected: true,
-      detail: channel.lastSignal ? `Active ${relativeFromNow(channel.lastSignal)}` : "Connected",
-    };
+  if (status === "attention") {
+    return (
+      <span className="inline-flex items-center gap-1 text-[0.66rem] font-semibold text-amend-warm">
+        <span className="size-1.5 rounded-full bg-amend-warm" />
+        Attention
+      </span>
+    );
   }
-  return { connected: false };
+  return null;
+}
+
+function TileAction({
+  status,
+  pending,
+  onConnect,
+  onDisconnect,
+}: {
+  status: TileStatus;
+  pending: boolean;
+  onConnect: () => void;
+  onDisconnect: () => void;
+}) {
+  if (status === "planned") {
+    return (
+      <span className="mt-3 inline-flex h-7 w-full items-center justify-center rounded-lg text-[0.72rem] font-medium text-muted-foreground/45 ring-1 ring-white/[0.04] ring-inset">
+        Planned
+      </span>
+    );
+  }
+  if (status === "connected") {
+    return (
+      <button
+        type="button"
+        disabled={pending}
+        onClick={onDisconnect}
+        className={agentButtonClass(
+          "secondary",
+          "sm",
+          "mt-3 w-full hover:bg-destructive/10 hover:text-destructive hover:ring-destructive/25",
+        )}
+      >
+        {pending ? <Loader2 className="animate-spin" /> : null}
+        Disconnect
+      </button>
+    );
+  }
+  // disconnected | attention → connect (attention re-arms a record that exists).
+  return (
+    <button
+      type="button"
+      disabled={pending}
+      onClick={onConnect}
+      className={agentButtonClass("secondary", "sm", "mt-3 w-full")}
+    >
+      {pending ? <Loader2 className="animate-spin" /> : <Plus />}
+      {status === "attention" ? "Reconnect" : "Connect"}
+    </button>
+  );
 }
 
 function IntegrationTile({
   item,
   role,
-  state,
+  status,
+  pending,
+  onConnect,
+  onDisconnect,
 }: {
   item: Integration;
   role: Role;
-  state: ConnectionState;
+  status: TileStatus;
+  pending: boolean;
+  onConnect: () => void;
+  onDisconnect: () => void;
 }) {
-  const connected = state.connected;
-  const sub = connected ? (state.detail ?? "Connected") : (item.blurbByRole?.[role] ?? item.blurb);
+  const connected = status === "connected";
+  const sub =
+    status === "attention" ? "Needs reconnecting" : (item.blurbByRole?.[role] ?? item.blurb);
 
   return (
     <div className="group flex flex-col rounded-xl bg-white/[0.02] p-4 ring-1 ring-white/[0.06] ring-inset transition-colors duration-150 ease-linear hover:bg-white/[0.035] hover:ring-white/[0.1]">
@@ -232,12 +337,7 @@ function IntegrationTile({
             <item.glyph className="size-5" />
           ) : null}
         </span>
-        {connected ? (
-          <span className="inline-flex items-center gap-1 text-[0.66rem] font-semibold text-amend-success">
-            <span className="size-1.5 rounded-full bg-amend-success" />
-            Live
-          </span>
-        ) : null}
+        <StatusTag status={status} />
       </div>
 
       <p className="mt-3 text-sm font-semibold text-foreground">{item.name}</p>
@@ -245,27 +345,12 @@ function IntegrationTile({
         {sub}
       </p>
 
-      <button
-        type="button"
-        onClick={() =>
-          connected
-            ? toast.info({ title: item.name, description: "Manage flow is coming soon." })
-            : toast.info({
-                title: `Connect ${item.name}`,
-                description: "This connection isn't wired up yet — the flow is the next build.",
-              })
-        }
-        className={cn(agentButtonClass(connected ? "ghost" : "secondary", "sm"), "mt-3 w-full")}
-      >
-        {connected ? (
-          "Manage"
-        ) : (
-          <>
-            <Plus />
-            Connect
-          </>
-        )}
-      </button>
+      <TileAction
+        status={status}
+        pending={pending}
+        onConnect={onConnect}
+        onDisconnect={onDisconnect}
+      />
     </div>
   );
 }
@@ -274,30 +359,44 @@ function RoleSection({
   role,
   label,
   description,
-  sources,
+  byProvider,
+  pendingProviders,
+  onConnect,
+  onDisconnect,
 }: {
   role: Role;
   label: string;
   description: string;
-  sources: SourcesStatus | undefined;
+  byProvider: Map<string, IntegrationRecord>;
+  pendingProviders: Set<string>;
+  onConnect: (item: Integration) => void;
+  onDisconnect: (item: Integration) => void;
 }) {
-  // Connected first, then alphabetical — so the live ones lead each category.
+  // Connected first, then attention/disconnected, planned last — alphabetical
+  // within a tier — so live sources lead each category.
   const items = CATALOG.filter((item) => item.roles.includes(role))
-    .map((item) => ({ item, state: statusFor(item, sources) }))
+    .map((item) => ({ item, status: tileStatusFor(item, byProvider) }))
     .sort(
       (a, b) =>
-        Number(b.state.connected) - Number(a.state.connected) ||
-        a.item.name.localeCompare(b.item.name),
+        STATUS_RANK[b.status] - STATUS_RANK[a.status] || a.item.name.localeCompare(b.item.name),
     );
-  const connected = items.filter((i) => i.state.connected).length;
+  const connectedCount = items.filter((entry) => entry.status === "connected").length;
 
   return (
     <section>
-      <SectionLabel count={connected > 0 ? connected : undefined}>{label}</SectionLabel>
+      <SectionLabel count={connectedCount > 0 ? connectedCount : undefined}>{label}</SectionLabel>
       <p className="mb-3 mt-1 text-xs text-muted-foreground">{description}</p>
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-        {items.map(({ item, state }) => (
-          <IntegrationTile key={`${role}-${item.id}`} item={item} role={role} state={state} />
+        {items.map(({ item, status }) => (
+          <IntegrationTile
+            key={`${role}-${item.id}`}
+            item={item}
+            role={role}
+            status={status}
+            pending={item.provider ? pendingProviders.has(item.provider) : false}
+            onConnect={() => onConnect(item)}
+            onDisconnect={() => onDisconnect(item)}
+          />
         ))}
       </div>
     </section>
@@ -329,7 +428,11 @@ function ConnectionsToolbar({
           All
         </ToolbarPill>
         {ROLES.map((role) => (
-          <ToolbarPill key={role.key} active={active === role.key} onClick={() => onChange(role.key)}>
+          <ToolbarPill
+            key={role.key}
+            active={active === role.key}
+            onClick={() => onChange(role.key)}
+          >
             {role.label}
           </ToolbarPill>
         ))}
@@ -366,21 +469,60 @@ function Body({ children }: { children: ReactNode }) {
   );
 }
 
-function CenteredSurface({ children }: { children: ReactNode }) {
-  return <div className="grid min-h-0 flex-1 place-items-center p-6">{children}</div>;
-}
+export function AmendConnectionsScreen({ workspaceId }: { workspaceId: string }) {
+  const isRealWorkspace = workspaceId !== fallbackWorkspace.id;
+  const queryArgs = isRealWorkspace ? { workspaceSlug: workspaceId } : {};
+  const settings = useQuery(workspaceSettingsQuery, queryArgs) as WorkspaceSettingsData | undefined;
+  const upsertIntegration = useMutation(upsertIntegrationConnectionMutation);
 
-export function AmendConnectionsScreen() {
-  const { data: sources, isLoading, isError } = useSourcesStatus();
   const [activeRole, setActiveRole] = useState<Role | "all">("all");
+  const [pendingProviders, setPendingProviders] = useState<Set<string>>(() => new Set());
 
-  const connectedCount = useMemo(() => {
-    const ids = new Set<string>();
-    for (const item of CATALOG) {
-      if (statusFor(item, sources).connected) ids.add(item.id);
+  const byProvider = useMemo(() => {
+    const map = new Map<string, IntegrationRecord>();
+    for (const record of settings?.integrations ?? []) map.set(record.provider, record);
+    return map;
+  }, [settings]);
+
+  const connectedCount = useMemo(
+    () => CATALOG.filter((item) => tileStatusFor(item, byProvider) === "connected").length,
+    [byProvider],
+  );
+
+  async function applyState(item: Integration, nextState: "connected" | "disabled") {
+    if (!item.provider) return;
+    const provider = item.provider;
+    setPendingProviders((prev) => new Set(prev).add(provider));
+    try {
+      await upsertIntegration({
+        ...(isRealWorkspace ? { workspaceSlug: workspaceId } : {}),
+        provider,
+        direction: directionFor(item.roles),
+        displayName: item.name,
+        state: nextState,
+      });
+      if (nextState === "connected") {
+        toast.success({
+          title: `${item.name} connected`,
+          description: "Amend will start using this source.",
+        });
+      } else {
+        toast.success({
+          title: `${item.name} disconnected`,
+          description: "Amend will stop using this source.",
+          button: { title: "Undo", onClick: () => void applyState(item, "connected") },
+        });
+      }
+    } catch (error) {
+      toast.error(errorMessage(error, `Couldn't update ${item.name}. Please try again.`));
+    } finally {
+      setPendingProviders((prev) => {
+        const next = new Set(prev);
+        next.delete(provider);
+        return next;
+      });
     }
-    return ids.size;
-  }, [sources]);
+  }
 
   const visibleRoles = ROLES.filter((role) => activeRole === "all" || activeRole === role.key);
 
@@ -388,18 +530,14 @@ export function AmendConnectionsScreen() {
     <>
       <PageHeader
         className="relative z-20 bg-background"
-        icon={Link2}
+        icon={PlugSocket}
         title="Connections"
         actions={<ConnectedStat count={connectedCount} />}
         filters={<ConnectionsToolbar active={activeRole} onChange={setActiveRole} />}
       />
 
       <DashboardWorkspaceSurface>
-        {isError ? (
-          <CenteredSurface>
-            <ErrorState />
-          </CenteredSurface>
-        ) : isLoading ? (
+        {settings === undefined ? (
           <Body>
             <ConnectionsSkeleton />
           </Body>
@@ -411,7 +549,10 @@ export function AmendConnectionsScreen() {
                 role={role.key}
                 label={role.label}
                 description={role.description}
-                sources={sources}
+                byProvider={byProvider}
+                pendingProviders={pendingProviders}
+                onConnect={(item) => void applyState(item, "connected")}
+                onDisconnect={(item) => void applyState(item, "disabled")}
               />
             ))}
           </Body>

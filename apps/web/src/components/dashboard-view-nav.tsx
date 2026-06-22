@@ -3,10 +3,10 @@ import {
   Brain,
   GitPullRequestArrow,
   Inbox,
-  Link2,
   Map,
   MessageSquareText,
   Newspaper,
+  PlugSocket,
   Settings,
 } from "@/lib/icons";
 import type { ReactElement } from "react";
@@ -74,7 +74,7 @@ export function MobileViewNav({
     ["roadmap", <Map />, "Roadmap"],
     ["changelog", <Newspaper />, "Changelog"],
     ["memory", <Brain />, "Memory"],
-    ["connections", <Link2 />, "Connections"],
+    ["connections", <PlugSocket />, "Connections"],
     ["settings", <Settings />, "Settings"],
     ["setup", <GitPullRequestArrow />, "Setup"],
   ];

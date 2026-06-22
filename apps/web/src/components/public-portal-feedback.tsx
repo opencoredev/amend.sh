@@ -121,7 +121,7 @@ export function PortalFeedbackView({
         ))}
       </div>
 
-      <PortalSurface className="mt-4 overflow-hidden">
+      <PortalSurface className="mt-4 min-h-[calc(100svh-13rem)] overflow-hidden">
         {visible.length === 0 ? (
           <div className="grid place-items-center px-6 py-20 text-center">
             <Inbox className="size-7 text-muted-foreground/30" />

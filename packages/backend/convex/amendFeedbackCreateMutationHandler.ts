@@ -6,6 +6,7 @@ import { demoWorkspace } from "./amendDemoData";
 import type { CreateFeedbackArgs } from "./amendFeedbackTypes";
 import type { SourceLink } from "./amendTypes";
 import { resolvePublicScope } from "./amendSeed";
+import type { DashboardAuthUser } from "./amendWorkspace";
 import { getWritableDashboardProject } from "./amendWorkspace";
 import { authComponent } from "./auth";
 
@@ -24,7 +25,7 @@ export async function createFeedbackHandler(ctx: MutationCtx, args: CreateFeedba
   if (settings.feedbackMode === "closed") {
     throw new Error("Portal feedback is closed for this workspace");
   }
-  const authUser = await authComponent.safeGetAuthUser(ctx);
+  const authUser = (await authComponent.safeGetAuthUser(ctx)) as DashboardAuthUser | null;
   if (settings.feedbackMode === "authenticated" && !authUser) {
     throw new Error("Portal feedback requires authentication for this workspace");
   }
@@ -51,6 +52,25 @@ export async function createFeedbackHandler(ctx: MutationCtx, args: CreateFeedba
     updatedAt: now,
     ...(args.authorEmail ? { authorEmail: args.authorEmail } : {}),
   });
+
+  // Record the creator as the first voter (votes starts at 1 above). Without this
+  // interaction the vote dedup can't see them, so the same person could upvote
+  // again from the dashboard or the portal and inflate the count.
+  const creatorId = authUser?.userId ?? authUser?.user?.id ?? authUser?._id;
+  const creatorEmail = args.authorEmail ?? authUser?.user?.email;
+  if (creatorId || creatorEmail) {
+    await ctx.db.insert("feedbackInteractions", {
+      workspaceId: workspace._id,
+      ...(project ? { projectId: project._id } : {}),
+      feedbackItemId: feedbackId,
+      feedbackKey: stableKey,
+      kind: "vote",
+      source: "portal",
+      createdAt: now,
+      ...(creatorId ? { externalUserId: creatorId } : {}),
+      ...(creatorEmail ? { email: creatorEmail } : {}),
+    });
+  }
 
   const reviewItemId = await ctx.db.insert("reviewItems", {
     workspaceId: workspace._id,

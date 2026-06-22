@@ -1,10 +1,19 @@
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@amend/ui/components/dropdown-menu";
 import { cn } from "@amend/ui/lib/utils";
-import { Link } from "@tanstack/react-router";
-import { Plus } from "@/lib/icons";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { LayoutGrid, LogOut, Plus, UserRound } from "@/lib/icons";
 
+import { AccountAvatar, initialsFromIdentity } from "@/components/account-avatar";
 import type { PortalData, PortalView } from "@/components/public-portal-types";
 import { authClient } from "@/lib/auth-client";
 import { portalRedirectTo } from "@/lib/auth-redirects";
+import { identifyAndCapturePostHogEvent } from "@/lib/posthog";
 
 type PortalWorkspace = PortalData["workspace"];
 
@@ -45,43 +54,105 @@ function Tab({
 
 function Account({ workspaceSlug }: { workspaceSlug: string }) {
   const session = authClient.useSession();
+  const navigate = useNavigate();
   const user = session.data?.user;
 
-  if (user) {
-    const initials = (user.name ?? user.email ?? "")
-      .split(/\s+/)
-      .map((part) => part[0])
-      .filter(Boolean)
-      .slice(0, 2)
-      .join("")
-      .toUpperCase();
+  if (!user) {
     return (
-      <div className="flex items-center gap-2">
-        <Link
-          to="/dashboard"
-          className="hidden h-9 items-center whitespace-nowrap rounded-lg bg-foreground/[0.06] px-3 text-sm font-medium text-foreground outline-none ring-1 ring-white/[0.07] transition-colors duration-150 ease-linear hover:bg-foreground/[0.09] focus-visible:ring-2 focus-visible:ring-white/25 active:opacity-75 sm:inline-flex"
-        >
-          Dashboard
-        </Link>
-        <span className="grid size-9 shrink-0 place-items-center overflow-hidden rounded-lg bg-background/75 text-xs font-semibold text-foreground ring-1 ring-white/[0.06]">
-          {user.image ? (
-            <img alt="" src={user.image} className="size-full object-cover" />
-          ) : (
-            initials || "?"
-          )}
-        </span>
-      </div>
+      <Link
+        to="/sign-in"
+        search={{ redirectTo: portalRedirectTo(workspaceSlug) }}
+        className="inline-flex h-9 items-center whitespace-nowrap rounded-lg bg-foreground/[0.06] px-3.5 text-sm font-semibold text-foreground outline-none ring-1 ring-white/[0.07] transition-colors duration-150 ease-linear hover:bg-foreground/[0.09] focus-visible:ring-2 focus-visible:ring-white/25 active:opacity-75"
+      >
+        Sign in
+      </Link>
     );
   }
 
+  // The signed-in identity is the same better-auth account used by the dashboard,
+  // so the portal avatar opens a parallel account menu: a person who runs their
+  // own workspace can jump to their dashboard or account, and anyone signed in to
+  // vote can reach their account or sign out — one account across every surface.
+  const name = user.name?.trim() || user.email?.split("@")[0] || "Account";
+  const email = user.email ?? "Signed in";
+  const initials = initialsFromIdentity(user.name, user.email);
+
   return (
-    <Link
-      to="/sign-in"
-      search={{ redirectTo: portalRedirectTo(workspaceSlug) }}
-      className="inline-flex h-9 items-center whitespace-nowrap rounded-lg bg-foreground/[0.06] px-3.5 text-sm font-semibold text-foreground outline-none ring-1 ring-white/[0.07] transition-colors duration-150 ease-linear hover:bg-foreground/[0.09] focus-visible:ring-2 focus-visible:ring-white/25 active:opacity-75"
-    >
-      Sign in
-    </Link>
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        render={
+          <button
+            type="button"
+            aria-label="Account menu"
+            className="rounded-lg outline-none transition focus-visible:ring-2 focus-visible:ring-white/25 active:opacity-75 data-[popup-open]:ring-2 data-[popup-open]:ring-white/20"
+          />
+        }
+      >
+        <AccountAvatar className="size-9 rounded-lg" image={user.image} initials={initials} />
+      </DropdownMenuTrigger>
+
+      <DropdownMenuContent
+        align="end"
+        side="bottom"
+        sideOffset={10}
+        className="min-w-[14rem] rounded-2xl bg-popover p-2 shadow-[0_24px_70px_-10px_rgb(0_0_0/0.7)] ring-1 ring-white/[0.08]"
+      >
+        <div className="flex items-center gap-3 rounded-xl bg-white/[0.025] px-2.5 py-2.5">
+          <AccountAvatar className="size-9 rounded-xl" image={user.image} initials={initials} />
+          <div className="min-w-0">
+            <p className="truncate text-sm font-semibold leading-tight">{name}</p>
+            <p className="mt-0.5 truncate text-[0.72rem] leading-tight text-muted-foreground">
+              {email}
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-1.5 grid gap-0.5">
+          <DropdownMenuItem
+            className="gap-2.5 rounded-lg px-2.5 py-2 text-sm focus:bg-accent"
+            onClick={() =>
+              void navigate({ to: "/dashboard/$view", params: { view: "account" }, search: {} })
+            }
+          >
+            <UserRound className="size-4 text-muted-foreground" />
+            Account settings
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            className="gap-2.5 rounded-lg px-2.5 py-2 text-sm focus:bg-accent"
+            onClick={() => void navigate({ to: "/dashboard" })}
+          >
+            <LayoutGrid className="size-4 text-muted-foreground" />
+            Dashboard
+          </DropdownMenuItem>
+        </div>
+
+        <DropdownMenuSeparator className="my-1.5 bg-white/[0.06]" />
+
+        <DropdownMenuItem
+          variant="destructive"
+          className="gap-2.5 rounded-lg px-2.5 py-2 text-sm"
+          onClick={() => {
+            void (async () => {
+              await identifyAndCapturePostHogEvent({
+                event: "user_signed_out",
+                identity: { email: user.email, name: user.name, userId: user.id },
+                properties: { surface: "portal_account_menu" },
+              });
+              authClient.signOut({
+                fetchOptions: {
+                  onSuccess: () => {
+                    location.reload();
+                  },
+                },
+              });
+            })();
+          }}
+        >
+          <LogOut className="size-4" />
+          Sign out
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
 

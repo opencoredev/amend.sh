@@ -2,59 +2,60 @@ import { Link } from "@tanstack/react-router";
 
 import { BrandIcon } from "./brand-icons";
 import { heroListens } from "./home-content";
+import { ctaGhost, ctaPrimary } from "./home-cta";
 
 export function HomeHero() {
   return (
-    <section className="amend-hero relative isolate flex min-h-[100svh] w-full flex-col justify-center overflow-hidden">
-      <div className="amend-hero-photo" aria-hidden />
+    <section className="amend-hero relative isolate flex min-h-[100svh] w-full flex-col items-center justify-center overflow-hidden">
+      <div className="amend-hero-bg" aria-hidden />
       <div className="amend-hero-veil" aria-hidden />
 
-      <div className="mx-auto w-full max-w-7xl px-5 pb-16 pt-28 sm:px-6 lg:px-8 lg:pt-24">
-        <div className="amend-rise flex max-w-2xl flex-col items-start gap-8">
-          <h1 className="amend-h text-[2.6rem] text-foreground sm:text-5xl lg:text-[3.75rem]">
-            <span className="block">Users asked. You shipped.</span>
-            <span className="block">
-              Amend closes <span className="text-amend-warm">the loop</span>.
+      <div className="amend-rise mx-auto flex w-full max-w-2xl flex-col items-center px-5 pb-20 pt-32 text-center sm:px-6">
+        <h1 className="amend-h text-balance text-[2.75rem] leading-[1.05] text-foreground sm:text-[3.5rem] lg:text-[4.5rem]">
+          Close <span className="text-amend-warm">the loop</span> on every user request.
+        </h1>
+
+        <p className="mt-6 max-w-md text-balance text-base leading-relaxed text-muted-foreground sm:text-lg">
+          Amend turns scattered requests into tracked work, follows them through GitHub and Linear,
+          and tells everyone who asked the moment you ship.
+        </p>
+
+        <div className="mt-9 flex flex-col items-center gap-x-7 gap-y-4 sm:flex-row">
+          <Link
+            to="/sign-up"
+            className={`${ctaPrimary} inline-flex h-11 px-6 text-sm`}
+          >
+            Request access
+            <span className="amend-link-arrow" aria-hidden>
+              &rarr;
             </span>
-          </h1>
+          </Link>
+          <a
+            href="#workflow"
+            className={`${ctaGhost} inline-flex h-11 px-3 text-sm`}
+          >
+            How it works
+            <span className="transition-transform group-hover:translate-x-0.5" aria-hidden>
+              &rarr;
+            </span>
+          </a>
+        </div>
 
-          <p className="max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-            Amend groups scattered requests into one tracked thread, follows them through GitHub and
-            Linear, and tells the people who asked the moment you ship.
-          </p>
-
-          <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
-            <Link
-              to="/sign-up"
-              className="group inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-foreground px-5 text-sm font-medium text-background shadow-sm transition-colors hover:bg-foreground/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amend-warm focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-            >
-              Request access
-              <span className="amend-link-arrow" aria-hidden>
-                &rarr;
+        <div className="mt-20 flex flex-col items-center gap-4">
+          <span className="amend-eyebrow text-[0.6rem]">Works with</span>
+          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3">
+            {heroListens.map((source) => (
+              <span
+                key={source.label}
+                className="group/logo flex items-center gap-2 text-[0.8rem] text-muted-foreground/60 transition-colors hover:text-foreground"
+              >
+                <BrandIcon
+                  name={source.brand}
+                  className="size-4 opacity-60 transition-opacity group-hover/logo:opacity-100"
+                />
+                {source.label}
               </span>
-            </Link>
-            <a
-              href="#workflow"
-              className="inline-flex h-11 items-center justify-center gap-2 rounded-lg border border-border bg-card/40 px-5 text-sm font-medium text-foreground/90 backdrop-blur-sm transition-colors hover:border-foreground/30 hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground"
-            >
-              How it works
-              <span aria-hidden>-&gt;</span>
-            </a>
-          </div>
-
-          <div className="mt-3 flex flex-col gap-3 border-t border-border/70 pt-6">
-            <span className="amend-eyebrow">Works with</span>
-            <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
-              {heroListens.map((source) => (
-                <span
-                  key={source.label}
-                  className="flex items-center gap-2 text-sm text-muted-foreground"
-                >
-                  <BrandIcon name={source.brand} className="size-4 opacity-80" />
-                  {source.label}
-                </span>
-              ))}
-            </div>
+            ))}
           </div>
         </div>
       </div>

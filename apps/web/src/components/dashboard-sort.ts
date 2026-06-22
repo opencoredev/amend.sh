@@ -16,8 +16,8 @@ export type SortOption = { value: string; label: string };
 
 export const SORT_OPTIONS: Record<SortableView, SortOption[]> = {
   posts: [
-    { value: "recent", label: "Recent" },
     { value: "votes", label: "Most upvoted" },
+    { value: "recent", label: "Recent" },
     { value: "alpha", label: "A–Z" },
   ],
   roadmap: [
@@ -32,7 +32,8 @@ export const SORT_OPTIONS: Record<SortableView, SortOption[]> = {
 };
 
 export const DEFAULT_SORT: Record<SortableView, string> = {
-  posts: "recent",
+  // Feedback boards lead with the most-wanted requests, so posts default to votes.
+  posts: "votes",
   roadmap: "recent",
   changelog: "recent",
 };

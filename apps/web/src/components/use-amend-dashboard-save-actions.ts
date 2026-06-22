@@ -24,6 +24,7 @@ import {
   fallbackWorkspace,
   normalizedPriority,
   persistedRoadmapKey,
+  roadmapSourceFeedbackKey,
   roadmapStatusToPortalStatus,
   sourceFeedbackKey,
 } from "@/components/amend-dashboard-utils";
@@ -150,6 +151,25 @@ export function useAmendDashboardSaveActions({
     toast.success("Feedback note added");
   }
 
+  // A roadmap item synced from feedback shares the feedback record, so its notes
+  // attach to that same feedback key — keeping /roadmap?item=… and /posts?feedback=…
+  // in lockstep. Mirrors voteRoadmapListItem's feedback-key routing.
+  async function addRoadmapNote(item: DashboardRoadmap, note: string) {
+    if (workspace.id === fallbackWorkspace.id) {
+      throw new Error("Create a project before adding notes.");
+    }
+    const feedbackKey = roadmapSourceFeedbackKey(item);
+    if (!feedbackKey) return;
+    await recordFeedbackInteraction({
+      body: note,
+      feedbackKey,
+      kind: "comment",
+      source: "rest",
+      ...mutationScope,
+    });
+    toast.success("Feedback note added");
+  }
+
   async function saveChangelogEntry(payload: ChangelogSavePayload) {
     if (workspace.id === fallbackWorkspace.id) {
       throw new Error("Create a project before editing changelogs.");
@@ -208,6 +228,7 @@ export function useAmendDashboardSaveActions({
 
   return {
     addFeedbackNote,
+    addRoadmapNote,
     autoSaveChangelogEntry,
     handleComposerSubmit,
     publishChangelogEntry,

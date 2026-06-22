@@ -8,19 +8,21 @@ export const boardItems = [
   "Customer Feedback",
 ] as const;
 export type BoardItem = (typeof boardItems)[number];
+// Status dot colors mirror the StatusPill palette used across the feedback list,
+// roadmap, and detail views (amber → blue → violet → emerald), plus rose for the
+// composer-only "Rejected" state, so a status reads the same color everywhere.
 export const statusItems = [
-  ["In Review", "bg-foreground"],
-  ["Planned", "bg-muted-foreground"],
-  ["In Progress", "bg-foreground/70"],
-  ["Completed", "bg-foreground"],
-  ["Rejected", "bg-muted-foreground"],
+  ["In Review", "bg-amber-400"],
+  ["Planned", "bg-blue-400"],
+  ["In Progress", "bg-violet-400"],
+  ["Completed", "bg-emerald-400"],
+  ["Rejected", "bg-rose-400"],
 ] as const;
 export type StatusItem = (typeof statusItems)[number][0];
-export const tagItems = [
-  ["High Priority", "bg-foreground"],
-  ["Low Priority", "bg-muted-foreground"],
-] as const;
-export type TagItem = (typeof tagItems)[number][0];
+// Tag colors are resolved per name from the shared workspace tag palette
+// (see tagColorByName) so the picker dot matches the tag's chip color elsewhere.
+export const tagItems = ["High Priority", "Low Priority"] as const;
+export type TagItem = (typeof tagItems)[number];
 
 export type ComposerSubmitPayload = {
   assignee: string | null;

@@ -2,7 +2,7 @@ import { cn } from "@amend/ui/lib/utils";
 import { useDraggable } from "@dnd-kit/core";
 import type { KeyboardEvent as ReactKeyboardEvent } from "react";
 
-import { Link2, Megaphone, MessageSquare } from "@/lib/icons";
+import { GripVertical, Link2, Megaphone, MessageSquare } from "@/lib/icons";
 
 import type { DashboardRoadmap, RoadmapStatus } from "@/components/amend-dashboard-types";
 import {
@@ -107,20 +107,49 @@ function RoadmapCardBody({
 }
 
 /**
+ * Explicit drag affordance for a card whose body now uses a `pointer` cursor.
+ * The whole card stays draggable, but the body reading as "click to open" means
+ * the grip is what advertises "drag to move". It stays faintly visible at rest
+ * (so the card always reads as draggable and the left rail is never an empty
+ * indent), brightens on hover, and shows grabbed on the floating drag clone. It
+ * lives in a slim left rail so it never overlaps the title or shifts content.
+ */
+function DragHandle({ grabbing = false }: { grabbing?: boolean }) {
+  return (
+    <span
+      aria-hidden
+      className={cn(
+        "-ml-0.5 mt-0.5 flex shrink-0 transition-colors duration-150 ease-out",
+        grabbing
+          ? "cursor-grabbing text-muted-foreground/70"
+          : "cursor-grab text-muted-foreground/30 group-hover:text-muted-foreground/60",
+      )}
+    >
+      <GripVertical className="size-4" />
+    </span>
+  );
+}
+
+/**
  * Floating clone rendered inside the dnd-kit `DragOverlay` while dragging — a
  * plain lifted card (just depth from the shadow, no tilt). It's portaled to
  * `<body>`, so the shadow never clips against the column's scroll container.
+ * Mirrors the card's grip rail so content doesn't shift sideways at pickup.
  */
 export function RoadmapCardOverlay({ item }: { item: DashboardRoadmap }) {
   return (
     <div
       className={cn(
-        "w-full cursor-grabbing",
+        "flex w-full items-start gap-1 cursor-grabbing",
         CARD_CHROME,
+        "pl-2",
         "bg-[#26262c] shadow-2xl shadow-black/50 ring-white/[0.16]",
       )}
     >
-      <RoadmapCardBody item={item} onVote={() => Promise.resolve()} />
+      <DragHandle grabbing />
+      <div className="min-w-0 flex-1">
+        <RoadmapCardBody item={item} onVote={() => Promise.resolve()} />
+      </div>
     </div>
   );
 }
@@ -157,8 +186,14 @@ export function RoadmapCard({
       {...attributes}
       {...listeners}
       className={cn(
-        "group w-full cursor-grab select-none text-left outline-none",
+        "group flex w-full items-start gap-1 cursor-pointer select-none text-left outline-none",
         CARD_CHROME,
+        // `pointer` (not `grab`): the card's primary action is opening the detail,
+        // so it must read as clickable. Drag still works (press + move past the
+        // sensor's 5px threshold) and is advertised by the grip in the rail.
+        // A slim left rail (pl-2 in place of px-3's left) holds that grip without
+        // overlapping the title or shifting content.
+        "pl-2",
         // Hover is just a clean surface lighten — no ring outline (a hairline
         // appearing reads as noise) and no shadow/lift (those overflow the
         // column's scroll container and clip). Inset focus ring is clip-safe.
@@ -169,7 +204,10 @@ export function RoadmapCard({
         isDragging && "opacity-0",
       )}
     >
-      <RoadmapCardBody item={item} onVote={onVote} />
+      <DragHandle />
+      <div className="min-w-0 flex-1">
+        <RoadmapCardBody item={item} onVote={onVote} />
+      </div>
     </article>
   );
 }

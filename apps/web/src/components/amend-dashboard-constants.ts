@@ -14,6 +14,7 @@ export const viewValues: DashboardView[] = [
   "memory",
   "connections",
   "settings",
+  "account",
   "setup",
 ];
 export const boardValues: BoardId[] = ["feature", "bug", "changelog", "feedback"];
