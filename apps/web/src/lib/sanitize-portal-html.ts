@@ -10,16 +10,16 @@
  *
  * This is a trust-model safety net (authors are semi-trusted), not a hardened
  * parser. It removes whole dangerous elements, inline event handlers, and
- * `javascript:` URLs, which covers the realistic vectors for this content.
+ * unsafe URL schemes, which covers the realistic vectors for this content.
  */
 
 const DANGEROUS_BLOCK =
   /<\s*(script|style|iframe|object|embed|form|noscript|template)\b[^>]*>[\s\S]*?<\s*\/\s*\1\s*>/gi;
 const DANGEROUS_VOID =
   /<\s*(script|style|iframe|object|embed|form|noscript|template|link|meta|base)\b[^>]*\/?>/gi;
-const EVENT_HANDLER_ATTR = /\s+on[a-z]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi;
+const EVENT_HANDLER_ATTR = /[\s/]+on[a-z]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi;
 const JS_URI_ATTR =
-  /\s+(?:href|src|xlink:href)\s*=\s*(?:"\s*javascript:[^"]*"|'\s*javascript:[^']*'|javascript:[^\s>]+)/gi;
+  /[\s/]+(?:href|src|xlink:href)\s*=\s*(?:"\s*(?:javascript|data|vbscript):[^"]*"|'\s*(?:javascript|data|vbscript):[^']*'|\s*(?:javascript|data|vbscript):[^\s>]+)/gi;
 
 export function sanitizePortalHtml(html: string | null | undefined): string {
   if (!html) {

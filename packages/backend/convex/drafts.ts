@@ -143,11 +143,7 @@ async function queueNotificationDeliveries(
   }
 }
 
-async function queueChangelogReview(
-  ctx: MutationCtx,
-  draft: Doc<"draftProposals">,
-  now: number,
-) {
+async function queueChangelogReview(ctx: MutationCtx, draft: Doc<"draftProposals">, now: number) {
   await ctx.db.insert("reviewItems", {
     workspaceId: draft.workspaceId,
     stableKey: `review-proactive-${draft._id}`,
@@ -167,5 +163,8 @@ async function queueChangelogReview(
 function safetyStrip(value: string) {
   return value
     .replace(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi, "[email]")
-    .replace(/(sk|pk|ghp|gho|github_pat)_[A-Za-z0-9_\-]+/g, "[secret]");
+    .replace(/\bAKIA[A-Z0-9]{16}\b/g, "[secret]")
+    .replace(/\bxox[baprs]-[A-Za-z0-9-]{10,}\b/g, "[secret]")
+    .replace(/\beyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\b/g, "[secret]")
+    .replace(/\b(?:sk|pk|ghp|gho|github_pat)_[A-Za-z0-9_\-]{16,}\b/g, "[secret]");
 }

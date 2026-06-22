@@ -53,7 +53,7 @@ export async function resolvePersonForEvidence(
     displayName: args.name?.trim() || handle || email || "Unknown requester",
     ...(email ? { verifiedEmail: email } : {}),
     ...(accountId ? { accountId } : {}),
-    paying: Boolean(accountId),
+    paying: false,
     createdAt: now,
     updatedAt: now,
   });

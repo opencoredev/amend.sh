@@ -52,6 +52,11 @@ POST /api/v1/:workspace/github
 The request must include `X-GitHub-Event`, `X-GitHub-Delivery`, and
 `X-Hub-Signature-256` when the secret is configured.
 
+Legacy ingest routes under `/ingest/*` are fail-closed in production too:
+`/ingest/githubWebhook` requires the same GitHub signature verification, while
+`/ingest/discordWebhook` and `/ingest/sourceEvent` require
+`Authorization: Bearer <AMEND_API_TOKEN>`.
+
 ## CLI Imports
 
 The local CLI supports direct imports and file-based imports:

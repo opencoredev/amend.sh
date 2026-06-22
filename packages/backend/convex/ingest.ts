@@ -1,11 +1,17 @@
 import { httpAction } from "./_generated/server";
 import { api, internal } from "./_generated/api";
+import { verifyApiToken, verifyGitHubSignature } from "./httpRuntimeAuth";
 import { githubSourceEvent, sourceEventFromBody } from "./httpRuntimeSourceEventInputs";
 import { json, readBody } from "./httpRuntimeRouting";
 import { optionalString, record } from "./httpRuntimeScalars";
 
 export const githubWebhook = httpAction(async (ctx, request) => {
   const rawBody = await request.text();
+  const signature = await verifyGitHubSignature(request, rawBody);
+  if (!signature.ok) {
+    return json({ error: signature.error }, 401);
+  }
+
   const body = readBody(rawBody);
   const workspaceSlug = optionalString(body.workspaceSlug) ?? "demo";
   const result = await ctx.runMutation(internal.amend.trustedIngestSourceEvent, {
@@ -16,6 +22,11 @@ export const githubWebhook = httpAction(async (ctx, request) => {
 });
 
 export const discordWebhook = httpAction(async (ctx, request) => {
+  const auth = verifyApiToken(request);
+  if (!auth.ok) {
+    return json({ error: auth.error }, 401);
+  }
+
   const body = readBody(await request.text());
   const workspaceSlug = optionalString(body.workspaceSlug) ?? "demo";
   const message = record(body.message) ?? body;
@@ -31,6 +42,11 @@ export const discordWebhook = httpAction(async (ctx, request) => {
 });
 
 export const sourceEvent = httpAction(async (ctx, request) => {
+  const auth = verifyApiToken(request);
+  if (!auth.ok) {
+    return json({ error: auth.error }, 401);
+  }
+
   const body = readBody(await request.text());
   const workspaceSlug = optionalString(body.workspaceSlug) ?? "demo";
   const result = await ctx.runMutation(internal.amend.trustedIngestSourceEvent, {
