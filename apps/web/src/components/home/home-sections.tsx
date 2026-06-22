@@ -19,7 +19,7 @@ export function MobileActionBar() {
         </nav>
         <Link
           to="/sign-up"
-          className="flex h-10 items-center justify-center rounded-lg bg-foreground px-4 text-[13px] font-medium text-background transition-colors hover:bg-foreground/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amend-warm focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          className="flex h-10 items-center justify-center rounded-lg bg-amend-warm px-4 text-[13px] font-medium text-amend-warm-foreground transition-colors hover:bg-amend-warm/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amend-warm focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         >
           Request access
         </Link>

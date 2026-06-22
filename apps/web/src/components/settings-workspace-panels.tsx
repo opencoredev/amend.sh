@@ -10,23 +10,23 @@ import { AutomationSettingsPanel } from "@/components/settings-workspace-automat
 import { GeneralSettingsPanel } from "@/components/settings-workspace-general-panel";
 import { PortalSettingsPanel } from "@/components/settings-workspace-portal-panel";
 import { ServicesSettingsPanel } from "@/components/settings-workspace-services-panel";
+import { TagsSettingsPanel } from "@/components/settings-workspace-tags-panel";
 import type {
+  AutomationRulesDraft,
   LogoActionState,
-  SettingsSavingState,
   SettingsServiceRow,
 } from "@/components/settings-workspace-panel-types";
 
 export type {
+  AutomationRulesDraft,
   LogoActionState,
-  SettingsSavingState,
   SettingsServiceRow,
 } from "@/components/settings-workspace-panel-types";
-export { SettingsWorkspaceHeader } from "./settings-workspace-header";
-export { SettingsWorkspaceSidebar } from "./settings-workspace-sidebar";
 
 export function SettingsWorkspaceSections({
   activeProject,
   activeSection,
+  automation,
   canSave,
   customThemeCss,
   description,
@@ -36,14 +36,11 @@ export function SettingsWorkspaceSections({
   logoFileInputRef,
   logoUrl,
   name,
-  onAutomationSave,
   onLoadLogoFromWebsite,
   onLogoFileChange,
-  onPortalSave,
-  onProjectSave,
-  saving,
   serviceRows,
   settings,
+  setAutomationRule,
   setCustomThemeCss,
   setDescription,
   setHeadline,
@@ -56,9 +53,11 @@ export function SettingsWorkspaceSections({
   themeAppearance,
   themePreset,
   websiteUrl,
+  workspaceSlug,
 }: {
   activeProject: ProjectMenuItem;
   activeSection: SettingsSection;
+  automation: AutomationRulesDraft;
   canSave: boolean;
   customThemeCss: string;
   description: string;
@@ -68,14 +67,11 @@ export function SettingsWorkspaceSections({
   logoFileInputRef: RefObject<HTMLInputElement | null>;
   logoUrl: string;
   name: string;
-  onAutomationSave: () => void;
   onLoadLogoFromWebsite: () => void;
   onLogoFileChange: (file: File | undefined) => void;
-  onPortalSave: () => void;
-  onProjectSave: () => void;
-  saving: SettingsSavingState;
   serviceRows: SettingsServiceRow[];
   settings: WorkspaceSettingsData | undefined;
+  setAutomationRule: (key: keyof AutomationRulesDraft, value: boolean) => void;
   setCustomThemeCss: (value: string) => void;
   setDescription: (value: string) => void;
   setHeadline: (value: string) => void;
@@ -88,6 +84,7 @@ export function SettingsWorkspaceSections({
   themeAppearance: PortalThemeAppearance;
   themePreset: string;
   websiteUrl: string;
+  workspaceSlug?: string;
 }) {
   return (
     <div className="min-w-0">
@@ -102,12 +99,11 @@ export function SettingsWorkspaceSections({
           name={name}
           onLoadLogoFromWebsite={onLoadLogoFromWebsite}
           onLogoFileChange={onLogoFileChange}
-          onProjectSave={onProjectSave}
-          saving={saving}
           setDescription={setDescription}
           setLogoUrl={setLogoUrl}
           setName={setName}
           setWebsiteUrl={setWebsiteUrl}
+          settings={settings}
           websiteUrl={websiteUrl}
         />
       ) : null}
@@ -116,12 +112,9 @@ export function SettingsWorkspaceSections({
 
       {activeSection === "portal" ? (
         <PortalSettingsPanel
-          canSave={canSave}
           customThemeCss={customThemeCss}
           headline={headline}
           intro={intro}
-          onPortalSave={onPortalSave}
-          saving={saving}
           setCustomThemeCss={setCustomThemeCss}
           setHeadline={setHeadline}
           setIntro={setIntro}
@@ -134,14 +127,15 @@ export function SettingsWorkspaceSections({
 
       {activeSection === "automation" ? (
         <AutomationSettingsPanel
+          automation={automation}
           canSave={canSave}
-          onAutomationSave={onAutomationSave}
-          saving={saving}
-          settings={settings}
+          setAutomationRule={setAutomationRule}
         />
       ) : null}
 
       {activeSection === "accounts" ? <AccountsSettingsPanel settings={settings} /> : null}
+
+      {activeSection === "tags" ? <TagsSettingsPanel workspaceSlug={workspaceSlug} /> : null}
     </div>
   );
 }

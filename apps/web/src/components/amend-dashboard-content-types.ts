@@ -17,12 +17,21 @@ import type {
 export type ChangelogSavePayload = {
   body: string;
   category: string;
+  coverImageStorageId?: string | null;
+  metaDescription?: string;
   stableKey?: string;
   status: string;
   summary: string;
   tags: string[];
   title: string;
   version?: string;
+};
+
+/** Content payload plus the publish intent, sent when committing from the review surface. */
+export type ChangelogPublishPayload = ChangelogSavePayload & {
+  mode: "now" | "schedule";
+  scheduledFor?: number;
+  notifySubscribers?: boolean;
 };
 
 export type DashboardContentProps = {
@@ -44,15 +53,19 @@ export type DashboardContentProps = {
   searchQuery: string;
   requiresProjectSetup: boolean;
   selectedChangelog: DashboardChangelog | null;
+  selectedChangelogKey: string | null;
   selectedFeedback: Post | null;
   selectedRoadmap: DashboardRoadmap | null;
   workspace: Workspace;
   onAddFeedbackNote: (note: string) => Promise<void>;
+  onAddRoadmapNote: (item: DashboardRoadmap, note: string) => Promise<void>;
   onAddRoadmap: (status: RoadmapStatus) => void;
   onBackFromChangelog: () => void;
   onBackFromFeedback: () => void;
   onBackFromRoadmap: () => void;
+  onChangelogAutoSave: (payload: ChangelogSavePayload) => Promise<string | null>;
   onChangelogCategoryChange: (category: string) => void;
+  onChangelogPublish: (payload: ChangelogPublishPayload) => Promise<void>;
   onChangelogSave: (payload: ChangelogSavePayload) => Promise<void>;
   onChangelogStatusChange: (status: ChangelogStatusFilter) => void;
   onCreate: () => void;
@@ -69,6 +82,7 @@ export type DashboardContentProps = {
   onSearchChange: (query: string) => void;
   onStatusChange: (status: RoadmapStatus | "all") => void;
   roadmapViews: RoadmapView[];
+  onVoteFeedbackPost: (post: Post) => Promise<unknown>;
   onVoteRoadmapItem: (item: DashboardRoadmap) => Promise<unknown>;
   onVoteSelectedRoadmap: (item: DashboardRoadmap) => Promise<unknown>;
 };

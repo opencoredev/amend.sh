@@ -6,7 +6,9 @@
   --amend-ease-fast: cubic-bezier(0.2, 0, 0, 1);
   --amend-state-dur: 180ms;
   /* warm signal accent, derived from --amend-warm */
-  --amend-glow: 245 200 107;
+  --amend-glow: 239 152 54;
+  /* warmer ember beneath the glow — the orange end of the hero's ember→gold field */
+  --amend-ember: 232 146 74;
 }
 
 @layer base {
@@ -42,18 +44,29 @@
     font-weight: 700;
   }
 
+  /* Inter — self-hosted, the look-alike *fallback* for non-Apple devices. Apple
+     devices resolve SF Pro first (see --font-ui) and never download this. */
+  @font-face {
+    font-family: "Inter";
+    src: url("/fonts/inter-400.woff2") format("woff2");
+    font-display: swap;
+    font-style: normal;
+    font-weight: 400;
+  }
+
+  @font-face {
+    font-family: "Inter";
+    src: url("/fonts/inter-500.woff2") format("woff2");
+    font-display: swap;
+    font-style: normal;
+    font-weight: 500;
+  }
+
   html {
     -webkit-font-smoothing: antialiased;
     scroll-behavior: smooth;
     scroll-padding-top: 5rem;
     text-rendering: geometricprecision;
-  }
-
-  /* Toast (sileo): lift the pill off the near-black canvas with a hairline
-     edge + deep shadow so it reads as an elevated surface, matching the
-     dashboard's rounded ring-1 surfaces. */
-  [data-sileo-toast] {
-    filter: drop-shadow(0 1px 0 rgb(255 255 255 / 0.05)) drop-shadow(0 16px 36px rgb(0 0 0 / 0.55));
   }
 
   h1,
@@ -105,7 +118,7 @@
 }
 
 /* ----------------------------------------------------------------------------
-   Hero — full-bleed cinematic "closing the loop" composition
+   Hero — warm ember→gold gradient framing a calm dark core, content centered
 ---------------------------------------------------------------------------- */
 .amend-hero {
   position: relative;
@@ -115,86 +128,79 @@
   overflow: hidden;
 }
 
-/* The generated warm-loop photograph, anchored to the right. Painted as a
-   background so a still-missing asset degrades cleanly to the CSS aura below
-   (no broken-image icon). */
-.amend-hero-photo {
+/* Saved ember→gold backdrop: glowing amber bars frame a dark center where the
+   headline sits. Full-bleed, held still. */
+.amend-hero-bg {
   position: absolute;
   inset: 0;
-  z-index: -3;
-  opacity: 0.9;
-  background-image: url("/images/hero-loop.webp");
-  background-size: cover;
-  background-position: 76% 44%;
-  background-repeat: no-repeat;
-  animation: amend-hero-drift 24s ease-in-out infinite alternate;
-}
-
-/* CSS-built warm signal arc — enhances the photo, and stands alone as a
-   premium fallback if the asset is missing. */
-.amend-hero-aura {
-  position: absolute;
-  inset: -10% -5% -20% 20%;
   z-index: -2;
-  pointer-events: none;
-  background:
-    radial-gradient(
-      60% 55% at 72% 38%,
-      rgb(var(--amend-glow) / 0.26) 0%,
-      rgb(var(--amend-glow) / 0.08) 38%,
-      transparent 68%
-    ),
-    radial-gradient(40% 60% at 88% 70%, rgb(var(--amend-glow) / 0.12) 0%, transparent 60%);
-  filter: blur(8px);
-  animation: amend-hero-pulse 9s ease-in-out infinite;
+  background-image: url("/images/bg-hero.webp");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
-/* Legibility veil: keeps the left text column on calm darkness. */
+/* Legibility veil, kept deliberately light so the warm bars stay rich: a soft
+   scrim beneath the nav, a gentle hold behind the headline, and a fade into the
+   next section along the bottom edge. */
 .amend-hero-veil {
   position: absolute;
   inset: 0;
   z-index: -1;
   pointer-events: none;
   background:
-    linear-gradient(
-      90deg,
-      var(--background) 0%,
-      rgb(13 13 15 / 0.92) 34%,
-      rgb(13 13 15 / 0.55) 58%,
-      transparent 92%
-    ),
-    linear-gradient(to top, var(--background) 2%, transparent 28%),
-    linear-gradient(to bottom, var(--background) 0%, transparent 22%);
+    linear-gradient(to bottom, rgb(13 13 15 / 0.4) 0%, rgb(13 13 15 / 0) 22%),
+    radial-gradient(56% 46% at 50% 52%, rgb(13 13 15 / 0.34) 0%, rgb(13 13 15 / 0) 76%),
+    linear-gradient(to bottom, rgb(13 13 15 / 0) 74%, var(--background) 100%);
 }
 
 @media (max-width: 767px) {
-  .amend-hero-photo {
-    object-position: 70% 30%;
-    opacity: 0.55;
+  /* Phones can't fit both warm edges under `cover`, so frame the glow from the
+     top and let it settle into the page. */
+  .amend-hero-bg {
+    background-size: 150% auto;
+    background-position: center top;
   }
 
   .amend-hero-veil {
     background:
-      linear-gradient(
-        90deg,
-        var(--background) 8%,
-        rgb(13 13 15 / 0.86) 52%,
-        rgb(13 13 15 / 0.62) 100%
-      ),
-      linear-gradient(to top, var(--background) 4%, transparent 40%),
-      linear-gradient(to bottom, var(--background) 0%, transparent 30%);
+      linear-gradient(to bottom, rgb(13 13 15 / 0.4) 0%, rgb(13 13 15 / 0) 20%),
+      radial-gradient(85% 42% at 50% 44%, rgb(13 13 15 / 0.32) 0%, rgb(13 13 15 / 0) 72%),
+      linear-gradient(to bottom, rgb(13 13 15 / 0) 64%, var(--background) 100%);
   }
 }
 
-/* fine film grain over the whole page, GPU-cheap (fixed, no repaint on scroll) */
-.amend-grain {
-  position: fixed;
-  inset: 0;
-  z-index: 30;
-  pointer-events: none;
-  opacity: 0.15;
-  mix-blend-mode: soft-light;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+/* ----------------------------------------------------------------------------
+   Console warmth — the hero's ember→gold field, carried into the app so the
+   dashboard shares the landing's warmth instead of reading as flat gray. The
+   glow is baked into each surface's own background (not a floating layer), so on
+   a scroll container the default background-attachment pins it to the panel's
+   top edge: a warm "dawn" stays at the top of every view as content scrolls.
+---------------------------------------------------------------------------- */
+.amend-workspace-surface {
+  background-color: var(--workspace-surface-background);
+  background-image:
+    radial-gradient(
+      120% 64% at 50% 0%,
+      rgb(var(--amend-glow) / 0.055) 0%,
+      rgb(var(--amend-glow) / 0) 58%
+    ),
+    radial-gradient(
+      86% 48% at 50% -6%,
+      rgb(var(--amend-ember) / 0.05) 0%,
+      rgb(var(--amend-ember) / 0) 54%
+    );
+  background-repeat: no-repeat;
+}
+
+/* The rail echoes the warmth at its very top, where the switcher + compose sit. */
+.amend-sidebar-warm {
+  background-image: radial-gradient(
+    150% 24% at 50% 0%,
+    rgb(var(--amend-glow) / 0.05) 0%,
+    rgb(var(--amend-glow) / 0) 72%
+  );
+  background-repeat: no-repeat;
 }
 
 /* Hero entrance — staggered rise */
@@ -336,33 +342,28 @@
   }
 }
 
-@keyframes amend-hero-pulse {
-  0%,
-  100% {
-    opacity: 0.85;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.04);
-  }
-}
-
-@keyframes amend-hero-drift {
-  0% {
-    transform: scale(1.02) translateX(0);
-  }
-  100% {
-    transform: scale(1.08) translateX(-1.5%);
-  }
-}
-
 @keyframes amend-marquee {
   0% {
     transform: translate3d(0, 0, 0);
   }
   100% {
     transform: translate3d(-33.333%, 0, 0);
+  }
+}
+
+/* Proactive-agent console: one restrained route-enter so a navigation reads as
+   a view change. Reduced motion is handled by the global block below. */
+.amend-page-enter {
+  animation: amend-page-enter 0.22s var(--amend-ease) both;
+}
+@keyframes amend-page-enter {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 6px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
   }
 }
 
@@ -376,13 +377,12 @@
     animation-iteration-count: 1 !important;
   }
 
-  .amend-hero-photo,
-  .amend-hero-aura,
   .amend-rise > *,
   .amend-flowline,
   .amend-flowline-v,
   .amend-loop-dot,
-  .amend-marquee-track {
+  .amend-marquee-track,
+  .amend-page-enter {
     animation: none !important;
   }
 

@@ -21,7 +21,14 @@ type ReviewQueueArgs = WorkspaceArgs & { status?: Doc<"reviewItems">["status"] }
 
 export async function getPublicPortalHandler(ctx: QueryCtx, args: PublicPortalArgs) {
   const requestedSlug = workspaceSlug(args.workspaceSlug);
-  const workspace = await getWorkspaceRecord(ctx, requestedSlug);
+
+  // Portal URLs are PROJECT slugs — every project has its own public portal. Try
+  // the project first and scope the portal to it; fall back to a workspace slug
+  // for workspace-level portals and the demo.
+  const project = await getUniquePublicProject(ctx, requestedSlug);
+  const workspace = project
+    ? await ctx.db.get(project.workspaceId)
+    : await getWorkspaceRecord(ctx, requestedSlug);
   if (!workspace) {
     if (requestedSlug !== DEMO_SLUG) {
       return {
@@ -59,30 +66,62 @@ export async function getPublicPortalHandler(ctx: QueryCtx, args: PublicPortalAr
     };
   }
 
+  const projectId = project?._id;
   const [plan, changelog, roadmap, feedback] = await Promise.all([
     ctx.db
       .query("plans")
       .withIndex("by_workspace", (q) => q.eq("workspaceId", workspace._id))
       .first(),
-    ctx.db
-      .query("changelogEntries")
-      .withIndex("by_workspace_and_createdAt", (q) => q.eq("workspaceId", workspace._id))
-      .order("desc")
-      .take(20),
-    ctx.db
-      .query("roadmapItems")
-      .withIndex("by_workspace_and_createdAt", (q) => q.eq("workspaceId", workspace._id))
-      .order("desc")
-      .take(30),
-    ctx.db
-      .query("feedbackItems")
-      .withIndex("by_workspace_and_createdAt", (q) => q.eq("workspaceId", workspace._id))
-      .order("desc")
-      .take(30),
+    projectId
+      ? ctx.db
+          .query("changelogEntries")
+          .withIndex("by_project", (q) => q.eq("projectId", projectId))
+          .order("desc")
+          .take(20)
+      : ctx.db
+          .query("changelogEntries")
+          .withIndex("by_workspace_and_createdAt", (q) => q.eq("workspaceId", workspace._id))
+          .order("desc")
+          .take(20),
+    projectId
+      ? ctx.db
+          .query("roadmapItems")
+          .withIndex("by_project", (q) => q.eq("projectId", projectId))
+          .order("desc")
+          .take(30)
+      : ctx.db
+          .query("roadmapItems")
+          .withIndex("by_workspace_and_createdAt", (q) => q.eq("workspaceId", workspace._id))
+          .order("desc")
+          .take(30),
+    projectId
+      ? ctx.db
+          .query("feedbackItems")
+          .withIndex("by_project", (q) => q.eq("projectId", projectId))
+          .order("desc")
+          .take(30)
+      : ctx.db
+          .query("feedbackItems")
+          .withIndex("by_workspace_and_createdAt", (q) => q.eq("workspaceId", workspace._id))
+          .order("desc")
+          .take(30),
   ]);
 
   const settings = workspace.portalSettings ?? demoWorkspace.portalSettings;
-  const publicWorkspace = normalizeWorkspace(workspace);
+  // Project portals use project branding; workspace portals keep workspace branding.
+  const rawLogo = project?.logoUrl?.trim();
+  const projectLogoUrl =
+    rawLogo && rawLogo !== "data:,"
+      ? rawLogo
+      : project?.logoStorageId
+        ? await ctx.storage.getUrl(project.logoStorageId)
+        : null;
+  const publicWorkspace = {
+    ...normalizeWorkspace(workspace),
+    ...(project?.name ? { name: project.name } : {}),
+    slug: requestedSlug,
+    logoUrl: projectLogoUrl,
+  };
   if (workspace.visibility === "private") {
     return {
       workspace: publicWorkspace,
@@ -99,9 +138,17 @@ export async function getPublicPortalHandler(ctx: QueryCtx, args: PublicPortalAr
     changelog:
       settings.changelogVisibility === "private"
         ? []
-        : changelog
-            .filter((entry) => isPublicChangelogStatus(entry.status))
-            .map(normalizeChangelog),
+        : await Promise.all(
+            changelog
+              .filter((entry) => isPublicChangelogStatus(entry.status))
+              .map(async (entry) => ({
+                ...normalizeChangelog(entry),
+                coverImageUrl: entry.coverImageStorageId
+                  ? await ctx.storage.getUrl(entry.coverImageStorageId)
+                  : null,
+                metaDescription: entry.metaDescription ?? null,
+              })),
+          ),
     roadmap:
       settings.roadmapVisibility === "private"
         ? []
@@ -158,4 +205,12 @@ export async function getNotificationCenterHandler(ctx: QueryCtx, args: Workspac
     .order("desc")
     .take(50);
   return notifications.map(normalizeNotification);
+}
+
+async function getUniquePublicProject(ctx: QueryCtx, slug: string) {
+  const matches = await ctx.db
+    .query("projects")
+    .withIndex("by_slug", (q) => q.eq("slug", slug))
+    .take(2);
+  return matches.length === 1 ? matches[0] : null;
 }

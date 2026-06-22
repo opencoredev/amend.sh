@@ -1,43 +1,5 @@
 import { Button } from "@amend/ui/components/button";
-import type { ReactElement, ReactNode } from "react";
-
-import { cn } from "@amend/ui/lib/utils";
-
-export function SettingsPanel({
-  action,
-  children,
-  icon,
-  title,
-}: {
-  action?: ReactNode;
-  children: ReactNode;
-  icon: ReactElement;
-  title: string;
-}) {
-  return (
-    <section className="rounded-xl border border-border/80 bg-card shadow-sm shadow-black/10">
-      <div className="flex items-center justify-between gap-3 border-b border-border/70 px-4 py-3">
-        <div className="flex min-w-0 items-center gap-2.5">
-          <span className="grid size-7 shrink-0 place-items-center rounded-md border border-border/80 bg-muted/60 text-muted-foreground [&_svg]:size-3.5">
-            {icon}
-          </span>
-          <h3 className="truncate text-xs font-semibold tracking-normal">{title}</h3>
-        </div>
-        {action}
-      </div>
-      <div className="grid gap-2 p-4">{children}</div>
-    </section>
-  );
-}
-
-export function StatusRow({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex min-h-9 items-center justify-between gap-3 rounded-lg border border-border/70 bg-background/70 px-3">
-      <span className="text-xs font-medium text-muted-foreground">{label}</span>
-      <span className="truncate text-right text-xs font-semibold">{value}</span>
-    </div>
-  );
-}
+import type { ReactElement } from "react";
 
 export function EmptyModule({
   action,
@@ -70,23 +32,5 @@ export function EmptyModule({
         ) : null}
       </div>
     </section>
-  );
-}
-
-export function BooleanRow({ checked, label }: { checked: boolean; label: string }) {
-  return (
-    <div className="flex min-h-9 items-center justify-between gap-3 rounded-lg border border-border/70 bg-background/70 px-3">
-      <span className="text-xs font-medium text-muted-foreground">{label}</span>
-      <span
-        className={cn(
-          "grid size-4 place-items-center rounded-sm border text-[0.6rem] font-semibold",
-          checked
-            ? "border-foreground bg-foreground text-background"
-            : "border-border bg-muted text-muted-foreground",
-        )}
-      >
-        {checked ? "Y" : "N"}
-      </span>
-    </div>
   );
 }

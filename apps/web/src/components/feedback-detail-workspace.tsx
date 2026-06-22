@@ -1,93 +1,77 @@
-import { cn } from "@amend/ui/lib/utils";
-import { useState } from "react";
-
 import type { Post } from "@/components/amend-dashboard-types";
-import { formatDate, statusTitle } from "@/components/amend-dashboard-utils";
-import { DetailStat, SourceEvidenceList } from "@/components/dashboard-detail-shared";
+import { formatDate } from "@/components/amend-dashboard-utils";
+import { DetailSectionLabel, SourceEvidenceList } from "@/components/dashboard-detail-shared";
+import { DashboardWorkspaceSurface } from "@/components/dashboard-workspace-surface";
 import { FeedbackDetailCommentsPanel } from "@/components/feedback-detail-comments-panel";
-import { FeedbackDetailHeader } from "@/components/feedback-detail-header";
-import { FeedbackDetailSidebar } from "@/components/feedback-detail-sidebar";
+import { StatusPill } from "@/components/status-pill";
+import { VoteButton } from "@/components/vote-button";
 
 export function FeedbackDetailWorkspace({
   onAddNote,
-  onBack,
+  onVote,
   post,
 }: {
   onAddNote: (note: string) => Promise<void>;
-  onBack: () => void;
+  onVote: (post: Post) => Promise<unknown>;
   post: Post;
 }) {
-  const [activeTab, setActiveTab] = useState<"comments" | "details" | "sources">("comments");
-
   return (
-    <div className="t-panel-slide min-h-svh bg-card/40" data-open="true">
-      <FeedbackDetailHeader onBack={onBack} post={post} />
+    <DashboardWorkspaceSurface>
+      <div className="w-full max-w-3xl px-5 py-6 md:px-8 md:py-8">
+        <header className="flex items-start gap-4">
+          <VoteButton
+            count={post.voters}
+            voted={post.hasVoted}
+            onVote={() => onVote(post)}
+            title={post.title}
+          />
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
+              <StatusPill status={post.status} />
+              <span aria-hidden>·</span>
+              <span className="truncate">{post.source}</span>
+              <span aria-hidden>·</span>
+              <span>Updated {formatDate(post.updatedAt)}</span>
+            </div>
+            <h1 className="mt-2.5 text-balance text-2xl font-semibold leading-tight md:text-[1.75rem]">
+              {post.title}
+            </h1>
+          </div>
+        </header>
 
-      <div className="grid gap-0 lg:grid-cols-[minmax(0,1fr)_20rem]">
-        <article className="min-w-0 border-b border-border bg-background/45 lg:border-b-0 lg:border-r">
-          <div className="mx-auto grid max-w-4xl gap-6 px-4 py-6 md:px-6 md:py-8">
-            <section className="grid gap-4">
-              <h2 className="text-sm font-semibold">Description</h2>
-              <p className="max-w-3xl whitespace-pre-wrap text-pretty text-sm leading-7 text-muted-foreground">
-                {post.body || "No description was added."}
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {post.labels.length > 0 ? (
-                  post.labels.map((label) => (
-                    <span
-                      key={label}
-                      className="rounded-full bg-white/[0.05] px-3 py-1 text-xs text-muted-foreground ring-1 ring-white/[0.06]"
-                    >
-                      {label}
-                    </span>
-                  ))
-                ) : (
-                  <span className="rounded-full bg-white/[0.05] px-3 py-1 text-xs text-muted-foreground ring-1 ring-white/[0.06]">
-                    No tags
-                  </span>
-                )}
-              </div>
-            </section>
-
-            <div className="border-b border-white/[0.06] pb-2">
-              <div className="flex flex-wrap gap-1">
-                {(["comments", "details", "sources"] as const).map((tab) => (
-                  <button
-                    key={tab}
-                    type="button"
-                    className={cn(
-                      "min-h-9 rounded-lg px-3 text-sm font-semibold capitalize text-muted-foreground transition-colors duration-150 ease-linear hover:bg-foreground/[0.055] hover:text-foreground active:opacity-75",
-                      activeTab === tab && "bg-foreground/[0.08] text-foreground",
-                    )}
-                    onClick={() => setActiveTab(tab)}
+        <div className="mt-8 grid gap-8">
+          <section className="grid gap-3">
+            <DetailSectionLabel>Description</DetailSectionLabel>
+            <p className="whitespace-pre-wrap text-pretty text-sm leading-7 text-muted-foreground">
+              {post.body || "No description was added."}
+            </p>
+            {post.labels.length > 0 ? (
+              <div className="flex flex-wrap gap-1.5">
+                {post.labels.map((label) => (
+                  <span
+                    key={label}
+                    className="rounded-full bg-white/[0.05] px-2.5 py-0.5 text-xs text-muted-foreground ring-1 ring-white/[0.06]"
                   >
-                    {tab}
-                  </button>
+                    {label}
+                  </span>
                 ))}
               </div>
-            </div>
-
-            {activeTab === "comments" ? (
-              <FeedbackDetailCommentsPanel onAddNote={onAddNote} />
             ) : null}
+          </section>
 
-            {activeTab === "details" ? (
-              <section className="grid gap-3 sm:grid-cols-2">
-                <DetailStat label="Status" value={statusTitle(post.status)} />
-                <DetailStat label="Votes" value={String(post.voters)} />
-                <DetailStat label="Roadmap links" value={String(post.linkedRoadmapCount)} />
-                <DetailStat label="Changelog links" value={String(post.linkedChangelogCount)} />
-                <DetailStat label="Author" value={post.authorName || "Dashboard"} />
-                <DetailStat label="Updated" value={formatDate(post.updatedAt)} />
-              </section>
-            ) : null}
+          <section className="grid gap-3">
+            <DetailSectionLabel>Comments</DetailSectionLabel>
+            <FeedbackDetailCommentsPanel onAddNote={onAddNote} />
+          </section>
 
-            {activeTab === "sources" ? <SourceEvidenceList links={post.sourceLinks} /> : null}
-          </div>
-        </article>
-
-        <FeedbackDetailSidebar post={post} />
+          {post.sourceLinks.length > 0 ? (
+            <section className="grid gap-3">
+              <DetailSectionLabel>Source evidence</DetailSectionLabel>
+              <SourceEvidenceList links={post.sourceLinks} />
+            </section>
+          ) : null}
+        </div>
       </div>
-    </div>
+    </DashboardWorkspaceSurface>
   );
 }

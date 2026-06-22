@@ -173,6 +173,8 @@ export const loopEvent = v.union(
   v.literal("user_signed_up"),
   v.literal("agent_run_completed"),
   v.literal("changelog_upserted"),
+  v.literal("changelog_published"),
+  v.literal("changelog_scheduled"),
   v.literal("feedback_submitted"),
   v.literal("project_created"),
   v.literal("project_source_connected"),

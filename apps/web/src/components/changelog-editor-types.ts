@@ -3,6 +3,8 @@ import type { DashboardChangelog } from "@/components/amend-dashboard-types";
 export type ChangelogEditorSavePayload = {
   body: string;
   category: string;
+  coverImageStorageId?: string | null;
+  metaDescription?: string;
   stableKey?: string;
   status: string;
   summary: string;
@@ -11,14 +13,27 @@ export type ChangelogEditorSavePayload = {
   version?: string;
 };
 
-/** Sentinel selection key that opens the editor on a fresh, unsaved draft. */
-export const NEW_CHANGELOG_KEY = "new-changelog-draft";
+/** Lifecycle of the editor's background auto-save, surfaced in the header status. */
+export type AutoSaveStatus = "idle" | "saving" | "saved" | "error";
+
+/**
+ * Mint a fresh UUID for a brand-new changelog draft. This becomes the entry's
+ * permanent `stableKey` on the first save (the backend honors a client-provided
+ * key), so the URL key stays the same opaque id from creation through every later
+ * edit — it never re-derives from the title and so never drifts out of sync.
+ */
+export function createNewChangelogKey() {
+  return crypto.randomUUID();
+}
 
 /** Stable blank entry rendered when composing a brand-new changelog. */
 export const BLANK_CHANGELOG: DashboardChangelog = {
   authorName: "",
   body: "",
   category: "added",
+  coverImageStorageId: null,
+  coverImageUrl: null,
+  metaDescription: null,
   recordId: null,
   sourceLinks: [],
   stableKey: "",

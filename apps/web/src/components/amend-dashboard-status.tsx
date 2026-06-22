@@ -1,4 +1,4 @@
-import { CalendarClock, Check, Circle, Radio } from "@/lib/icons";
+import { Activity, CalendarClock, CircleCheckBig, CircleDashed } from "@/lib/icons";
 import type { ReactElement } from "react";
 
 import type { RoadmapStatus } from "@/components/amend-dashboard-types";
@@ -10,7 +10,7 @@ export const statusMeta: Record<
   backlog: {
     label: "Under Review",
     short: "Review",
-    icon: <Circle />,
+    icon: <CircleDashed />,
     dot: "bg-muted-foreground",
   },
   next: {
@@ -22,13 +22,13 @@ export const statusMeta: Record<
   progress: {
     label: "In Progress",
     short: "Progress",
-    icon: <Radio />,
+    icon: <Activity />,
     dot: "bg-foreground",
   },
   done: {
     label: "Done",
     short: "Done",
-    icon: <Check />,
+    icon: <CircleCheckBig />,
     dot: "bg-foreground",
   },
 };

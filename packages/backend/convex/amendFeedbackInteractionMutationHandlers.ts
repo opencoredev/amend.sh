@@ -3,7 +3,7 @@ import type { MutationCtx } from "./_generated/server";
 import { recordAnalyticsEvent } from "./amendAnalytics";
 import { workspaceSlug } from "./amendBackendUtils";
 import type { RecordFeedbackInteractionArgs } from "./amendFeedbackTypes";
-import { ensureBaseRecords } from "./amendSeed";
+import { resolvePublicScope } from "./amendSeed";
 import type { DashboardAuthUser } from "./amendWorkspace";
 import { getWritableDashboardProject } from "./amendWorkspace";
 import { authComponent } from "./auth";
@@ -18,8 +18,14 @@ export async function recordFeedbackInteractionHandler(
   const actorId = args.externalUserId ?? authUserId;
   const actorEmail = args.email ?? authUser?.user?.email;
   const normalizedWorkspaceSlug = workspaceSlug(args.workspaceSlug);
-  const workspace = await ensureBaseRecords(ctx, normalizedWorkspaceSlug);
-  const project = await getWritableDashboardProject(ctx, workspace._id, args.projectSlug);
+  // The portal sends a project slug — resolve the project's workspace so we look
+  // up the feedback item in the right place (votes/comments on a project portal).
+  const { project: portalProject, workspace } = await resolvePublicScope(
+    ctx,
+    normalizedWorkspaceSlug,
+  );
+  const project =
+    portalProject ?? (await getWritableDashboardProject(ctx, workspace._id, args.projectSlug));
   const feedback = await ctx.db
     .query("feedbackItems")
     .withIndex("by_workspace_and_stableKey", (q) =>

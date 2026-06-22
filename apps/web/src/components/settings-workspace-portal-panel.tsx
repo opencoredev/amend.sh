@@ -1,13 +1,11 @@
-import { Input } from "@amend/ui/components/input";
 import { cn } from "@amend/ui/lib/utils";
-import { Check, Globe, Sparkles } from "@/lib/icons";
+import { Check, Sparkles } from "@/lib/icons";
 
-import { SettingsPanel } from "@/components/amend-dashboard-shared";
 import {
   SettingsField,
-  SettingsSaveButton,
+  SettingsInput,
+  SettingsSection,
 } from "@/components/settings-workspace-panel-primitives";
-import type { SettingsSavingState } from "@/components/settings-workspace-panel-types";
 import {
   CUSTOM_PORTAL_THEME_ID,
   getPortalThemePreset,
@@ -21,12 +19,9 @@ import {
 } from "@/lib/portal-themes";
 
 export function PortalSettingsPanel({
-  canSave,
   customThemeCss,
   headline,
   intro,
-  onPortalSave,
-  saving,
   setCustomThemeCss,
   setHeadline,
   setIntro,
@@ -35,12 +30,9 @@ export function PortalSettingsPanel({
   themeAppearance,
   themePreset,
 }: {
-  canSave: boolean;
   customThemeCss: string;
   headline: string;
   intro: string;
-  onPortalSave: () => void;
-  saving: SettingsSavingState;
   setCustomThemeCss: (value: string) => void;
   setHeadline: (value: string) => void;
   setIntro: (value: string) => void;
@@ -67,15 +59,12 @@ export function PortalSettingsPanel({
   }
 
   return (
-    <SettingsPanel
-      action={
-        <SettingsSaveButton disabled={!canSave || saving === "portal"} onClick={onPortalSave} />
-      }
-      icon={<Globe />}
+    <SettingsSection
+      description="Theme and copy for your public feedback, roadmap, and changelog portal."
       title="Public portal"
     >
       <SettingsField label="Theme">
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
           {PORTAL_THEME_PRESETS.map((preset) => {
             const swatch = portalThemeSwatch(preset);
             const selected = themePreset === preset.id;
@@ -86,10 +75,10 @@ export function PortalSettingsPanel({
                 aria-pressed={selected}
                 onClick={() => selectPreset(preset.id)}
                 className={cn(
-                  "group relative overflow-hidden rounded-xl border text-left transition-colors duration-150 ease-linear",
+                  "group relative overflow-hidden rounded-xl text-left ring-inset transition-[box-shadow] duration-150 ease-linear",
                   selected
-                    ? "border-foreground ring-1 ring-foreground"
-                    : "border-border hover:border-foreground/40",
+                    ? "ring-2 ring-foreground"
+                    : "ring-1 ring-white/[0.08] hover:ring-white/[0.18]",
                 )}
               >
                 <span
@@ -105,7 +94,7 @@ export function PortalSettingsPanel({
                     style={{ backgroundColor: swatch.primary }}
                   />
                 </span>
-                <span className="flex items-center justify-between gap-2 px-2.5 py-1.5">
+                <span className="flex items-center justify-between gap-2 bg-white/[0.02] px-2.5 py-1.5">
                   <span className="truncate text-xs font-medium">{preset.label}</span>
                   {selected ? <Check className="size-3.5 shrink-0 text-foreground" /> : null}
                 </span>
@@ -120,8 +109,8 @@ export function PortalSettingsPanel({
             className={cn(
               "flex min-h-[4.75rem] flex-col items-center justify-center gap-1 rounded-xl border border-dashed text-center transition-colors duration-150 ease-linear",
               isCustom
-                ? "border-foreground text-foreground ring-1 ring-foreground"
-                : "border-border text-muted-foreground hover:border-foreground/40 hover:text-foreground",
+                ? "border-foreground/70 text-foreground ring-1 ring-foreground"
+                : "border-white/[0.12] text-muted-foreground hover:border-white/25 hover:text-foreground",
             )}
           >
             <Sparkles className="size-4" />
@@ -131,7 +120,7 @@ export function PortalSettingsPanel({
       </SettingsField>
 
       <SettingsField label="Appearance">
-        <div className="inline-flex rounded-lg border border-border bg-muted p-0.5">
+        <div className="inline-flex rounded-lg bg-white/[0.04] p-0.5 ring-1 ring-white/[0.06] ring-inset">
           {(["light", "dark"] as const).map((mode) => (
             <button
               key={mode}
@@ -141,7 +130,7 @@ export function PortalSettingsPanel({
               className={cn(
                 "h-8 rounded-md px-4 text-xs font-semibold capitalize transition-colors duration-150 ease-linear",
                 themeAppearance === mode
-                  ? "bg-background text-foreground shadow-sm"
+                  ? "bg-white/[0.08] text-foreground shadow-sm"
                   : "text-muted-foreground hover:text-foreground",
               )}
             >
@@ -156,7 +145,10 @@ export function PortalSettingsPanel({
       </SettingsField>
 
       {isCustom ? (
-        <SettingsField label="Custom theme CSS">
+        <SettingsField
+          label="Custom theme CSS"
+          description="Paste a shadcn token export — we read the :root and .dark color variables."
+        >
           <textarea
             value={customThemeCss}
             onChange={(event) => setCustomThemeCss(event.target.value)}
@@ -164,12 +156,12 @@ export function PortalSettingsPanel({
             placeholder={
               ":root {\n  --background: oklch(...);\n  --primary: oklch(...);\n}\n.dark {\n  --background: oklch(...);\n}"
             }
-            className="min-h-40 w-full resize-y rounded-lg border border-input bg-background px-3 py-2 font-mono text-xs leading-5 outline-none placeholder:text-muted-foreground/60 focus-visible:ring-2 focus-visible:ring-ring/50"
+            className="min-h-40 w-full resize-y rounded-lg border-transparent bg-[#151518] px-3 py-2.5 font-mono text-xs leading-5 text-foreground ring-1 ring-white/[0.055] outline-none transition-[box-shadow] duration-150 ease-linear placeholder:text-muted-foreground/50 focus-visible:ring-white/[0.18]"
           />
           <p className="mt-1.5 text-xs text-muted-foreground">
             {customThemeCss.trim() ? (
               customParse?.light || customParse?.dark ? (
-                <span className="text-emerald-500">
+                <span className="text-amend-success">
                   Detected{" "}
                   {[customParse.light && "light", customParse.dark && "dark"]
                     .filter(Boolean)
@@ -183,31 +175,26 @@ export function PortalSettingsPanel({
                   <code className="font-mono">.dark</code> blocks.
                 </span>
               )
-            ) : (
-              <>
-                Paste a shadcn token export — we read the <code className="font-mono">:root</code>{" "}
-                and <code className="font-mono">.dark</code> color variables.
-              </>
-            )}
+            ) : null}
           </p>
         </SettingsField>
       ) : null}
 
       <SettingsField label="Headline">
-        <Input
-          className="h-10 rounded-lg bg-background text-sm"
+        <SettingsInput
+          className="max-w-md"
           value={headline}
           onChange={(event) => setHeadline(event.target.value)}
         />
       </SettingsField>
       <SettingsField label="Intro">
-        <Input
-          className="h-10 rounded-lg bg-background text-sm"
+        <SettingsInput
+          className="max-w-md"
           value={intro}
           onChange={(event) => setIntro(event.target.value)}
         />
       </SettingsField>
-    </SettingsPanel>
+    </SettingsSection>
   );
 }
 
@@ -219,7 +206,10 @@ function countTokens(parsed: { dark?: Record<string, string>; light?: Record<str
 function PortalThemePreview({ theme }: { theme: ResolvedPortalTheme }) {
   return (
     <div
-      className={cn("overflow-hidden rounded-xl border border-border", theme.isDark && "dark")}
+      className={cn(
+        "max-w-md overflow-hidden rounded-xl border border-border",
+        theme.isDark && "dark",
+      )}
       style={portalThemeStyleVars(theme.vars)}
     >
       <div className="bg-background p-3 text-foreground">

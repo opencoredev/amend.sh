@@ -21,6 +21,7 @@ export type Post = {
   stableKey: string;
   updatedAt: number;
   voters: number;
+  hasVoted: boolean;
   date: string;
 };
 
@@ -38,6 +39,7 @@ export type DashboardFeedback = {
   title: string;
   updatedAt: number;
   votes: number;
+  viewerHasVoted?: boolean;
 };
 
 export type DashboardRoadmap = {
@@ -53,6 +55,7 @@ export type DashboardRoadmap = {
   target?: string;
   title: string;
   updatedAt: number;
+  viewerHasVoted?: boolean;
 };
 
 export type RoadmapView = {
@@ -66,6 +69,9 @@ export type DashboardChangelog = {
   authorName: string;
   body: string;
   category: string;
+  coverImageStorageId?: string | null;
+  coverImageUrl?: string | null;
+  metaDescription?: string | null;
   publishedAt?: number;
   recordId: string | null;
   scheduledFor?: number;

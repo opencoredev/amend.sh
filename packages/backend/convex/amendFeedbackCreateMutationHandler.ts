@@ -1,23 +1,31 @@
+import { internal } from "./_generated/api";
 import type { MutationCtx } from "./_generated/server";
 import { recordAnalyticsEvent } from "./amendAnalytics";
 import { slugPart, workspaceSlug } from "./amendBackendUtils";
 import { demoWorkspace } from "./amendDemoData";
 import type { CreateFeedbackArgs } from "./amendFeedbackTypes";
 import type { SourceLink } from "./amendTypes";
-import { ensureBaseRecords } from "./amendSeed";
+import { resolvePublicScope } from "./amendSeed";
+import type { DashboardAuthUser } from "./amendWorkspace";
 import { getWritableDashboardProject } from "./amendWorkspace";
 import { authComponent } from "./auth";
 
 export async function createFeedbackHandler(ctx: MutationCtx, args: CreateFeedbackArgs) {
   const now = Date.now();
   const normalizedWorkspaceSlug = workspaceSlug(args.workspaceSlug);
-  const workspace = await ensureBaseRecords(ctx, normalizedWorkspaceSlug);
-  const project = await getWritableDashboardProject(ctx, workspace._id, args.projectSlug);
+  // The portal sends a project slug — resolve it so new feedback lands on that
+  // project (and its workspace), not a non-existent workspace.
+  const { project: portalProject, workspace } = await resolvePublicScope(
+    ctx,
+    normalizedWorkspaceSlug,
+  );
+  const project =
+    portalProject ?? (await getWritableDashboardProject(ctx, workspace._id, args.projectSlug));
   const settings = workspace.portalSettings ?? demoWorkspace.portalSettings;
   if (settings.feedbackMode === "closed") {
     throw new Error("Portal feedback is closed for this workspace");
   }
-  const authUser = await authComponent.safeGetAuthUser(ctx);
+  const authUser = (await authComponent.safeGetAuthUser(ctx)) as DashboardAuthUser | null;
   if (settings.feedbackMode === "authenticated" && !authUser) {
     throw new Error("Portal feedback requires authentication for this workspace");
   }
@@ -44,6 +52,25 @@ export async function createFeedbackHandler(ctx: MutationCtx, args: CreateFeedba
     updatedAt: now,
     ...(args.authorEmail ? { authorEmail: args.authorEmail } : {}),
   });
+
+  // Record the creator as the first voter (votes starts at 1 above). Without this
+  // interaction the vote dedup can't see them, so the same person could upvote
+  // again from the dashboard or the portal and inflate the count.
+  const creatorId = authUser?.userId ?? authUser?.user?.id ?? authUser?._id;
+  const creatorEmail = args.authorEmail ?? authUser?.user?.email;
+  if (creatorId || creatorEmail) {
+    await ctx.db.insert("feedbackInteractions", {
+      workspaceId: workspace._id,
+      ...(project ? { projectId: project._id } : {}),
+      feedbackItemId: feedbackId,
+      feedbackKey: stableKey,
+      kind: "vote",
+      source: "portal",
+      createdAt: now,
+      ...(creatorId ? { externalUserId: creatorId } : {}),
+      ...(creatorEmail ? { email: creatorEmail } : {}),
+    });
+  }
 
   const reviewItemId = await ctx.db.insert("reviewItems", {
     workspaceId: workspace._id,
@@ -76,6 +103,18 @@ export async function createFeedbackHandler(ctx: MutationCtx, args: CreateFeedba
     sourceLinks: [sourceLink],
     createdAt: now,
     updatedAt: now,
+  });
+
+  await ctx.scheduler.runAfter(0, internal.pipeline.processEvent, {
+    workspaceId: workspace._id,
+    externalId: sourceLink.externalId,
+    text: args.body,
+    title: args.title,
+    author: args.authorName ?? args.authorEmail ?? "Anonymous",
+    url: sourceLink.url,
+    provider: sourceLink.provider,
+    labels: args.labels ?? [],
+    email: args.authorEmail,
   });
 
   await recordAnalyticsEvent(ctx, {

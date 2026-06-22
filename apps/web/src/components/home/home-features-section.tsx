@@ -17,16 +17,17 @@ export function FeaturesSection() {
           </p>
         </div>
 
-        <div className="mt-16 grid gap-x-12 gap-y-14 sm:grid-cols-2 lg:mt-20">
+        <div className="mt-14 border-t border-border lg:mt-16" data-reveal>
           {features.map((feature) => (
-            <div key={feature.index} className="flex gap-5" data-reveal>
-              <span className="amend-mono text-xl text-amend-warm">{feature.index}</span>
-              <div className="pt-0.5">
-                <h3 className="text-lg font-semibold leading-snug text-foreground">
-                  {feature.title}
-                </h3>
-                <p className="mt-3 text-sm leading-6 text-muted-foreground">{feature.copy}</p>
-              </div>
+            <div
+              key={feature.index}
+              className="grid grid-cols-1 gap-x-10 gap-y-2 border-b border-border py-7 md:grid-cols-[2.5rem_17rem_1fr] md:items-baseline"
+            >
+              <span className="amend-mono text-sm text-amend-warm">{feature.index}</span>
+              <h3 className="text-base font-semibold leading-snug text-foreground">
+                {feature.title}
+              </h3>
+              <p className="max-w-xl text-sm leading-6 text-muted-foreground">{feature.copy}</p>
             </div>
           ))}
         </div>

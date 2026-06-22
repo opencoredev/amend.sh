@@ -1,0 +1,241 @@
+===============================================================================
+AMEND — PROACTIVE AGENT · BACKEND PLAN (v1)
+Stack: Convex (packages/backend/convex). TypeScript. Better Auth. PostHog.
+Pairs with: FRONTEND_PLAN.txt  (same CONTRACT block lives in both — keep in sync)
+===============================================================================
+
+-------------------------------------------------------------------------------
+COORDINATION PROTOCOL — READ FIRST (this is how the two plans don't collide)
+-------------------------------------------------------------------------------
+1. OWNERSHIP. Backend touches ONLY `packages/backend/convex/**`. It never edits
+   anything under `apps/web/**`. Frontend never edits `convex/**`. No shared
+   source files except the CONTRACT (below), which is the single agreed seam.
+
+2. THE CONTRACT IS THE SEAM. The only thing the two sides share is the set of
+   Convex query/mutation names + their argument and return shapes (the CONTRACT
+   section). Frontend codes against those shapes; backend implements them.
+   Nothing else crosses the line.
+
+3. STUBS FIRST (unblocks frontend on day one). Backend Phase 0 ships every
+   CONTRACT function as a STUB that returns fixture data of the correct shape.
+   The moment P0 lands, frontend can call real `api.*` functions and get
+   correctly-typed (fake) data, then we fill in real logic behind the same
+   signatures. Frontend is NEVER blocked waiting on backend logic.
+
+4. CHANGING THE CONTRACT. If a signature/shape must change, update the CONTRACT
+   block in BOTH files in the same commit and tell the other side. Never change
+   a return shape silently — that is the one thing that breaks the other side.
+
+5. INTEGRATION HANDSHAKE. Per screen, frontend flips one data hook from its
+   mock layer to `useQuery(api.x.y)`. Because the stub already returns the real
+   shape, that swap is a no-op for the UI. Do screens one at a time.
+
+-------------------------------------------------------------------------------
+CONTRACT — the Convex API surface (IDENTICAL in FRONTEND_PLAN.txt)
+-------------------------------------------------------------------------------
+All functions are workspace-scoped; `workspaceId` is resolved from the auth'd
+session server-side (frontend passes it explicitly only where noted). Types are
+the RETURN shapes the frontend renders. Treat these as load-bearing.
+
+  // ---- shared data shapes ----
+  Ghost = {
+    id, workspaceId, title,
+    status: "ghost" | "accepted" | "killed",
+    proof: {
+      people: number,            // distinct identity-verified people
+      payingPeople: number,      // subset that map to a paying account
+      sources: { channel: "discord"|"support"|"github"|"embed", count: number }[],
+      strength: "thin" | "building" | "strong",   // derived, NOT a raw float
+      growthPerWeek: number
+    },
+    sampleQuotes: { text, author, channel, url }[],   // max 3
+    firstSeen: number, lastSeen: number
+  }
+
+  Need = Ghost & {                         // an accepted ghost
+    evidence: Evidence[],
+    linkedShip?: ShipLink
+  }
+
+  Evidence = { id, sourceChannel, author, text, url,
+               confidenceBucket: "clear"|"worth-a-look"|"unsure",
+               promotedBy: "agent"|"human" }
+
+  ShipLink = { prNumber, sha, releaseTag?, mergedAt, url }
+
+  DraftProposal = { id, kind: "changelog"|"notify",
+                    needId, needTitle, draftText,
+                    recipients?: { handle, channel }[],
+                    status: "pending"|"approved"|"rejected" }
+
+  ChangelogEntry = { id, title, body, shippedAt, ship: ShipLink, published: boolean }
+
+  MemoryRule = { id, kind: "noise"|"dedupe"|"addressed"|"allowlist"|"pattern",
+                 text, taughtBy, taughtAt, blastRadius: number, enabled: boolean }
+
+  DigestPreview = {
+    period: { from, to },
+    resolved: { needTitle, ship: ShipLink, peopleNotified: number }[],
+    readyGhosts: Ghost[],
+    handledSilently: number
+  }
+
+  // ---- QUERIES (frontend reads; reactive) ----
+  needs.listGhosts({ })            -> Ghost[]     // status === "ghost", sorted by strength
+  needs.listAccepted({ })          -> Need[]      // status === "accepted"
+  needs.get({ needId })            -> Need | null // full evidence trail
+  drafts.listPending({ })          -> DraftProposal[]
+  changelog.list({ })              -> ChangelogEntry[]
+  memory.listRules({ })            -> MemoryRule[]
+  digest.preview({ })              -> DigestPreview
+  sources.status({ })              -> { github: boolean, feedback: boolean }
+
+  // ---- MUTATIONS (user actions from the UI) ----
+  needs.acceptGhost({ ghostId })            -> { ok: true }
+  needs.keepGathering({ ghostId })          -> { ok: true }
+  needs.killGhost({ ghostId, reason? })     -> { ok: true }   // writes noise: memory
+  drafts.approve({ draftId })               -> { ok: true }   // triggers the actual send
+  drafts.reject({ draftId, edits? })        -> { ok: true }
+  memory.toggleRule({ ruleId, enabled })    -> { ok: true }
+  memory.undoRule({ ruleId })               -> { ok: true }
+  changelog.publish({ entryId })            -> { ok: true }
+  sources.connectGithub({ repo, token })    -> { ok: true }   // kicks off backfill
+
+  // ---- INTERNAL (webhooks / cron / pipeline — UI NEVER calls these) ----
+  httpAction  ingest.githubWebhook
+  httpAction  ingest.discordWebhook
+  internalAction pipeline.processEvent
+  internalAction backfill.gitHistory
+  internalMutation agent.linkShipsToNeeds
+  cron        digest.sendWeekly
+
+===============================================================================
+BUILD PHASES (sequenced so frontend is unblocked early, hard parts come later)
+===============================================================================
+
+PHASE 0 — SCHEMA + CONTRACT STUBS  (do this first; unblocks frontend immediately)
+-------------------------------------------------------------------------------
+GOAL: every CONTRACT query/mutation exists and returns correctly-shaped fixture
+data. No real logic yet.
+- Extend schema in `convex/schema*.ts`. New tables (reuse existing automation
+  tables where they fit — automationDecisions ≈ DraftProposal, agentRuns = run
+  ledger):
+    needs           (the ghost/need; status, title, denormalized proof.* fields,
+                     conditionFlags for cheap trigger checks)
+    evidence        (many-to-many join: needId, sourceEventId, person, channel,
+                     handle, text, url, confidenceBucket, promotedBy)
+    needVectors     (SEPARATE table: needId, embedding[]; vector index, filter
+                     field = workspaceId)  // vectors are large; keep them apart
+    sourceEvents    (raw verbatim ingest + thin normalized fields; immutable)
+    persons + identityHandles  (identity graph; deterministic joins)
+    shipLinks       (needId, prNumber, sha, releaseTag, mergedAt, url)
+    proposals       (the human-gated drafts; reuse/extend automationDecisions)
+    changelogEntries
+    memoryRules     (kind, text, taughtBy, taughtAt, enabled, version history)
+- Write all CONTRACT functions as stubs returning fixtures of the right shape.
+- DELIVERABLE: `bunx convex dev` typechecks; `api.needs.listGhosts` returns
+  3 fake ghosts. Tell frontend P0 is live.
+GOTCHAS: put `workspaceId` in vector index `filterFields`. One accent: do not
+let the frontend import anything but generated `api` — keep internals private.
+
+PHASE 1 — GITHUB + GIT-HISTORY BACKFILL  (the wedge + the cold-start fix)
+-------------------------------------------------------------------------------
+GOAL: connect a repo, replay 90 days of merged PRs/releases, populate the board.
+- `sources.connectGithub` stores the connection, schedules `backfill.gitHistory`.
+- `backfill.gitHistory`: CHUNKED + self-rescheduling (Convex action 10-min cap —
+  never backfill in one action). For each merged PR: create a shipLink; if the
+  PR body / linked issues mention a requester or an existing need, draft a
+  ChangelogEntry. Produces the "you closed #12 and never told the 3 people" moment.
+- `ingest.githubWebhook`: HTTP action that ONLY enqueues (validate signature,
+  store raw sourceEvent, schedule pipeline). Idempotent on delivery id.
+DELIVERABLE: connect repo -> changelog list populates from real history.
+GOTCHAS: chunk backfill; idempotent handlers; never call OpenAI in the webhook.
+
+PHASE 2 — INGEST ONE FEEDBACK SOURCE + THE FUNNEL
+-------------------------------------------------------------------------------
+GOAL: one feedback inbound (the embed/SDK for v1; stable IDs + identity).
+- The funnel before any expensive call:
+    Stage 0 free heuristics (bot/length/channel/regex) -> drop 70-90%
+    Stage 1 embedding-centroid gate (is-feedback vs chatter exemplars)
+    Stage 2 chat LLM ONLY on the ambiguous middle
+- Route all model work through a bounded Workpool (concurrency 5-10) so bursts
+  queue, not stampede. Every handler idempotent (dedupe key = source msg id).
+DELIVERABLE: a submitted feedback item flows in and becomes a sourceEvent that
+survives the funnel.
+
+PHASE 3 — DEDUP ENGINE + GHOST PROOF ACCUMULATION  (the hard core)
+-------------------------------------------------------------------------------
+GOAL: turn surviving signal into ghosts that accumulate proof correctly.
+- classify -> retrieve -> judge -> commit:
+    classify into fixed schema (type, sentiment, facets: area/verb/polarity/platform)
+    retrieve top-K from needVectors (filter workspaceId)
+    judge with LLM ONLY when cosine in 0.80-0.95 band
+    facet guard (hardcoded): refuse merge across facet mismatch even at 0.97
+    COMMIT via transactional MUTATION keyed by deterministic cluster key
+    (NOT in the action) -> closes the concurrent false-split race
+- Recompute denormalized proof.* on the need each time evidence attaches:
+  people, payingPeople, sources[], strength (thin/building/strong = a derived
+  bucket, never a raw float exposed), growthPerWeek.
+DELIVERABLE: two paraphrases of one need merge; "export" vs "import" do NOT.
+`needs.listGhosts` returns real ghosts with real proof.
+
+PHASE 4 — IDENTITY (deterministic-first) + PAYING FLAG
+-------------------------------------------------------------------------------
+GOAL: proof counts distinct VERIFIED people, and knows who pays.
+- persons/identityHandles via deterministic joins ONLY for v1: verified email,
+  OAuth-linked account, commit-email == ticket-email, exact handle. Fuzzy
+  inference is a non-auto suggestion (defer).
+- payingPeople = persons mapped to a billing/paying account (flag for now).
+DELIVERABLE: proof.people = distinct persons; proof.payingPeople correct.
+
+PHASE 5 — THE WALL + HUMAN-GATED PROPOSALS
+-------------------------------------------------------------------------------
+GOAL: nothing reaches a customer/public surface without a human + a safety gate.
+- On accept/resolution, agent DRAFTS a proposal (changelog | notify). The LLM
+  emits a proposal row; it never sends. `drafts.approve` is the only path that
+  performs the real send / publish (deterministic code).
+- Safety gate before any external crossing: PII/secret scan, paraphrase +
+  attribution-strip for public; support-sourced evidence NEVER auto-publishes.
+DELIVERABLE: `drafts.listPending` returns real drafts; approve actually sends.
+
+PHASE 6 — MEMORY SYSTEM
+-------------------------------------------------------------------------------
+GOAL: learn from corrections, legibly and reversibly.
+- killGhost(reason) / explicit "always noise" writes a memoryRule (kind=noise),
+  with taughtBy/taughtAt and a computed blastRadius (how many items it hides).
+- Pipeline reads memoryRules before deciding (suppress / auto-attach / escalate).
+- Rules are versioned + reversible (`memory.undoRule`); "not now" != durable
+  suppression (durable = admin action). Memory written from validated decisions
+  only, never raw model free-text.
+DELIVERABLE: `memory.listRules` real; toggling a rule changes pipeline behavior.
+
+PHASE 7 — PROACTIVITY TRIGGERS + WEEKLY DIGEST
+-------------------------------------------------------------------------------
+GOAL: the push retention hook + honest triggers.
+- Reactive: in-mutation condition checks schedule the actor (weight crossed /
+  linked PR merged). Scheduled sweep (cron) for time/absence/aggregate.
+- `agent.linkShipsToNeeds`: when a PR merges, attach the shipLink to matching
+  needs, draft the "we shipped your thing" proposal.
+- `digest.sendWeekly` (cron): compose DigestPreview, send via email/Slack.
+  THIS is the retention hook — measure open rate (the make-or-break metric).
+DELIVERABLE: weekly digest sends; `digest.preview` powers the in-app preview.
+
+-------------------------------------------------------------------------------
+VALIDATION (run the narrowest relevant check each phase)
+-------------------------------------------------------------------------------
+- `bunx convex dev` typechecks after every phase.
+- Phase 3: unit-test the facet guard (export/import stay split) + the
+  transactional commit under two concurrent inserts.
+- Phase 5: assert no function except `drafts.approve` can perform an external
+  send (grep for the send call; it lives in exactly one place behind the gate).
+- Phase 7: trigger a test PR merge -> confirm a draft proposal appears, not a
+  sent message.
+
+-------------------------------------------------------------------------------
+DO / DON'T
+-------------------------------------------------------------------------------
+DO: keep the pipeline hardcoded TS; LLM only at classify + pairwise-judge with
+    fixed prompts; treat all source text as untrusted delimited data.
+DON'T: edit apps/web/**. DON'T change a CONTRACT return shape without updating
+    FRONTEND_PLAN.txt in the same commit. DON'T let the LLM call tools or send.
+===============================================================================

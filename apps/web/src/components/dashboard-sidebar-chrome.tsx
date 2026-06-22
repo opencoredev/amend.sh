@@ -1,6 +1,21 @@
 import { cn } from "@amend/ui/lib/utils";
-import { Map, MessageSquareText, Newspaper, Settings } from "@/lib/icons";
+import { Link } from "@tanstack/react-router";
+import {
+  BookOpen,
+  Brain,
+  Globe,
+  Inbox,
+  Map,
+  MessageSquareText,
+  Newspaper,
+  PlugSocket,
+  Plus,
+  Settings,
+} from "@/lib/icons";
 import type { ReactElement, RefObject } from "react";
+
+import { useInboxReviewCount } from "@/lib/mock-amend";
+import { agentDocsUrl } from "@/lib/seo";
 
 import type {
   ChangelogStatusFilter,
@@ -17,14 +32,17 @@ import DashboardUserMenu from "@/components/dashboard-user-menu";
 import { MobileViewNav } from "@/components/dashboard-view-nav";
 import { ModuleSidebar } from "@/components/dashboard-module-sidebar";
 import { WorkspaceSwitcher } from "@/components/dashboard-workspace-switcher";
+import { portalSlugFromUrl } from "@/components/public-portal-types";
 
 function SidebarMainNavButton({
   active,
+  badge,
   icon,
   label,
   onClick,
 }: {
   active: boolean;
+  badge?: number;
   icon: ReactElement;
   label: string;
   onClick: () => void;
@@ -32,8 +50,9 @@ function SidebarMainNavButton({
   return (
     <button
       type="button"
+      aria-current={active ? "page" : undefined}
       className={cn(
-        "relative flex min-h-10 items-center gap-3 rounded-xl px-3 text-sm transition-colors duration-150 ease-linear active:opacity-75 [&_svg]:size-4 [&_svg]:shrink-0",
+        "relative flex min-h-10 items-center gap-3 rounded-xl px-3 text-sm outline-none transition-colors duration-150 ease-linear focus-visible:ring-2 focus-visible:ring-white/20 active:opacity-75 [&_svg]:size-4 [&_svg]:shrink-0",
         active
           ? "bg-foreground/[0.075] font-semibold text-foreground"
           : "font-medium text-muted-foreground hover:bg-foreground/[0.045] hover:text-foreground",
@@ -42,14 +61,63 @@ function SidebarMainNavButton({
     >
       {icon}
       {label}
+      {badge ? (
+        <span className="ml-auto inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-amend-warm/15 px-1.5 font-mono text-[0.66rem] font-semibold tabular-nums text-amend-warm">
+          {badge}
+        </span>
+      ) : null}
     </button>
   );
 }
 
-const NAV_ITEMS: Array<[DashboardView, ReactElement, string]> = [
-  ["posts", <MessageSquareText />, "Feedback"],
-  ["roadmap", <Map />, "Roadmap"],
-  ["changelog", <Newspaper />, "Changelog"],
+/** Primary action under the workspace switcher — opens the composer for the active board. */
+function ComposeButton({ label, onCompose }: { label: string; onCompose: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onCompose}
+      className="flex min-h-10 w-full items-center gap-2.5 rounded-xl bg-amend-warm/[0.12] px-3 text-sm font-semibold text-amend-warm outline-none ring-1 ring-amend-warm/25 transition-colors duration-150 ease-linear hover:bg-amend-warm/[0.18] focus-visible:ring-2 focus-visible:ring-amend-warm/40 active:opacity-75 [&_svg]:size-4 [&_svg]:shrink-0"
+    >
+      <Plus />
+      {label}
+    </button>
+  );
+}
+
+const UTILITY_ROW_CLASS =
+  "flex min-h-9 w-full items-center gap-3 rounded-lg px-3 text-[0.8rem] font-medium text-muted-foreground outline-none transition-colors duration-150 ease-linear hover:bg-foreground/[0.045] hover:text-foreground focus-visible:ring-2 focus-visible:ring-white/20 active:opacity-75 [&_svg]:size-4 [&_svg]:shrink-0";
+
+/** Quiet, pinned external-resource link in the lower rail. */
+function SidebarUtilityRow({
+  href,
+  icon,
+  label,
+}: {
+  href: string;
+  icon: ReactElement;
+  label: string;
+}) {
+  return (
+    <a href={href} target="_blank" rel="noreferrer noopener" className={UTILITY_ROW_CLASS}>
+      {icon}
+      {label}
+    </a>
+  );
+}
+
+/** Primary destinations clustered by job: triage · boards · memory · settings. */
+const NAV_GROUPS: Array<Array<[DashboardView, ReactElement, string]>> = [
+  [["inbox", <Inbox />, "Inbox"]],
+  [
+    ["posts", <MessageSquareText />, "Feedback"],
+    ["roadmap", <Map />, "Roadmap"],
+    ["changelog", <Newspaper />, "Changelog"],
+  ],
+  [
+    ["memory", <Brain />, "Memory"],
+    ["connections", <PlugSocket />, "Connections"],
+  ],
+  [["settings", <Settings />, "Settings"]],
 ];
 
 export function DashboardSidebarChrome({
@@ -66,6 +134,7 @@ export function DashboardSidebarChrome({
   onAddProject,
   onChangelogCategoryChange,
   onChangelogStatusChange,
+  onCompose,
   onOpenChange,
   onProjectChange,
   onQueryChange,
@@ -93,6 +162,7 @@ export function DashboardSidebarChrome({
   onAddProject: () => void;
   onChangelogCategoryChange: (category: string) => void;
   onChangelogStatusChange: (status: ChangelogStatusFilter) => void;
+  onCompose: () => void;
   onOpenChange: (open: boolean) => void;
   onProjectChange: (id: string) => void;
   onQueryChange: (query: string) => void;
@@ -107,6 +177,13 @@ export function DashboardSidebarChrome({
   roadmapViews: RoadmapView[];
   workspaceMenuRef: RefObject<HTMLDivElement | null>;
 }) {
+  const reviewCount = useInboxReviewCount();
+  const composeLabel =
+    activeView === "changelog"
+      ? "New changelog"
+      : activeView === "roadmap"
+        ? "New feature"
+        : "New feedback";
   const sidebarProps = {
     activeChangelogCategory,
     activeChangelogStatus,
@@ -140,54 +217,81 @@ export function DashboardSidebarChrome({
       {/* Desktop single sidebar */}
       <aside
         className={cn(
-          "hidden bg-background lg:flex lg:flex-col",
+          "amend-sidebar-warm hidden bg-background lg:flex lg:flex-col",
           focusChangelogEditor && "lg:hidden",
         )}
       >
         <WorkspaceSwitcher menuRef={workspaceMenuRef} {...switcherProps} />
 
-        {/* Main section nav */}
-        <nav className="grid gap-1.5 px-3 py-3">
-          {NAV_ITEMS.map(([view, icon, label]) => (
-            <SidebarMainNavButton
-              key={view}
-              active={activeView === view}
-              icon={icon}
-              label={label}
-              onClick={() => onViewChange(view)}
-            />
-          ))}
-          <SidebarMainNavButton
-            active={activeView === "settings"}
-            icon={<Settings />}
-            label="Settings"
-            onClick={() => onViewChange("settings")}
-          />
-        </nav>
-        <div className="mx-4 h-px bg-foreground/[0.045]" />
+        {/* Primary action */}
+        <div className="px-3 pb-3">
+          <ComposeButton label={composeLabel} onCompose={onCompose} />
+        </div>
 
-        {/* Context nav */}
+        {/* Main section nav — grouped by job (triage · boards · memory · settings), no dividers */}
+        <nav aria-label="Workspace sections" className="px-3 pb-3">
+          <div className="grid gap-3">
+            {NAV_GROUPS.map((group) => (
+              <div key={group[0]![0]} className="grid gap-1">
+                {group.map(([view, icon, label]) => (
+                  <SidebarMainNavButton
+                    key={view}
+                    active={activeView === view}
+                    badge={view === "inbox" ? reviewCount : undefined}
+                    icon={icon}
+                    label={label}
+                    onClick={() => onViewChange(view)}
+                  />
+                ))}
+              </div>
+            ))}
+          </div>
+        </nav>
+        {/* Context nav (setup view) fills/scrolls here; otherwise an empty spacer */}
         <div className="min-h-0 flex-1 overflow-y-auto">
           <ModuleSidebar {...sidebarProps} />
         </div>
 
+        {/* Utility — pinned to the lower rail above the account */}
+        <div className="grid gap-0.5 px-3 pb-2">
+          <SidebarUtilityRow href={agentDocsUrl} icon={<BookOpen />} label="Documentation" />
+          <Link
+            to="/portal/$workspaceSlug"
+            params={{ workspaceSlug: portalSlugFromUrl(project.portal) }}
+            target="_blank"
+            className={UTILITY_ROW_CLASS}
+          >
+            <Globe />
+            View public page
+          </Link>
+        </div>
+
         {/* Account */}
-        <div className="border-t border-foreground/[0.045] p-3">
-          <DashboardUserMenu onOpenSettings={() => onViewChange("settings")} />
+        <div className="p-3">
+          <DashboardUserMenu
+            onOpenAccount={() => onViewChange("account")}
+            onOpenSettings={() => onViewChange("settings")}
+          />
         </div>
       </aside>
 
       {/* Mobile header */}
       <div className="bg-background lg:hidden">
         <WorkspaceSwitcher menuRef={mobileWorkspaceMenuRef} {...switcherProps} />
+        <div className="px-3 pb-2">
+          <ComposeButton label={composeLabel} onCompose={onCompose} />
+        </div>
         <MobileViewNav activeView={activeView} onViewChange={onViewChange} />
         {!focusChangelogEditor ? (
           <div className="max-h-[38svh] overflow-auto">
             <ModuleSidebar {...sidebarProps} />
           </div>
         ) : null}
-        <div className="border-t border-foreground/[0.045] p-3">
-          <DashboardUserMenu onOpenSettings={() => onViewChange("settings")} />
+        <div className="p-3">
+          <DashboardUserMenu
+            onOpenAccount={() => onViewChange("account")}
+            onOpenSettings={() => onViewChange("settings")}
+          />
         </div>
       </div>
     </>

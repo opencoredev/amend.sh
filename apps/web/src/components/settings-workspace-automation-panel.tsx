@@ -1,46 +1,65 @@
-import { DatabaseZap } from "@/lib/icons";
+import {
+  SettingsRow,
+  SettingsSection,
+  SettingsSwitch,
+} from "@/components/settings-workspace-panel-primitives";
+import type { AutomationRulesDraft } from "@/components/settings-workspace-panel-types";
 
-import { BooleanRow, SettingsPanel } from "@/components/amend-dashboard-shared";
-import type { WorkspaceSettingsData } from "@/components/amend-dashboard-types";
-import { SettingsSaveButton } from "@/components/settings-workspace-panel-primitives";
-import type { SettingsSavingState } from "@/components/settings-workspace-panel-types";
+const GUARDRAILS: Array<{
+  description: string;
+  key: keyof AutomationRulesDraft;
+  label: string;
+}> = [
+  {
+    key: "autoDraftChangelog",
+    label: "Draft changelogs automatically",
+    description: "Write a changelog draft when a matching pull request merges.",
+  },
+  {
+    key: "autoUpdateFeedbackStatus",
+    label: "Update feedback status",
+    description: "Move feedback to shipped once its update goes live.",
+  },
+  {
+    key: "autoUpdateRoadmapStatus",
+    label: "Advance roadmap items",
+    description: "Progress roadmap items as their work ships.",
+  },
+  {
+    key: "requireReviewForPublicCopy",
+    label: "Require review for public copy",
+    description: "Hold anything user-facing for a human to approve before publishing.",
+  },
+];
 
 export function AutomationSettingsPanel({
+  automation,
   canSave,
-  onAutomationSave,
-  saving,
-  settings,
+  setAutomationRule,
 }: {
+  automation: AutomationRulesDraft;
   canSave: boolean;
-  onAutomationSave: () => void;
-  saving: SettingsSavingState;
-  settings: WorkspaceSettingsData | undefined;
+  setAutomationRule: (key: keyof AutomationRulesDraft, value: boolean) => void;
 }) {
-  const rules = settings?.automationRules;
-
   return (
-    <SettingsPanel
-      action={
-        <SettingsSaveButton
-          disabled={!canSave || saving === "automation"}
-          onClick={onAutomationSave}
-        />
-      }
-      icon={<DatabaseZap />}
+    <SettingsSection
+      description="Decide what the agent does on its own and what waits for a human."
       title="Automation guardrails"
     >
-      <div className="grid gap-2 sm:grid-cols-2">
-        <BooleanRow checked={rules?.autoDraftChangelog ?? false} label="Draft changelogs" />
-        <BooleanRow
-          checked={rules?.autoUpdateFeedbackStatus ?? false}
-          label="Update feedback status"
+      {GUARDRAILS.map((rule) => (
+        <SettingsRow
+          key={rule.key}
+          label={rule.label}
+          description={rule.description}
+          control={
+            <SettingsSwitch
+              checked={automation[rule.key]}
+              label={rule.label}
+              onChange={canSave ? (next) => setAutomationRule(rule.key, next) : undefined}
+            />
+          }
         />
-        <BooleanRow checked={rules?.autoUpdateRoadmapStatus ?? false} label="Move roadmap items" />
-        <BooleanRow
-          checked={rules?.requireReviewForPublicCopy ?? true}
-          label="Require public copy review"
-        />
-      </div>
-    </SettingsPanel>
+      ))}
+    </SettingsSection>
   );
 }

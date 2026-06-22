@@ -1,130 +1,88 @@
 import { Button } from "@amend/ui/components/button";
-import { ChevronDown } from "@/lib/icons";
-import { useState } from "react";
 
-import { DetailStat, SourceEvidenceList } from "@/components/dashboard-detail-shared";
 import type { DashboardRoadmap } from "@/components/amend-dashboard-types";
 import {
   formatDate,
   priorityLabel,
   roadmapStatusToRoadmapStatus,
   sourceFeedbackKey,
-  statusTitle,
 } from "@/components/amend-dashboard-utils";
-import { errorMessage, toast } from "@/lib/toast";
+import { DetailSectionLabel, SourceEvidenceList } from "@/components/dashboard-detail-shared";
+import { DashboardWorkspaceSurface } from "@/components/dashboard-workspace-surface";
+import { StatusPill } from "@/components/status-pill";
+import { VoteButton } from "@/components/vote-button";
 
 export function RoadmapDetailWorkspace({
   item,
-  onBack,
   onOpenFeedback,
   onVote,
 }: {
   item: DashboardRoadmap;
-  onBack: () => void;
   onOpenFeedback: (stableKey: string) => void;
   onVote: (item: DashboardRoadmap) => Promise<unknown>;
 }) {
   const feedbackKey = sourceFeedbackKey(item);
-  const [voting, setVoting] = useState(false);
+  const status = roadmapStatusToRoadmapStatus(item.status);
 
   return (
-    <div className="t-panel-slide min-h-svh bg-card/40" data-open="true">
-      <div className="border-b border-border bg-background/70 px-4 py-4 backdrop-blur md:px-6">
-        <button
-          type="button"
-          className="inline-flex min-h-10 items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground transition-colors duration-150 ease-linear hover:text-foreground active:opacity-75"
-          onClick={onBack}
-        >
-          <ChevronDown className="size-3 rotate-90" />
-          Back to roadmap
-        </button>
-        <div className="mt-4 flex flex-wrap items-start justify-between gap-4">
-          <div className="min-w-0">
-            <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-              <span className="rounded-md bg-white/[0.05] px-2.5 py-0.5 font-semibold ring-1 ring-white/[0.06]">
-                {statusTitle(roadmapStatusToRoadmapStatus(item.status))}
-              </span>
+    <DashboardWorkspaceSurface>
+      <div className="w-full max-w-3xl px-5 py-6 md:px-8 md:py-8">
+        <header className="flex items-start gap-4">
+          <VoteButton
+            count={item.feedbackCount}
+            voted={item.viewerHasVoted ?? false}
+            onVote={() => onVote(item)}
+            title={item.title}
+          />
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
+              <StatusPill status={status} />
+              <span aria-hidden>·</span>
               <span>{priorityLabel(item.priority)}</span>
-              <span>{formatDate(item.updatedAt)}</span>
+              {item.target ? (
+                <>
+                  <span aria-hidden>·</span>
+                  <span>{item.target}</span>
+                </>
+              ) : null}
+              <span aria-hidden>·</span>
+              <span>Updated {formatDate(item.updatedAt)}</span>
             </div>
-            <h1 className="mt-3 max-w-4xl text-balance text-2xl font-semibold leading-tight md:text-3xl">
+            <h1 className="mt-2.5 text-balance text-2xl font-semibold leading-tight md:text-[1.75rem]">
               {item.title}
             </h1>
           </div>
-          <button
-            type="button"
-            className="flex min-h-10 items-center gap-2 rounded-xl bg-[#151518] px-3 text-sm text-muted-foreground ring-1 ring-white/[0.055] transition-colors duration-150 ease-linear hover:bg-[#1a1a1d] hover:text-foreground active:opacity-75"
-            disabled={voting}
-            onClick={() => {
-              setVoting(true);
-              void onVote(item)
-                .catch((error: unknown) =>
-                  toast.error({
-                    title: "Vote was not saved",
-                    description: errorMessage(
-                      error,
-                      "The roadmap vote could not be saved. Refresh the project and try again.",
-                    ),
-                  }),
-                )
-                .finally(() => setVoting(false));
-            }}
-          >
-            <ChevronDown className="size-3 rotate-180" />
-            <span className="font-semibold tabular-nums text-foreground">{item.feedbackCount}</span>
-            <span>votes</span>
-          </button>
-        </div>
-      </div>
+        </header>
 
-      <div className="grid gap-0 lg:grid-cols-[minmax(0,1fr)_20rem]">
-        <article className="min-w-0 border-b border-border bg-background/45 lg:border-b-0 lg:border-r">
-          <div className="mx-auto grid max-w-4xl gap-6 px-4 py-6 md:px-6 md:py-8">
-            <section className="grid gap-4">
-              <h2 className="text-sm font-semibold">Roadmap item</h2>
-              <p className="max-w-3xl whitespace-pre-wrap text-pretty text-sm leading-7 text-muted-foreground">
-                {item.description || item.impact || "No description was added."}
-              </p>
-            </section>
-            <section className="grid gap-3 sm:grid-cols-2">
-              <DetailStat
-                label="Status"
-                value={statusTitle(roadmapStatusToRoadmapStatus(item.status))}
-              />
-              <DetailStat label="Priority" value={priorityLabel(item.priority)} />
-              <DetailStat label="Votes" value={String(item.feedbackCount)} />
-              <DetailStat label="Changelog links" value={String(item.changelogCount)} />
-              <DetailStat label="Target" value={item.target ?? "No target"} />
-              <DetailStat label="Updated" value={formatDate(item.updatedAt)} />
-            </section>
-            <SourceEvidenceList links={item.sourceLinks} />
-          </div>
-        </article>
-
-        <aside className="grid min-w-0 content-start gap-4 bg-card/35 p-4 md:p-6">
+        <div className="mt-8 grid gap-8">
           <section className="grid gap-3">
-            <h2 className="text-sm font-semibold">Linked feedback</h2>
-            {feedbackKey ? (
+            <DetailSectionLabel>Description</DetailSectionLabel>
+            <p className="whitespace-pre-wrap text-pretty text-sm leading-7 text-muted-foreground">
+              {item.description || item.impact || "No description was added."}
+            </p>
+          </section>
+
+          {item.sourceLinks.length > 0 ? (
+            <section className="grid gap-3">
+              <DetailSectionLabel>Source evidence</DetailSectionLabel>
+              <SourceEvidenceList links={item.sourceLinks} />
+            </section>
+          ) : null}
+
+          {feedbackKey ? (
+            <section className="grid gap-3">
+              <DetailSectionLabel>Linked feedback</DetailSectionLabel>
               <Button
-                className="h-10 rounded-xl border border-foreground bg-foreground px-4 text-xs font-semibold text-background transition-colors duration-150 ease-linear hover:bg-foreground/80 active:opacity-75"
+                className="h-10 w-fit justify-center rounded-xl border border-foreground bg-foreground px-4 text-xs font-semibold text-background transition-colors duration-150 ease-linear hover:bg-foreground/80 active:opacity-75"
                 type="button"
                 onClick={() => onOpenFeedback(feedbackKey)}
               >
                 Open feedback
               </Button>
-            ) : (
-              <p className="text-pretty text-xs leading-5 text-muted-foreground">
-                This was created directly on the roadmap. It is also listed on the feedback screen
-                so the board and roadmap stay aligned.
-              </p>
-            )}
-          </section>
-          <section className="grid gap-3">
-            <h2 className="text-sm font-semibold">Source evidence</h2>
-            <SourceEvidenceList compact links={item.sourceLinks} />
-          </section>
-        </aside>
+            </section>
+          ) : null}
+        </div>
       </div>
-    </div>
+    </DashboardWorkspaceSurface>
   );
 }

@@ -1,64 +1,141 @@
 import { cn } from "@amend/ui/lib/utils";
-import { ArrowLeft, Check, Mail, MoreHorizontal, Settings2 } from "@/lib/icons";
+import { ArrowLeft, Check, Loader2, Megaphone, MoreHorizontal, Settings2 } from "@/lib/icons";
 import { useEffect, useState } from "react";
 
-const STATUS_OPTIONS = [
-  ["draft", "Draft"],
-  ["in_review", "In review"],
-  ["scheduled", "Scheduled"],
-  ["published", "Published"],
-] as const;
+import type { AutoSaveStatus } from "@/components/changelog-editor-types";
 
 const CATEGORY_OPTIONS = [
   ["added", "New"],
   ["changed", "Improved"],
   ["fixed", "Fixed"],
   ["removed", "Removed"],
+  ["security", "Security"],
 ] as const;
+
+/**
+ * Calm, always-present save status — the editor auto-saves, so this reassures
+ * rather than interrupts: "Saving…" while a write is pending, "Saved · 2m ago"
+ * at rest, a one-tap retry on failure, and a nudge when a title is still missing.
+ */
+function SaveIndicator({
+  autoSaveStatus,
+  hasUnsavedChanges,
+  lastSavedLabel,
+  needsTitle,
+  onRetrySave,
+}: {
+  autoSaveStatus: AutoSaveStatus;
+  hasUnsavedChanges: boolean;
+  lastSavedLabel: string | null;
+  needsTitle: boolean;
+  onRetrySave: () => void;
+}) {
+  if (needsTitle) {
+    return (
+      <span className="hidden items-center gap-1.5 pr-1 text-xs font-medium text-amber-400/90 sm:flex">
+        Add a title to save
+      </span>
+    );
+  }
+
+  if (autoSaveStatus === "error") {
+    return (
+      <span className="flex items-center gap-2 pr-1 text-xs font-medium">
+        <span className="text-amber-400">Couldn’t save</span>
+        <button
+          type="button"
+          className="rounded-md px-1.5 py-0.5 font-semibold text-foreground underline-offset-2 transition-colors hover:underline active:opacity-75"
+          onClick={onRetrySave}
+        >
+          Retry
+        </button>
+      </span>
+    );
+  }
+
+  if (autoSaveStatus === "saving" || hasUnsavedChanges) {
+    return (
+      <span
+        aria-live="polite"
+        className="hidden items-center gap-1.5 pr-1 text-xs font-medium text-muted-foreground sm:flex"
+      >
+        <Loader2 className="size-3.5 animate-spin" />
+        Saving…
+      </span>
+    );
+  }
+
+  if (autoSaveStatus === "saved") {
+    return (
+      <span
+        aria-live="polite"
+        className="hidden items-center gap-1.5 pr-1 text-xs font-medium text-muted-foreground sm:flex"
+      >
+        <Check className="size-3.5 text-emerald-400" />
+        Saved
+        {lastSavedLabel ? (
+          <span className="text-muted-foreground/55">· {lastSavedLabel}</span>
+        ) : null}
+      </span>
+    );
+  }
+
+  return null;
+}
+
+/** Current publish state at a glance, beside the Publish action. */
+function StatusPill({ status }: { status: string }) {
+  if (status === "published") {
+    return (
+      <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/12 px-2.5 py-1 text-xs font-semibold text-emerald-400 ring-1 ring-emerald-500/20 ring-inset">
+        <span className="size-1.5 rounded-full bg-emerald-400" />
+        Published
+      </span>
+    );
+  }
+  if (status === "scheduled") {
+    return (
+      <span className="inline-flex items-center gap-1.5 rounded-full bg-sky-500/12 px-2.5 py-1 text-xs font-semibold text-sky-300 ring-1 ring-sky-500/20 ring-inset">
+        <span className="size-1.5 rounded-full bg-sky-400" />
+        Scheduled
+      </span>
+    );
+  }
+  return null;
+}
 
 export function ChangelogEditorHeader({
   authorInitials,
-  canSave,
+  autoSaveStatus,
   category,
-  confirmClose,
-  isDirty,
+  hasUnsavedChanges,
   isNew,
-  onCancelClose,
+  lastSavedLabel,
+  needsTitle,
   onCategoryChange,
-  onDiscard,
+  onOpenPublish,
   onRequestClose,
-  onSendEmailChange,
-  onShowPubliclyChange,
-  onStatusChange,
+  onRetrySave,
   onVersionChange,
-  saving,
-  sendEmail,
-  showPublicly,
   status,
   version,
 }: {
   authorInitials: string;
-  canSave: boolean;
+  autoSaveStatus: AutoSaveStatus;
   category: string;
-  confirmClose: boolean;
-  isDirty: boolean;
+  hasUnsavedChanges: boolean;
   isNew: boolean;
-  onCancelClose: () => void;
+  lastSavedLabel: string | null;
+  needsTitle: boolean;
   onCategoryChange: (value: string) => void;
-  onDiscard: () => void;
+  onOpenPublish: () => void;
   onRequestClose: () => void;
-  onSendEmailChange: (value: boolean) => void;
-  onShowPubliclyChange: (value: boolean) => void;
-  onStatusChange: (value: string) => void;
+  onRetrySave: () => void;
   onVersionChange: (value: string) => void;
-  saving: boolean;
-  sendEmail: boolean;
-  showPublicly: boolean;
   status: string;
   version: string;
 }) {
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const isPublished = status === "published";
 
   useEffect(() => {
     if (!settingsOpen) return;
@@ -70,7 +147,7 @@ export function ChangelogEditorHeader({
   }, [settingsOpen]);
 
   return (
-    <header className="relative z-20 flex h-14 shrink-0 items-center justify-between gap-3 border-b border-white/[0.05] bg-background/80 px-3 backdrop-blur md:px-4">
+    <header className="relative z-20 flex h-14 shrink-0 items-center justify-between gap-3 border-b border-white/[0.05] bg-[var(--workspace-surface-background)] px-3 md:px-4">
       <div className="flex min-w-0 items-center gap-2">
         <button
           type="button"
@@ -89,55 +166,29 @@ export function ChangelogEditorHeader({
       </div>
 
       <div className="flex items-center gap-2">
-        <button
-          type="button"
-          aria-pressed={isPublished}
-          className="group flex items-center gap-2 rounded-lg px-1.5 py-1 transition-colors duration-150 ease-linear hover:bg-foreground/[0.05]"
-          onClick={() => onStatusChange(isPublished ? "draft" : "published")}
-        >
-          <span
-            className={cn(
-              "text-xs font-semibold tabular-nums transition-colors",
-              isPublished ? "text-emerald-400" : "text-muted-foreground",
-            )}
-          >
-            {isPublished ? "Published" : "Draft"}
-          </span>
-          <span
-            className={cn(
-              "relative h-5 w-9 rounded-full transition-colors duration-200 ease-out",
-              isPublished ? "bg-emerald-500/80" : "bg-foreground/[0.14]",
-            )}
-          >
-            <span
-              className={cn(
-                "absolute top-0.5 size-4 rounded-full bg-background shadow-sm transition-transform duration-200 ease-out",
-                isPublished ? "translate-x-[1.125rem]" : "translate-x-0.5",
-              )}
-            />
-          </span>
-        </button>
+        <SaveIndicator
+          autoSaveStatus={autoSaveStatus}
+          hasUnsavedChanges={hasUnsavedChanges}
+          lastSavedLabel={lastSavedLabel}
+          needsTitle={needsTitle}
+          onRetrySave={onRetrySave}
+        />
+
+        <StatusPill status={status} />
 
         <button
-          type="submit"
-          disabled={saving || !canSave}
+          type="button"
           className="flex h-9 items-center gap-2 rounded-lg border border-foreground bg-foreground px-3.5 text-sm font-semibold text-background transition-colors duration-150 ease-linear hover:bg-foreground/85 active:opacity-75 disabled:cursor-not-allowed disabled:opacity-40"
+          onClick={onOpenPublish}
         >
-          {saving ? "Saving…" : "Save"}
-          <span
-            className={cn(
-              "grid size-4 place-items-center rounded-full",
-              isDirty ? "bg-amber-400/90" : "bg-emerald-500/90",
-            )}
-          >
-            {isDirty ? null : <Check className="size-2.5 text-background" />}
-          </span>
+          <Megaphone className="size-4" />
+          {status === "published" ? "Update" : "Publish"}
         </button>
 
         <div className="relative">
           <button
             type="button"
-            aria-label="Changelog settings"
+            aria-label="Changelog details"
             aria-expanded={settingsOpen}
             className={cn(
               "grid size-9 place-items-center rounded-lg border text-muted-foreground transition-colors duration-150 ease-linear hover:text-foreground active:opacity-75",
@@ -162,24 +213,8 @@ export function ChangelogEditorHeader({
               <div className="t-pop is-open absolute right-0 top-11 z-20 w-72 rounded-xl border border-white/[0.08] bg-card p-3 shadow-[0_22px_70px_rgb(0_0_0/0.5)]">
                 <div className="flex items-center gap-2 px-1 pb-2 text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
                   <Settings2 className="size-3.5" />
-                  Publishing
+                  Details
                 </div>
-                <label className="grid gap-1.5 px-1 py-1.5">
-                  <span className="text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-                    Status
-                  </span>
-                  <select
-                    className="h-9 rounded-lg border border-white/[0.08] bg-background px-2.5 text-sm text-foreground outline-none focus:border-foreground"
-                    value={status}
-                    onChange={(event) => onStatusChange(event.target.value)}
-                  >
-                    {STATUS_OPTIONS.map(([value, label]) => (
-                      <option key={value} value={value}>
-                        {label}
-                      </option>
-                    ))}
-                  </select>
-                </label>
                 <label className="grid gap-1.5 px-1 py-1.5">
                   <span className="text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
                     Category
@@ -207,55 +242,14 @@ export function ChangelogEditorHeader({
                     onChange={(event) => onVersionChange(event.target.value)}
                   />
                 </label>
-
-                <div className="mt-1.5 border-t border-white/[0.06] pt-1.5">
-                  <label className="flex cursor-pointer items-center justify-between gap-2 rounded-lg px-1 py-2 text-sm text-muted-foreground transition-colors hover:bg-foreground/[0.04]">
-                    <span>Show on public portal</span>
-                    <input
-                      checked={showPublicly}
-                      className="size-4 accent-foreground"
-                      type="checkbox"
-                      onChange={(event) => onShowPubliclyChange(event.target.checked)}
-                    />
-                  </label>
-                  <label className="flex cursor-pointer items-center justify-between gap-2 rounded-lg px-1 py-2 text-sm text-muted-foreground transition-colors hover:bg-foreground/[0.04]">
-                    <span className="inline-flex items-center gap-2">
-                      <Mail className="size-3.5" />
-                      Email subscribers on publish
-                    </span>
-                    <input
-                      checked={sendEmail}
-                      className="size-4 accent-foreground"
-                      type="checkbox"
-                      onChange={(event) => onSendEmailChange(event.target.checked)}
-                    />
-                  </label>
-                </div>
+                <p className="px-1 pt-1.5 text-xs text-muted-foreground/70">
+                  Cover image, summary, scheduling, and email live in Publish.
+                </p>
               </div>
             </>
           ) : null}
         </div>
       </div>
-
-      {confirmClose ? (
-        <div className="absolute left-1/2 top-14 z-30 mt-2 flex -translate-x-1/2 items-center gap-3 rounded-xl border border-white/[0.08] bg-card px-3 py-2 shadow-[0_18px_60px_rgb(0_0_0/0.5)]">
-          <p className="text-sm text-muted-foreground">Discard unsaved changes?</p>
-          <button
-            type="button"
-            className="h-8 rounded-lg border border-white/[0.08] bg-background px-3 text-xs font-semibold text-muted-foreground transition-colors hover:text-foreground active:opacity-75"
-            onClick={onCancelClose}
-          >
-            Keep editing
-          </button>
-          <button
-            type="button"
-            className="h-8 rounded-lg border border-foreground bg-foreground px-3 text-xs font-semibold text-background transition-colors hover:bg-foreground/85 active:opacity-75"
-            onClick={onDiscard}
-          >
-            Discard
-          </button>
-        </div>
-      ) : null}
     </header>
   );
 }

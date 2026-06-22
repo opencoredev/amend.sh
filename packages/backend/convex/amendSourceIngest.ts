@@ -1,3 +1,4 @@
+import { internal } from "./_generated/api";
 import type { Id } from "./_generated/dataModel";
 import type { MutationCtx } from "./_generated/server";
 import { recordAnalyticsEvent } from "./amendAnalytics";
@@ -78,6 +79,18 @@ export async function trustedIngestSourceEventHandler(
   let changelogEntryId: Id<"changelogEntries"> | undefined;
   let notificationId: Id<"notifications"> | undefined;
   let reviewItemId: Id<"reviewItems"> | undefined;
+
+  await ctx.scheduler.runAfter(0, internal.pipeline.processEvent, {
+    workspaceId: workspace._id,
+    sourceEventId,
+    externalId: args.externalId,
+    text: [args.title, args.labels?.join(" "), args.milestone].filter(Boolean).join("\n"),
+    title: args.title,
+    author: args.author,
+    url: args.url,
+    provider,
+    labels: args.labels ?? [],
+  });
 
   if (isShippedSourceEvent(args)) {
     const shippedResult = await handleShippedSourceEvent(ctx, {

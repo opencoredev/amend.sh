@@ -2,9 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "convex/react";
 import { makeFunctionReference } from "convex/server";
 
-import { PortalSkeleton } from "@/components/portal-list-elements";
 import { PublicPortalView } from "@/components/public-portal-view";
-import type { PortalData } from "@/components/public-portal-types";
+import { PortalSkeleton } from "@/components/public-portal-shared";
+import type { PortalData, PortalSearch } from "@/components/public-portal-types";
 import { canonicalLink, openGraphMeta, siteUrl } from "@/lib/seo";
 
 export const Route = createFileRoute("/portal/$workspaceSlug")({
@@ -32,6 +32,19 @@ export const Route = createFileRoute("/portal/$workspaceSlug")({
       ],
     };
   },
+  validateSearch: (search: Record<string, unknown>): PortalSearch => {
+    const next: PortalSearch = {};
+    if (search.view === "roadmap" || search.view === "changelog") {
+      next.view = search.view;
+    }
+    if (typeof search.post === "string") {
+      next.post = search.post;
+    }
+    if (typeof search.entry === "string") {
+      next.entry = search.entry;
+    }
+    return next;
+  },
   component: PortalRoute,
 });
 
@@ -39,11 +52,12 @@ const portalQuery = makeFunctionReference<"query">("amend:getPublicPortal");
 
 function PortalRoute() {
   const { workspaceSlug } = Route.useParams();
+  const search = Route.useSearch();
   const portal = useQuery(portalQuery, { workspaceSlug }) as PortalData | undefined;
 
   if (!portal) {
     return <PortalSkeleton workspaceSlug={workspaceSlug} />;
   }
 
-  return <PublicPortalView portal={portal} workspaceSlug={workspaceSlug} />;
+  return <PublicPortalView portal={portal} search={search} workspaceSlug={workspaceSlug} />;
 }

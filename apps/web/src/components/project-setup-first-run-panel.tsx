@@ -1,151 +1,122 @@
-import { Button } from "@amend/ui/components/button";
-import { Input } from "@amend/ui/components/input";
-import { cn } from "@amend/ui/lib/utils";
-import type { KeyboardEventHandler, ReactNode } from "react";
+import type { ReactNode } from "react";
 
 import type { ProjectSuggestion, WebsiteLookupStatus } from "@/components/amend-dashboard-types";
-import { normalizeOptionalUrl } from "@/components/amend-dashboard-utils";
-import { ProjectLogo } from "@/components/project-logo";
-import { SetupStepHeader, WebsiteLookupMessage } from "@/components/project-setup-step-status";
+import { OnboardingFooter, OnboardingHeading } from "@/components/onboarding-ui";
+import { ProjectIdentityCard, WebsiteLookupMessage } from "@/components/project-setup-step-status";
+import { SettingsInput } from "@/components/settings-workspace-panel-primitives";
 
-export function ProjectSetupFirstRunPanel({
-  canCreate,
+/** Step 1 — point Amend at the product's website (the identity lookup). */
+export function WebsiteQuestion({
+  canContinue,
+  continueLabel,
   message,
-  onBack,
   onContinue,
-  onKeyDown,
-  onProjectNameChange,
-  onSave,
   onWebsiteUrlChange,
   projectName,
-  saving,
-  setupStep,
-  setupStepCount,
-  sourceChoice,
   suggestion,
-  suggestionLoading,
+  title,
   websiteStatus,
   websiteUrl,
 }: {
-  canCreate: boolean;
+  canContinue: boolean;
+  continueLabel: string;
   message: string;
-  onBack: () => void;
   onContinue: () => void;
-  onKeyDown: KeyboardEventHandler<HTMLDivElement>;
-  onProjectNameChange: (name: string) => void;
-  onSave: () => void;
   onWebsiteUrlChange: (url: string) => void;
   projectName: string;
-  saving: boolean;
-  setupStep: number;
-  setupStepCount: number;
-  sourceChoice: ReactNode;
   suggestion: ProjectSuggestion | null;
-  suggestionLoading: boolean;
+  title: string;
   websiteStatus: WebsiteLookupStatus;
   websiteUrl: string;
 }) {
-  const stepContent =
-    setupStep === 0 ? (
-      <div className="animate-in fade-in-0 slide-in-from-bottom-2 duration-300">
-        <SetupStepHeader
-          title="First things first."
-          copy="Which website should the agent use to identify this product?"
-        />
-        <label className="block">
-          <span className="text-xs font-semibold text-muted-foreground">Website URL</span>
-          <Input
-            className="mt-2 h-11 bg-background text-sm"
-            onChange={(event) => onWebsiteUrlChange(event.target.value)}
+  return (
+    <div>
+      <OnboardingHeading
+        title={title}
+        description="Amend reads your site to set up the project. Skip to do it by hand."
+      />
+      <div className="mt-7 grid gap-4">
+        <label className="grid gap-2">
+          <span className="text-sm font-medium text-foreground">Website URL</span>
+          <SettingsInput
+            autoFocus
             placeholder="yourproduct.com"
             value={websiteUrl}
+            onChange={(event) => onWebsiteUrlChange(event.target.value)}
           />
         </label>
-        <div className="mt-4 min-h-14">
+        <div className="min-h-5">
           <WebsiteLookupMessage message={message} status={websiteStatus} />
         </div>
+        {suggestion ? (
+          <ProjectIdentityCard
+            logoUrl={suggestion.logoUrl}
+            name={projectName || suggestion.name}
+            websiteUrl={suggestion.websiteUrl ?? websiteUrl}
+          />
+        ) : null}
       </div>
-    ) : (
-      <div className="animate-in fade-in-0 slide-in-from-bottom-2 duration-300">
-        <SetupStepHeader
-          title="Project surface ready."
-          copy="Confirm the identity the agent found. You can change details later in settings."
+      <OnboardingFooter
+        onPrimary={onContinue}
+        primaryDisabled={!canContinue}
+        primaryLabel={continueLabel}
+      />
+    </div>
+  );
+}
+
+/** Step 2 — confirm the identity and connect the first source. */
+export function SourceQuestion({
+  canCreate,
+  onBack,
+  onCreate,
+  onProjectNameChange,
+  projectName,
+  saving,
+  sourceChoice,
+  suggestion,
+  websiteUrl,
+}: {
+  canCreate: boolean;
+  onBack: () => void;
+  onCreate: () => void;
+  onProjectNameChange: (name: string) => void;
+  projectName: string;
+  saving: boolean;
+  sourceChoice: ReactNode;
+  suggestion: ProjectSuggestion | null;
+  websiteUrl: string;
+}) {
+  return (
+    <div>
+      <OnboardingHeading
+        title="Connect a first source"
+        description="Where Amend watches for changes. You can add more later."
+      />
+      <div className="mt-6 grid gap-4">
+        <ProjectIdentityCard
+          logoUrl={suggestion?.logoUrl}
+          name={projectName || suggestion?.name || "Untitled project"}
+          websiteUrl={suggestion?.websiteUrl ?? websiteUrl}
         />
-        <div className="mb-5 border border-border bg-muted/20 p-5">
-          <div className="flex items-center gap-4">
-            <span className="grid size-14 shrink-0 place-items-center overflow-hidden border border-border bg-background">
-              <ProjectLogo
-                className="size-full"
-                fallbackIconClassName="size-6"
-                logoUrl={suggestion?.logoUrl}
-                websiteUrl={suggestion?.websiteUrl ?? normalizeOptionalUrl(websiteUrl)}
-              />
-            </span>
-            <div className="min-w-0">
-              <p className="truncate text-xl font-semibold">{projectName || "Untitled project"}</p>
-              <p className="mt-1 truncate text-sm text-muted-foreground">
-                {normalizeOptionalUrl(websiteUrl) ?? "Manual setup"}
-              </p>
-            </div>
-          </div>
-        </div>
         {projectName ? null : (
-          <label className="block">
-            <span className="text-xs font-semibold text-muted-foreground">Project name</span>
-            <Input
-              className="mt-2 h-11 bg-background text-sm"
-              onChange={(event) => onProjectNameChange(event.target.value)}
+          <label className="grid gap-2">
+            <span className="text-sm font-medium text-foreground">Project name</span>
+            <SettingsInput
               placeholder="Amend"
               value={projectName}
+              onChange={(event) => onProjectNameChange(event.target.value)}
             />
           </label>
         )}
-        <div className="mt-5">{sourceChoice}</div>
+        {sourceChoice}
       </div>
-    );
-
-  return (
-    <div onKeyDown={onKeyDown}>
-      <div className="mb-16 flex items-center gap-1.5" aria-label="Project setup progress">
-        {Array.from({ length: setupStepCount }, (_, index) => (
-          <span
-            key={index}
-            className={cn(
-              "h-1.5 rounded-full transition-all duration-200",
-              index === setupStep ? "w-5 bg-foreground" : "w-2 bg-muted",
-            )}
-          />
-        ))}
-      </div>
-
-      <div className="grid min-h-[20rem] content-start gap-4">{stepContent}</div>
-
-      <div className="mt-16 flex items-center gap-2">
-        {setupStep > 0 ? (
-          <button
-            type="button"
-            className="grid h-9 min-w-9 place-items-center border border-foreground/60 bg-background px-3 text-sm font-semibold text-foreground transition-colors hover:bg-muted disabled:opacity-40"
-            disabled={saving}
-            onClick={onBack}
-          >
-            Back
-          </button>
-        ) : null}
-        {setupStep === 0 ? (
-          <Button
-            type="button"
-            className="h-9 px-4"
-            disabled={saving || suggestionLoading || (!!websiteUrl.trim() && !suggestion)}
-            onClick={onContinue}
-          >
-            {suggestionLoading ? "Checking..." : websiteUrl.trim() ? "Continue" : "Skip"} -&gt;
-          </Button>
-        ) : (
-          <Button type="button" className="h-9 px-4" disabled={!canCreate} onClick={onSave}>
-            {saving ? "Creating..." : "Create project"} -&gt;
-          </Button>
-        )}
-      </div>
+      <OnboardingFooter
+        onBack={onBack}
+        onPrimary={onCreate}
+        primaryDisabled={!canCreate}
+        primaryLabel={saving ? "Creating…" : "Create project"}
+      />
     </div>
   );
 }

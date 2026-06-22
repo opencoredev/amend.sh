@@ -1,11 +1,9 @@
-import { useState } from "react";
 import type { RefObject } from "react";
 
 import type { ProjectMenuItem, Workspace } from "@/components/amend-dashboard-types";
 import type { SettingsWorkspaceFormState } from "@/components/settings-workspace-controller-state";
-import type { SettingsSavingState } from "@/components/settings-workspace-panels";
+import type { AutomationRulesDraft } from "@/components/settings-workspace-panel-types";
 import { useSettingsWorkspaceLogoActions } from "@/components/use-settings-workspace-logo-actions";
-import { errorMessage, toast } from "@/lib/toast";
 
 type SettingsWorkspaceSaveActionsOptions = {
   activeProject: ProjectMenuItem;
@@ -19,6 +17,12 @@ type SettingsWorkspaceSaveActionsOptions = {
   workspace: Workspace;
 };
 
+/**
+ * Raw persistence for each editable settings slice. These intentionally return
+ * the mutation promise without toasting — auto-save reports success/failure
+ * through the toolbar status indicator instead (see {@link useSettingsAutoSave}).
+ * Logo upload/load keep their own toasts since they are explicit user actions.
+ */
 export function useSettingsWorkspaceSaveActions({
   activeProject,
   formState,
@@ -30,8 +34,6 @@ export function useSettingsWorkspaceSaveActions({
   updateProject,
   workspace,
 }: SettingsWorkspaceSaveActionsOptions) {
-  const [saving, setSaving] = useState<SettingsSavingState>(null);
-
   const saveProject = (overrides: Record<string, unknown> = {}) =>
     updateProject({
       description: formState.description,
@@ -43,6 +45,34 @@ export function useSettingsWorkspaceSaveActions({
       workspaceSlug: workspace.id,
       ...overrides,
     });
+
+  const savePortal = () =>
+    updatePortal({
+      changelogVisibility: "public",
+      customThemeCss: formState.customThemeCss,
+      feedbackMode: "open",
+      headline: formState.headline,
+      intro: formState.intro,
+      roadmapVisibility: "public",
+      themeAppearance: formState.themeAppearance,
+      themePreset: formState.themePreset,
+      workspaceSlug: workspace.id,
+    });
+
+  const saveAutomation = (draft: AutomationRulesDraft) =>
+    updateAutomationRules({
+      autoDraftChangelog: draft.autoDraftChangelog,
+      autoNotifyUsers: true,
+      autoPublishChangelog: false,
+      autoUpdateFeedbackStatus: draft.autoUpdateFeedbackStatus,
+      autoUpdateRoadmapStatus: draft.autoUpdateRoadmapStatus,
+      mode: "review_first",
+      requireReviewBelowConfidence: 0.82,
+      requireReviewForHighImpact: true,
+      requireReviewForPublicCopy: draft.requireReviewForPublicCopy,
+      workspaceSlug: workspace.id,
+    });
+
   const logoActions = useSettingsWorkspaceLogoActions({
     activeProject,
     formState,
@@ -56,79 +86,9 @@ export function useSettingsWorkspaceSaveActions({
   return {
     loadLogoFromWebsite: logoActions.loadLogoFromWebsite,
     logoAction: logoActions.logoAction,
-    saveAutomationRules,
-    savePortalSettings,
-    saveProjectSettings,
-    saving,
+    saveAutomation,
+    savePortal,
+    saveProject,
     uploadLogoFile: logoActions.uploadLogoFile,
   };
-
-  function saveProjectSettings() {
-    setSaving("project");
-    void saveProject()
-      .then(() => toast.success("Project saved"))
-      .catch((error: unknown) =>
-        toast.error({
-          title: "Project was not saved",
-          description: errorMessage(
-            error,
-            "The selected project could not be updated. Check the values and try again.",
-          ),
-        }),
-      )
-      .finally(() => setSaving(null));
-  }
-
-  function savePortalSettings() {
-    setSaving("portal");
-    void updatePortal({
-      changelogVisibility: "public",
-      customThemeCss: formState.customThemeCss,
-      feedbackMode: "open",
-      headline: formState.headline,
-      intro: formState.intro,
-      roadmapVisibility: "public",
-      themeAppearance: formState.themeAppearance,
-      themePreset: formState.themePreset,
-      workspaceSlug: workspace.id,
-    })
-      .then(() => toast.success("Portal settings saved"))
-      .catch((error: unknown) =>
-        toast.error({
-          title: "Portal settings were not saved",
-          description: errorMessage(
-            error,
-            "The public portal copy could not be updated. Check the fields and try again.",
-          ),
-        }),
-      )
-      .finally(() => setSaving(null));
-  }
-
-  function saveAutomationRules() {
-    setSaving("automation");
-    void updateAutomationRules({
-      autoDraftChangelog: true,
-      autoNotifyUsers: true,
-      autoPublishChangelog: false,
-      autoUpdateFeedbackStatus: true,
-      autoUpdateRoadmapStatus: true,
-      mode: "review_first",
-      requireReviewBelowConfidence: 0.82,
-      requireReviewForHighImpact: true,
-      requireReviewForPublicCopy: true,
-      workspaceSlug: workspace.id,
-    })
-      .then(() => toast.success("Automation rules saved"))
-      .catch((error: unknown) =>
-        toast.error({
-          title: "Automation settings were not saved",
-          description: errorMessage(
-            error,
-            "The automation rules could not be updated. Refresh the settings page and try again.",
-          ),
-        }),
-      )
-      .finally(() => setSaving(null));
-  }
 }

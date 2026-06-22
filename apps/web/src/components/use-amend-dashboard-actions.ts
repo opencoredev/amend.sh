@@ -49,7 +49,7 @@ export function useAmendDashboardActions({
   }
 
   function openFeedbackFromRoadmap(stableKey: string) {
-    setSelectedRoadmapKey(null);
+    // The feedback setter already clears any open roadmap item, so this is one nav.
     setSelectedFeedbackKey(stableKey);
   }
 
@@ -64,12 +64,16 @@ export function useAmendDashboardActions({
 
   return {
     addFeedbackNote: saveActions.addFeedbackNote,
+    addRoadmapNote: saveActions.addRoadmapNote,
+    autoSaveChangelogEntry: saveActions.autoSaveChangelogEntry,
     handleComposerSubmit: saveActions.handleComposerSubmit,
     moveRoadmapItem: saveActions.moveRoadmapItem,
     openFeedbackFromRoadmap,
     openFeedbackPost,
     openRoadmapItem,
+    publishChangelogEntry: saveActions.publishChangelogEntry,
     saveChangelogEntry: saveActions.saveChangelogEntry,
+    voteFeedbackPost: saveActions.voteFeedbackPost,
     voteRoadmapListItem: saveActions.voteRoadmapListItem,
     voteSelectedRoadmapItem: saveActions.voteSelectedRoadmapItem,
   };

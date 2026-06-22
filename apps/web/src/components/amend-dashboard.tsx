@@ -28,7 +28,7 @@ export default function AmendDashboard() {
   }
 
   return (
-    <main className="dark min-h-svh overflow-hidden bg-background p-3 font-sans text-foreground lg:h-svh">
+    <main className="dark min-h-svh overflow-hidden bg-background p-3 font-ui text-13 text-default lg:h-svh">
       <div
         className={cn(
           "grid min-h-[calc(100svh-1.5rem)] overflow-hidden rounded-2xl bg-background shadow-[0_24px_80px_rgb(0_0_0/0.32)] ring-1 ring-white/[0.035] lg:h-[calc(100svh-1.5rem)] lg:min-h-0",

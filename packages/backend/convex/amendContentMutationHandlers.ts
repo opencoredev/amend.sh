@@ -1,7 +1,8 @@
-import type { Doc } from "./_generated/dataModel";
+import type { Doc, Id } from "./_generated/dataModel";
 import type { MutationCtx } from "./_generated/server";
 import { recordAnalyticsEvent } from "./amendAnalytics";
 import { slugPart, workspaceSlug } from "./amendBackendUtils";
+import { trustedPlanNotificationDeliveriesHandler } from "./amendDeliveryMutationHandlers";
 import { normalizeChangelog, normalizeRoadmap } from "./amendNormalizers";
 import { ensureBaseRecords } from "./amendSeed";
 import {
@@ -23,6 +24,22 @@ type UpsertChangelogEntryArgs = {
   version?: string;
   publishedAt?: number;
   scheduledFor?: number;
+  coverImageStorageId?: Id<"_storage"> | null;
+  metaDescription?: string;
+};
+
+type PublishChangelogEntryArgs = {
+  workspaceSlug?: string;
+  projectSlug?: string;
+  stableKey: string;
+  mode: "now" | "schedule";
+  scheduledFor?: number;
+  notifySubscribers?: boolean;
+};
+
+type GenerateChangelogCoverUploadUrlArgs = {
+  workspaceSlug?: string;
+  projectSlug?: string;
 };
 
 type UpsertRoadmapItemArgs = {
@@ -80,6 +97,13 @@ export async function trustedUpsertChangelogEntryHandler(
     ...(args.publishedAt ? { publishedAt: args.publishedAt } : {}),
     ...(args.scheduledFor ? { scheduledFor: args.scheduledFor } : {}),
     ...(args.version ? { version: args.version } : {}),
+    // Cover / SEO only flow from the publish review surface; autosave omits them
+    // (undefined), so they're left untouched on every keystroke. null clears the
+    // cover; a storage id sets it.
+    ...(args.coverImageStorageId !== undefined
+      ? { coverImageStorageId: args.coverImageStorageId ?? undefined }
+      : {}),
+    ...(args.metaDescription !== undefined ? { metaDescription: args.metaDescription } : {}),
   };
   const entryId = existing
     ? (await ctx.db.patch(existing._id, patch), existing._id)
@@ -107,6 +131,114 @@ export async function trustedUpsertChangelogEntryHandler(
     },
     source: "rest",
   });
+  return normalizeChangelog(entry);
+}
+
+/** Short-lived upload URL for a changelog cover image — mirrors the project logo flow. */
+export async function generateChangelogCoverUploadUrlHandler(
+  ctx: MutationCtx,
+  args: GenerateChangelogCoverUploadUrlArgs,
+) {
+  const user = await requireDashboardUser(ctx);
+  await ensureDashboardBaseRecords(ctx, user, args.workspaceSlug);
+  return await ctx.storage.generateUploadUrl();
+}
+
+export async function publishChangelogEntryHandler(
+  ctx: MutationCtx,
+  args: PublishChangelogEntryArgs,
+) {
+  await requireDashboardUser(ctx);
+  return await trustedPublishChangelogEntryHandler(ctx, args);
+}
+
+/**
+ * Explicit publish transition, kept separate from upsert so it never races the
+ * debounced content autosave: it stamps publishedAt, approves review, and (Phase 3)
+ * enqueues subscriber email. Scheduling stores scheduledFor; a cron flips it live.
+ */
+export async function trustedPublishChangelogEntryHandler(
+  ctx: MutationCtx,
+  args: PublishChangelogEntryArgs,
+) {
+  const now = Date.now();
+  const normalizedWorkspaceSlug = workspaceSlug(args.workspaceSlug);
+  const workspace = await ensureBaseRecords(ctx, normalizedWorkspaceSlug);
+  const existing = await ctx.db
+    .query("changelogEntries")
+    .withIndex("by_workspace_and_stableKey", (q) =>
+      q.eq("workspaceId", workspace._id).eq("stableKey", args.stableKey),
+    )
+    .unique();
+  if (!existing) {
+    throw new Error("Changelog entry not found");
+  }
+
+  if (args.mode === "schedule") {
+    if (!args.scheduledFor) {
+      throw new Error("A scheduled time is required to schedule a changelog");
+    }
+    await ctx.db.patch(existing._id, {
+      status: "scheduled",
+      scheduledFor: args.scheduledFor,
+      reviewerStatus: "approved",
+      updatedAt: now,
+    });
+  } else {
+    await ctx.db.patch(existing._id, {
+      status: "published",
+      publishedAt: existing.publishedAt ?? now,
+      scheduledFor: undefined,
+      reviewerStatus: "approved",
+      updatedAt: now,
+    });
+  }
+
+  const entry = await ctx.db.get(existing._id);
+  if (!entry) {
+    throw new Error("Failed to publish changelog entry");
+  }
+  await recordAnalyticsEvent(ctx, {
+    workspaceId: workspace._id,
+    workspaceSlug: normalizedWorkspaceSlug,
+    event: args.mode === "schedule" ? "changelog_scheduled" : "changelog_published",
+    metadata: {
+      changelogEntryId: entry._id,
+      stableKey: entry.stableKey,
+      status: entry.status,
+      title: entry.title,
+    },
+    source: "rest",
+  });
+
+  // Notify subscribers only on immediate publish. We queue a notification and fan
+  // it out to the delivery outbox (the existing drain sends it; dry-runs without
+  // Resend keys). Scheduled posts notify when the cron flips them — a follow-up.
+  if (args.mode === "now" && args.notifySubscribers) {
+    const notificationKey = `changelog-published-${entry.stableKey}-${now}`;
+    await ctx.db.insert("notifications", {
+      workspaceId: workspace._id,
+      ...(entry.projectId ? { projectId: entry.projectId } : {}),
+      stableKey: notificationKey,
+      title: entry.title,
+      body: entry.summary,
+      channel: "email",
+      audience: "subscribers",
+      status: "queued",
+      priority: "normal",
+      relatedKind: "changelog",
+      relatedKey: entry.stableKey,
+      sourceLinks: entry.sourceLinks,
+      createdAt: now,
+      updatedAt: now,
+    });
+    await trustedPlanNotificationDeliveriesHandler(ctx, {
+      workspaceSlug: normalizedWorkspaceSlug,
+      notificationKey,
+      channel: "email",
+    });
+  }
+
   return normalizeChangelog(entry);
 }
 
