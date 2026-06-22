@@ -108,25 +108,17 @@ export async function getPublicPortalHandler(ctx: QueryCtx, args: PublicPortalAr
   ]);
 
   const settings = workspace.portalSettings ?? demoWorkspace.portalSettings;
-  // Branding from the resolved project (or the workspace's primary project): the
-  // clean name + logo, so the header matches the dashboard, not the raw slug. Keep
-  // the portal's own slug so in-portal nav links stay on the same project URL.
-  const brandingProject =
-    project ??
-    (await ctx.db
-      .query("projects")
-      .withIndex("by_workspace", (q) => q.eq("workspaceId", workspace._id))
-      .first());
-  const rawLogo = brandingProject?.logoUrl?.trim();
+  // Project portals use project branding; workspace portals keep workspace branding.
+  const rawLogo = project?.logoUrl?.trim();
   const projectLogoUrl =
     rawLogo && rawLogo !== "data:,"
       ? rawLogo
-      : brandingProject?.logoStorageId
-        ? await ctx.storage.getUrl(brandingProject.logoStorageId)
+      : project?.logoStorageId
+        ? await ctx.storage.getUrl(project.logoStorageId)
         : null;
   const publicWorkspace = {
     ...normalizeWorkspace(workspace),
-    ...(brandingProject?.name ? { name: brandingProject.name } : {}),
+    ...(project?.name ? { name: project.name } : {}),
     slug: requestedSlug,
     logoUrl: projectLogoUrl,
   };

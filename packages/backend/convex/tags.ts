@@ -98,14 +98,13 @@ export const update = mutation({
     const nextColor = normalizeColor(args.color, tag.color);
 
     if (nextName.toLowerCase() !== tag.name.toLowerCase()) {
-      const all = await ctx.db
+      const clash = await ctx.db
         .query("workspaceTags")
-        .withIndex("by_workspace", (q) => q.eq("workspaceId", workspace._id))
-        .collect();
-      const clash = all.find(
-        (other) => other._id !== tag._id && other.name.toLowerCase() === nextName.toLowerCase(),
-      );
-      if (clash) throw new Error("A tag with that name already exists.");
+        .withIndex("by_workspace_and_name", (q) =>
+          q.eq("workspaceId", workspace._id).eq("name", nextName),
+        )
+        .first();
+      if (clash && clash._id !== tag._id) throw new Error("A tag with that name already exists.");
     }
 
     if (nextName !== tag.name) {

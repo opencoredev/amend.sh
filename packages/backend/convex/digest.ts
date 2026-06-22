@@ -58,7 +58,7 @@ export const sendWeekly = internalMutation({
     for (const member of members.filter(
       (member) => member.role === "owner" || member.role === "admin",
     )) {
-      const recipient = member.email.trim();
+      const recipient = member.email?.trim();
       if (!recipient) continue;
 
       await ctx.db.insert("deliveryOutbox", {

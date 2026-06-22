@@ -52,12 +52,15 @@ export const proactiveTables = {
       digestEligible: v.boolean(),
     }),
     clusterKey: v.string(),
+    facetArea: v.optional(v.string()),
+    facetVerb: v.optional(v.string()),
     createdAt: v.number(),
     updatedAt: v.number(),
   })
     .index("by_workspace", ["workspaceId"])
     .index("by_workspace_and_status", ["workspaceId", "status"])
     .index("by_workspace_and_clusterKey", ["workspaceId", "clusterKey"])
+    .index("by_workspace_and_facetArea", ["workspaceId", "facetArea"])
     .index("by_workspace_and_lastSeen", ["workspaceId", "lastSeen"]),
 
   evidence: defineTable({

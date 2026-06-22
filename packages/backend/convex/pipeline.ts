@@ -113,6 +113,8 @@ export const commitProcessedEvent = internalMutation({
           lastSeen: now,
           conditionFlags: { readyForReview: false, hasLinkedShip: false, digestEligible: true },
           clusterKey: classification.clusterKey,
+          facetArea: classification.area,
+          facetVerb: classification.verb,
           createdAt: now,
           updatedAt: now,
         });
@@ -182,7 +184,9 @@ async function findCompatibleNeed(
 
   const needs = await ctx.db
     .query("needs")
-    .withIndex("by_workspace", (q) => q.eq("workspaceId", args.workspaceId))
+    .withIndex("by_workspace_and_facetArea", (q) =>
+      q.eq("workspaceId", args.workspaceId).eq("facetArea", args.area),
+    )
     .collect();
   return (
     needs.find((need) => {

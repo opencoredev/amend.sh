@@ -43,13 +43,16 @@ describe("proactive ingest security guards", () => {
 
     expect(source).toContain("facetsCompatible");
     expect(source).toContain("facetsFromClusterKey");
-    expect(source).toContain("by_workspace");
+    expect(source).toContain("by_workspace_and_facetArea");
+    expect(source).not.toContain(
+      '.withIndex("by_workspace", (q) => q.eq("workspaceId", args.workspaceId))',
+    );
   });
 
   test("weekly digest skips blank email recipients", () => {
     const source = readFileSync(join(root, "digest.ts"), "utf8");
 
-    expect(source).toContain("const recipient = member.email.trim()");
+    expect(source).toContain("const recipient = member.email?.trim()");
     expect(source).toContain("if (!recipient) continue");
   });
 
@@ -58,5 +61,26 @@ describe("proactive ingest security guards", () => {
 
     expect(source).toContain("Promise.all");
     expect(source).toContain("peopleById");
+  });
+
+  test("scheduled changelog publish queues subscriber deliveries", () => {
+    const source = readFileSync(join(root, "changelogScheduler.ts"), "utf8");
+
+    expect(source).toContain('audience: "subscribers"');
+    expect(source).toContain("trustedPlanNotificationDeliveriesHandler");
+  });
+
+  test("workspace portal branding does not fall back to an arbitrary project", () => {
+    const source = readFileSync(join(root, "amendPortalReadHandlers.ts"), "utf8");
+
+    expect(source).toContain("Project portals use project branding");
+    expect(source).not.toContain("brandingProject");
+  });
+
+  test("tag rename duplicate check uses the composite name index", () => {
+    const source = readFileSync(join(root, "tags.ts"), "utf8");
+
+    expect(source).toContain("by_workspace_and_name");
+    expect(source).not.toContain("const all = await ctx.db");
   });
 });

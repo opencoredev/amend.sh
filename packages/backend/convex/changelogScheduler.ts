@@ -2,6 +2,7 @@ import { v } from "convex/values";
 
 import { internalMutation } from "./_generated/server";
 import { recordAnalyticsEvent } from "./amendAnalytics";
+import { trustedPlanNotificationDeliveriesHandler } from "./amendDeliveryMutationHandlers";
 
 /**
  * Publishes scheduled changelog entries once their time arrives. Driven by a
@@ -44,6 +45,30 @@ export const publishDueScheduled = internalMutation({
         },
         source: "rest",
       });
+      if (workspace) {
+        const notificationKey = `changelog-published-${entry.stableKey}-${now}`;
+        await ctx.db.insert("notifications", {
+          workspaceId: entry.workspaceId,
+          ...(entry.projectId ? { projectId: entry.projectId } : {}),
+          stableKey: notificationKey,
+          title: entry.title,
+          body: entry.summary,
+          channel: "email",
+          audience: "subscribers",
+          status: "queued",
+          priority: "normal",
+          relatedKind: "changelog",
+          relatedKey: entry.stableKey,
+          sourceLinks: entry.sourceLinks,
+          createdAt: now,
+          updatedAt: now,
+        });
+        await trustedPlanNotificationDeliveriesHandler(ctx, {
+          workspaceSlug: workspace.slug,
+          notificationKey,
+          channel: "email",
+        });
+      }
       published += 1;
     }
 
