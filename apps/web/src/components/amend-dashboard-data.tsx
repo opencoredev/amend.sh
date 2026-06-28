@@ -32,6 +32,34 @@ export const createWorkspaceTagMutation = makeFunctionReference<"mutation">("tag
 export const updateWorkspaceTagMutation = makeFunctionReference<"mutation">("tags:update");
 export const removeWorkspaceTagMutation = makeFunctionReference<"mutation">("tags:remove");
 
+// Proactive agent — Inbox (needs)
+export const listGhostsQuery = makeFunctionReference<"query">("needs:listGhosts");
+export const listAcceptedNeedsQuery = makeFunctionReference<"query">("needs:listAccepted");
+export const getNeedQuery = makeFunctionReference<"query">("needs:get");
+export const acceptGhostMutation = makeFunctionReference<"mutation">("needs:acceptGhost");
+export const keepGatheringMutation = makeFunctionReference<"mutation">("needs:keepGathering");
+export const killGhostMutation = makeFunctionReference<"mutation">("needs:killGhost");
+export const restoreGhostMutation = makeFunctionReference<"mutation">("needs:restoreGhost");
+
+// Proactive agent — Inbox (drafts)
+export const listPendingDraftsQuery = makeFunctionReference<"query">("drafts:listPending");
+export const approveDraftMutation = makeFunctionReference<"mutation">("drafts:approve");
+export const rejectDraftMutation = makeFunctionReference<"mutation">("drafts:reject");
+export const updateDraftTextMutation = makeFunctionReference<"mutation">("drafts:updateDraftText");
+
+// Proactive agent — Memory
+export const listMemoryRulesQuery = makeFunctionReference<"query">("memory:listRules");
+export const toggleMemoryRuleMutation = makeFunctionReference<"mutation">("memory:toggleRule");
+export const undoMemoryRuleMutation = makeFunctionReference<"mutation">("memory:undoRule");
+
+// Proactive agent — weekly digest
+export const digestPreviewQuery = makeFunctionReference<"query">("digest:preview");
+
+// GitHub App install completion
+export const completeGithubInstallMutation = makeFunctionReference<"mutation">(
+  "amendGithubInstall:completeGithubInstall",
+);
+
 export const feedbackBoard: Board = {
   id: "feedback",
   name: "Feedback",

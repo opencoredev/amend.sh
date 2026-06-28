@@ -19,6 +19,9 @@ export type IngestSourceEventArgs = {
   sourceCreatedAt?: number;
   sourceUpdatedAt?: number;
   observedAt?: number;
+  // True only on the HMAC-verified GitHub webhook path; gates repository-based
+  // workspace routing in trustedIngestSourceEventHandler.
+  verifiedRepoRouting?: boolean;
 };
 
 export function createSourceLink(

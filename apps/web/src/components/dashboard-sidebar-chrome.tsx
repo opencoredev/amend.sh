@@ -17,6 +17,8 @@ import type { ReactElement, RefObject } from "react";
 import { useInboxReviewCount } from "@/lib/mock-amend";
 import { agentDocsUrl } from "@/lib/seo";
 
+import { BETA_DISABLED_VIEWS } from "@/components/amend-dashboard-constants";
+
 import type {
   ChangelogStatusFilter,
   DashboardChangelog,
@@ -178,6 +180,10 @@ export function DashboardSidebarChrome({
   workspaceMenuRef: RefObject<HTMLDivElement | null>;
 }) {
   const reviewCount = useInboxReviewCount();
+  // 3-view beta: drop nav entries (and any now-empty group) for hidden views.
+  const visibleNavGroups = NAV_GROUPS.map((group) =>
+    group.filter(([view]) => !BETA_DISABLED_VIEWS.has(view)),
+  ).filter((group) => group.length > 0);
   const composeLabel =
     activeView === "changelog"
       ? "New changelog"
@@ -231,7 +237,7 @@ export function DashboardSidebarChrome({
         {/* Main section nav — grouped by job (triage · boards · memory · settings), no dividers */}
         <nav aria-label="Workspace sections" className="px-3 pb-3">
           <div className="grid gap-3">
-            {NAV_GROUPS.map((group) => (
+            {visibleNavGroups.map((group) => (
               <div key={group[0]![0]} className="grid gap-1">
                 {group.map(([view, icon, label]) => (
                   <SidebarMainNavButton

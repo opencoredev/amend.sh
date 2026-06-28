@@ -2,6 +2,8 @@ import { httpRouter } from "convex/server";
 
 import { httpAction } from "./_generated/server";
 import { authComponent, createAuth } from "./auth";
+import * as discordInteractions from "./convexDiscordInteractions";
+import * as discordMessages from "./convexDiscordMessages";
 import { restGet } from "./httpRestGet";
 import { restPost } from "./httpRestPost";
 import { corsHeaders, json, versionMetadata } from "./httpRuntime";
@@ -27,6 +29,16 @@ http.route({ method: "GET", pathPrefix: "/api/v1/", handler: restGet });
 http.route({ method: "POST", pathPrefix: "/api/v1/", handler: restPost });
 http.route({ method: "POST", path: "/ingest/githubWebhook", handler: ingest.githubWebhook });
 http.route({ method: "POST", path: "/ingest/discordWebhook", handler: ingest.discordWebhook });
+http.route({
+  method: "POST",
+  path: "/ingest/discordInteraction",
+  handler: discordInteractions.discordInteraction,
+});
+http.route({
+  method: "POST",
+  path: "/ingest/discordMessage",
+  handler: discordMessages.discordMessageIngest,
+});
 http.route({ method: "POST", path: "/ingest/sourceEvent", handler: ingest.sourceEvent });
 http.route({ method: "OPTIONS", pathPrefix: "/api/v1/", handler: restOptions });
 

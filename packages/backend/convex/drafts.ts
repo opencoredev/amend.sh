@@ -3,6 +3,8 @@ import type { MutationCtx } from "./_generated/server";
 import type { Doc } from "./_generated/dataModel";
 import { v } from "convex/values";
 
+import { internal } from "./_generated/api";
+
 import {
   draftIdArgs,
   proactiveWorkspaceArgs,
@@ -140,6 +142,17 @@ async function queueNotificationDeliveries(
       createdAt: now,
       updatedAt: now,
     });
+
+    // Outbound Discord: when the recipient targets a Discord channel (the
+    // `handle` is the channel id), schedule the bot post. Mutations cannot
+    // fetch, so the actual REST call happens in the scheduled action, which
+    // gracefully no-ops if DISCORD_BOT_TOKEN is unset.
+    if (recipient.channel === "discord" && recipient.handle.trim().length > 0) {
+      await ctx.scheduler.runAfter(0, internal.convexDiscordDelivery.sendDiscordMessageInternal, {
+        channelId: recipient.handle,
+        content: `Shipped: ${draft.needTitle}\n\n${safetyStrip(draft.draftText)}`,
+      });
+    }
   }
 }
 

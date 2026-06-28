@@ -17,6 +17,12 @@ export const viewValues: DashboardView[] = [
   "account",
   "setup",
 ];
+
+/**
+ * Views hidden during the 3-view beta (Inbox · Connections · Memory + Settings/Account).
+ * Their screens/code stay intact — these are only gated out of the nav and routing.
+ */
+export const BETA_DISABLED_VIEWS = new Set<DashboardView>(["posts", "roadmap", "changelog"]);
 export const boardValues: BoardId[] = ["feature", "bug", "changelog", "feedback"];
 export const statusValues: Array<RoadmapStatus | "all"> = [
   "all",

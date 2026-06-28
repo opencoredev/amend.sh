@@ -19,6 +19,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as PortalWorkspaceSlugRouteImport } from './routes/portal.$workspaceSlug'
 import { Route as DashboardViewRouteImport } from './routes/dashboard.$view'
 import { Route as ApiOgIndexRouteImport } from './routes/api/og/index'
+import { Route as DashboardSetupGithubRouteImport } from './routes/dashboard_.setup.github'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as ApiOgPortalSlugRouteImport } from './routes/api/og/portal.$slug'
 
@@ -72,6 +73,11 @@ const ApiOgIndexRoute = ApiOgIndexRouteImport.update({
   path: '/api/og/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardSetupGithubRoute = DashboardSetupGithubRouteImport.update({
+  id: '/dashboard_/setup/github',
+  path: '/dashboard/setup/github',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
@@ -94,6 +100,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/$view': typeof DashboardViewRoute
   '/portal/$workspaceSlug': typeof PortalWorkspaceSlugRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/dashboard/setup/github': typeof DashboardSetupGithubRoute
   '/api/og/': typeof ApiOgIndexRoute
   '/api/og/portal/$slug': typeof ApiOgPortalSlugRoute
 }
@@ -108,6 +115,7 @@ export interface FileRoutesByTo {
   '/dashboard/$view': typeof DashboardViewRoute
   '/portal/$workspaceSlug': typeof PortalWorkspaceSlugRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/dashboard/setup/github': typeof DashboardSetupGithubRoute
   '/api/og': typeof ApiOgIndexRoute
   '/api/og/portal/$slug': typeof ApiOgPortalSlugRoute
 }
@@ -123,6 +131,7 @@ export interface FileRoutesById {
   '/dashboard/$view': typeof DashboardViewRoute
   '/portal/$workspaceSlug': typeof PortalWorkspaceSlugRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/dashboard_/setup/github': typeof DashboardSetupGithubRoute
   '/api/og/': typeof ApiOgIndexRoute
   '/api/og/portal/$slug': typeof ApiOgPortalSlugRoute
 }
@@ -139,6 +148,7 @@ export interface FileRouteTypes {
     | '/dashboard/$view'
     | '/portal/$workspaceSlug'
     | '/api/auth/$'
+    | '/dashboard/setup/github'
     | '/api/og/'
     | '/api/og/portal/$slug'
   fileRoutesByTo: FileRoutesByTo
@@ -153,6 +163,7 @@ export interface FileRouteTypes {
     | '/dashboard/$view'
     | '/portal/$workspaceSlug'
     | '/api/auth/$'
+    | '/dashboard/setup/github'
     | '/api/og'
     | '/api/og/portal/$slug'
   id:
@@ -167,6 +178,7 @@ export interface FileRouteTypes {
     | '/dashboard/$view'
     | '/portal/$workspaceSlug'
     | '/api/auth/$'
+    | '/dashboard_/setup/github'
     | '/api/og/'
     | '/api/og/portal/$slug'
   fileRoutesById: FileRoutesById
@@ -181,6 +193,7 @@ export interface RootRouteChildren {
   SignUpRoute: typeof SignUpRoute
   PortalWorkspaceSlugRoute: typeof PortalWorkspaceSlugRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
+  DashboardSetupGithubRoute: typeof DashboardSetupGithubRoute
   ApiOgIndexRoute: typeof ApiOgIndexRoute
   ApiOgPortalSlugRoute: typeof ApiOgPortalSlugRoute
 }
@@ -257,6 +270,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiOgIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard_/setup/github': {
+      id: '/dashboard_/setup/github'
+      path: '/dashboard/setup/github'
+      fullPath: '/dashboard/setup/github'
+      preLoaderRoute: typeof DashboardSetupGithubRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
@@ -296,6 +316,7 @@ const rootRouteChildren: RootRouteChildren = {
   SignUpRoute: SignUpRoute,
   PortalWorkspaceSlugRoute: PortalWorkspaceSlugRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
+  DashboardSetupGithubRoute: DashboardSetupGithubRoute,
   ApiOgIndexRoute: ApiOgIndexRoute,
   ApiOgPortalSlugRoute: ApiOgPortalSlugRoute,
 }

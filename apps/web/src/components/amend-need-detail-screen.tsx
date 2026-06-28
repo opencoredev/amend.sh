@@ -29,7 +29,13 @@ import {
 import { PageScroll } from "@/components/amend-agent-chrome";
 import type { Evidence, Need, SourceChannel } from "@/lib/amend-contract";
 import { activityPhrase, formatDayMonth, formatFullDate } from "@/lib/amend-agent-format";
-import { acceptGhost, keepGathering, killGhost, restoreGhost, useNeed } from "@/lib/mock-amend";
+import {
+  useAcceptGhost,
+  useKeepGathering,
+  useKillGhost,
+  useNeed,
+  useRestoreGhost,
+} from "@/lib/mock-amend";
 import {
   ArrowLeft,
   ChevronDown,
@@ -139,6 +145,10 @@ function ProofRow({ label, children }: { label: string; children: React.ReactNod
 function ProofRail({ need, onBack }: { need: Need; onBack: () => void }) {
   const isGhost = need.status === "ghost";
   const thin = need.proof.strength === "thin";
+  const acceptGhost = useAcceptGhost();
+  const keepGathering = useKeepGathering();
+  const killGhost = useKillGhost();
+  const restoreGhost = useRestoreGhost();
 
   return (
     <aside className="space-y-3 lg:sticky lg:top-1">
@@ -226,7 +236,7 @@ function ProofRail({ need, onBack }: { need: Need; onBack: () => void }) {
             className="w-full"
             title={thin ? "Needs more proof before it can be added" : undefined}
             onClick={() => {
-              acceptGhost(need.id);
+              void acceptGhost(need.id);
               toast.success({
                 title: "Added to the board",
                 description: `“${need.title}” is now tracked.`,
@@ -242,7 +252,7 @@ function ProofRail({ need, onBack }: { need: Need; onBack: () => void }) {
               size="sm"
               className="flex-1"
               onClick={() => {
-                keepGathering(need.id);
+                void keepGathering(need.id);
                 toast.info({
                   title: "Keeping watch",
                   description: "Resurfaced as the proof grows.",
@@ -257,11 +267,11 @@ function ProofRail({ need, onBack }: { need: Need; onBack: () => void }) {
               size="sm"
               className="flex-1"
               onClick={() => {
-                killGhost(need.id);
+                void killGhost(need.id);
                 toast.success({
                   title: "Taught Amend to skip this",
                   description: "Manage it in Memory.",
-                  button: { title: "Undo", onClick: () => restoreGhost(need.id) },
+                  button: { title: "Undo", onClick: () => void restoreGhost(need.id) },
                 });
                 onBack();
               }}

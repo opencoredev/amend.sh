@@ -59,7 +59,7 @@ export function useAmendDashboardNavigation({
   const projectCreated = (projectSlug: string, workspaceSlug?: string) => {
     setActiveProject(projectSlug);
     setRoute({
-      view: "posts",
+      view: "inbox",
       workspace: workspaceSlug ?? workspaceId,
     });
   };

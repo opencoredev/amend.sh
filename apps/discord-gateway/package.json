@@ -1,0 +1,14 @@
+{
+  "name": "@amend/discord-gateway",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Always-on Discord gateway worker: reads allowlisted channels, asks the Amend backend's AI judge if a message is signal, reacts 👀 on the ones that become needs.",
+  "scripts": {
+    "start": "bun index.mjs",
+    "dev": "bun --watch index.mjs"
+  },
+  "dependencies": {
+    "discord.js": "^14.16.3"
+  }
+}

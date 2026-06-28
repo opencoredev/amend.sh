@@ -56,6 +56,11 @@ export const ingestSourceEventArgs = {
   sourceCreatedAt: v.optional(v.number()),
   sourceUpdatedAt: v.optional(v.number()),
   observedAt: v.optional(v.number()),
+  // Set true ONLY on the HMAC-verified GitHub webhook path so the repository ->
+  // workspace routing in amendSourceIngest can trust the (owner,repo) on the
+  // event. Generic REST (/ingest/sourceEvent), CLI, and Discord callers leave
+  // this unset and keep using the slug-based fallback.
+  verifiedRepoRouting: v.optional(v.boolean()),
 };
 
 export const createFeedbackArgs = {

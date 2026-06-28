@@ -1,5 +1,5 @@
 import { internal } from "./_generated/api";
-import type { Id } from "./_generated/dataModel";
+import type { Doc, Id } from "./_generated/dataModel";
 import type { MutationCtx } from "./_generated/server";
 import { recordAnalyticsEvent } from "./amendAnalytics";
 import { workspaceSlug } from "./amendBackendUtils";
@@ -24,11 +24,31 @@ export async function trustedIngestSourceEventHandler(
   const now = Date.now();
   const observedAt = args.observedAt ?? now;
   const provider = args.provider ?? "github";
-  const normalizedWorkspaceSlug = workspaceSlug(args.workspaceSlug);
+
+  // Route incoming GitHub webhooks by the repository they came from rather than a
+  // slug in the payload. Real GitHub deliveries don't carry a workspace slug, so
+  // when an existing githubConnections row owns this `owner/repo`, the event
+  // belongs to that connection's workspace. If no connection matches we fall back
+  // to the slug-based path, preserving behavior for REST/CLI callers and the demo
+  // workspace.
+  //
+  // Only do this for HMAC-verified GitHub webhooks (`verifiedRepoRouting`).
+  // Otherwise an unverified caller could spoof an `owner/repo` another workspace
+  // connected and hijack that repo's events; unverified/REST/CLI/Discord callers
+  // therefore keep using the slug-based fallback below.
+  const routedConnection =
+    provider === "github" && args.verifiedRepoRouting === true
+      ? await resolveGithubConnectionByRepository(ctx, args.owner, args.repo)
+      : undefined;
+
+  const normalizedWorkspaceSlug = routedConnection
+    ? ((await ctx.db.get(routedConnection.workspaceId))?.slug ?? workspaceSlug(args.workspaceSlug))
+    : workspaceSlug(args.workspaceSlug);
   const workspace = await ensureBaseRecords(ctx, normalizedWorkspaceSlug);
   const connection =
     provider === "github"
-      ? await ensureGitHubConnection(ctx, workspace._id, args.owner, args.repo)
+      ? (routedConnection ??
+        (await ensureGitHubConnection(ctx, workspace._id, args.owner, args.repo)))
       : undefined;
   const requestedProject = await getWritableDashboardProject(ctx, workspace._id, args.projectSlug);
   const projectId = requestedProject?._id ?? connection?.projectId;
@@ -129,4 +149,51 @@ export async function trustedIngestSourceEventHandler(
     sourceEventId,
     status: existing ? "updated" : "created",
   };
+}
+
+/**
+ * Resolve the githubConnections row that owns an incoming GitHub event's
+ * repository, so webhook deliveries land in the workspace that actually
+ * connected the repo. Returns `undefined` when the repository is unknown (no
+ * owner/repo on the event, or no connection has been created yet), letting the
+ * caller fall back to slug-based resolution.
+ *
+ * Callers MUST only invoke this for HMAC-verified GitHub deliveries (see the
+ * `verifiedRepoRouting` gate above), since the (owner,repo) is the routing key.
+ *
+ * TODO(hardening): the next step is to route by GitHub App `installation_id`
+ * (the `by_installation` index) instead of (owner,repo), which uniquely
+ * identifies the installation that GitHub signed the delivery for and removes
+ * the remaining ambiguity when the same repo is connected by multiple
+ * workspaces.
+ */
+async function resolveGithubConnectionByRepository(
+  ctx: MutationCtx,
+  owner: string | undefined,
+  repo: string | undefined,
+): Promise<Doc<"githubConnections"> | undefined> {
+  if (!owner || !repo) {
+    return undefined;
+  }
+  const connections = await ctx.db
+    .query("githubConnections")
+    .withIndex("by_owner_and_repo", (q) => q.eq("owner", owner).eq("repo", repo))
+    .collect();
+  // Ignore rows whose installation was explicitly disconnected — a stale
+  // disconnected row must never capture another workspace's live webhooks.
+  const live = connections.filter(
+    (connection) => connection.installationState !== "disconnected",
+  );
+  if (live.length === 0) {
+    return undefined;
+  }
+  // Deterministically pick the FIRST registrant (earliest createdAt). This makes
+  // a later workspace connecting the same repo unable to hijack routing away
+  // from the workspace that connected it first; ties break on _id for stability.
+  return live.reduce((earliest, connection) => {
+    if (connection.createdAt !== earliest.createdAt) {
+      return connection.createdAt < earliest.createdAt ? connection : earliest;
+    }
+    return connection._id < earliest._id ? connection : earliest;
+  });
 }

@@ -11,6 +11,7 @@ import {
 } from "@/lib/icons";
 import type { ReactElement } from "react";
 
+import { BETA_DISABLED_VIEWS } from "@/components/amend-dashboard-constants";
 import type { DashboardView } from "@/components/amend-dashboard-types";
 import { BrandMark } from "@/components/brand-mark";
 
@@ -21,12 +22,14 @@ export function IconRail({
   activeView: DashboardView;
   onViewChange: (view: DashboardView) => void;
 }) {
-  const railItems: Array<[DashboardView, ReactElement, string]> = [
-    ["inbox", <Inbox />, "Inbox"],
-    ["posts", <MessageSquareText />, "Feedback"],
-    ["roadmap", <Map />, "Roadmap"],
-    ["changelog", <Newspaper />, "Changelog"],
-  ];
+  const railItems: Array<[DashboardView, ReactElement, string]> = (
+    [
+      ["inbox", <Inbox />, "Inbox"],
+      ["posts", <MessageSquareText />, "Feedback"],
+      ["roadmap", <Map />, "Roadmap"],
+      ["changelog", <Newspaper />, "Changelog"],
+    ] as Array<[DashboardView, ReactElement, string]>
+  ).filter(([view]) => !BETA_DISABLED_VIEWS.has(view));
 
   return (
     <aside className="hidden bg-background lg:flex lg:flex-col lg:items-center lg:py-3">
@@ -34,7 +37,7 @@ export function IconRail({
         type="button"
         aria-label="Dashboard"
         className="grid size-9 place-items-center rounded-lg bg-foreground/[0.075] text-foreground transition-colors duration-150 ease-linear hover:bg-foreground hover:text-background active:opacity-75"
-        onClick={() => onViewChange("posts")}
+        onClick={() => onViewChange("inbox")}
       >
         <BrandMark decorative size="sm" variant="mono" />
       </button>
@@ -68,16 +71,18 @@ export function MobileViewNav({
   activeView: DashboardView;
   onViewChange: (view: DashboardView) => void;
 }) {
-  const items: Array<[DashboardView, ReactElement, string]> = [
-    ["inbox", <Inbox />, "Inbox"],
-    ["posts", <MessageSquareText />, "Feedback"],
-    ["roadmap", <Map />, "Roadmap"],
-    ["changelog", <Newspaper />, "Changelog"],
-    ["memory", <Brain />, "Memory"],
-    ["connections", <PlugSocket />, "Connections"],
-    ["settings", <Settings />, "Settings"],
-    ["setup", <GitPullRequestArrow />, "Setup"],
-  ];
+  const items: Array<[DashboardView, ReactElement, string]> = (
+    [
+      ["inbox", <Inbox />, "Inbox"],
+      ["posts", <MessageSquareText />, "Feedback"],
+      ["roadmap", <Map />, "Roadmap"],
+      ["changelog", <Newspaper />, "Changelog"],
+      ["memory", <Brain />, "Memory"],
+      ["connections", <PlugSocket />, "Connections"],
+      ["settings", <Settings />, "Settings"],
+      ["setup", <GitPullRequestArrow />, "Setup"],
+    ] as Array<[DashboardView, ReactElement, string]>
+  ).filter(([view]) => !BETA_DISABLED_VIEWS.has(view));
 
   return (
     <nav aria-label="Dashboard sections" className="px-3 py-2">

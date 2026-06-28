@@ -4,9 +4,15 @@ import { optionalString, record } from "./httpRuntimeScalars";
 export function githubSourceEvent(request: Request, payload: Record<string, unknown>) {
   const event = request.headers.get("x-github-event") ?? optionalString(payload.event) ?? "unknown";
   const repository = record(payload.repository);
+  // Real GitHub webhooks always carry `repository.full_name` ("owner/repo") on
+  // events with repository context; fall back to it when the nested owner/name
+  // are unavailable so repository -> workspace routing stays reliable.
+  const [fullNameOwner, fullNameRepo] = splitFullName(repository?.full_name);
   const owner =
-    optionalString(record(repository?.owner)?.login) ?? optionalString(repository?.owner);
-  const repo = optionalString(repository?.name);
+    optionalString(record(repository?.owner)?.login) ??
+    optionalString(repository?.owner) ??
+    fullNameOwner;
+  const repo = optionalString(repository?.name) ?? fullNameRepo;
   const sender = optionalString(record(payload.sender)?.login);
   const receivedAt = Date.now();
 
@@ -127,6 +133,18 @@ export function githubSourceEvent(request: Request, payload: Record<string, unkn
   }
 
   throw new Error(`Unsupported GitHub event '${event}'`);
+}
+
+function splitFullName(value: unknown): [string | undefined, string | undefined] {
+  const fullName = optionalString(value);
+  if (!fullName) {
+    return [undefined, undefined];
+  }
+  const slashIndex = fullName.indexOf("/");
+  if (slashIndex <= 0 || slashIndex === fullName.length - 1) {
+    return [undefined, undefined];
+  }
+  return [fullName.slice(0, slashIndex), fullName.slice(slashIndex + 1)];
 }
 
 function labels(value: unknown) {

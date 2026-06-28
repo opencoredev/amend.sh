@@ -18,7 +18,7 @@ import { ToolbarBar, ToolbarGroup, ToolbarPill } from "@/components/dashboard-to
 import { PageHeader } from "@/components/amend-agent-chrome";
 import type { MemoryRule, MemoryRuleKind } from "@/lib/amend-contract";
 import { relativeFromNow } from "@/lib/amend-agent-format";
-import { toggleRule, undoRule, useMemoryRules } from "@/lib/mock-amend";
+import { useMemoryRules, useToggleRule, useUndoRule } from "@/lib/mock-amend";
 import {
   AiMagic,
   Brain,
@@ -88,9 +88,11 @@ function RuleRow({ rule }: { rule: MemoryRule }) {
   const { short, label, Icon } = kindMeta[rule.kind];
   const needsAudit =
     rule.enabled && rule.blastRadius >= AUDIT_THRESHOLD && rule.kind !== "allowlist";
+  const toggleRule = useToggleRule();
+  const undoRule = useUndoRule();
 
   function onForget() {
-    undoRule(rule.id);
+    void undoRule(rule.id);
     toast.success({
       title: "Unlearned",
       description: "Amend dropped this rule and won't apply it anymore.",
@@ -138,7 +140,7 @@ function RuleRow({ rule }: { rule: MemoryRule }) {
         </span>
         <Switch
           checked={rule.enabled}
-          onChange={(next) => toggleRule(rule.id, next)}
+          onChange={(next) => void toggleRule(rule.id, next)}
           label={`${rule.enabled ? "Pause" : "Resume"} rule: ${rule.text}`}
         />
         <IconButton

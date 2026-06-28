@@ -23,16 +23,16 @@ import { PageHeader } from "@/components/amend-agent-chrome";
 import { AmendNeedDetailScreen } from "@/components/amend-need-detail-screen";
 import type { DigestResolved, DraftProposal, Ghost, Need, Proof } from "@/lib/amend-contract";
 import {
-  acceptGhost,
-  approveDraft,
-  killGhost,
-  rejectDraft,
-  restoreGhost,
-  updateDraftText,
+  useAcceptGhost,
   useAcceptedNeeds,
+  useApproveDraft,
   useDigestPreview,
   useGhosts,
+  useKillGhost,
   usePendingDrafts,
+  useRejectDraft,
+  useRestoreGhost,
+  useUpdateDraftText,
 } from "@/lib/mock-amend";
 import {
   Check,
@@ -49,7 +49,7 @@ import {
   X,
   type LucideIcon,
 } from "@/lib/icons";
-import { toast } from "@/lib/toast";
+import { errorMessage, toast } from "@/lib/toast";
 
 // ---------------------------------------------------------------------------
 // Chrome
@@ -145,12 +145,21 @@ function ProofStats({ proof, className }: { proof: Proof; className?: string }) 
 }
 
 // Low-chrome action buttons — soft-filled primary, quiet secondary. No borders.
-function PrimaryAction({ onClick, children }: { onClick: () => void; children: ReactNode }) {
+function PrimaryAction({
+  onClick,
+  children,
+  disabled = false,
+}: {
+  onClick: () => void;
+  children: ReactNode;
+  disabled?: boolean;
+}) {
   return (
     <button
       type="button"
       onClick={onClick}
-      className="inline-flex h-7 items-center gap-1.5 rounded-lg bg-amend-success/15 px-2.5 text-xs font-semibold text-amend-success outline-none transition-colors duration-150 ease-linear hover:bg-amend-success/25 active:opacity-75 focus-visible:ring-2 focus-visible:ring-amend-success/40 [&_svg]:size-3.5"
+      disabled={disabled}
+      className="inline-flex h-7 items-center gap-1.5 rounded-lg bg-amend-success/15 px-2.5 text-xs font-semibold text-amend-success outline-none transition-colors duration-150 ease-linear hover:bg-amend-success/25 active:opacity-75 focus-visible:ring-2 focus-visible:ring-amend-success/40 disabled:pointer-events-none disabled:opacity-50 [&_svg]:size-3.5"
     >
       {children}
     </button>
@@ -161,19 +170,22 @@ function QuietAction({
   onClick,
   children,
   danger = false,
+  disabled = false,
   className,
 }: {
   onClick: () => void;
   children: ReactNode;
   danger?: boolean;
+  disabled?: boolean;
   className?: string;
 }) {
   return (
     <button
       type="button"
       onClick={onClick}
+      disabled={disabled}
       className={cn(
-        "inline-flex h-7 items-center gap-1.5 rounded-lg px-2.5 text-xs font-medium outline-none transition-colors duration-150 ease-linear active:opacity-75 focus-visible:ring-2 focus-visible:ring-white/20 [&_svg]:size-3.5",
+        "inline-flex h-7 items-center gap-1.5 rounded-lg px-2.5 text-xs font-medium outline-none transition-colors duration-150 ease-linear active:opacity-75 focus-visible:ring-2 focus-visible:ring-white/20 disabled:pointer-events-none disabled:opacity-50 [&_svg]:size-3.5",
         danger
           ? "text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
           : "text-muted-foreground hover:bg-white/[0.06] hover:text-foreground",
@@ -216,21 +228,46 @@ function RecipientList({ draft }: { draft: DraftProposal }) {
 function DraftRow({ draft }: { draft: DraftProposal }) {
   const [editing, setEditing] = useState(false);
   const [text, setText] = useState(draft.draftText);
+  // In-flight guard: approve fires two mutations (update + approve), so a
+  // double-click would queue duplicate changelog/notify sends. One flag covers
+  // every action button on the row.
+  const [pending, setPending] = useState(false);
   const isNotify = draft.kind === "notify";
+  const approveDraft = useApproveDraft();
+  const rejectDraft = useRejectDraft();
+  const updateDraftText = useUpdateDraftText();
 
-  function approve(value?: string) {
-    if (value !== undefined) updateDraftText(draft.id, value);
-    approveDraft(draft.id);
-    toast.success({
-      title: "Approved",
-      description: isNotify
-        ? "Your message will go to the people who asked."
-        : "It'll be added to your changelog.",
-    });
+  async function approve(value?: string) {
+    if (pending) return;
+    setPending(true);
+    try {
+      // Persist the edit before approving — approve queues the changelog/notify
+      // from the stored draftText, so the update has to commit first.
+      if (value !== undefined) await updateDraftText(draft.id, value);
+      await approveDraft(draft.id);
+      toast.success({
+        title: "Approved",
+        description: isNotify
+          ? "Your message will go to the people who asked."
+          : "It'll be added to your changelog.",
+      });
+    } catch (error) {
+      toast.error(errorMessage(error, "Couldn't approve this draft. Please try again."));
+    } finally {
+      setPending(false);
+    }
   }
-  function reject() {
-    rejectDraft(draft.id);
-    toast.info({ title: "Draft rejected", description: "The agent won't send this one." });
+  async function reject() {
+    if (pending) return;
+    setPending(true);
+    try {
+      await rejectDraft(draft.id);
+      toast.info({ title: "Draft rejected", description: "The agent won't send this one." });
+    } catch (error) {
+      toast.error(errorMessage(error, "Couldn't reject this draft. Please try again."));
+    } finally {
+      setPending(false);
+    }
   }
 
   return (
@@ -262,11 +299,12 @@ function DraftRow({ draft }: { draft: DraftProposal }) {
           <div className="mt-3 flex flex-wrap items-center gap-1">
             {editing ? (
               <>
-                <PrimaryAction onClick={() => approve(text)}>
+                <PrimaryAction disabled={pending} onClick={() => void approve(text)}>
                   <Check />
                   Save &amp; approve
                 </PrimaryAction>
                 <QuietAction
+                  disabled={pending}
                   onClick={() => {
                     setText(draft.draftText);
                     setEditing(false);
@@ -277,15 +315,15 @@ function DraftRow({ draft }: { draft: DraftProposal }) {
               </>
             ) : (
               <>
-                <PrimaryAction onClick={() => approve()}>
+                <PrimaryAction disabled={pending} onClick={() => void approve()}>
                   <Check />
                   Approve
                 </PrimaryAction>
-                <QuietAction onClick={() => setEditing(true)}>
+                <QuietAction disabled={pending} onClick={() => setEditing(true)}>
                   <SquarePen />
                   Edit
                 </QuietAction>
-                <QuietAction danger className="ml-auto" onClick={reject}>
+                <QuietAction danger disabled={pending} className="ml-auto" onClick={() => void reject()}>
                   <X />
                   Reject
                 </QuietAction>
@@ -303,20 +341,40 @@ function DraftRow({ draft }: { draft: DraftProposal }) {
 // ---------------------------------------------------------------------------
 
 function ReadyRow({ ghost, onOpen }: { ghost: Ghost; onOpen: () => void }) {
-  function add() {
-    acceptGhost(ghost.id);
-    toast.success({
-      title: "Added to the roadmap",
-      description: `“${ghost.title}” is now a tracked need.`,
-    });
+  const [pending, setPending] = useState(false);
+  const acceptGhost = useAcceptGhost();
+  const killGhost = useKillGhost();
+  const restoreGhost = useRestoreGhost();
+  async function add() {
+    if (pending) return;
+    setPending(true);
+    try {
+      await acceptGhost(ghost.id);
+      toast.success({
+        title: "Added to the roadmap",
+        description: `“${ghost.title}” is now a tracked need.`,
+      });
+    } catch (error) {
+      toast.error(errorMessage(error, "Couldn't add this to the roadmap. Please try again."));
+    } finally {
+      setPending(false);
+    }
   }
-  function dismiss() {
-    killGhost(ghost.id);
-    toast.success({
-      title: "Dismissed",
-      description: `Amend won't resurface “${ghost.title}”. Manage it in Memory.`,
-      button: { title: "Undo", onClick: () => restoreGhost(ghost.id) },
-    });
+  async function dismiss() {
+    if (pending) return;
+    setPending(true);
+    try {
+      await killGhost(ghost.id);
+      toast.success({
+        title: "Dismissed",
+        description: `Amend won't resurface “${ghost.title}”. Manage it in Memory.`,
+        button: { title: "Undo", onClick: () => void restoreGhost(ghost.id) },
+      });
+    } catch (error) {
+      toast.error(errorMessage(error, "Couldn't dismiss this. Please try again."));
+    } finally {
+      setPending(false);
+    }
   }
   return (
     <div className="transition-colors duration-150 hover:bg-foreground/[0.015]">
@@ -330,11 +388,11 @@ function ReadyRow({ ghost, onOpen }: { ghost: Ghost; onOpen: () => void }) {
           <ProofStats proof={ghost.proof} className="mt-1" />
         </button>
         <div className="flex shrink-0 items-center gap-1">
-          <PrimaryAction onClick={add}>
+          <PrimaryAction disabled={pending} onClick={() => void add()}>
             <Plus />
             <span className="hidden sm:inline">Add</span>
           </PrimaryAction>
-          <QuietAction danger onClick={dismiss}>
+          <QuietAction danger disabled={pending} onClick={() => void dismiss()}>
             <X />
             <span className="hidden sm:inline">Dismiss</span>
           </QuietAction>

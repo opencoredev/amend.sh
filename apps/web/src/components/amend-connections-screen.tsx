@@ -15,6 +15,7 @@
  */
 import { cn } from "@amend/ui/lib/utils";
 import { useMutation, useQuery } from "convex/react";
+import { makeFunctionReference } from "convex/server";
 import { type ReactNode, useMemo, useState } from "react";
 
 import { SectionLabel, SkeletonBar, agentButtonClass } from "@/components/amend-agent-shared";
@@ -40,6 +41,31 @@ import {
   type LucideIcon,
 } from "@/lib/icons";
 import { errorMessage, toast } from "@/lib/toast";
+
+// Lightweight install-context query: returns the GitHub App `installUrl` (with the
+// `/dashboard/setup/github` return baked into its `state`) without paying for the
+// full repository listing. Declared locally — the same pattern the project-setup
+// GitHub hook uses for its own backend handle.
+const githubInstallContextQuery = makeFunctionReference<"query">("amend:getGitHubInstallContext");
+
+interface GitHubInstallContext {
+  configured: boolean;
+  installUrl?: string;
+  missing: string[];
+  workspaceSlug: string;
+}
+
+// Discord bot invite/install link. Sourced from an env var so we can swap in the
+// real application id later; the fallback keeps the button functional in the
+// meantime (generic OAuth2 invite with the manage-channels/send-messages scope).
+const DISCORD_INSTALL_URL: string =
+  import.meta.env.VITE_DISCORD_INSTALL_URL ??
+  "https://discord.com/oauth2/authorize?scope=bot+applications.commands";
+
+/** Open an external install/invite flow in a new tab, hardened against tab-jacking. */
+function openInstallUrl(url: string) {
+  window.open(url, "_blank", "noopener,noreferrer");
+}
 
 type Role = "listening" | "ships" | "delivery";
 
@@ -473,6 +499,9 @@ export function AmendConnectionsScreen({ workspaceId }: { workspaceId: string })
   const isRealWorkspace = workspaceId !== fallbackWorkspace.id;
   const queryArgs = isRealWorkspace ? { workspaceSlug: workspaceId } : {};
   const settings = useQuery(workspaceSettingsQuery, queryArgs) as WorkspaceSettingsData | undefined;
+  const githubInstall = useQuery(githubInstallContextQuery, queryArgs) as
+    | GitHubInstallContext
+    | undefined;
   const upsertIntegration = useMutation(upsertIntegrationConnectionMutation);
 
   const [activeRole, setActiveRole] = useState<Role | "all">("all");
@@ -488,6 +517,56 @@ export function AmendConnectionsScreen({ workspaceId }: { workspaceId: string })
     () => CATALOG.filter((item) => tileStatusFor(item, byProvider) === "connected").length,
     [byProvider],
   );
+
+  // Providers with a real install/OAuth flow also launch their hosted handshake.
+  // GitHub returns to `/dashboard/setup/github` (which records the installation id
+  // via completeGithubInstall); the Discord bot invite doesn't redirect back.
+  // Returns false if it couldn't launch (e.g. the GitHub App isn't configured) so
+  // the caller can skip the optimistic state write rather than fake a connection.
+  function launchInstall(item: Integration): boolean {
+    if (item.provider === "github") {
+      const installUrl = githubInstall?.installUrl;
+      if (!installUrl) {
+        toast.error({
+          title: "GitHub App isn't configured",
+          description: githubInstall
+            ? `Missing ${githubInstall.missing.join(", ") || "app credentials"}.`
+            : "Still loading the install link — try again in a moment.",
+        });
+        return false;
+      }
+      openInstallUrl(installUrl);
+      toast.info({
+        title: "Finish in GitHub",
+        description: "Approve the Amend app, then you'll land back on Connections.",
+      });
+      return true;
+    }
+    if (item.provider === "discord") {
+      openInstallUrl(DISCORD_INSTALL_URL);
+      toast.info({
+        title: "Finish in Discord",
+        description: "Authorize the Amend bot for your server.",
+      });
+      return true;
+    }
+    return true;
+  }
+
+  // For launch providers (github, discord) the connection isn't real until the
+  // hosted install completes, so we only launch the flow and let the
+  // authoritative state arrive from the backend (completeGithubInstall via the
+  // setup callback, surfaced through the workspaceSettings subscription) — no
+  // optimistic "connected" write that would flash a false "Live" if the user
+  // cancels. Non-launch providers still connect optimistically on click.
+  function onConnect(item: Integration) {
+    const isLaunchProvider = item.provider === "github" || item.provider === "discord";
+    if (isLaunchProvider) {
+      launchInstall(item);
+      return;
+    }
+    void applyState(item, "connected");
+  }
 
   async function applyState(item: Integration, nextState: "connected" | "disabled") {
     if (!item.provider) return;
@@ -551,7 +630,7 @@ export function AmendConnectionsScreen({ workspaceId }: { workspaceId: string })
                 description={role.description}
                 byProvider={byProvider}
                 pendingProviders={pendingProviders}
-                onConnect={(item) => void applyState(item, "connected")}
+                onConnect={onConnect}
                 onDisconnect={(item) => void applyState(item, "disabled")}
               />
             ))}

@@ -2,7 +2,6 @@ import type { Id } from "./_generated/dataModel";
 import type { MutationCtx } from "./_generated/server";
 import { DEMO_SLUG, demoConnection } from "./amendDemoData";
 import { ensureDemoBaseRecords } from "./amendSeedBase";
-import { ensureDemoProductRecords } from "./amendSeedContent";
 import {
   ensureChannelPlaceholders,
   ensureWorkspacePlanAndRules,
@@ -95,15 +94,9 @@ export async function ensureGitHubConnection(
 }
 
 export async function ensureDemoDataForWorkspace(ctx: MutationCtx, slug: string) {
+  // Demo PRODUCT seeding is DISABLED for the beta: amend-labs is now the real
+  // workspace and must not be pre-filled with fake needs/drafts/changelog/source
+  // events. Only base config (workspace/plan/members/connection) is ensured here.
   const workspace = await ensureBaseRecords(ctx, slug);
-  const connection = await ctx.db
-    .query("githubConnections")
-    .withIndex("by_workspace", (q) => q.eq("workspaceId", workspace._id))
-    .first();
-  await ensureDemoProductRecords(ctx, {
-    connectionId: connection?._id,
-    projectId: connection?.projectId,
-    workspaceId: workspace._id,
-  });
   return workspace._id;
 }

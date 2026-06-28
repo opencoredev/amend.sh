@@ -68,11 +68,18 @@ export function verifyApiToken(request: Request) {
 }
 
 export async function verifyGitHubSignature(request: Request, rawBody: string) {
+  const secret = process.env.GITHUB_WEBHOOK_SECRET;
+  // Allow unsigned deliveries ONLY as the intentional local-dev affordance:
+  // a local SITE_URL AND no webhook secret configured. In any non-local (prod)
+  // environment a missing secret must reject rather than accept forged unsigned
+  // webhooks, so we never pass allowUnsigned there. When a secret IS set the
+  // helper always requires a valid signature regardless of this flag.
+  const allowUnsigned = isLocalAuthSiteUrl(process.env.SITE_URL) && !secret;
   return await verifyGitHubWebhookSignature(
     rawBody,
     request.headers.get("x-hub-signature-256"),
-    process.env.GITHUB_WEBHOOK_SECRET,
-    { allowUnsigned: isLocalAuthSiteUrl(process.env.SITE_URL) },
+    secret,
+    { allowUnsigned },
   );
 }
 

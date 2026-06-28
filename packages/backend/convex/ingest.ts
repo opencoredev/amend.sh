@@ -1,5 +1,6 @@
 import { httpAction } from "./_generated/server";
 import { api, internal } from "./_generated/api";
+import { DEMO_SLUG } from "./amendDemoData";
 import { verifyApiToken, verifyGitHubSignature } from "./httpRuntimeAuth";
 import { githubSourceEvent, sourceEventFromBody } from "./httpRuntimeSourceEventInputs";
 import { json, readBody } from "./httpRuntimeRouting";
@@ -13,9 +14,12 @@ export const githubWebhook = httpAction(async (ctx, request) => {
   }
 
   const body = readBody(rawBody);
-  const workspaceSlug = optionalString(body.workspaceSlug) ?? "demo";
+  const workspaceSlug = optionalString(body.workspaceSlug) ?? DEMO_SLUG;
   const result = await ctx.runMutation(internal.amend.trustedIngestSourceEvent, {
     workspaceSlug,
+    // HMAC-verified above, so the (owner,repo) on this event can be trusted to
+    // route the delivery to the workspace that connected the repo.
+    verifiedRepoRouting: true,
     ...githubSourceEvent(request, body),
   });
   return json({ ok: true, result }, 202);
@@ -28,7 +32,7 @@ export const discordWebhook = httpAction(async (ctx, request) => {
   }
 
   const body = readBody(await request.text());
-  const workspaceSlug = optionalString(body.workspaceSlug) ?? "demo";
+  const workspaceSlug = optionalString(body.workspaceSlug) ?? DEMO_SLUG;
   const message = record(body.message) ?? body;
   const result = await ctx.runMutation(api.amend.createFeedback, {
     workspaceSlug,
@@ -48,7 +52,7 @@ export const sourceEvent = httpAction(async (ctx, request) => {
   }
 
   const body = readBody(await request.text());
-  const workspaceSlug = optionalString(body.workspaceSlug) ?? "demo";
+  const workspaceSlug = optionalString(body.workspaceSlug) ?? DEMO_SLUG;
   const result = await ctx.runMutation(internal.amend.trustedIngestSourceEvent, {
     workspaceSlug,
     ...sourceEventFromBody(body),

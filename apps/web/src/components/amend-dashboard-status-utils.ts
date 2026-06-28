@@ -80,10 +80,14 @@ export function composerStatusToRoadmapStatus(status: ComposerSubmitPayload["sta
 
 export function normalizeView(value?: string): DashboardView {
   if (value === "members") return "settings";
-  if (value === "share") return "posts";
   // The agent's Board + Drafts folded into the Inbox — keep old deep links alive.
   if (value === "board" || value === "drafts") return "inbox";
-  return viewValues.includes(value as DashboardView) ? (value as DashboardView) : "posts";
+  // 3-view beta: Feedback (incl. its legacy `share` alias)/Roadmap/Changelog are hidden —
+  // send their deep links to the Inbox so direct-URL access can't reach a disabled view.
+  if (value === "share" || value === "posts" || value === "roadmap" || value === "changelog") {
+    return "inbox";
+  }
+  return viewValues.includes(value as DashboardView) ? (value as DashboardView) : "inbox";
 }
 
 export function normalizeBoard(value?: string): BoardId {

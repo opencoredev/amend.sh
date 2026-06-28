@@ -12,6 +12,7 @@ export const workspaceSourceTables = {
     repo: v.string(),
     repositoryUrl: v.string(),
     defaultBranch: v.string(),
+    installationId: v.optional(v.string()),
     installationState: v.union(
       v.literal("demo"),
       v.literal("connected"),
@@ -30,7 +31,8 @@ export const workspaceSourceTables = {
     .index("by_workspace", ["workspaceId"])
     .index("by_project", ["projectId"])
     .index("by_workspace_and_owner_and_repo", ["workspaceId", "owner", "repo"])
-    .index("by_owner_and_repo", ["owner", "repo"]),
+    .index("by_owner_and_repo", ["owner", "repo"])
+    .index("by_installation", ["installationId"]),
 
   sourceEvents: defineTable({
     workspaceId: v.id("workspaces"),
