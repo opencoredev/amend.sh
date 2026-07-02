@@ -82,11 +82,8 @@ export function normalizeView(value?: string): DashboardView {
   if (value === "members") return "settings";
   // The agent's Board + Drafts folded into the Inbox — keep old deep links alive.
   if (value === "board" || value === "drafts") return "inbox";
-  // 3-view beta: Feedback (incl. its legacy `share` alias)/Roadmap/Changelog are hidden —
-  // send their deep links to the Inbox so direct-URL access can't reach a disabled view.
-  if (value === "share" || value === "posts" || value === "roadmap" || value === "changelog") {
-    return "inbox";
-  }
+  // `share` is the legacy alias for the Feedback (posts) view — keep old links alive.
+  if (value === "share") return "posts";
   return viewValues.includes(value as DashboardView) ? (value as DashboardView) : "inbox";
 }
 
@@ -125,6 +122,7 @@ export function viewTitle(view: DashboardView) {
     posts: "Feedback",
     roadmap: "Roadmap",
     changelog: "Changelog",
+    insights: "Insights",
     memory: "Memory",
     connections: "Connections",
     settings: "Settings",

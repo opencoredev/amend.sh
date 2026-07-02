@@ -4,7 +4,6 @@ import { HomeHeader } from "@/components/home/home-header";
 import { HomeHero } from "@/components/home/home-hero";
 import { Footer } from "@/components/home/home-footer";
 import { MobileActionBar } from "@/components/home/home-sections";
-import { WorkflowSection } from "@/components/home/home-workflow-section";
 import { FeaturesSection } from "@/components/home/home-features-section";
 import { ConnectSection } from "@/components/home/home-connect-section";
 import { PricingSection } from "@/components/home/home-pricing-section";
@@ -59,7 +58,6 @@ function HomeComponent() {
       <HomeHeader />
       <MobileActionBar />
       <HomeHero />
-      <WorkflowSection />
       <FeaturesSection />
       <ConnectSection />
       <PricingSection />

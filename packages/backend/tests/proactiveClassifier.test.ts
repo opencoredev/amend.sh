@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 
-import { classifySignal, facetsCompatible } from "../convex/proactiveClassifier";
+import { classifySignal, facetsCompatible } from "../convex/pipeline/proactiveClassifier";
 
 describe("proactive facet guard", () => {
   test("keeps export and import requests split", () => {

@@ -57,7 +57,7 @@ export function EditorToolPanel({
       {panel === "link" ? (
         <div className="grid gap-2 p-3">
           <input
-            className="h-9 rounded-lg bg-[#151518] px-3 text-sm text-foreground ring-1 ring-white/[0.055] placeholder:text-muted-foreground focus:outline-none focus:ring-white/[0.16]"
+            className="h-9 rounded-lg bg-amend-inset px-3 text-sm text-foreground ring-1 ring-white/[0.055] placeholder:text-muted-foreground focus:outline-none focus:ring-white/[0.16]"
             placeholder="https://example.com"
             value={linkUrl}
             onChange={(event) => onLinkUrlChange(event.target.value)}
@@ -66,7 +66,7 @@ export function EditorToolPanel({
             }}
           />
           <input
-            className="h-9 rounded-lg bg-[#151518] px-3 text-sm text-foreground ring-1 ring-white/[0.055] placeholder:text-muted-foreground focus:outline-none focus:ring-white/[0.16]"
+            className="h-9 rounded-lg bg-amend-inset px-3 text-sm text-foreground ring-1 ring-white/[0.055] placeholder:text-muted-foreground focus:outline-none focus:ring-white/[0.16]"
             placeholder="Optional label"
             value={linkText}
             onChange={(event) => onLinkTextChange(event.target.value)}
@@ -79,7 +79,7 @@ export function EditorToolPanel({
       ) : (
         <div className="grid gap-2 p-3">
           <select
-            className="h-9 rounded-lg bg-[#151518] px-3 text-sm text-foreground ring-1 ring-white/[0.055] focus:outline-none focus:ring-white/[0.16]"
+            className="h-9 rounded-lg bg-amend-inset px-3 text-sm text-foreground ring-1 ring-white/[0.055] focus:outline-none focus:ring-white/[0.16]"
             value={codeLanguage}
             onChange={(event) => onCodeLanguageChange(event.target.value)}
           >
@@ -88,7 +88,7 @@ export function EditorToolPanel({
             <option value="sh">Shell</option>
           </select>
           <textarea
-            className="min-h-28 resize-none rounded-lg bg-[#151518] p-3 font-mono text-xs leading-5 text-foreground ring-1 ring-white/[0.055] placeholder:text-muted-foreground focus:outline-none focus:ring-white/[0.16]"
+            className="min-h-28 resize-none rounded-lg bg-amend-inset p-3 font-mono text-xs leading-5 text-foreground ring-1 ring-white/[0.055] placeholder:text-muted-foreground focus:outline-none focus:ring-white/[0.16]"
             placeholder={'const update = "shipped";'}
             value={codeValue}
             onChange={(event) => onCodeValueChange(event.target.value)}

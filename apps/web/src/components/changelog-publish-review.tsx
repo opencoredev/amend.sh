@@ -1,3 +1,4 @@
+import type { Id } from "@amend/backend/convex/_generated/dataModel";
 import { cn } from "@amend/ui/lib/utils";
 import { useRef, useState } from "react";
 import type { ReactNode } from "react";
@@ -32,7 +33,7 @@ const META_DESCRIPTION_MAX = 160;
 /** Values the review surface emits; the workspace merges these with editor content. */
 export type PublishReviewValues = {
   summary: string;
-  coverImageStorageId: string | null;
+  coverImageStorageId: Id<"_storage"> | null;
   metaDescription: string;
   mode: "now" | "schedule";
   scheduledFor?: number;
@@ -122,13 +123,13 @@ export function ChangelogPublishReview({
   workspaceSlug?: string;
   initialSummary: string;
   initialCoverUrl: string | null;
-  initialCoverStorageId: string | null;
+  initialCoverStorageId: Id<"_storage"> | null;
   initialMetaDescription: string;
   onBack: () => void;
   onCommit: (values: PublishReviewValues) => void;
 }) {
   const [summary, setSummary] = useState(initialSummary);
-  const [coverStorageId, setCoverStorageId] = useState<string | null>(initialCoverStorageId);
+  const [coverStorageId, setCoverStorageId] = useState<Id<"_storage"> | null>(initialCoverStorageId);
   const [coverUrl, setCoverUrl] = useState<string | null>(initialCoverUrl);
   const [metaDescription, setMetaDescription] = useState(initialMetaDescription);
   const [scheduleLater, setScheduleLater] = useState(false);

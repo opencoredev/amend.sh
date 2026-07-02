@@ -1,5 +1,7 @@
 import { useMutation } from "convex/react";
+import type { FunctionArgs } from "convex/server";
 
+import { fallbackWorkspace } from "@/components/amend-dashboard-constants";
 import type {
   ChangelogPublishPayload,
   ChangelogSavePayload,
@@ -11,25 +13,69 @@ import {
   upsertRoadmapItemMutation,
   voteRoadmapItemMutation,
 } from "@/components/amend-dashboard-data";
-import type { DashboardMutationScope } from "@/components/amend-dashboard-mutation-types";
+import {
+  roadmapSourceFeedbackKey,
+  sourceFeedbackKey,
+} from "@/components/amend-dashboard-data-mappers";
 import { statusMeta } from "@/components/amend-dashboard-status";
+import {
+  normalizedPriority,
+  persistedRoadmapKey,
+  roadmapStatusToPortalStatus,
+} from "@/components/amend-dashboard-status-utils";
 import type {
+  DashboardMutationScope,
   DashboardRoadmap,
   DashboardView,
   Post,
   RoadmapStatus,
   Workspace,
 } from "@/components/amend-dashboard-types";
-import {
-  fallbackWorkspace,
-  normalizedPriority,
-  persistedRoadmapKey,
-  roadmapSourceFeedbackKey,
-  roadmapStatusToPortalStatus,
-  sourceFeedbackKey,
-} from "@/components/amend-dashboard-utils";
 import { useAmendDashboardComposerSubmit } from "@/components/use-amend-dashboard-composer-submit";
 import { errorMessage, toast } from "@/lib/toast";
+
+// The changelog editor keeps `status` as a plain string; validate + narrow it
+// to the backend's status union at the mutation boundary so garbage never
+// leaves the client. The list is typed against the generated args, so a
+// backend rename breaks this file at compile time.
+type ChangelogEntryStatus = NonNullable<
+  FunctionArgs<typeof upsertChangelogEntryMutation>["status"]
+>;
+// Keyed record so BOTH removals and additions on the backend union break
+// this file at compile time (a bare array only catches removals).
+const changelogEntryStatusMap = {
+  archived: true,
+  draft: true,
+  in_review: true,
+  published: true,
+  scheduled: true,
+} satisfies Record<ChangelogEntryStatus, true>;
+const changelogEntryStatuses = Object.keys(changelogEntryStatusMap) as ChangelogEntryStatus[];
+
+function toChangelogStatus(status: string): ChangelogEntryStatus {
+  const known = changelogEntryStatuses.find((value) => value === status);
+  if (!known) throw new Error(`Unknown changelog status: ${status}`);
+  return known;
+}
+
+// Same boundary narrowing for the editor's category select.
+type ChangelogEntryCategory = NonNullable<
+  FunctionArgs<typeof upsertChangelogEntryMutation>["category"]
+>;
+const changelogEntryCategoryMap = {
+  added: true,
+  changed: true,
+  fixed: true,
+  removed: true,
+  security: true,
+} satisfies Record<ChangelogEntryCategory, true>;
+const changelogEntryCategories = Object.keys(changelogEntryCategoryMap) as ChangelogEntryCategory[];
+
+function toChangelogCategory(category: string): ChangelogEntryCategory {
+  const known = changelogEntryCategories.find((value) => value === category);
+  if (!known) throw new Error(`Unknown changelog category: ${category}`);
+  return known;
+}
 
 export function useAmendDashboardSaveActions({
   activeView,
@@ -176,6 +222,8 @@ export function useAmendDashboardSaveActions({
     }
     await upsertChangelog({
       ...payload,
+      category: toChangelogCategory(payload.category),
+      status: toChangelogStatus(payload.status),
       ...mutationScope,
     });
     toast.success("Changelog updated");
@@ -193,10 +241,12 @@ export function useAmendDashboardSaveActions({
     if (workspace.id === fallbackWorkspace.id) {
       throw new Error("Create a project before editing changelogs.");
     }
-    const saved = (await upsertChangelog({
+    const saved = await upsertChangelog({
       ...payload,
+      category: toChangelogCategory(payload.category),
+      status: toChangelogStatus(payload.status),
       ...mutationScope,
-    })) as { stableKey?: string } | null | undefined;
+    });
     return saved?.stableKey ?? null;
   }
 
@@ -214,7 +264,12 @@ export function useAmendDashboardSaveActions({
     if (!content.stableKey) {
       throw new Error("Save the changelog before publishing.");
     }
-    await upsertChangelog({ ...content, ...mutationScope });
+    await upsertChangelog({
+      ...content,
+      category: toChangelogCategory(content.category),
+      status: toChangelogStatus(content.status),
+      ...mutationScope,
+    });
     await publishChangelog({
       stableKey: content.stableKey,
       mode,

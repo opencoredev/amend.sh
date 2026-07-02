@@ -56,7 +56,7 @@
     "dev:web": "WORKTREE_NAME=${WORKTREE_NAME:-$(basename \"$PWD\")} turbo -F web dev",
     "dev:docs": "WORKTREE_NAME=${WORKTREE_NAME:-$(basename \"$PWD\")} turbo -F fumadocs dev",
     "dev:server": "turbo -F @amend/backend dev",
-    "dev:bot": "turbo -F @amend/discord-gateway dev",
+    "dev:bot": "turbo -F @amend/gateway dev",
     "dev:setup": "bun scripts/setup-agentic-convex.ts",
     "dev:setup:local": "bun scripts/setup-agentic-convex.ts --local",
     "check": "bun run lint && bun run format:check && bun run check-types && bun run repo:hygiene && bun run source:size && bun run test",

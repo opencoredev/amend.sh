@@ -1,12 +1,12 @@
 import type {
+  DashboardMutationScope,
   DashboardRoadmap,
   DashboardView,
   Post,
   RoadmapStatus,
   Workspace,
 } from "@/components/amend-dashboard-types";
-import { sourceFeedbackKey } from "@/components/amend-dashboard-utils";
-import type { DashboardMutationScope } from "@/components/amend-dashboard-mutation-types";
+import { sourceFeedbackKey } from "@/components/amend-dashboard-data-mappers";
 import { useAmendDashboardSaveActions } from "@/components/use-amend-dashboard-save-actions";
 
 export function useAmendDashboardActions({

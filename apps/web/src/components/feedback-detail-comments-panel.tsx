@@ -37,7 +37,7 @@ export function FeedbackDetailCommentsPanel({
 
   return (
     <section className="grid gap-4">
-      <div className="rounded-2xl bg-[#151518] p-4 ring-1 ring-white/[0.055]">
+      <div className="rounded-2xl bg-amend-inset p-4 ring-1 ring-white/[0.055]">
         <textarea
           className="min-h-28 w-full resize-y bg-transparent text-sm leading-6 outline-none placeholder:text-muted-foreground"
           placeholder="Add an internal note or customer reply..."
@@ -63,7 +63,7 @@ export function FeedbackDetailCommentsPanel({
           {notes.map((note, index) => (
             <article
               key={`${note}-${index}`}
-              className="rounded-2xl bg-[#151518] p-4 text-sm leading-6 text-muted-foreground ring-1 ring-white/[0.055]"
+              className="rounded-2xl bg-amend-inset p-4 text-sm leading-6 text-muted-foreground ring-1 ring-white/[0.055]"
             >
               {note}
             </article>

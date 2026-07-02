@@ -5,8 +5,9 @@ import { components, internal } from "./_generated/api";
 import type { Id } from "./_generated/dataModel";
 import { action, internalMutation, mutation, query } from "./_generated/server";
 import type { MutationCtx, QueryCtx } from "./_generated/server";
+import { ensureChannelPlaceholders } from "./workspace/amendWorkspace";
 import { authComponent } from "./auth";
-import { projectSuggestion, slugify, suggestProjectFromWebsite } from "./projectWebsiteSuggestions";
+import { projectSuggestion, slugify, suggestProjectFromWebsite } from "./projectSetup/projectWebsiteSuggestions";
 
 const rateLimiter = new RateLimiter(components.rateLimiter, {
   projectWebsiteLookup: {
@@ -128,6 +129,7 @@ export const create = mutation({
       updatedAt: now,
       visibility: "private",
     });
+    await ensureChannelPlaceholders(ctx, workspaceId);
 
     await ctx.db.insert("workspaceMembers", {
       createdAt: now,

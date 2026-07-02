@@ -17,7 +17,11 @@ import {
   Globe,
   LifeBuoy,
   Loader2,
+  Mail,
+  Slack,
   Sparkles,
+  Telegram,
+  TwitterX,
   type LucideIcon,
 } from "@/lib/icons";
 import type {
@@ -38,7 +42,16 @@ export const channelMeta: Record<SourceChannel, { label: string; Icon: LucideIco
   support: { label: "Support", Icon: LifeBuoy },
   github: { label: "GitHub", Icon: Github },
   embed: { label: "Embed", Icon: Globe },
+  slack: { label: "Slack", Icon: Slack },
+  email: { label: "Email", Icon: Mail },
+  x: { label: "X", Icon: TwitterX },
+  telegram: { label: "Telegram", Icon: Telegram },
 };
+
+/** Narrow a wire-level channel string (e.g. draft recipients) to the known union. */
+export function isSourceChannel(value: string): value is SourceChannel {
+  return value in channelMeta;
+}
 
 export function ChannelGlyph({
   channel,
@@ -173,13 +186,34 @@ const avatarSize = {
   lg: "size-9 text-[0.7rem]",
 } as const;
 
+// Deterministic per-person tint so initials avatars are visually distinct and a
+// given person keeps the same color everywhere they appear.
+const avatarTones = [
+  "bg-rose-500/20 text-rose-200",
+  "bg-amber-500/20 text-amber-200",
+  "bg-emerald-500/20 text-emerald-200",
+  "bg-sky-500/20 text-sky-200",
+  "bg-violet-500/20 text-violet-200",
+  "bg-orange-500/20 text-orange-200",
+  "bg-teal-500/20 text-teal-200",
+];
+
+function avatarToneFor(name: string) {
+  let hash = 0;
+  for (let i = 0; i < name.length; i += 1) hash = (hash * 31 + name.charCodeAt(i)) >>> 0;
+  return avatarTones[hash % avatarTones.length];
+}
+
 export function Avatar({
   name,
+  src,
   size = "md",
   className,
   title,
 }: {
   name: string;
+  /** Real profile picture (Discord/GitHub). Falls back to colored initials. */
+  src?: string;
   size?: keyof typeof avatarSize;
   className?: string;
   title?: string;
@@ -188,12 +222,24 @@ export function Avatar({
     <span
       title={title ?? name}
       className={cn(
-        "inline-flex shrink-0 items-center justify-center rounded-full bg-white/[0.06] font-semibold text-muted-foreground ring-1 ring-white/[0.1] ring-inset select-none",
+        "relative inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full font-semibold ring-1 ring-white/[0.1] ring-inset select-none",
+        avatarToneFor(name),
         avatarSize[size],
         className,
       )}
     >
-      {initialsOf(name)}
+      <span className="absolute inset-0 flex items-center justify-center">{initialsOf(name)}</span>
+      {src ? (
+        <img
+          src={src}
+          alt={name}
+          loading="lazy"
+          className="absolute inset-0 size-full rounded-full object-cover"
+          onError={(event) => {
+            event.currentTarget.style.display = "none";
+          }}
+        />
+      ) : null}
     </span>
   );
 }
@@ -216,13 +262,13 @@ export function AvatarStack({
           key={`${name}-${i}`}
           name={name}
           size={size}
-          className={cn("ring-2 ring-[#151518]", i > 0 && "-ml-2")}
+          className={cn("ring-2 ring-amend-inset", i > 0 && "-ml-2")}
         />
       ))}
       {extra > 0 ? (
         <span
           className={cn(
-            "-ml-2 inline-flex items-center justify-center rounded-full bg-white/[0.05] font-mono font-medium text-muted-foreground ring-2 ring-[#151518]",
+            "-ml-2 inline-flex items-center justify-center rounded-full bg-white/[0.05] font-mono font-medium text-muted-foreground ring-2 ring-amend-inset",
             avatarSize[size],
           )}
         >
@@ -397,7 +443,7 @@ export function EmptyState({
 }) {
   return (
     <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-white/[0.09] bg-white/[0.012] px-6 py-14 text-center">
-      <span className="mb-3 inline-flex size-11 items-center justify-center rounded-xl bg-amend-warm/[0.08] text-amend-warm/85 ring-1 ring-amend-warm/20 ring-inset">
+      <span className="mb-3 inline-flex size-11 items-center justify-center rounded-xl bg-white/[0.04] text-muted-foreground ring-1 ring-white/[0.07] ring-inset">
         <Icon className="size-5" />
       </span>
       <p className="text-sm font-semibold text-foreground">{title}</p>

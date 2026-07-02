@@ -10,23 +10,23 @@ import {
 export async function runSmokeProductLoopChecks() {
   await check("shipped GitHub work closes linked feedback loop", async () => {
     const sourceIngest = [
-      await read("packages/backend/convex/amendSourceIngest.ts"),
-      await read("packages/backend/convex/amendSourceIngestRelations.ts"),
-      await read("packages/backend/convex/amendSourceIngestShipped.ts"),
-      await read("packages/backend/convex/amendSourceNotifications.ts"),
+      await read("packages/backend/convex/ingest/amendSourceIngest.ts"),
+      await read("packages/backend/convex/ingest/amendSourceIngestRelations.ts"),
+      await read("packages/backend/convex/ingest/amendSourceIngestShipped.ts"),
+      await read("packages/backend/convex/ingest/amendSourceNotifications.ts"),
     ].join("\n");
     assertIncludes(sourceIngest, "update_feedback_status", "GitHub ingestion");
     assertIncludes(sourceIngest, "update_roadmap_status", "GitHub ingestion");
     assertIncludes(sourceIngest, "Requested work shipped", "GitHub ingestion");
-    assertIncludes(sourceIngest, 'status: "shipped"', "GitHub ingestion");
+    assertIncludes(sourceIngest, '? "shipped"', "GitHub ingestion (automation-gated)");
     assertIncludes(sourceIngest, "relatedFeedbackIds", "GitHub ingestion");
   });
 
   await check("feedback interactions are durable records", async () => {
     const schemaIdentityTables = await read(
-      "packages/backend/convex/schemaProductIdentityTables.ts",
+      "packages/backend/convex/schema/schemaProductIdentityTables.ts",
     );
-    const validators = await read("packages/backend/convex/amendValidators.ts");
+    const validators = await read("packages/backend/convex/lib/amendValidators.ts");
     const sdk = await readSdkSource();
     const embed = await readSdkEmbedSource();
     assertIncludes(schemaIdentityTables, "feedbackInteractions", "schema");
@@ -38,23 +38,23 @@ export async function runSmokeProductLoopChecks() {
   });
 
   await check("event-lite analytics expose identify and account identify", async () => {
-    const backendAnalytics = await read("packages/backend/convex/amendAnalytics.ts");
-    const backendAnalyticsEvents = await read("packages/backend/convex/amendAnalyticsEvents.ts");
+    const backendAnalytics = await read("packages/backend/convex/dashboard/amendAnalytics.ts");
+    const backendAnalyticsEvents = await read("packages/backend/convex/dashboard/amendAnalyticsEvents.ts");
     const backendIdentity = await read(
-      "packages/backend/convex/amendFeedbackIdentityMutationHandlers.ts",
+      "packages/backend/convex/content/amendFeedbackIdentityMutationHandlers.ts",
     );
     const backendConfig = await read("packages/backend/convex/convex.config.ts");
-    const sourceIngest = await read("packages/backend/convex/amendSourceIngest.ts");
-    const agentPersistence = await read("packages/backend/convex/amendAgentRunPersistence.ts");
-    const dashboardOverview = await read("packages/backend/convex/amendDashboardOverview.ts");
+    const sourceIngest = await read("packages/backend/convex/ingest/amendSourceIngest.ts");
+    const agentPersistence = await read("packages/backend/convex/agent/amendAgentRunPersistence.ts");
+    const dashboardOverview = await read("packages/backend/convex/dashboard/amendDashboardOverview.ts");
     const webPostHog = await read("apps/web/src/lib/posthog.ts");
     const rootRoute = await read("apps/web/src/routes/__root.tsx");
     const openApi = await read("packages/api-spec/openapi.yaml");
     const openApiTypes = await read("packages/sdk/src/openapi-types.ts");
     const proactivationAnalytics = await read(
-      "apps/web/src/components/proactivation-analytics-panel.tsx",
+      "apps/web/src/components/amend-insights-screen.tsx",
     );
-    const validators = await read("packages/backend/convex/amendValidators.ts");
+    const validators = await read("packages/backend/convex/lib/amendValidators.ts");
     const sdk = await readSdkSource();
     const docs = await readIntegrationDocs();
     const readme = await read("README.md");
@@ -85,7 +85,7 @@ export async function runSmokeProductLoopChecks() {
     assertIncludes(webPostHog, "posthog.init", "browser PostHog setup");
     assertIncludes(webPostHog, "capturePostHogEvent", "browser semantic PostHog events");
     assertIncludes(rootRoute, "capturePostHogPageview", "browser PostHog pageviews");
-    assertIncludes(proactivationAnalytics, "Event capture", "analytics panel");
+    assertIncludes(proactivationAnalytics, "Captured signal", "insights analytics view");
     assertIncludes(validators, 'v.literal("identify")', "event schema");
     assertIncludes(validators, 'v.literal("account_identify")', "event schema");
     assertIncludes(validators, 'v.literal("user_signed_up")', "event schema");
@@ -100,11 +100,11 @@ export async function runSmokeProductLoopChecks() {
 
   await check("notification preferences support digest and unsubscribe flows", async () => {
     const sdk = await readSdkSource();
-    const functionArgs = await read("packages/backend/convex/amendNotificationFunctionArgs.ts");
+    const functionArgs = await read("packages/backend/convex/delivery/amendNotificationFunctionArgs.ts");
     const schemaNotificationTables = await read(
-      "packages/backend/convex/schemaProductNotificationTables.ts",
+      "packages/backend/convex/schema/schemaProductNotificationTables.ts",
     );
-    const httpRuntime = await read("packages/backend/convex/httpRuntimeAuth.ts");
+    const httpRuntime = await read("packages/backend/convex/lib/httpRuntimeAuth.ts");
     const docs = await readIntegrationDocs();
     assertIncludes(sdk, "setNotificationPreference", "SDK preferences");
     assertIncludes(sdk, "unsubscribe", "SDK preferences");

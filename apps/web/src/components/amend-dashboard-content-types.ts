@@ -1,3 +1,4 @@
+import type { Id } from "@amend/backend/convex/_generated/dataModel";
 import type {
   Board,
   ChangelogStatusFilter,
@@ -17,7 +18,7 @@ import type {
 export type ChangelogSavePayload = {
   body: string;
   category: string;
-  coverImageStorageId?: string | null;
+  coverImageStorageId?: Id<"_storage"> | null;
   metaDescription?: string;
   stableKey?: string;
   status: string;

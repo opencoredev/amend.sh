@@ -1,15 +1,20 @@
 import { internal } from "./_generated/api";
 import { mutation, query } from "./_generated/server";
 
-import { connectGithubArgs, proactiveWorkspaceArgs } from "./proactiveArgs";
-import { okResult, proactiveSourcesStatus } from "./proactiveValidators";
-import { ensureGitHubConnection } from "./amendSeed";
-import { requireProactiveWorkspace } from "./proactiveShared";
+import { connectGithubArgs, proactiveWorkspaceArgs } from "./pipeline/proactiveArgs";
+import { okResult, proactiveSourcesStatus, type ProactiveSourceChannel } from "./pipeline/proactiveValidators";
+import { ensureGitHubConnection } from "./demo/amendSeed";
+import { requireProactiveWorkspace } from "./pipeline/proactiveShared";
 
 // The four feedback channels the contract surfaces. They map 1:1 onto
 // `sourceEvents.provider` values, so a channel is "connected" once we've seen a
 // signal on it. GitHub is the only one with a real connection record today.
-const FEEDBACK_CHANNELS = ["discord", "support", "github", "embed"] as const;
+const FEEDBACK_CHANNELS: readonly ProactiveSourceChannel[] = [
+  "discord",
+  "support",
+  "github",
+  "embed",
+];
 
 export const status = query({
   args: proactiveWorkspaceArgs,

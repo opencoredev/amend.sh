@@ -3,11 +3,11 @@ import type { Id } from "./_generated/dataModel";
 import type { MutationCtx, QueryCtx } from "./_generated/server";
 import { v } from "convex/values";
 
-import { proactiveWorkspaceArgs } from "./proactiveArgs";
-import { proactiveDigestPreview } from "./proactiveValidators";
-import { ghostSortValue, needToGhost, requireProactiveWorkspace } from "./proactiveShared";
-import { workspaceSlug } from "./amendBackendUtils";
-import { ensureBaseRecords } from "./amendSeed";
+import { proactiveWorkspaceArgs } from "./pipeline/proactiveArgs";
+import { proactiveDigestPreview } from "./pipeline/proactiveValidators";
+import { ghostSortValue, needToGhost, requireProactiveWorkspace } from "./pipeline/proactiveShared";
+import { workspaceSlug } from "./lib/amendBackendUtils";
+import { ensureBaseRecords } from "./demo/amendSeed";
 
 function oneWeekWindow(now: number) {
   return { from: now - 1000 * 60 * 60 * 24 * 7, to: now };

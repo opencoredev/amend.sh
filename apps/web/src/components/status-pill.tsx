@@ -1,7 +1,7 @@
 import { cn } from "@amend/ui/lib/utils";
 
 import type { RoadmapStatus } from "@/components/amend-dashboard-types";
-import { statusTitle } from "@/components/amend-dashboard-utils";
+import { statusTitle } from "@/components/amend-dashboard-status-utils";
 
 const STATUS_STYLE: Record<RoadmapStatus, { dot: string; pill: string }> = {
   backlog: { dot: "bg-amber-400", pill: "bg-amber-400/10 text-amber-300 ring-amber-400/25" },

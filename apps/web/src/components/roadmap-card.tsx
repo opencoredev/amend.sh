@@ -5,13 +5,11 @@ import type { KeyboardEvent as ReactKeyboardEvent } from "react";
 import { GripVertical, Link2, Megaphone, MessageSquare } from "@/lib/icons";
 
 import type { DashboardRoadmap, RoadmapStatus } from "@/components/amend-dashboard-types";
-import {
-  roadmapStatusToRoadmapStatus,
-  sourceFeedbackKey,
-} from "@/components/amend-dashboard-utils";
+import { sourceFeedbackKey } from "@/components/amend-dashboard-data-mappers";
+import { roadmapStatusToRoadmapStatus } from "@/components/amend-dashboard-status-utils";
 import { VoteButton } from "@/components/vote-button";
 
-// Sits a clear step above the workspace surface (#151518) so cards read as
+// Sits a clear step above the workspace surface (bg-amend-inset) so cards read as
 // distinct objects now that the columns are background-less lanes.
 const CARD_CHROME =
   "rounded-xl bg-[#1f1f24] px-3 py-2.5 shadow-[inset_0_1px_0_rgb(255_255_255/0.05)] ring-1 ring-white/[0.07]";

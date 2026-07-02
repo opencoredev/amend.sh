@@ -4,6 +4,10 @@
   "description": "",
   "license": "ISC",
   "author": "",
+  "type": "module",
+  "exports": {
+    "./convex/_generated/*": "./convex/_generated/*.js"
+  },
   "scripts": {
     "dev": "convex dev",
     "dev:setup": "bun ../../scripts/setup-agentic-convex.ts",

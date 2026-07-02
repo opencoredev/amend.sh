@@ -16,12 +16,20 @@ import {
   ShaChip,
   SkeletonBar,
   channelMeta,
+  isSourceChannel,
 } from "@/components/amend-agent-shared";
 import { DashboardWorkspaceSurface } from "@/components/dashboard-workspace-surface";
 import { ToolbarBar, ToolbarGroup, ToolbarPill } from "@/components/dashboard-toolbar";
 import { PageHeader } from "@/components/amend-agent-chrome";
 import { AmendNeedDetailScreen } from "@/components/amend-need-detail-screen";
-import type { DigestResolved, DraftProposal, Ghost, Need, Proof } from "@/lib/amend-contract";
+import type {
+  DigestResolved,
+  DraftProposal,
+  Ghost,
+  Need,
+  Proof,
+  ProofStrength,
+} from "@/lib/amend-contract";
 import {
   useAcceptGhost,
   useAcceptedNeeds,
@@ -33,7 +41,7 @@ import {
   useRejectDraft,
   useRestoreGhost,
   useUpdateDraftText,
-} from "@/lib/mock-amend";
+} from "@/lib/amend-data";
 import {
   Check,
   ChevronRight,
@@ -108,7 +116,12 @@ function StatusChip({
   );
 }
 
-function ReadyChip() {
+function SignalChip({ strength }: { strength: ProofStrength }) {
+  // "Ready" (strong, multi-mention) gets the live pulse; weaker single-mention
+  // signal reads "Gathering" so the chip never overstates a thin ghost.
+  if (strength !== "strong") {
+    return <StatusChip tone="muted">Gathering</StatusChip>;
+  }
   return (
     <StatusChip tone="success">
       <span className="relative flex size-1.5">
@@ -210,17 +223,23 @@ function RecipientList({ draft }: { draft: DraftProposal }) {
       <span className="text-[0.7rem] text-muted-foreground">
         Reaches {draft.recipients.length} {draft.recipients.length === 1 ? "person" : "people"}:
       </span>
-      {draft.recipients.map((r) => (
-        <span
-          key={`${r.handle}-${r.channel}`}
-          className="inline-flex items-center gap-1.5 rounded-full bg-white/[0.03] py-0.5 pl-1 pr-2 ring-1 ring-white/[0.06] ring-inset"
-          title={`${r.handle} · ${channelMeta[r.channel].label}`}
-        >
-          <Avatar name={r.handle} size="sm" />
-          <span className="text-[0.7rem] text-foreground/80">{r.handle}</span>
-          <ChannelGlyph channel={r.channel} className="size-3 text-muted-foreground/70" />
-        </span>
-      ))}
+      {draft.recipients.map((r) => {
+        // Recipient channels arrive as plain strings; only known channels get a glyph.
+        const channel = isSourceChannel(r.channel) ? r.channel : null;
+        return (
+          <span
+            key={`${r.handle}-${r.channel}`}
+            className="inline-flex items-center gap-1.5 rounded-full bg-white/[0.03] py-0.5 pl-1 pr-2 ring-1 ring-white/[0.06] ring-inset"
+            title={channel ? `${r.handle} · ${channelMeta[channel].label}` : r.handle}
+          >
+            <Avatar name={r.handle} size="sm" />
+            <span className="text-[0.7rem] text-foreground/80">{r.handle}</span>
+            {channel ? (
+              <ChannelGlyph channel={channel} className="size-3 text-muted-foreground/70" />
+            ) : null}
+          </span>
+        );
+      })}
     </div>
   );
 }
@@ -288,7 +307,7 @@ function DraftRow({ draft }: { draft: DraftProposal }) {
               onChange={(e) => setText(e.target.value)}
               rows={5}
               autoFocus
-              className="mt-2.5 w-full resize-y rounded-xl bg-[#151518] p-3 text-[0.84rem] leading-relaxed text-foreground ring-1 ring-white/[0.09] ring-inset outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring/40"
+              className="mt-2.5 w-full resize-y rounded-xl bg-amend-inset p-3 text-[0.84rem] leading-relaxed text-foreground ring-1 ring-white/[0.09] ring-inset outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring/40"
             />
           ) : (
             <p className="mt-1.5 whitespace-pre-wrap text-[0.84rem] leading-relaxed text-foreground/80">
@@ -383,7 +402,7 @@ function ReadyRow({ ghost, onOpen }: { ghost: Ghost; onOpen: () => void }) {
         <button type="button" onClick={onOpen} className="min-w-0 text-left">
           <div className="flex min-w-0 items-center gap-2">
             <span className="truncate text-sm font-semibold text-foreground">{ghost.title}</span>
-            <ReadyChip />
+            <SignalChip strength={ghost.proof.strength} />
           </div>
           <ProofStats proof={ghost.proof} className="mt-1" />
         </button>
@@ -483,10 +502,16 @@ export function AmendInboxScreen() {
     draftsQuery.isError || ghostsQuery.isError || acceptedQuery.isError || digestQuery.isError;
 
   const drafts = draftsQuery.data ?? [];
-  const ready = (ghostsQuery.data ?? []).filter((g) => g.proof.strength === "strong");
+  // Surface every captured ghost for review — not just "strong" multi-mention
+  // ones. A single Discord/GitHub mention creates a "thin" ghost; hiding those
+  // made real captured signal invisible ("all caught up" despite needs existing).
+  // Strong ones sort to the top so the best-supported demand still leads.
+  const ghosts = [...(ghostsQuery.data ?? [])].sort(
+    (a, b) => (b.proof.strength === "strong" ? 1 : 0) - (a.proof.strength === "strong" ? 1 : 0),
+  );
   const inProgress = (acceptedQuery.data ?? []).filter((n) => !n.linkedShip);
   const resolved = digestQuery.data?.resolved ?? [];
-  const reviewCount = drafts.length + ready.length;
+  const reviewCount = drafts.length + ghosts.length;
   const isEmpty = reviewCount === 0 && inProgress.length === 0 && resolved.length === 0;
   const hasContent = !isLoading && !isError && !isEmpty;
 
@@ -552,7 +577,7 @@ export function AmendInboxScreen() {
                   {drafts.map((draft) => (
                     <DraftRow key={draft.id} draft={draft} />
                   ))}
-                  {ready.map((ghost) => (
+                  {ghosts.map((ghost) => (
                     <ReadyRow
                       key={ghost.id}
                       ghost={ghost}

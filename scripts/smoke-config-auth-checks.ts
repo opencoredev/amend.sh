@@ -22,7 +22,7 @@ export async function runSmokeConfigAuthChecks() {
       "web dev should be worktree-scoped portless",
     );
     assert(
-      docsPackage.scripts?.dev === "portless docs.${WORKTREE_NAME:-amend} next dev",
+      docsPackage.scripts?.dev === "portless docs.${WORKTREE_NAME:-amend} vite dev",
       "docs dev should be worktree-scoped portless",
     );
     return "bun dev -> worktree-scoped portless web + docs";
@@ -39,17 +39,12 @@ export async function runSmokeConfigAuthChecks() {
     ].join("\n");
     const landing = [
       await read("apps/web/src/routes/index.tsx"),
-      await read("apps/web/src/components/home/home-product-sections.tsx"),
+      await read("apps/web/src/components/home/home-footer.tsx"),
       await read("apps/web/src/components/home/home-pricing-section.tsx"),
-      await read("apps/web/src/components/home/home-workflow-section.tsx"),
+      await read("apps/web/src/components/home/home-connect-section.tsx"),
     ].join("\n");
     const dashboard = await read("apps/web/src/components/amend-dashboard.tsx");
-    const proactivationInspector = [
-      await read("apps/web/src/components/proactivation-inspector.tsx"),
-      await read("apps/web/src/components/proactivation-inspector-block.tsx"),
-      await read("apps/web/src/components/proactivation-inspector-control-panels.tsx"),
-      await read("apps/web/src/components/proactivation-inspector-evidence-panels.tsx"),
-    ].join("\n");
+    const dashboardSidebar = await read("apps/web/src/components/dashboard-sidebar-chrome.tsx");
 
     assertIncludes(webEnvExample, "VITE_DOCS_URL=http://docs.amend.localhost:1355/docs", "web env");
     assertIncludes(productionEnvExample, "VITE_DOCS_URL=https://amend.sh/docs", "production env");
@@ -64,7 +59,7 @@ export async function runSmokeConfigAuthChecks() {
     );
     assertIncludes(landing, 'docsUrl("source-trace")', "landing docs links");
     assertIncludes(landing, 'docsUrl("self-hosting")', "landing docs links");
-    assertIncludes(proactivationInspector, "Launch gate", "dashboard docs link");
+    assertIncludes(dashboardSidebar, 'label="Documentation"', "dashboard docs link");
     assert(!landing.includes('href="/docs"'), "landing should not hardcode /docs");
     assert(
       !dashboard.includes("docs/launch-runbook.md"),

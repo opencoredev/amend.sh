@@ -1,17 +1,15 @@
 import { useAction } from "convex/react";
-import { makeFunctionReference } from "convex/server";
 import { useRef, useState } from "react";
 
+import { suggestFromWebsiteAction } from "@/components/amend-dashboard-data";
 import type {
   ProjectMenuItem,
   ProjectSuggestion,
   WebsiteLookupStatus,
 } from "@/components/amend-dashboard-types";
-import { fallbackProjectNameFromUrl, slugPart } from "@/components/amend-dashboard-utils";
+import { fallbackProjectNameFromUrl, slugPart } from "@/components/amend-dashboard-format";
 import { useProjectSetupWebsiteSuggestion } from "@/components/use-project-setup-draft-effects";
 import type { ProjectConnectionMode } from "@/components/use-project-setup-github";
-
-const suggestFromWebsite = makeFunctionReference<"action">("projects:suggestFromWebsite");
 
 export function useProjectSetupDraftState({
   existingProject,
@@ -20,7 +18,7 @@ export function useProjectSetupDraftState({
   existingProject?: ProjectMenuItem;
   surface: "dashboard" | "first-run";
 }) {
-  const suggestProject = useAction(suggestFromWebsite);
+  const suggestProject = useAction(suggestFromWebsiteAction);
   const [websiteUrl, setWebsiteUrl] = useState("");
   const [projectName, setProjectName] = useState("");
   const [projectSlug, setProjectSlug] = useState("");

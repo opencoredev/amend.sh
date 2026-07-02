@@ -5,7 +5,7 @@ import type {
   ProjectSuggestion,
   WebsiteLookupStatus,
 } from "@/components/amend-dashboard-types";
-import { isCompleteDomainInput } from "@/components/amend-dashboard-utils";
+import { isCompleteDomainInput } from "@/components/amend-dashboard-format";
 import type { ProjectConnectionMode } from "@/components/use-project-setup-github";
 
 type EditedRef = { current: boolean };

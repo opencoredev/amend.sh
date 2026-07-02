@@ -19,7 +19,8 @@ export type PostHogEventName =
   | "sign_up_submitted"
   | "user_signed_in"
   | "user_signed_out"
-  | "user_signed_up";
+  | "user_signed_up"
+  | "waitlist_joined";
 
 type PostHogEventProperties = Record<string, boolean | number | string | null | undefined>;
 
@@ -39,6 +40,7 @@ const postHogEventNames: Record<PostHogEventName, string> = {
   user_signed_in: "user signed in",
   user_signed_out: "user signed out",
   user_signed_up: "user signed up",
+  waitlist_joined: "waitlist joined",
 };
 
 function loadPostHog() {

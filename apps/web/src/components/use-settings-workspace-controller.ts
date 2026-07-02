@@ -1,30 +1,22 @@
-import { useAction, useMutation, useQuery } from "convex/react";
-import { makeFunctionReference } from "convex/server";
+import { useAction, useMutation } from "convex/react";
+
+import { useAuthedQuery } from "@/lib/convex-utils";
 import { useRef } from "react";
 
-import type {
-  ProjectMenuItem,
-  Workspace,
-  WorkspaceSettingsData,
-} from "@/components/amend-dashboard-types";
-import { fallbackWorkspace } from "@/components/amend-dashboard-utils";
+import {
+  generateProjectLogoUploadUrlMutation,
+  suggestFromWebsiteAction,
+  updateAutomationRulesMutation,
+  updatePortalSettingsMutation,
+  updateProjectMutation,
+  workspaceSettingsQuery,
+} from "@/components/amend-dashboard-data";
+import type { ProjectMenuItem, Workspace } from "@/components/amend-dashboard-types";
+import { fallbackWorkspace } from "@/components/amend-dashboard-constants";
 import { useSettingsWorkspaceFormState } from "@/components/settings-workspace-controller-state";
 import { useSettingsWorkspaceSaveActions } from "@/components/use-settings-workspace-save-actions";
 import { settingsServiceRows } from "@/components/settings-workspace-service-rows";
 import { combineAutoSaveStatus, useSettingsAutoSave } from "@/components/use-settings-autosave";
-
-const suggestFromWebsite = makeFunctionReference<"action">("projects:suggestFromWebsite");
-const workspaceSettingsQuery = makeFunctionReference<"query">("amend:getWorkspaceSettings");
-const updateProjectMutation = makeFunctionReference<"mutation">("amend:updateProject");
-const generateProjectLogoUploadUrlMutation = makeFunctionReference<"mutation">(
-  "amend:generateProjectLogoUploadUrl",
-);
-const updatePortalSettingsMutation = makeFunctionReference<"mutation">(
-  "amend:updatePortalSettings",
-);
-const updateAutomationRulesMutation = makeFunctionReference<"mutation">(
-  "amend:updateAutomationRules",
-);
 
 export function useSettingsWorkspaceController({
   activeProject,
@@ -34,8 +26,8 @@ export function useSettingsWorkspaceController({
   workspace: Workspace;
 }) {
   const queryArgs = workspace.id === fallbackWorkspace.id ? {} : { workspaceSlug: workspace.id };
-  const settings = useQuery(workspaceSettingsQuery, queryArgs) as WorkspaceSettingsData | undefined;
-  const suggestProject = useAction(suggestFromWebsite);
+  const settings = useAuthedQuery(workspaceSettingsQuery, queryArgs);
+  const suggestProject = useAction(suggestFromWebsiteAction);
   const updateProject = useMutation(updateProjectMutation);
   const generateLogoUploadUrl = useMutation(generateProjectLogoUploadUrlMutation);
   const updatePortal = useMutation(updatePortalSettingsMutation);

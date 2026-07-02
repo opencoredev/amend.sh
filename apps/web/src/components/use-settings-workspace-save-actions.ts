@@ -1,19 +1,30 @@
+import type { FunctionArgs } from "convex/server";
 import type { RefObject } from "react";
 
+import type {
+  updateAutomationRulesMutation,
+  updatePortalSettingsMutation,
+  updateProjectMutation,
+} from "@/components/amend-dashboard-data";
 import type { ProjectMenuItem, Workspace } from "@/components/amend-dashboard-types";
 import type { SettingsWorkspaceFormState } from "@/components/settings-workspace-controller-state";
 import type { AutomationRulesDraft } from "@/components/settings-workspace-panel-types";
 import { useSettingsWorkspaceLogoActions } from "@/components/use-settings-workspace-logo-actions";
 
+// Args derive from the generated mutation references, so the payloads built
+// below compile against the real backend validators — a backend field rename
+// breaks this file instead of failing at runtime.
 type SettingsWorkspaceSaveActionsOptions = {
   activeProject: ProjectMenuItem;
   formState: SettingsWorkspaceFormState;
   generateLogoUploadUrl: (args: { projectKey: string; workspaceSlug: string }) => Promise<unknown>;
   logoFileInputRef: RefObject<HTMLInputElement | null>;
   suggestProject: (args: { websiteUrl: string }) => Promise<unknown>;
-  updateAutomationRules: (args: Record<string, unknown>) => Promise<unknown>;
-  updatePortal: (args: Record<string, unknown>) => Promise<unknown>;
-  updateProject: (args: Record<string, unknown>) => Promise<unknown>;
+  updateAutomationRules: (
+    args: FunctionArgs<typeof updateAutomationRulesMutation>,
+  ) => Promise<unknown>;
+  updatePortal: (args: FunctionArgs<typeof updatePortalSettingsMutation>) => Promise<unknown>;
+  updateProject: (args: FunctionArgs<typeof updateProjectMutation>) => Promise<unknown>;
   workspace: Workspace;
 };
 
@@ -34,7 +45,7 @@ export function useSettingsWorkspaceSaveActions({
   updateProject,
   workspace,
 }: SettingsWorkspaceSaveActionsOptions) {
-  const saveProject = (overrides: Record<string, unknown> = {}) =>
+  const saveProject = (overrides: Partial<FunctionArgs<typeof updateProjectMutation>> = {}) =>
     updateProject({
       description: formState.description,
       logoUrl: formState.logoUrl,

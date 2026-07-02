@@ -156,7 +156,7 @@ export function PortalSettingsPanel({
             placeholder={
               ":root {\n  --background: oklch(...);\n  --primary: oklch(...);\n}\n.dark {\n  --background: oklch(...);\n}"
             }
-            className="min-h-40 w-full resize-y rounded-lg border-transparent bg-[#151518] px-3 py-2.5 font-mono text-xs leading-5 text-foreground ring-1 ring-white/[0.055] outline-none transition-[box-shadow] duration-150 ease-linear placeholder:text-muted-foreground/50 focus-visible:ring-white/[0.18]"
+            className="min-h-40 w-full resize-y rounded-lg border-transparent bg-amend-inset px-3 py-2.5 font-mono text-xs leading-5 text-foreground ring-1 ring-white/[0.055] outline-none transition-[box-shadow] duration-150 ease-linear placeholder:text-muted-foreground/50 focus-visible:ring-white/[0.18]"
           />
           <p className="mt-1.5 text-xs text-muted-foreground">
             {customThemeCss.trim() ? (

@@ -1,0 +1,11 @@
+<svg fill="none" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <title>Amend A-splice favicon</title>
+  <rect width="64" height="64" fill="#0d0c0a" />
+  <path
+    clip-rule="evenodd"
+    d="M9 57 27.2 10h9.6L55 57H44.1l-3.5-9.4H23.4L19.9 57H9Zm19.7-20.4h6.6L32 26.3l-3.3 10.3Z"
+    fill="#f7f4ef"
+    fill-rule="evenodd"
+  />
+  <path d="M21.9 40.1h22.3L40.9 48H18.7l3.2-7.9Z" fill="#e19b40" />
+</svg>

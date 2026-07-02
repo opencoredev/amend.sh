@@ -27,9 +27,9 @@ const markVariantClasses: Record<BrandMarkVariant, string> = {
   mono: "text-foreground",
 };
 
-// The closing dot completes the loop. Warm signal on the solid mark, otherwise
-// it stays monochrome so the logo reads cleanly on any surface.
-const dotFillClasses: Record<BrandMarkVariant, string> = {
+// Solid uses the hero-orange splice. Muted variants collapse to one color so
+// the mark still works in dense chrome and disabled/muted UI contexts.
+const spliceFillClasses: Record<BrandMarkVariant, string> = {
   solid: "fill-amend-warm",
   soft: "fill-current",
   ghost: "fill-current",
@@ -66,15 +66,16 @@ export function BrandMark({
       {...props}
     >
       {decorative ? null : <title id={titleId}>{title}</title>}
-      {/* The loop: a ring left open, about to close. */}
       <path
-        d="M50.5 39.5A20 20 0 1 1 50.5 24.5"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeWidth="6"
+        clipRule="evenodd"
+        d="M8 56 26.6 8h10.8L56 56H44.15l-3.6-9.7h-17.1l-3.6 9.7H8Zm20.35-20.2h7.3L32 24.6l-3.65 11.2Z"
+        className="fill-current"
+        fillRule="evenodd"
       />
-      {/* The signal returning to its origin, closing the loop. */}
-      <circle cx="52" cy="32" r="4.4" className={dotFillClasses[variant]} />
+      <path
+        d="M21.6 39.2h23.8L41.9 48H18.1l3.5-8.8Z"
+        className={spliceFillClasses[variant]}
+      />
     </svg>
   );
 }

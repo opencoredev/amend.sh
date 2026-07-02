@@ -9,11 +9,51 @@ describe("proactive ingest security guards", () => {
     const source = readFileSync(join(root, "ingest.ts"), "utf8");
 
     expect(source).toContain("verifyGitHubSignature(request, rawBody)");
-    expect(source.match(/verifyApiToken\(request\)/g)?.length).toBe(2);
+    expect(source.match(/verifyApiToken\(request\)/g)?.length).toBe(1);
+  });
+
+  test("signal-bus ingest endpoint requires the owner token and rejects unrouted signals", () => {
+    const source = readFileSync(join(root, "signalIngest.ts"), "utf8");
+
+    expect(source.match(/verifyApiToken\(request\)/g)?.length).toBe(1);
+    // Unrouted signals 404 instead of defaulting into a single workspace, and
+    // the route lookup happens before the (paid) LLM triage call.
+    expect(source).toContain("404");
+    expect(source).toContain("resolveRouteForIngest");
+    expect(source.indexOf("resolveRouteForIngest")).toBeLessThan(
+      source.indexOf("classifySignalContent({"),
+    );
+    // Shipped-work kinds are reserved for the HMAC-verified GitHub webhook —
+    // a bearer-token signal must not fabricate a release/PR.
+    expect(source).toContain("GITHUB_ONLY_KINDS");
+    // Bodies are clamped (LLM input cost + Convex document limits) and ids are
+    // provider-namespaced so cross-provider dedupe keys cannot collide.
+    expect(source).toContain("MAX_SIGNAL_BODY_CHARS");
+    expect(source).toContain("namespacedExternalId");
+  });
+
+  test("shipped-work side effects require verified GitHub provenance", () => {
+    const source = readFileSync(join(root, "ingest/amendSourceIngest.ts"), "utf8");
+
+    expect(source).toContain('provider === "github" && isShippedSourceEvent(args)');
+  });
+
+  test("discord message ingest routes by guild before triage and keeps the owner token", () => {
+    const source = readFileSync(join(root, "convexDiscordMessages.ts"), "utf8");
+
+    expect(source.match(/verifyApiToken\(request\)/g)?.length).toBe(1);
+    expect(source).toContain("resolveRouteForIngest");
+    expect(source.indexOf("resolveRouteForIngest")).toBeLessThan(
+      source.indexOf("classifySignalContent({"),
+    );
+    // The workspace comes from route resolution, never from a raw env default
+    // read inside the endpoint.
+    expect(source).toContain("workspaceSlug: route.workspaceSlug");
+    expect(source).not.toContain("DISCORD_DEFAULT_WORKSPACE_SLUG");
   });
 
   test("inbound accountId does not create paying people", () => {
-    const source = readFileSync(join(root, "proactiveProof.ts"), "utf8");
+    const source = readFileSync(join(root, "pipeline/proactiveProof.ts"), "utf8");
 
     expect(source).toContain("paying: false");
     expect(source).not.toContain("paying: Boolean(accountId)");
@@ -29,8 +69,8 @@ describe("proactive ingest security guards", () => {
   });
 
   test("public project slug lookup is collision safe", () => {
-    const portalReadHandlers = readFileSync(join(root, "amendPortalReadHandlers.ts"), "utf8");
-    const seed = readFileSync(join(root, "amendSeed.ts"), "utf8");
+    const portalReadHandlers = readFileSync(join(root, "content/amendPortalReadHandlers.ts"), "utf8");
+    const seed = readFileSync(join(root, "demo/amendSeed.ts"), "utf8");
 
     expect(portalReadHandlers).toContain("take(2)");
     expect(portalReadHandlers).toContain("matches.length === 1");
@@ -57,7 +97,7 @@ describe("proactive ingest security guards", () => {
   });
 
   test("proof recompute batches person lookups", () => {
-    const source = readFileSync(join(root, "proactiveProof.ts"), "utf8");
+    const source = readFileSync(join(root, "pipeline/proactiveProof.ts"), "utf8");
 
     expect(source).toContain("Promise.all");
     expect(source).toContain("peopleById");
@@ -71,7 +111,7 @@ describe("proactive ingest security guards", () => {
   });
 
   test("workspace portal branding does not fall back to an arbitrary project", () => {
-    const source = readFileSync(join(root, "amendPortalReadHandlers.ts"), "utf8");
+    const source = readFileSync(join(root, "content/amendPortalReadHandlers.ts"), "utf8");
 
     expect(source).toContain("Project portals use project branding");
     expect(source).not.toContain("brandingProject");

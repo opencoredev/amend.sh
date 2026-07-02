@@ -28,7 +28,7 @@ export const Route = createFileRoute("/sign-in")({
         throw redirectToPortal(portalRedirect);
       }
       throw redirect({
-        params: { view: "proactivation" },
+        params: { view: "inbox" },
         search: {},
         to: "/dashboard/$view",
       });

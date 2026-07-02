@@ -14,7 +14,7 @@ import {
   requiresGetApiToken,
   restRoute,
   verifyApiToken,
-} from "./httpRuntime";
+} from "./lib/httpRuntime";
 
 export const restGet = httpAction(async (ctx, request) => {
   const route = restRoute(request);

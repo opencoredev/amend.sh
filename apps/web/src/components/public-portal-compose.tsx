@@ -1,14 +1,12 @@
+import { api } from "@amend/backend/convex/_generated/api";
 import { Link } from "@tanstack/react-router";
 import { useMutation } from "convex/react";
-import { makeFunctionReference } from "convex/server";
 import { useEffect, useState, type FormEvent } from "react";
 
 import type { FeedbackMode } from "@/components/public-portal-types";
 import { authClient } from "@/lib/auth-client";
 import { portalRedirectTo } from "@/lib/auth-redirects";
 import { Check, X } from "@/lib/icons";
-
-const feedbackMutation = makeFunctionReference<"mutation">("amend:createFeedback");
 
 export function PortalComposeDialog({
   feedbackMode,
@@ -28,7 +26,7 @@ export function PortalComposeDialog({
   const [email, setEmail] = useState("");
   const [state, setState] = useState<"idle" | "sent" | "submitting">("idle");
   const [error, setError] = useState("");
-  const createFeedback = useMutation(feedbackMutation);
+  const createFeedback = useMutation(api.amend.createFeedback);
 
   useEffect(() => {
     if (!open) {
@@ -168,7 +166,7 @@ export function PortalComposeDialog({
                   onChange={(event) => setEmail(event.target.value)}
                   placeholder="Email for updates (optional)"
                   type="email"
-                  className="mt-1 h-9 w-full rounded-lg border-transparent bg-[#151518] px-3 text-sm ring-1 ring-white/[0.055] outline-none transition-[box-shadow] duration-150 ease-linear placeholder:text-muted-foreground focus-visible:ring-white/[0.16]"
+                  className="mt-1 h-9 w-full rounded-lg border-transparent bg-amend-inset px-3 text-sm ring-1 ring-white/[0.055] outline-none transition-[box-shadow] duration-150 ease-linear placeholder:text-muted-foreground focus-visible:ring-white/[0.16]"
                 />
               ) : null}
             </div>

@@ -1,4 +1,3 @@
-import { useQuery } from "convex/react";
 import { useEffect, useState } from "react";
 
 import {
@@ -13,15 +12,14 @@ import type {
   DashboardProject,
   WorkspaceId,
 } from "@/components/amend-dashboard-types";
-import { fallbackWorkspace } from "@/components/amend-dashboard-utils";
+import { fallbackWorkspace } from "@/components/amend-dashboard-constants";
+import { useAuthedQuery } from "@/lib/convex-utils";
 
 export function useAmendDashboardData({
   activeProjectSlug,
-  hasSession,
   workspaceId,
 }: {
   activeProjectSlug?: string;
-  hasSession: boolean;
   workspaceId: WorkspaceId;
 }) {
   const workspaceQueryArgs =
@@ -29,12 +27,8 @@ export function useAmendDashboardData({
   const dashboardQueryArgs = activeProjectSlug
     ? { ...workspaceQueryArgs, projectSlug: activeProjectSlug }
     : workspaceQueryArgs;
-  const dashboard = useQuery(dashboardOverviewQuery, hasSession ? dashboardQueryArgs : "skip") as
-    | DashboardOverview
-    | undefined;
-  const projects = useQuery(projectsQuery, hasSession ? workspaceQueryArgs : "skip") as
-    | DashboardProject[]
-    | undefined;
+  const dashboard = useAuthedQuery(dashboardOverviewQuery, dashboardQueryArgs);
+  const projects = useAuthedQuery(projectsQuery, workspaceQueryArgs);
   const [cachedDashboard, setCachedDashboard] = useState<DashboardOverview | undefined>(() =>
     readStoredJson<DashboardOverview>(dashboardCacheKey(workspaceId, activeProjectSlug)),
   );

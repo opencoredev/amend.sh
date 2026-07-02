@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 
-import { hmacSha256Hex, verifyStripeWebhookSignature } from "../packages/backend/convex/signatures";
+import { hmacSha256Hex, verifyStripeWebhookSignature } from "../packages/backend/convex/lib/signatures";
 
 describe("Stripe webhook signatures", () => {
   const rawBody = JSON.stringify({

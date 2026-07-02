@@ -1,9 +1,10 @@
+import type { Id } from "@amend/backend/convex/_generated/dataModel";
 import type { DashboardChangelog } from "@/components/amend-dashboard-types";
 
 export type ChangelogEditorSavePayload = {
   body: string;
   category: string;
-  coverImageStorageId?: string | null;
+  coverImageStorageId?: Id<"_storage"> | null;
   metaDescription?: string;
   stableKey?: string;
   status: string;

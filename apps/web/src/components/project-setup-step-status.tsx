@@ -2,7 +2,7 @@ import { cn } from "@amend/ui/lib/utils";
 import { CircleDashed } from "@/lib/icons";
 
 import type { WebsiteLookupStatus } from "@/components/amend-dashboard-types";
-import { normalizeOptionalUrl } from "@/components/amend-dashboard-utils";
+import { normalizeOptionalUrl } from "@/components/amend-dashboard-format";
 import { ProjectLogo } from "@/components/project-logo";
 import { StatePill } from "@/components/settings-workspace-panel-primitives";
 
@@ -41,7 +41,7 @@ export function WebsiteLookupMessage({
   return <p className="text-xs leading-5 text-muted-foreground">{message}</p>;
 }
 
-/** Resolved-identity row, on the dashboard's `#151518` inset surface. */
+/** Resolved-identity row, on the dashboard's `bg-amend-inset` inset surface. */
 export function ProjectIdentityCard({
   logoUrl,
   name,
@@ -54,7 +54,7 @@ export function ProjectIdentityCard({
   const normalizedUrl = normalizeOptionalUrl(websiteUrl ?? "");
 
   return (
-    <div className="flex items-center gap-3 rounded-xl bg-[#151518] p-3 ring-1 ring-white/[0.055] ring-inset">
+    <div className="flex items-center gap-3 rounded-xl bg-amend-inset p-3 ring-1 ring-white/[0.055] ring-inset">
       <span className="grid size-10 shrink-0 place-items-center overflow-hidden rounded-lg bg-background ring-1 ring-white/[0.06] ring-inset">
         <ProjectLogo
           className="size-full"

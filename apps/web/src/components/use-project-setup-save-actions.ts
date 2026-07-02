@@ -1,7 +1,12 @@
 import { useMutation } from "convex/react";
-import { makeFunctionReference } from "convex/server";
 import { useState } from "react";
 
+import { fallbackWorkspace } from "@/components/amend-dashboard-constants";
+import {
+  connectProjectRepositoryMutation,
+  createProjectMutation,
+  markProjectFeedbackSourceMutation,
+} from "@/components/amend-dashboard-data";
 import type {
   CreatedProject,
   ProjectMenuItem,
@@ -10,21 +15,9 @@ import type {
   Workspace,
 } from "@/components/amend-dashboard-types";
 import type { ProjectConnectionMode } from "@/components/use-project-setup-github";
-import {
-  fallbackWorkspace,
-  normalizeOptionalUrl,
-  slugPart,
-} from "@/components/amend-dashboard-utils";
+import { normalizeOptionalUrl, slugPart } from "@/components/amend-dashboard-format";
 import { capturePostHogEvent } from "@/lib/posthog";
 import { errorMessage, toast } from "@/lib/toast";
-
-const createWorkspaceProject = makeFunctionReference<"mutation">("amend:createProject");
-const connectProjectRepository = makeFunctionReference<"mutation">(
-  "amend:connectProjectRepository",
-);
-const markProjectFeedbackSource = makeFunctionReference<"mutation">(
-  "amend:markProjectFeedbackSource",
-);
 
 export function useProjectSetupSaveActions({
   connectionMode,
@@ -57,9 +50,9 @@ export function useProjectSetupSaveActions({
   websiteUrl: string;
   workspace: Workspace;
 }) {
-  const create = useMutation(createWorkspaceProject);
-  const connectRepository = useMutation(connectProjectRepository);
-  const markFeedbackSource = useMutation(markProjectFeedbackSource);
+  const create = useMutation(createProjectMutation);
+  const connectRepository = useMutation(connectProjectRepositoryMutation);
+  const markFeedbackSource = useMutation(markProjectFeedbackSourceMutation);
   const [saving, setSaving] = useState(false);
 
   function saveProject() {
@@ -141,7 +134,7 @@ export function useProjectSetupSaveActions({
       ...(workspace.id === fallbackWorkspace.id ? {} : { workspaceSlug: workspace.id }),
     })
       .then(async (created) => {
-        const createdProject = created as CreatedProject;
+        const createdProject: CreatedProject = created;
         const projectSlug = createdProject.slug || slug;
         if (connectionMode === "github" && repositoryDraft) {
           try {

@@ -8,19 +8,17 @@ export const boardItems = [
   "Customer Feedback",
 ] as const;
 export type BoardItem = (typeof boardItems)[number];
-// Status dot colors mirror the StatusPill palette used across the feedback list,
-// roadmap, and detail views (amber → blue → violet → emerald), plus rose for the
-// composer-only "Rejected" state, so a status reads the same color everywhere.
+// Status and tag options are plain labels; their leading glyph is resolved from
+// an icon map at the call site (see statusIcon in the status/tag popovers), so a
+// status shows the same icon in the picker and on the footer trigger.
 export const statusItems = [
-  ["In Review", "bg-amber-400"],
-  ["Planned", "bg-blue-400"],
-  ["In Progress", "bg-violet-400"],
-  ["Completed", "bg-emerald-400"],
-  ["Rejected", "bg-rose-400"],
+  "In Review",
+  "Planned",
+  "In Progress",
+  "Completed",
+  "Rejected",
 ] as const;
-export type StatusItem = (typeof statusItems)[number][0];
-// Tag colors are resolved per name from the shared workspace tag palette
-// (see tagColorByName) so the picker dot matches the tag's chip color elsewhere.
+export type StatusItem = (typeof statusItems)[number];
 export const tagItems = ["High Priority", "Low Priority"] as const;
 export type TagItem = (typeof tagItems)[number];
 

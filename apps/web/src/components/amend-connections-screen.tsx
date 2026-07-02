@@ -14,8 +14,7 @@
  * rather than a dead button — no fake "coming soon".
  */
 import { cn } from "@amend/ui/lib/utils";
-import { useMutation, useQuery } from "convex/react";
-import { makeFunctionReference } from "convex/server";
+import { useMutation } from "convex/react";
 import { type ReactNode, useMemo, useState } from "react";
 
 import { SectionLabel, SkeletonBar, agentButtonClass } from "@/components/amend-agent-shared";
@@ -24,11 +23,13 @@ import { PageHeader } from "@/components/amend-agent-chrome";
 import { ToolbarBar, ToolbarGroup, ToolbarPill } from "@/components/dashboard-toolbar";
 import { BrandIcon, type BrandKey } from "@/components/brand-icons";
 import {
+  githubInstallContextQuery,
   upsertIntegrationConnectionMutation,
   workspaceSettingsQuery,
 } from "@/components/amend-dashboard-data";
 import type { WorkspaceSettingsData } from "@/components/amend-dashboard-types";
-import { fallbackWorkspace } from "@/components/amend-dashboard-utils";
+import { fallbackWorkspace } from "@/components/amend-dashboard-constants";
+import { useAuthedQuery } from "@/lib/convex-utils";
 import {
   Code2,
   Globe,
@@ -41,19 +42,6 @@ import {
   type LucideIcon,
 } from "@/lib/icons";
 import { errorMessage, toast } from "@/lib/toast";
-
-// Lightweight install-context query: returns the GitHub App `installUrl` (with the
-// `/dashboard/setup/github` return baked into its `state`) without paying for the
-// full repository listing. Declared locally — the same pattern the project-setup
-// GitHub hook uses for its own backend handle.
-const githubInstallContextQuery = makeFunctionReference<"query">("amend:getGitHubInstallContext");
-
-interface GitHubInstallContext {
-  configured: boolean;
-  installUrl?: string;
-  missing: string[];
-  workspaceSlug: string;
-}
 
 // Discord bot invite/install link. Sourced from an env var so we can swap in the
 // real application id later; the fallback keeps the button functional in the
@@ -432,7 +420,7 @@ function RoleSection({
 function ConnectedStat({ count }: { count: number }) {
   if (count <= 0) return null;
   return (
-    <div className="hidden h-10 items-center gap-2 rounded-xl bg-[#151518] px-3.5 text-sm ring-1 ring-white/[0.055] sm:flex">
+    <div className="hidden h-10 items-center gap-2 rounded-xl bg-amend-inset px-3.5 text-sm ring-1 ring-white/[0.055] sm:flex">
       <Sparkles className="size-3.5 text-amend-success" />
       <span className="font-mono font-semibold tabular-nums text-foreground">{count}</span>
       <span className="text-muted-foreground">connected</span>
@@ -498,10 +486,8 @@ function Body({ children }: { children: ReactNode }) {
 export function AmendConnectionsScreen({ workspaceId }: { workspaceId: string }) {
   const isRealWorkspace = workspaceId !== fallbackWorkspace.id;
   const queryArgs = isRealWorkspace ? { workspaceSlug: workspaceId } : {};
-  const settings = useQuery(workspaceSettingsQuery, queryArgs) as WorkspaceSettingsData | undefined;
-  const githubInstall = useQuery(githubInstallContextQuery, queryArgs) as
-    | GitHubInstallContext
-    | undefined;
+  const settings = useAuthedQuery(workspaceSettingsQuery, queryArgs);
+  const githubInstall = useAuthedQuery(githubInstallContextQuery, queryArgs);
   const upsertIntegration = useMutation(upsertIntegrationConnectionMutation);
 
   const [activeRole, setActiveRole] = useState<Role | "all">("all");

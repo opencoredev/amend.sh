@@ -1,8 +1,8 @@
+import { api } from "@amend/backend/convex/_generated/api";
 import { FieldGroup } from "@amend/ui/components/field";
 import { useForm } from "@tanstack/react-form";
 import { Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { useMutation } from "convex/react";
-import { makeFunctionReference } from "convex/server";
 import { useState } from "react";
 import z from "zod";
 
@@ -20,7 +20,6 @@ import { capturePostHogEvent, identifyAndCapturePostHogEvent } from "@/lib/posth
 import { toast } from "@/lib/toast";
 
 const previewAuthEnabled = import.meta.env.VITE_AMEND_PREVIEW_AUTH === "true";
-const joinWaitlistMutation = makeFunctionReference<"mutation">("amend:joinWaitlist");
 
 export default function SignUpForm({ onSwitchToSignIn }: { onSwitchToSignIn?: () => void }) {
   if (!previewAuthEnabled) {
@@ -34,7 +33,7 @@ function GatedSignUpForm({ onSwitchToSignIn }: { onSwitchToSignIn?: () => void }
   const [formError, setFormError] = useState("");
   const [submittedEmail, setSubmittedEmail] = useState("");
   const search = useSearch({ from: "/sign-up" }) as { email?: string };
-  const joinWaitlist = useMutation(joinWaitlistMutation);
+  const joinWaitlist = useMutation(api.amend.joinWaitlist);
   const form = useForm({
     defaultValues: {
       company: "",

@@ -1,8 +1,8 @@
 import { v } from "convex/values";
 
 import { internalMutation } from "./_generated/server";
-import { recordAnalyticsEvent } from "./amendAnalytics";
-import { trustedPlanNotificationDeliveriesHandler } from "./amendDeliveryMutationHandlers";
+import { recordAnalyticsEvent } from "./dashboard/amendAnalytics";
+import { trustedPlanNotificationDeliveriesHandler } from "./delivery/amendDeliveryMutationHandlers";
 
 /**
  * Publishes scheduled changelog entries once their time arrives. Driven by a

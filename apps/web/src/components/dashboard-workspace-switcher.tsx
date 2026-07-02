@@ -66,7 +66,7 @@ export function WorkspaceSwitcher({
       <button
         type="button"
         className={cn(
-          "flex min-h-12 w-full items-center gap-2.5 rounded-xl bg-[#151518] px-2 text-left shadow-[inset_0_1px_0_rgb(255_255_255/0.035)] outline-none ring-1 ring-white/[0.055] transition-colors duration-150 ease-linear hover:bg-[#1a1a1d] focus-visible:ring-2 focus-visible:ring-white/25 active:opacity-75",
+          "flex min-h-12 w-full items-center gap-2.5 rounded-xl bg-amend-inset px-2 text-left shadow-[inset_0_1px_0_rgb(255_255_255/0.035)] outline-none ring-1 ring-white/[0.055] transition-colors duration-150 ease-linear hover:bg-[#1a1a1d] focus-visible:ring-2 focus-visible:ring-white/25 active:opacity-75",
           open && "bg-[#1a1a1d] ring-white/15",
         )}
         aria-expanded={open}

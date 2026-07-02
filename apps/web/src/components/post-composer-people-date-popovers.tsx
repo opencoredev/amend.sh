@@ -50,7 +50,7 @@ export function DatePopover({
           <button
             key={quarter}
             type="button"
-            className="h-7 rounded-lg bg-[#151518] text-[0.68rem] font-semibold text-muted-foreground ring-1 ring-white/[0.055] transition-colors duration-150 ease-linear hover:bg-[#1a1a1d] hover:text-foreground active:opacity-75"
+            className="h-7 rounded-lg bg-amend-inset text-[0.68rem] font-semibold text-muted-foreground ring-1 ring-white/[0.055] transition-colors duration-150 ease-linear hover:bg-[#1a1a1d] hover:text-foreground active:opacity-75"
             onClick={() => onSelect(quarter)}
           >
             {quarter}
@@ -62,7 +62,7 @@ export function DatePopover({
           <button
             type="button"
             aria-label="Previous month"
-            className="grid size-7 place-items-center rounded-lg bg-[#151518] text-muted-foreground ring-1 ring-white/[0.055] transition-colors duration-150 ease-linear hover:bg-foreground hover:text-background active:opacity-75"
+            className="grid size-7 place-items-center rounded-lg bg-amend-inset text-muted-foreground ring-1 ring-white/[0.055] transition-colors duration-150 ease-linear hover:bg-foreground hover:text-background active:opacity-75"
           >
             <ChevronLeft className="size-4" />
           </button>
@@ -70,7 +70,7 @@ export function DatePopover({
           <button
             type="button"
             aria-label="Next month"
-            className="grid size-7 place-items-center rounded-lg bg-[#151518] text-muted-foreground ring-1 ring-white/[0.055] transition-colors duration-150 ease-linear hover:bg-foreground hover:text-background active:opacity-75"
+            className="grid size-7 place-items-center rounded-lg bg-amend-inset text-muted-foreground ring-1 ring-white/[0.055] transition-colors duration-150 ease-linear hover:bg-foreground hover:text-background active:opacity-75"
           >
             <ChevronRight className="size-4" />
           </button>

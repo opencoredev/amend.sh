@@ -1,0 +1,41 @@
+<svg width="1296" height="384" viewBox="0 0 216 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <title>Amend hero ember lockup concept</title>
+  <defs>
+    <linearGradient id="ember-lockup-stroke" x1="13" y1="49" x2="55" y2="16" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#60270F" />
+      <stop offset="0.36" stop-color="#C77929" />
+      <stop offset="0.68" stop-color="#F3C366" />
+      <stop offset="1" stop-color="#DB8E34" />
+    </linearGradient>
+    <radialGradient id="ember-lockup-dot" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(52 32) rotate(90) scale(6.8)">
+      <stop offset="0" stop-color="#F3C366" />
+      <stop offset="0.5" stop-color="#DB8E34" />
+      <stop offset="1" stop-color="#A15920" />
+    </radialGradient>
+  </defs>
+  <path
+    d="M50.5 39.5A20 20 0 1 1 50.5 24.5"
+    stroke="url(#ember-lockup-stroke)"
+    stroke-linecap="round"
+    stroke-width="7"
+  />
+  <circle cx="52" cy="32" r="5.1" fill="url(#ember-lockup-dot)" />
+  <text
+    x="76"
+    y="39"
+    fill="#F1F1F0"
+    font-family="Geist, Inter, ui-sans-serif, system-ui, sans-serif"
+    font-size="25"
+    font-weight="700"
+    letter-spacing="-0.4"
+  >amend</text>
+  <text
+    x="140"
+    y="39"
+    fill="#A7A7AF"
+    font-family="Geist, Inter, ui-sans-serif, system-ui, sans-serif"
+    font-size="25"
+    font-weight="700"
+    letter-spacing="-0.4"
+  >.sh</text>
+</svg>

@@ -13,7 +13,7 @@ import {
   settingsSecondaryButtonClass,
 } from "@/components/settings-workspace-panel-primitives";
 
-const surfaceClass = "rounded-xl bg-[#151518] ring-1 ring-white/[0.055] ring-inset";
+const surfaceClass = "rounded-xl bg-amend-inset ring-1 ring-white/[0.055] ring-inset";
 const labelClass = "text-xs font-medium text-muted-foreground";
 
 export function GitHubRepositoryPicker({

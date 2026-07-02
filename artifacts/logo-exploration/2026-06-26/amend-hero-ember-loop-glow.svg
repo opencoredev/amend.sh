@@ -1,0 +1,35 @@
+<svg width="512" height="512" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <title>Amend hero ember loop glow concept</title>
+  <defs>
+    <linearGradient id="ember-glow-stroke" x1="13" y1="49" x2="55" y2="16" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#60270F" />
+      <stop offset="0.32" stop-color="#C77929" />
+      <stop offset="0.68" stop-color="#F3C366" />
+      <stop offset="1" stop-color="#DB8E34" />
+    </linearGradient>
+    <radialGradient id="ember-glow-dot" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(52 32) rotate(90) scale(7)">
+      <stop offset="0" stop-color="#F3C366" />
+      <stop offset="0.55" stop-color="#DB8E34" />
+      <stop offset="1" stop-color="#A15920" />
+    </radialGradient>
+    <filter id="soft-ember" x="-30%" y="-30%" width="160%" height="160%" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="1.6" />
+    </filter>
+  </defs>
+  <path
+    d="M50.5 39.5A20 20 0 1 1 50.5 24.5"
+    stroke="#DB8E34"
+    stroke-linecap="round"
+    stroke-width="8"
+    opacity="0.28"
+    filter="url(#soft-ember)"
+  />
+  <path
+    d="M50.5 39.5A20 20 0 1 1 50.5 24.5"
+    stroke="url(#ember-glow-stroke)"
+    stroke-linecap="round"
+    stroke-width="7"
+  />
+  <circle cx="52" cy="32" r="7.2" fill="#DB8E34" opacity="0.2" filter="url(#soft-ember)" />
+  <circle cx="52" cy="32" r="5.1" fill="url(#ember-glow-dot)" />
+</svg>

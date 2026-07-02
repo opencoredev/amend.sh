@@ -1,18 +1,22 @@
 import { useMutation } from "convex/react";
 
+import { fallbackWorkspace } from "@/components/amend-dashboard-constants";
 import {
   createFeedbackMutation,
   upsertChangelogEntryMutation,
   upsertRoadmapItemMutation,
 } from "@/components/amend-dashboard-data";
-import type { DashboardMutationScope } from "@/components/amend-dashboard-mutation-types";
-import type { DashboardView, RoadmapStatus, Workspace } from "@/components/amend-dashboard-types";
 import {
   composerStatusToChangelogStatus,
   composerStatusToRoadmapStatus,
-  fallbackWorkspace,
   roadmapStatusToPortalStatus,
-} from "@/components/amend-dashboard-utils";
+} from "@/components/amend-dashboard-status-utils";
+import type {
+  DashboardMutationScope,
+  DashboardView,
+  RoadmapStatus,
+  Workspace,
+} from "@/components/amend-dashboard-types";
 import type { ComposerSubmitPayload } from "@/components/post-composer-model";
 import { toast } from "@/lib/toast";
 

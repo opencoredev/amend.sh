@@ -1,0 +1,354 @@
+AMEND PROACTIVE AGENT V2 — AGENT EXECUTION PLAN
+================================================
+Updated: 2026-07-02. This is the working handoff for agents building v2.
+Read alongside docs/proactive-agent-v2-plan.md (architecture rationale + audit).
+Wave 0 (refactor) and Wave 1 (signal bus + gateway) are DONE, reviewed, gated.
+This file = what exists now, exact contracts, and the remaining waves in detail.
+
+------------------------------------------------------------------
+0. STATE OF THE WORLD (verified 2026-07-02)
+------------------------------------------------------------------
+Gates at last check: 144/144 bun tests · typecheck 6/6 workspaces ·
+oxlint clean · prod build PASS · 21/21 static smoke checks PASS ·
+gateway dry-run PASS. Backend tsconfig has noUnusedLocals/noUnusedParameters.
+
+DONE — Wave 0 (refactor):
+- Bugs fixed: roadmap auto-ship now respects automationRules
+  (ingest/amendSourceIngestRelations.ts, `canAutoUpdateRoadmap ? "shipped" : …`);
+  changelog auto-draft gated on `autoDraftChangelog ?? true`; skipped drafts
+  carry needsReview:false; decision summaries truthful.
+- deliveryOutbox actually sends: deliveryScheduler.ts claim→send→settle.
+  Claim mutation flips queued→"sending" transactionally (no double-send vs the
+  REST drain), 10-min claimedAt lease reclaims crashed drains, attempts ≤ 3
+  with requeue-on-transient-failure, rows older than 7 days expire as skipped,
+  1-minute cron in crons.ts. REST deliveries{action:"send"} claims through the
+  same path (dry-run keeps the legacy unclaimed read).
+- Deleted: /ingest/discordWebhook legacy path, public amend.ingestSourceEvent,
+  needVectors table, amendLegacyWorkspaceHandler (fake getWorkspace),
+  analytics-workspace*.tsx, gsap dep, MockOverride/setMockOverride.
+- Backend reorg: 30 root files (everything that registers Convex functions +
+  schema.ts/auth.config.ts/convex.config.ts) + 144 helpers in 11 folders
+  (schema/ pipeline/ ingest/ workspace/ content/ delivery/ agent/ demo/
+  projectSetup/ dashboard/ lib/). Basenames preserved. INVARIANT: a Convex
+  function's api path = its file path → files that register functions
+  (query/mutation/action/internal*/httpAction/cronJobs) MUST stay at root.
+  packages/backend/tests/* are source-text assertions that read files BY PATH —
+  moving a file means updating those paths.
+- Web type spine: apps/web imports { api } from
+  "@amend/backend/convex/_generated/api" — ZERO makeFunctionReference strings
+  remain. GOTCHA: import backend TYPES via `import type` ONLY — the exports map
+  has no dataModel.js; a value import typechecks green and breaks the vite
+  build. lib/mock-amend.ts → lib/amend-data.ts (live data layer).
+  useAuthedQuery (lib/convex-utils.ts) gates every dashboard read (Convex-auth
+  race guard); portal/auth surfaces stay ungated on purpose.
+  Branded ids end-to-end: Id<"workspaceTags">, Id<"_storage"> (single cast at
+  the storage-upload JSON parse). Changelog category/status narrowed at the
+  mutation boundary via FunctionArgs<typeof mutation>["field"] +
+  satisfies-Record exhaustive lists (throw on unknown).
+  Web types: 11 amend-dashboard-* files → amend-dashboard-types.ts (in place,
+  69 importers untouched) + amend-dashboard-content-types.ts + lib/amend-contract.ts.
+- Hygiene: CI (preview+production) runs lint + bun test + fumadocs build check;
+  .env.example files complete; bg-amend-inset/ring-amend-inset token replaces
+  48 hardcoded #151518 (NEVER warm this token — it is the inset-control color);
+  docs/brand.md rewritten (warm system, "Noise in, receipts out");
+  fumadocs zod → catalog:, nitro pins aligned; smoke suite fully de-staled.
+  REAL BUG found by smoke: sign-in.tsx authenticated redirect went to dead
+  "proactivation" view → now "inbox".
+
+DONE — Wave 1 (signal bus + gateway):
+- schema/schemaProactiveTables.ts: channelRoutes table
+  { workspaceId, provider (sourceProvider validator), routingKey, state
+    active|disabled, config { ackReaction?, listenChannels? }, createdAt, updatedAt }
+  indexes by_provider_and_routingKey, by_workspace.
+- channelRoutes.ts (root): claimChannelRoute / releaseChannelRoute /
+  listChannelRoutes (dashboard-authed, membership-enforced, OCC-safe claim:
+  active route owned by another workspace throws "already claimed"; disabled
+  routes are reclaimable) + resolveRouteForIngest internalQuery.
+- ingest/channelRouting.ts: resolveChannelRoute (active only) +
+  resolveSignalWorkspaceSlug: route match → else dev fallback ONLY when
+  AMEND_DEV_DEFAULT_WORKSPACE_ALLOWED === "1" (uses DISCORD_DEFAULT_WORKSPACE_SLUG)
+  → else null → HTTP 404. The silent single-tenant default is dead in prod.
+- pipeline/signalTriage.ts: classifySignalContent({ body, provider, hint? })
+  — 12s AbortController, fail-closed {signal:false}, extractJsonObject robust
+  parser (exported for tests). Provider order: CROF_API_KEY set → crof
+  (CROF_BASE_URL ?? https://crof.ai/v1, model CROF_CLASSIFIER_MODEL ?? CROF_MODEL
+  ?? kimi-k2.6; deepseek-v4-flash known-good ~3.6s, qwen3.5-9b KNOWN BAD/timeout)
+  → else OPENROUTER_API_KEY → openrouter.ai/api/v1 (OPENROUTER_MODEL) → else
+  fail closed, no network. Provider is a prompt hint line, never a code fork.
+- signalIngest.ts (root) — POST /ingest/signal, bearer AMEND_API_TOKEN
+  (timing-safe, checked before parsing). Body:
+    { provider, externalId, routingKey,
+      author?: { id?, name?, handle?, avatarUrl?, email? },
+      content: { title?, body (required, clamped to 8000 chars), url?, labels? },
+      thread? (accepted, not persisted), kind?, occurredAt?, capabilities? }
+  Responses: 401 bad bearer · 400 invalid provider/missing fields/invalid kind
+  · 400 GITHUB-ONLY KINDS (pull_request, issue, release, label, milestone,
+  discussion are reserved for the HMAC-verified GitHub webhook — a bearer
+  signal must never fabricate a ship; defense-in-depth: ingest/amendSourceIngest.ts
+  gates the shipped branch on `provider === "github" && isShippedSourceEvent`)
+  · 404 unrouted (error names the provider+routingKey and how to claim)
+  · 200 {capture:false, react:false} triage-rejected
+  · 200 {capture:true, react:<config.ackReaction !== false>, title}.
+  externalId is provider-namespaced on ingest (`${provider}:${externalId}`
+  unless already prefixed) so cross-provider ids can't collide on the
+  workspace-scoped dedupe key. Conversational providers
+  (discord/slack/email/telegram/x/support/embed) with kind absent-or-
+  customer_signal run triage; others ingest directly. author.email →
+  authorEmail → person resolution (matches existing persons; NEVER sets/flips
+  paying — locked by ingestSecurity.test.ts).
+- convexDiscordMessages.ts: delegates to shared triage; resolves channelRoutes
+  by guildId BEFORE triage (unrouted guilds cost no LLM call); server-side
+  listenChannels filter; env-default read removed from the endpoint.
+  Wire protocol to the gateway unchanged.
+- apps/gateway (@amend/gateway, was apps/discord-gateway): index.mjs (boot,
+  env validation listing ALL missing vars, GATEWAY_CONNECTORS narrowing,
+  SIGINT/SIGTERM graceful shutdown + 5s force-exit + second-signal exit 130,
+  GATEWAY_DRY_RUN=1 offline smoke) · lib/forwarder.mjs (LRU dedupe cap 2048 by
+  externalId — per-process, lost on restart, backend tolerates redelivery;
+  8-slot semaphore, retries INSIDE the slot ~46s worst case; 15s
+  AbortController per attempt covering headers AND body — MUST stay above the
+  backend's 12s classifier budget; retry 250ms/1s on network/timeout/5xx;
+  4xx never retried and the log includes the response body reason) ·
+  connectors/discord.mjs (all discord.js specifics, 👀 ack, payload
+  byte-compatible with /ingest/discordMessage, externalId discord:message:<id>,
+  connector interface contract documented in header for future connectors).
+  root package.json dev:bot → turbo -F @amend/gateway dev.
+
+DEPLOY GATE (do before/at next deploy of backend to greedy-elephant-685):
+  EITHER set AMEND_DEV_DEFAULT_WORKSPACE_ALLOWED=1 (+ keep
+  DISCORD_DEFAULT_WORKSPACE_SLUG) on the deployment, OR claim the test guild:
+  channelRoutes.claimChannelRoute { provider:"discord", routingKey:"<guildId>" }.
+  Otherwise the verified Discord loop 404s (gateway logs reason, no retry).
+  PROD: never set the flag; routes only.
+  Also note prod CI: VERCEL_TOKEN secret was missing historically — verify
+  secrets before merging to main (main push = production deploy).
+
+GUARDRAILS (do not churn — verified good):
+  pipeline dedupe/commitProcessedEvent, proactiveProof, resolvePersonForEvidence,
+  findCompatibleNeed, Ed25519/HMAC verification, changelog scheduler, t-* motion
+  system + useDisclosureTransition (NO animation libs), statusMeta, @/lib/icons
+  wrapper (NEVER import lucide-react in app code), PageHeader/agent chrome,
+  settings primitives, amend-agent-shared.tsx (extend, don't rewrite),
+  trusted*-handler auth pattern, native scrollbars + rubber-band overscroll,
+  @posthog/convex pinned 1.x. Console: 13px base, text-strong/default/subtle,
+  gold=demand green=shipped, warm ember→gold field, anti-slop rules in
+  docs/brand.md. Adding a dashboard view touches ~6 files incl. exhaustive
+  viewTitle Record (amend-dashboard-status-utils.ts).
+
+DEFERRED POLISH (accepted, not blockers): ~10 pure re-export barrels alive
+inside backend folders; schema/ still 13 files (not merged to 3); amend-prefix
+basenames kept; formatting stutters in a few repaired files (oxfmt would fix).
+
+------------------------------------------------------------------
+1. EXECUTION MODEL FOR REMAINING WAVES
+------------------------------------------------------------------
+Per lane: one builder agent (Fable, async) + one adversarial reviewer agent
+(feature-dev:code-reviewer) that tries to BREAK it; orchestrator applies
+findings. Wave gate: bun run check-types && bun run lint && bun test &&
+bun run build + `bun run smoke` static checks stay green (runtime smoke needs
+dev servers). UI lanes additionally: design brief adherence (docs/brand.md
+anti-slop list), and screenshot review (agent-browser) when browser validation
+is allowed — never tune visuals blind.
+Builders must NOT: git add/commit/push, convex dev/deploy (codegen ok), start
+dev servers, touch unrelated uncommitted work. Watch for stalls: if a lane's
+task output file stops growing for ~30+ min, kill + relaunch with a recovery
+brief (check what it left in the tree first; snapshot BEFORE killing).
+
+------------------------------------------------------------------
+2. WAVE 2 — CHANNELS + THE NEW FACE (5 lanes)
+------------------------------------------------------------------
+
+L3. SLACK CONNECTOR (backend webhook — needs user-provided Slack app creds)
+  Files: new root slackIngest.ts + http.ts route POST /ingest/slackEvents;
+  helper ingest/slack.ts (verify + normalize, registration-free).
+  - Signing: v0 signature (v0:timestamp:rawBody HMAC-SHA256 with
+    SLACK_SIGNING_SECRET, timing-safe compare, reject |now-ts| > 300s).
+    Raw body MUST be read before parsing (mirror httpRuntimeAuth patterns).
+  - url_verification challenge: respond {challenge} BEFORE auth-gating logic.
+  - Events: message.channels (+ message.groups if scoped), app_mention.
+    Drop bot_id/subtype-edited messages. routingKey = team_id.
+  - Route resolution identical to discord (resolveRouteForIngest provider
+    "slack"); listenChannels filter on event.channel; triage via
+    classifySignalContent({provider:"slack"}); ingest with externalId
+    `slack:message:${channel}:${ts}`, author from event.user (fetch profile
+    lazily later — name/handle from event for now), url = Slack archive link
+    when team domain known else fallbackSourceEventUrl.
+  - Ack (react ✅/👀) requires a bot token → store in route config or
+    integrationConnections.config at connect time; POST reactions.add via
+    fetch from an internalAction (NOT in the http action hot path — schedule).
+  - Connect flow (minimal): Connections screen entry stores signing secret +
+    bot token via upsertIntegrationConnection config + claimChannelRoute with
+    team_id (user pastes team_id for MVP; OAuth install flow is a fast-follow).
+  - Env: SLACK_SIGNING_SECRET (deployment-level fallback for single-tenant dev).
+  - Tests: signature verification (valid/expired/bad), challenge echo,
+    bot-message drop, route-before-triage ordering (mirror ingestSecurity style).
+
+L4. INBOUND EMAIL + EMBED WIDGET (backend)
+  Email (Resend inbound): new root emailIngest.ts + http.ts route
+  POST /ingest/emailInbound.
+  - Verify Resend webhook signature (svix headers — svix-id/timestamp/signature,
+    HMAC base64; RESEND_INBOUND_SECRET). Parse from/to/subject/text.
+  - routingKey = the receiving alias (to address, lowercased) — workspaces
+    claim `<slug>@in.<domain>` via claimChannelRoute provider "email".
+  - externalId email:<message-id>; author.email = from (feeds person
+    resolution — strongest identity signal); title = subject; body = text
+    (already clamped by signal path if routed through /ingest/signal — this
+    endpoint normalizes then calls the same internal path as signalIngest;
+    factor the shared "normalize→route→triage→ingest" core out of
+    signalIngest.ts into ingest/signalCore.ts rather than duplicating).
+  Widget/embed: the portal composer already posts createFeedback (public path).
+  Add an authenticated variant: /ingest/signal with provider "embed" works
+  TODAY for server-side widget backends. For the browser-embed MVP: a public
+  httpAction /ingest/widget with per-workspace publishable key (new
+  workspaceKeys concept — defer if heavy; alternately reuse the portal
+  createFeedback flow and mark source "embed"). Keep scope tight: the SDK
+  embed already exists (packages/sdk embed-template) — wire its submit to the
+  portal flow if not already; verify before building new surface.
+
+L5. FEEDBACK BOARD: GHOSTS + PROOF (web UI — the flagship visible change)
+  Read memory/plan: ghosts live IN Posts; Inbox dies as a nav destination.
+  Files: posts-workspace.tsx, amend-inbox-screen.tsx (retire),
+  amend-dashboard-constants.ts / -status-utils.ts (viewTitle Record) /
+  -main-workspace.tsx / dashboard-sidebar-chrome.tsx / dashboard-view-nav.tsx
+  (the 6-file view checklist), amend-agent-shared.tsx (extend), lib/amend-data.ts.
+  - "Surfacing" band pinned atop the Posts list: useGhosts() (existing
+    needs:listGhosts, already proof-sorted). Ghost row: dashed ring
+    (ring-1 + dashed), reduced opacity, gold pulse dot (bg-amend-warm),
+    "Found by Amend · Xh ago", ProofChip, inline Accept
+    (acceptGhost → materializes; optional roadmap item with proof-derived
+    priority per automationRules thresholds) and Dismiss (killGhost + undo
+    toast via restoreGhost). Ghost→solid transition with existing t-* classes;
+    respect reduced motion. NO new animation libs.
+  - ProofChip (new, in amend-agent-shared.tsx): channel glyphs × counts (reuse
+    ChannelGlyph), people count, AvatarStack (authorAvatarUrl), paying badge,
+    7-day growth tick. Replaces the lone post.source text in PostRow.
+  - Drafts relocation: changelog drafts → Changelog view section; notify
+    drafts → post/need detail ("N people to notify — review"). draftProposals
+    schema unchanged.
+  - Sidebar: Posts inherits the review-count badge (useInboxReviewCount);
+    inbox → posts alias in normalizeView (keep alias, kill nav item); digest
+    "Shipped" content moves to Insights.
+  - Status mapping: add discriminated-union types to the 5 conversion fns in
+    amend-dashboard-status-utils.ts while touching them.
+  - Do NOT regress: person-first evidence trail in need detail (recent
+    redesign), VoteButton 2-state gold, warm field styling rules.
+  - Update smoke-dashboard-checks.ts assertions for the new Posts anatomy
+    (it asserts AmendInboxScreen today — change truthfully WITH the code).
+
+L6. PUBLIC PORTAL: PROOF + RECEIPTS (web UI)
+  Files: public-portal-feedback.tsx, public-portal-roadmap.tsx,
+  public-portal-changelog.tsx, public-portal-view.tsx, portal read handlers
+  (content/amendPortalReadHandlers.ts) for any new fields, routes/, lib/og-image.tsx.
+  - Proof on rows: "N people across Discord + GitHub" + AvatarStack, behind a
+    per-workspace privacy toggle (portalSettings.showSourceChannels — add to
+    PortalSettings type + settings panel + getPublicPortal projection).
+  - Receipts on shipped items: "requested Jun 2 → shipped Jun 28" from
+    firstSeen/shippedAt; changelog cross-link chips.
+  - Per-entry changelog routes /portal/$workspaceSlug/changelog/$entryKey with
+    real meta tags; new Satori layout ChangelogCover in lib/og-image.tsx +
+    /api/og/changelog/$slug route; drop the dead SSR guard in
+    public-portal-view.tsx hash routing when real routes land.
+  - Portal stays DARK, full-width max-w-7xl, slim top bar; reuse
+    PortalSurface/--workspace-surface-* tokens.
+
+L7. CHANGELOG AUTOGEN + DELIVERY (backend + light UI)
+  - Draft body LLM: on shipped GitHub event, an internalAction reads PR
+    title/body/commits (GitHub App API via lib/github.ts JWT minting) + linked
+    need evidence (needs/evidence tables) + workspace voice profile (L10
+    placeholder: fallback to a neutral system prompt) → writes real
+    title/body/summary/tags into the existing draft (replaces the placeholder
+    string in ingest/amendSourceIngestChangelog.ts upsertChangelogDraft).
+    Respect automationRules review gates; NEVER auto-publish.
+    Schedule from handleShippedSourceEvent (runAfter 0) — the mutation must
+    not await the LLM.
+  - Cover autogen: ChangelogCover Satori layout (workspace brand colors/logo,
+    entry title, category) → upload via existing one-shot storage URL →
+    coverImageStorageId on the draft.
+  - Email: real template (cover image, formatted body, portal deep link,
+    unsubscribe honoring notificationPreferences.unsubscribed); audience
+    picker: subscribers / PEOPLE-WHO-ASKED (need evidence → persons with
+    verifiedEmail; channel pings via gateway ack later) / everyone.
+    Type deliveryOutbox.payload (schema/schemaProductNotificationTables.ts
+    v.any() → payload union) — the email runtime blind-casts today.
+    Add by_workspace_and_notificationId_and_recipient index for dedupe
+    (current recipient-wide scan in trustedPlanNotificationDeliveries).
+  - Insights live: implement backend summary query (needs/evidence/pipeline
+    aggregates; gold=demand green=shipped) and wire useInsights() —
+    lib/amend-data.ts returns EMPTY_INSIGHTS constant today; contract types
+    already exist in lib/amend-contract.ts (InsightsSummary etc.).
+  - Extract useChangelogEditorAutoSave hook from the 432-line editor BEFORE
+    modifying it.
+
+------------------------------------------------------------------
+3. WAVE 3 — CLOSE THE LOOP + INTEGRATIONS (3 lanes)
+------------------------------------------------------------------
+
+L8. BRIEFS + GITHUB LOOP
+  - Brief generation: accepted need → agent writes buildBriefs row (problem,
+    top evidence quotes, acceptance criteria, suggested files — table exists
+    in schema). internalAction w/ LLM; triggered from acceptGhost or a
+    "Generate brief" action in need detail.
+  - Detail-screen actions: Copy brief (markdown) · Create GitHub issue via the
+    installed GitHub App (issue body embeds brief + need key `amend:<needId>`)
+    · cursor:// deep link.
+  - amend.yml template (anthropics/claude-code-action, triggered by
+    amend-build label) offered in Connections → "Build this" = create issue +
+    label → CI agent opens PR whose body references the need key → existing
+    merged-PR ingest links ship → need → changelog → notify.
+  - PREREQ FIX in this lane: findRelatedFeedback/findRelatedRoadmap
+    (ingest/amendSourceIngestRelations.ts) use .take(100) recency scans —
+    replace with need-key/source-link index matching; pick ONE owner for
+    feedback↔roadmap links (join table or single-side array — today BOTH
+    sides exist and neither is maintained by mutations; receipts depend on
+    correct links).
+  - Ack upgrade: on ship, gateway ack upgrades 👀 → ✅ + approval-gated thread
+    reply with changelog link (needs an outbound path: convexDiscordDelivery.ts
+    exists for bot-token sends; per-route ackReaction/reply toggle).
+
+L9. LINEAR EXPORT VIA EXECUTOR (backend + Connections UI)
+  - Convex internalAction exportNeedToLinear: POST
+    ${EXECUTOR_URL}/executions with Authorization: Bearer EXECUTOR_API_TOKEN,
+    body { code: "<tool-calling js targeting the Linear connection>",
+    autoApprove: true }; response {status:"completed"|"paused",...}. Store the
+    created issue URL on the need/post sourceLinks.
+    EXECUTOR_API_TOKEN is in packages/backend/.env.local — set on the
+    deployment via `bunx convex env set` when wiring. Cloud URL
+    https://executor.sh (org leo-s-organization); self-hosted CF worker
+    exists but pending Zero Trust Access (see memory) — use cloud until then.
+  - PREREQ (user): add a Linear connection in the executor catalog.
+  - Connections screen: routes/toggles editor (claim/release channel routes UI
+    — backend mutations EXIST: channelRoutes.claim/release/list; ack toggles;
+    Linear target team/project config in integrationConnections.config).
+
+L10. CONTEXT.DEV ONBOARDING (backend + setup flow)
+  - PREREQ (user): context.dev API key (free tier 500 credits).
+  - On workspace setup domain entry (projectSetup/ flow — suggestFromWebsite
+    exists): server-side action calls GET https://api.context.dev/v1/brand/retrieve
+    ?domain=… and GET /v1/web/styleguide?domain=… (Authorization: Bearer
+    ctxt_secret_…, env CONTEXT_DEV_API_KEY) → prefill name/description/logo,
+    map colors → --workspace-surface-* portal theme, cache a VOICE PROFILE per
+    workspace (new table or workspace field) consumed by L7 drafting.
+  - Replace the `as ProjectSuggestion` cast in
+    use-project-setup-draft-effects.ts with validated parsing while rewiring.
+  - Costs: brand retrieve 10cr, styleguide 10cr, scrape-markdown 1cr; cache
+    ~3 months server-side; prefetch endpoints are free on paid tiers.
+
+------------------------------------------------------------------
+4. MVP SHIP LINE + USER PREREQUISITES
+------------------------------------------------------------------
+MVP = Wave 0 + Wave 1 (DONE) + L3 (Slack) + L5 (ghosts/proof) + L7-lite
+(email template + notify-who-asked; outbox cron already done) + L9 one-way
+Linear export. Everything else fast-follows.
+
+USER-PROVIDED (not blocking L5/L7-lite): Slack app credentials (L3) ·
+context.dev API key (L10) · Linear connection in executor catalog (L9) ·
+Zero Trust Access on self-hosted executor worker (optional switch) ·
+X API decision (later polling connector).
+
+VERIFICATION per wave: full gate (above) + replay flows:
+- Signal bus: POST /ingest/signal (dev deployment, bearer) → need lands in
+  routed workspace; duplicate replay → single evidence row.
+- Wave 2 UI: run web app locally, screenshot ghost band / proof chips /
+  portal receipts desktop+mobile, review against docs/brand.md anti-slop.
+- Wave 3: label test issue in amend-labs → PR → merge → changelog draft w/
+  cover + notify-who-asked + Discord ✅ ack; Linear export creates real issue.

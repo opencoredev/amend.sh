@@ -7,8 +7,14 @@
   --amend-state-dur: 180ms;
   /* warm signal accent, derived from --amend-warm */
   --amend-glow: 239 152 54;
-  /* warmer ember beneath the glow — the orange end of the hero's ember→gold field */
-  --amend-ember: 232 146 74;
+  /* Minimal scrollbars (see the scrollbar section below). The thumb is tinted
+     from --muted-foreground so it tracks light/dark on its own; the drag state
+     warms to ember. Tune size/opacity here. */
+  --amend-scrollbar-size: 10px;
+  --amend-scrollbar-pad: 2px;
+  --amend-scrollbar-thumb: color-mix(in oklab, var(--muted-foreground) 22%, transparent);
+  --amend-scrollbar-thumb-hover: color-mix(in oklab, var(--muted-foreground) 42%, transparent);
+  --amend-scrollbar-thumb-active: color-mix(in oklab, rgb(var(--amend-glow)) 60%, var(--muted-foreground));
 }
 
 @layer base {
@@ -94,6 +100,83 @@
 }
 
 /* ----------------------------------------------------------------------------
+   Scroll behaviour + canvas for the always-dark product. Every app shell forces
+   `.dark` on its <main>; the per-workspace-themeable public portal (<main>
+   without `.dark`) is intentionally excluded from both rules so it keeps native
+   scrolling.
+
+   1. No rubber-band overscroll. The elastic "pull past the edge" and the dead
+      space / warm backdrop you see behind the hero when you do it are the *same*
+      motion — there's no way to keep the springy pull without it exposing what's
+      behind the page. The reveal is the thing we don't want, so stop the
+      over-pull. Normal scrolling is untouched; this only removes travel *past*
+      the top/bottom edge.
+   2. Dark canvas backstop. The document canvas (body background) otherwise
+      follows the visitor's OS theme, so a light-mode visitor could bare a
+      near-white strip wherever the page doesn't fully cover the viewport (mobile
+      URL-bar show/hide, momentum, sub-pixel rounding). Pin it dark. Mirrors the
+      `.dark` `--background` token (#0d0c0a).
+---------------------------------------------------------------------------- */
+html:has(main.dark) {
+  overscroll-behavior-y: none;
+}
+
+body:has(main.dark) {
+  background-color: #0d0c0a;
+}
+
+/* ----------------------------------------------------------------------------
+   Minimal themed scrollbars. We run native scroll (no JS scrollbar) — this only
+   restyles the browser's own bar into a slim, rounded, token-tinted thumb that
+   warms to ember while you drag. Resting state is intentionally faint and lifts
+   on hover.
+
+   Trade-off: defining ::-webkit-scrollbar opts macOS WebKit/Blink out of the
+   auto-hiding overlay bar in favor of an always-visible slim bar — the intended
+   look, and a clear upgrade on Windows/Linux where the native bar is chunky. The
+   standard scrollbar-* properties are scoped to Firefox so Chrome/Safari keep the
+   richer pseudo-element styling (hover + drag). These live in @layer base so a
+   per-element utility still wins — e.g. the portal nav strip, which hides its bar
+   via [scrollbar-width:none] [&::-webkit-scrollbar]:hidden.
+---------------------------------------------------------------------------- */
+@layer base {
+  /* Firefox has no ::-webkit-scrollbar — give it the standard properties only. */
+  @supports (scrollbar-width: thin) and (not selector(::-webkit-scrollbar)) {
+    html {
+      scrollbar-width: thin;
+      scrollbar-color: var(--amend-scrollbar-thumb) transparent;
+    }
+  }
+
+  /* WebKit / Blink (Chrome, Safari, Edge) */
+  ::-webkit-scrollbar {
+    width: var(--amend-scrollbar-size);
+    height: var(--amend-scrollbar-size);
+  }
+
+  ::-webkit-scrollbar-track,
+  ::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--amend-scrollbar-thumb);
+    background-clip: padding-box;
+    border: var(--amend-scrollbar-pad) solid transparent;
+    border-radius: 999px;
+    transition: background-color 150ms var(--amend-ease-fast);
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: var(--amend-scrollbar-thumb-hover);
+  }
+
+  ::-webkit-scrollbar-thumb:active {
+    background-color: var(--amend-scrollbar-thumb-active);
+  }
+}
+
+/* ----------------------------------------------------------------------------
    Landing display type — Geist, tightened. Isolated from app .amend-display.
 ---------------------------------------------------------------------------- */
 .amend-h {
@@ -115,6 +198,34 @@
   letter-spacing: 0.24em;
   text-transform: uppercase;
   color: var(--muted-foreground);
+}
+
+/* ----------------------------------------------------------------------------
+   Landing header — the nav stays fully transparent over the hero, so the warm
+   gradient is never cut by a bar, line, or scrim. Only once you scroll past the
+   hero into the dark sections does a page-colored backing fade in behind the
+   nav: it is invisible against those sections (same color, no border) yet
+   occludes the content scrolling underneath, so nothing bleeds through.
+---------------------------------------------------------------------------- */
+.amend-header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: var(--background);
+  opacity: 0;
+  transition: opacity 0.32s var(--amend-ease);
+}
+
+.amend-header[data-scrolled]::before {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .amend-header::before {
+    transition: none;
+  }
 }
 
 /* ----------------------------------------------------------------------------
@@ -168,39 +279,6 @@
       radial-gradient(85% 42% at 50% 44%, rgb(13 13 15 / 0.32) 0%, rgb(13 13 15 / 0) 72%),
       linear-gradient(to bottom, rgb(13 13 15 / 0) 64%, var(--background) 100%);
   }
-}
-
-/* ----------------------------------------------------------------------------
-   Console warmth — the hero's ember→gold field, carried into the app so the
-   dashboard shares the landing's warmth instead of reading as flat gray. The
-   glow is baked into each surface's own background (not a floating layer), so on
-   a scroll container the default background-attachment pins it to the panel's
-   top edge: a warm "dawn" stays at the top of every view as content scrolls.
----------------------------------------------------------------------------- */
-.amend-workspace-surface {
-  background-color: var(--workspace-surface-background);
-  background-image:
-    radial-gradient(
-      120% 64% at 50% 0%,
-      rgb(var(--amend-glow) / 0.055) 0%,
-      rgb(var(--amend-glow) / 0) 58%
-    ),
-    radial-gradient(
-      86% 48% at 50% -6%,
-      rgb(var(--amend-ember) / 0.05) 0%,
-      rgb(var(--amend-ember) / 0) 54%
-    );
-  background-repeat: no-repeat;
-}
-
-/* The rail echoes the warmth at its very top, where the switcher + compose sit. */
-.amend-sidebar-warm {
-  background-image: radial-gradient(
-    150% 24% at 50% 0%,
-    rgb(var(--amend-glow) / 0.05) 0%,
-    rgb(var(--amend-glow) / 0) 72%
-  );
-  background-repeat: no-repeat;
 }
 
 /* Hero entrance — staggered rise */

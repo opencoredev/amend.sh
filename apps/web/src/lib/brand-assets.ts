@@ -1,29 +1,56 @@
 export const amendMarkSvg = `<svg fill="none" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
   <title>Amend.sh mark</title>
-  <path d="M22 16H42M48 22V31H39M25 33H16V42" stroke="currentColor" stroke-linecap="square" stroke-width="4" opacity=".55"/>
-  <rect x="8" y="8" width="16" height="16" rx="2" fill="currentColor"/>
-  <rect x="40" y="8" width="16" height="16" rx="2" stroke="currentColor" stroke-width="4"/>
-  <rect x="24" y="24" width="16" height="16" rx="2" fill="currentColor" opacity=".8"/>
-  <rect x="8" y="40" width="16" height="16" rx="2" stroke="currentColor" stroke-width="4"/>
+  <path clip-rule="evenodd" d="M8 56 26.6 8h10.8L56 56H44.15l-3.6-9.7h-17.1l-3.6 9.7H8Zm20.35-20.2h7.3L32 24.6l-3.65 11.2Z" fill="currentColor" fill-rule="evenodd"/>
+  <path d="M21.6 39.2h23.8L41.9 48H18.1l3.5-8.8Z" fill="#e19b40"/>
 </svg>
 `;
 
-export const amendWordmarkSvg = `<svg fill="none" viewBox="0 0 216 64" xmlns="http://www.w3.org/2000/svg">
-  <title>Amend.sh wordmark</title>
-  <g color="currentColor">
-    <path d="M22 16H42M48 22V31H39M25 33H16V42" stroke="currentColor" stroke-linecap="square" stroke-width="4" opacity=".55"/>
-    <rect x="8" y="8" width="16" height="16" rx="2" fill="currentColor"/>
-    <rect x="40" y="8" width="16" height="16" rx="2" stroke="currentColor" stroke-width="4"/>
-    <rect x="24" y="24" width="16" height="16" rx="2" fill="currentColor" opacity=".8"/>
-    <rect x="8" y="40" width="16" height="16" rx="2" stroke="currentColor" stroke-width="4"/>
-  </g>
-  <text x="76" y="39" fill="currentColor" font-family="Geist Mono, SFMono-Regular, Menlo, monospace" font-size="24" font-weight="700" letter-spacing="3">AMEND</text>
-  <rect x="162" y="35" width="4" height="4" fill="currentColor"/>
-  <text x="173" y="39" fill="currentColor" font-family="Geist Mono, SFMono-Regular, Menlo, monospace" font-size="24" font-weight="700" letter-spacing="3">SH</text>
+export const amendMarkLightSvg = `<svg fill="none" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <title>Amend.sh mark for light backgrounds</title>
+  <path clip-rule="evenodd" d="M8 56 26.6 8h10.8L56 56H44.15l-3.6-9.7h-17.1l-3.6 9.7H8Zm20.35-20.2h7.3L32 24.6l-3.65 11.2Z" fill="#0d0c0a" fill-rule="evenodd"/>
+  <path d="M21.6 39.2h23.8L41.9 48H18.1l3.5-8.8Z" fill="#e19b40"/>
+</svg>
+`;
+
+export const amendMarkDarkSvg = `<svg fill="none" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <title>Amend.sh mark for dark backgrounds</title>
+  <path clip-rule="evenodd" d="M8 56 26.6 8h10.8L56 56H44.15l-3.6-9.7h-17.1l-3.6 9.7H8Zm20.35-20.2h7.3L32 24.6l-3.65 11.2Z" fill="#f7f4ef" fill-rule="evenodd"/>
+  <path d="M21.6 39.2h23.8L41.9 48H18.1l3.5-8.8Z" fill="#e19b40"/>
+</svg>
+`;
+
+export const amendWordmarkSvg = `<svg fill="none" viewBox="0 0 232 64" xmlns="http://www.w3.org/2000/svg">
+  <title>Amend.sh logo</title>
+  <path clip-rule="evenodd" d="M8 56 26.6 8h10.8L56 56H44.15l-3.6-9.7h-17.1l-3.6 9.7H8Zm20.35-20.2h7.3L32 24.6l-3.65 11.2Z" fill="currentColor" fill-rule="evenodd"/>
+  <path d="M21.6 39.2h23.8L41.9 48H18.1l3.5-8.8Z" fill="#e19b40"/>
+  <text x="76" y="40" fill="currentColor" font-family="Geist Mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" font-size="24" font-weight="700" letter-spacing=".2">amend</text>
+  <text x="162" y="40" fill="currentColor" font-family="Geist Mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" font-size="24" font-weight="700" letter-spacing=".2" opacity=".62">.sh</text>
+</svg>
+`;
+
+export const amendWordmarkLightSvg = `<svg fill="none" viewBox="0 0 232 64" xmlns="http://www.w3.org/2000/svg">
+  <title>Amend.sh logo for light backgrounds</title>
+  <path clip-rule="evenodd" d="M8 56 26.6 8h10.8L56 56H44.15l-3.6-9.7h-17.1l-3.6 9.7H8Zm20.35-20.2h7.3L32 24.6l-3.65 11.2Z" fill="#0d0c0a" fill-rule="evenodd"/>
+  <path d="M21.6 39.2h23.8L41.9 48H18.1l3.5-8.8Z" fill="#e19b40"/>
+  <text x="76" y="40" fill="#0d0c0a" font-family="Geist Mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" font-size="24" font-weight="700" letter-spacing=".2">amend</text>
+  <text x="162" y="40" fill="#6f6a64" font-family="Geist Mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" font-size="24" font-weight="700" letter-spacing=".2">.sh</text>
+</svg>
+`;
+
+export const amendWordmarkDarkSvg = `<svg fill="none" viewBox="0 0 232 64" xmlns="http://www.w3.org/2000/svg">
+  <title>Amend.sh logo for dark backgrounds</title>
+  <path clip-rule="evenodd" d="M8 56 26.6 8h10.8L56 56H44.15l-3.6-9.7h-17.1l-3.6 9.7H8Zm20.35-20.2h7.3L32 24.6l-3.65 11.2Z" fill="#f7f4ef" fill-rule="evenodd"/>
+  <path d="M21.6 39.2h23.8L41.9 48H18.1l3.5-8.8Z" fill="#e19b40"/>
+  <text x="76" y="40" fill="#f7f4ef" font-family="Geist Mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" font-size="24" font-weight="700" letter-spacing=".2">amend</text>
+  <text x="162" y="40" fill="#9d9488" font-family="Geist Mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" font-size="24" font-weight="700" letter-spacing=".2">.sh</text>
 </svg>
 `;
 
 export const brandAssetDownloads = [
-  ["amend-mark.svg", amendMarkSvg],
-  ["amend-wordmark.svg", amendWordmarkSvg],
+  ["logo.svg", amendWordmarkSvg],
+  ["logo-light.svg", amendWordmarkLightSvg],
+  ["logo-dark.svg", amendWordmarkDarkSvg],
+  ["logo-mark.svg", amendMarkSvg],
+  ["logo-mark-light.svg", amendMarkLightSvg],
+  ["logo-mark-dark.svg", amendMarkDarkSvg],
 ] as const;

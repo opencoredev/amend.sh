@@ -1,24 +1,21 @@
 <svg fill="none" viewBox="0 0 1600 1000" xmlns="http://www.w3.org/2000/svg">
   <title>Amend.sh brand board</title>
-  <rect width="1600" height="1000" fill="#0b0b0b"/>
-  <g stroke="#242424">
+  <rect width="1600" height="1000" fill="#0d0c0a"/>
+  <g stroke="#24201b">
     <rect x="80" y="72" width="1440" height="856"/>
     <path d="M80 214H1520M80 620H1520M560 214V928M1040 214V928"/>
   </g>
-  <text x="120" y="148" fill="#f5f5f5" font-family="Geist Mono, SFMono-Regular, Menlo, monospace" font-size="34" font-weight="700" letter-spacing="4">AMEND.SH</text>
-  <text x="120" y="184" fill="#808080" font-family="Geist Mono, SFMono-Regular, Menlo, monospace" font-size="18" letter-spacing="2">AMEND.SH / SOURCE TO STORY</text>
-  <g transform="translate(700 324) scale(3.2)" color="#f5f5f5">
-    <path d="M22 16H42M48 22V31H39M25 33H16V42" stroke="currentColor" stroke-linecap="square" stroke-width="4" opacity=".55"/>
-    <rect x="8" y="8" width="16" height="16" rx="2" fill="currentColor"/>
-    <rect x="40" y="8" width="16" height="16" rx="2" stroke="currentColor" stroke-width="4"/>
-    <rect x="24" y="24" width="16" height="16" rx="2" fill="currentColor" opacity=".8"/>
-    <rect x="8" y="40" width="16" height="16" rx="2" stroke="currentColor" stroke-width="4"/>
+  <text x="120" y="148" fill="#f7f4ef" font-family="Geist Mono, SFMono-Regular, Menlo, monospace" font-size="34" font-weight="700" letter-spacing="4">AMEND.SH</text>
+  <text x="120" y="184" fill="#9d9488" font-family="Geist Mono, SFMono-Regular, Menlo, monospace" font-size="18" letter-spacing="2">AMEND.SH / SOURCE TO STORY / A-SPLICE MARK</text>
+  <g transform="translate(700 314) scale(3.4)">
+    <path clip-rule="evenodd" d="M8 56 26.6 8h10.8L56 56H44.15l-3.6-9.7h-17.1l-3.6 9.7H8Zm20.35-20.2h7.3L32 24.6l-3.65 11.2Z" fill="#f7f4ef" fill-rule="evenodd"/>
+    <path d="M21.6 39.2h23.8L41.9 48H18.1l3.5-8.8Z" fill="#e19b40"/>
   </g>
-  <text x="120" y="718" fill="#f5f5f5" font-family="Geist Mono, SFMono-Regular, Menlo, monospace" font-size="42" font-weight="700" letter-spacing="5">AMEND</text>
-  <text x="338" y="718" fill="#8a8a8a" font-family="Geist Mono, SFMono-Regular, Menlo, monospace" font-size="26" font-weight="600" letter-spacing="2">.SH</text>
-  <text x="120" y="770" fill="#8a8a8a" font-family="Geist Mono, SFMono-Regular, Menlo, monospace" font-size="20">The mark is a transfer grid: source, shipped change, review, and customer update.</text>
-  <text x="600" y="718" fill="#f5f5f5" font-family="Geist Mono, SFMono-Regular, Menlo, monospace" font-size="24" font-weight="700">Usage</text>
-  <text x="600" y="770" fill="#8a8a8a" font-family="Geist Mono, SFMono-Regular, Menlo, monospace" font-size="18">No outer tile. No gradients. Use monochrome first.</text>
-  <text x="1080" y="718" fill="#f5f5f5" font-family="Geist Mono, SFMono-Regular, Menlo, monospace" font-size="24" font-weight="700">Files</text>
-  <text x="1080" y="770" fill="#8a8a8a" font-family="Geist Mono, SFMono-Regular, Menlo, monospace" font-size="18">amend-mark.svg / amend-wordmark.svg</text>
+  <text x="120" y="718" fill="#f7f4ef" font-family="Geist Mono, SFMono-Regular, Menlo, monospace" font-size="42" font-weight="700" letter-spacing="1">amend</text>
+  <text x="292" y="718" fill="#9d9488" font-family="Geist Mono, SFMono-Regular, Menlo, monospace" font-size="42" font-weight="700" letter-spacing="1">.sh</text>
+  <text x="120" y="770" fill="#9d9488" font-family="Geist Mono, SFMono-Regular, Menlo, monospace" font-size="20">The mark is an A with an inserted amendment splice: brand first, product metaphor second.</text>
+  <text x="600" y="718" fill="#f7f4ef" font-family="Geist Mono, SFMono-Regular, Menlo, monospace" font-size="24" font-weight="700">Usage</text>
+  <text x="600" y="770" fill="#9d9488" font-family="Geist Mono, SFMono-Regular, Menlo, monospace" font-size="18">Use light or dark logo files by surface. Use the square mark for favicon and app icons.</text>
+  <text x="1080" y="718" fill="#f7f4ef" font-family="Geist Mono, SFMono-Regular, Menlo, monospace" font-size="24" font-weight="700">Files</text>
+  <text x="1080" y="770" fill="#9d9488" font-family="Geist Mono, SFMono-Regular, Menlo, monospace" font-size="18">logo.svg / logo-light.svg / logo-dark.svg / favicon.ico</text>
 </svg>

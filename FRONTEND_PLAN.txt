@@ -96,7 +96,7 @@ PHASE 0 — MOCK DATA LAYER + ROUTE SKELETON  (do first; zero backend needed)
 -------------------------------------------------------------------------------
 - `apps/web/src/lib/amend-contract.ts`: TS interfaces copied from the CONTRACT
   (single source the components import). This is your typed seam.
-- `apps/web/src/lib/mock-amend.ts`: fixtures matching every CONTRACT return shape
+- `apps/web/src/lib/amend-data.ts`: fixtures matching every CONTRACT return shape
   (3 ghosts at different strengths, 2 accepted needs, 2 drafts, changelog, memory
   rules, a digest). A `useAmend(queryName)` hook that returns mock data now and
   will swap to `useQuery(api...)` later — keep the swap to ONE file.

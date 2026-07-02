@@ -1,3 +1,4 @@
+import type { Id } from "@amend/backend/convex/_generated/dataModel";
 import { useMutation } from "convex/react";
 import { useState } from "react";
 
@@ -14,7 +15,7 @@ export function useChangelogCoverUpload({ workspaceSlug }: { workspaceSlug?: str
   const generateUploadUrl = useMutation(generateChangelogCoverUploadUrlMutation);
   const [uploading, setUploading] = useState(false);
 
-  async function uploadCover(file: File | undefined): Promise<string | null> {
+  async function uploadCover(file: File | undefined): Promise<Id<"_storage"> | null> {
     if (!file) return null;
     if (!file.type.startsWith("image/")) {
       toast.error({
@@ -44,7 +45,9 @@ export function useChangelogCoverUpload({ workspaceSlug }: { workspaceSlug?: str
       if (!response.ok) {
         throw new Error("Convex storage rejected the uploaded image.");
       }
-      const { storageId } = (await response.json()) as { storageId: string };
+      // Convex's storage upload endpoint returns the new file's storage id;
+      // this is the one untyped HTTP boundary, so brand it here.
+      const { storageId } = (await response.json()) as { storageId: Id<"_storage"> };
       return storageId;
     } catch (error) {
       toast.error({

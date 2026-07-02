@@ -38,7 +38,7 @@ export function PostComposerHeader({
               "flex h-8 items-center gap-2 rounded-lg px-2.5 text-xs font-semibold transition-colors duration-150 ease-linear active:opacity-75",
               panel === "board"
                 ? "bg-accent text-foreground ring-1 ring-white/[0.09]"
-                : "bg-[#151518] text-muted-foreground ring-1 ring-white/[0.055] hover:bg-[#1a1a1d] hover:text-foreground",
+                : "bg-amend-inset text-muted-foreground ring-1 ring-white/[0.055] hover:bg-[#1a1a1d] hover:text-foreground",
             )}
             onClick={() => onPanelToggle("board")}
           >

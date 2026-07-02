@@ -58,9 +58,11 @@
   <!-- Horizontal rules flanking the brand mark -->
   <line x1="64" y1="500" x2="736" y2="500" stroke="#ffffff" stroke-opacity="0.1" stroke-width="1"/>
 
-  <!-- Brand mark – outer square + inner square, centered -->
-  <rect x="384" y="522" width="32" height="32" fill="none" stroke="#ffffff" stroke-opacity="0.65" stroke-width="1.5"/>
-  <rect x="393" y="531" width="14" height="14" fill="#ffffff" fill-opacity="0.65"/>
+  <!-- Brand mark -->
+  <g transform="translate(380 518) scale(.625)">
+    <path clip-rule="evenodd" d="M8 56 26.6 8h10.8L56 56H44.15l-3.6-9.7h-17.1l-3.6 9.7H8Zm20.35-20.2h7.3L32 24.6l-3.65 11.2Z" fill="#ffffff" fill-opacity="0.72" fill-rule="evenodd"/>
+    <path d="M21.6 39.2h23.8L41.9 48H18.1l3.5-8.8Z" fill="#e19b40"/>
+  </g>
 
   <!-- AMEND logotype -->
   <text font-family="'Courier New',Courier,monospace" font-size="56" font-weight="700" fill="#ffffff" fill-opacity="0.95" text-anchor="middle" x="400" y="632" letter-spacing="7">AMEND</text>

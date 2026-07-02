@@ -4,11 +4,11 @@ import {
   assertSeededDemoLocalAuthAllowed,
   isLocalAuthSiteUrl,
   seededDemoLocalOnlyMessage,
-} from "../packages/backend/convex/amendBackendUtils";
+} from "../packages/backend/convex/lib/amendBackendUtils";
 import {
   joinSeededDemoWorkspaceHandler,
   seedDemoDataHandler,
-} from "../packages/backend/convex/amendDevAndGithubHandlers";
+} from "../packages/backend/convex/lib/amendDevAndGithubHandlers";
 
 describe("development auth guards", () => {
   test("allows only localhost SITE_URL values for seeded demo auth", () => {

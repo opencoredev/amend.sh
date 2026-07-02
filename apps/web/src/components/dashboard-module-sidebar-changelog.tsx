@@ -1,4 +1,5 @@
-import { changelogCategories, stateValue } from "@/components/amend-dashboard-utils";
+import { changelogCategories } from "@/components/amend-dashboard-data-mappers";
+import { stateValue } from "@/components/amend-dashboard-format";
 import {
   SidebarDivider,
   SidebarFrame,

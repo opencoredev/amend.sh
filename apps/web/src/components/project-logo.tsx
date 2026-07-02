@@ -2,7 +2,7 @@ import { cn } from "@amend/ui/lib/utils";
 import { Globe } from "@/lib/icons";
 import { useEffect, useMemo, useState } from "react";
 
-import { duckDuckGoFaviconUrl, googleFaviconUrl } from "@/components/amend-dashboard-utils";
+import { duckDuckGoFaviconUrl, googleFaviconUrl } from "@/components/amend-dashboard-format";
 
 export function ProjectLogo({
   className,

@@ -18,7 +18,7 @@ import { ToolbarBar, ToolbarGroup, ToolbarPill } from "@/components/dashboard-to
 import { PageHeader } from "@/components/amend-agent-chrome";
 import type { MemoryRule, MemoryRuleKind } from "@/lib/amend-contract";
 import { relativeFromNow } from "@/lib/amend-agent-format";
-import { useMemoryRules, useToggleRule, useUndoRule } from "@/lib/mock-amend";
+import { useMemoryRules, useToggleRule, useUndoRule } from "@/lib/amend-data";
 import {
   AiMagic,
   Brain,
@@ -161,7 +161,7 @@ function RuleRow({ rule }: { rule: MemoryRule }) {
 function FilteringStat({ filteredPerMonth }: { filteredPerMonth: number }) {
   if (filteredPerMonth <= 0) return null;
   return (
-    <div className="hidden h-10 items-center gap-2 rounded-xl bg-[#151518] px-3.5 text-sm ring-1 ring-white/[0.055] sm:flex">
+    <div className="hidden h-10 items-center gap-2 rounded-xl bg-amend-inset px-3.5 text-sm ring-1 ring-white/[0.055] sm:flex">
       <Sparkles className="size-3.5 text-amend-success" />
       <span className="text-muted-foreground">Filtering</span>
       <span className="font-mono font-semibold tabular-nums text-foreground">

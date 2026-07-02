@@ -15,7 +15,7 @@ describe("auth transactional email flow", () => {
 
   test("transactional email helper logs provider delivery outcomes", async () => {
     const emailHelper = await readFile(
-      "packages/backend/convex/amendTransactionalEmails.ts",
+      "packages/backend/convex/delivery/amendTransactionalEmails.ts",
       "utf8",
     );
 

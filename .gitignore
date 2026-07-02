@@ -72,3 +72,6 @@ agent-ready-completion-audit-report.json
 tmp
 temp
 .vercel
+
+# Local MCP config (contains secrets)
+.mcp.json

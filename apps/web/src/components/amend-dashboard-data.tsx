@@ -1,64 +1,65 @@
+import { api } from "@amend/backend/convex/_generated/api";
+
 import { MessageSquareText } from "@/lib/icons";
-import { makeFunctionReference } from "convex/server";
 
 import type { Board } from "@/components/amend-dashboard-types";
 
-export const dashboardOverviewQuery = makeFunctionReference<"query">("amend:getDashboardOverview");
-export const projectsQuery = makeFunctionReference<"query">("amend:getProjects");
-export const createFeedbackMutation = makeFunctionReference<"mutation">("amend:createFeedback");
-export const recordFeedbackInteractionMutation = makeFunctionReference<"mutation">(
-  "amend:recordFeedbackInteraction",
-);
-export const upsertChangelogEntryMutation = makeFunctionReference<"mutation">(
-  "amend:upsertChangelogEntry",
-);
-export const publishChangelogEntryMutation = makeFunctionReference<"mutation">(
-  "amend:publishChangelogEntry",
-);
-export const generateChangelogCoverUploadUrlMutation = makeFunctionReference<"mutation">(
-  "amend:generateChangelogCoverUploadUrl",
-);
-export const upsertRoadmapItemMutation =
-  makeFunctionReference<"mutation">("amend:upsertRoadmapItem");
-export const voteRoadmapItemMutation = makeFunctionReference<"mutation">("amend:voteRoadmapItem");
+export const dashboardOverviewQuery = api.amend.getDashboardOverview;
+export const projectsQuery = api.amend.getProjects;
+export const createFeedbackMutation = api.amend.createFeedback;
+export const recordFeedbackInteractionMutation = api.amend.recordFeedbackInteraction;
+export const upsertChangelogEntryMutation = api.amend.upsertChangelogEntry;
+export const publishChangelogEntryMutation = api.amend.publishChangelogEntry;
+export const generateChangelogCoverUploadUrlMutation = api.amend.generateChangelogCoverUploadUrl;
+export const upsertRoadmapItemMutation = api.amend.upsertRoadmapItem;
+export const voteRoadmapItemMutation = api.amend.voteRoadmapItem;
 
-export const workspaceSettingsQuery = makeFunctionReference<"query">("amend:getWorkspaceSettings");
-export const upsertIntegrationConnectionMutation = makeFunctionReference<"mutation">(
-  "amend:upsertIntegrationConnection",
-);
+export const workspaceSettingsQuery = api.amend.getWorkspaceSettings;
+export const upsertIntegrationConnectionMutation = api.amend.upsertIntegrationConnection;
+export const updateProjectMutation = api.amend.updateProject;
+export const generateProjectLogoUploadUrlMutation = api.amend.generateProjectLogoUploadUrl;
+export const updatePortalSettingsMutation = api.amend.updatePortalSettings;
+export const updateAutomationRulesMutation = api.amend.updateAutomationRules;
 
-export const listWorkspaceTagsQuery = makeFunctionReference<"query">("tags:list");
-export const createWorkspaceTagMutation = makeFunctionReference<"mutation">("tags:create");
-export const updateWorkspaceTagMutation = makeFunctionReference<"mutation">("tags:update");
-export const removeWorkspaceTagMutation = makeFunctionReference<"mutation">("tags:remove");
+// Project setup — create the project, wire its first source, prefill from the website.
+export const createProjectMutation = api.amend.createProject;
+export const connectProjectRepositoryMutation = api.amend.connectProjectRepository;
+export const markProjectFeedbackSourceMutation = api.amend.markProjectFeedbackSource;
+export const listGitHubAppRepositoriesAction = api.amend.listGitHubAppRepositories;
+export const suggestFromWebsiteAction = api.projects.suggestFromWebsite;
+
+export const listWorkspaceTagsQuery = api.tags.list;
+export const createWorkspaceTagMutation = api.tags.create;
+export const updateWorkspaceTagMutation = api.tags.update;
+export const removeWorkspaceTagMutation = api.tags.remove;
 
 // Proactive agent — Inbox (needs)
-export const listGhostsQuery = makeFunctionReference<"query">("needs:listGhosts");
-export const listAcceptedNeedsQuery = makeFunctionReference<"query">("needs:listAccepted");
-export const getNeedQuery = makeFunctionReference<"query">("needs:get");
-export const acceptGhostMutation = makeFunctionReference<"mutation">("needs:acceptGhost");
-export const keepGatheringMutation = makeFunctionReference<"mutation">("needs:keepGathering");
-export const killGhostMutation = makeFunctionReference<"mutation">("needs:killGhost");
-export const restoreGhostMutation = makeFunctionReference<"mutation">("needs:restoreGhost");
+export const listGhostsQuery = api.needs.listGhosts;
+export const listAcceptedNeedsQuery = api.needs.listAccepted;
+export const getNeedQuery = api.needs.get;
+export const acceptGhostMutation = api.needs.acceptGhost;
+export const keepGatheringMutation = api.needs.keepGathering;
+export const killGhostMutation = api.needs.killGhost;
+export const restoreGhostMutation = api.needs.restoreGhost;
 
 // Proactive agent — Inbox (drafts)
-export const listPendingDraftsQuery = makeFunctionReference<"query">("drafts:listPending");
-export const approveDraftMutation = makeFunctionReference<"mutation">("drafts:approve");
-export const rejectDraftMutation = makeFunctionReference<"mutation">("drafts:reject");
-export const updateDraftTextMutation = makeFunctionReference<"mutation">("drafts:updateDraftText");
+export const listPendingDraftsQuery = api.drafts.listPending;
+export const approveDraftMutation = api.drafts.approve;
+export const rejectDraftMutation = api.drafts.reject;
+export const updateDraftTextMutation = api.drafts.updateDraftText;
 
 // Proactive agent — Memory
-export const listMemoryRulesQuery = makeFunctionReference<"query">("memory:listRules");
-export const toggleMemoryRuleMutation = makeFunctionReference<"mutation">("memory:toggleRule");
-export const undoMemoryRuleMutation = makeFunctionReference<"mutation">("memory:undoRule");
+export const listMemoryRulesQuery = api.memory.listRules;
+export const toggleMemoryRuleMutation = api.memory.toggleRule;
+export const undoMemoryRuleMutation = api.memory.undoRule;
 
 // Proactive agent — weekly digest
-export const digestPreviewQuery = makeFunctionReference<"query">("digest:preview");
+export const digestPreviewQuery = api.digest.preview;
 
-// GitHub App install completion
-export const completeGithubInstallMutation = makeFunctionReference<"mutation">(
-  "amendGithubInstall:completeGithubInstall",
-);
+// GitHub App install completion + install-context (installUrl without the
+// full repository listing — used by Connections).
+export const completeGithubInstallMutation = api.amendGithubInstall.completeGithubInstall;
+export const githubInstallContextQuery = api.amend.getGitHubInstallContext;
 
 export const feedbackBoard: Board = {
   id: "feedback",

@@ -28,7 +28,7 @@ export function SettingsWorkspace({
             autosave cue rides here now that the section nav lives in the header. */}
         <div className="mb-9 flex items-center justify-between gap-3">
           <div className="flex min-w-0 items-center gap-3">
-            <span className="grid size-10 shrink-0 place-items-center overflow-hidden rounded-xl bg-[#151518] ring-1 ring-white/[0.06] ring-inset">
+            <span className="grid size-10 shrink-0 place-items-center overflow-hidden rounded-xl bg-amend-inset ring-1 ring-white/[0.06] ring-inset">
               <ProjectLogo
                 className="size-full"
                 fallbackIconClassName="size-5"

@@ -1,0 +1,11 @@
+<svg width="512" height="512" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <title>Amend closure mark inverse concept</title>
+  <path
+    d="M19 14.4H35C45.82 14.4 54.6 23.18 54.6 34C54.6 44.82 45.82 53.6 35 53.6H19V42.4H35C39.64 42.4 43.4 38.64 43.4 34C43.4 29.36 39.64 25.6 35 25.6H19V14.4Z"
+    fill="#F1F1F0"
+  />
+  <rect x="24.2" y="38" width="20" height="6" rx="3" fill="#EF9836" transform="rotate(-45 24.2 38)" />
+  <circle cx="19" cy="20" r="5.6" fill="#F1F1F0" />
+  <circle cx="19" cy="48" r="5.6" fill="#EF9836" />
+  <circle cx="49" cy="34" r="4.9" fill="#EF9836" />
+</svg>

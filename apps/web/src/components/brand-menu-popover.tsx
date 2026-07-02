@@ -14,15 +14,15 @@ export function BrandMenuPopover({ onClose }: { onClose: () => void }) {
         icon={<Copy className="text-muted-foreground" />}
         label="Copy logo as SVG"
         onClick={() => {
-          copySvg(amendMarkSvg);
+          copySvg(amendWordmarkSvg);
           onClose();
         }}
       />
       <BrandMenuItem
         icon={<Code2 className="text-muted-foreground" />}
-        label="Copy wordmark as SVG"
+        label="Copy mark as SVG"
         onClick={() => {
-          copySvg(amendWordmarkSvg);
+          copySvg(amendMarkSvg);
           onClose();
         }}
       />

@@ -1,4 +1,6 @@
-import { useMutation, useQuery } from "convex/react";
+import { useMutation } from "convex/react";
+
+import { useAuthedQuery } from "@/lib/convex-utils";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { KeyboardEvent as ReactKeyboardEvent } from "react";
 
@@ -126,8 +128,8 @@ export function ChangelogEditorWorkspace({
   const isNew = entry.recordId === null;
 
   // Persistent, reusable workspace tags (with their colors).
-  const availableTags = (useQuery(listWorkspaceTagsQuery, workspaceSlug ? { workspaceSlug } : {}) ??
-    []) as WorkspaceTag[];
+  const availableTags: WorkspaceTag[] =
+    useAuthedQuery(listWorkspaceTagsQuery, workspaceSlug ? { workspaceSlug } : {}) ?? [];
   const createWorkspaceTag = useMutation(createWorkspaceTagMutation);
 
   function handleCreateTag(name: string, color: string) {

@@ -76,7 +76,6 @@ async function svgToPng(svg: string): Promise<Uint8Array> {
 const BG = "#0d0d0f";
 const FG = "#f1f1f0";
 const MUTED = "#a7a7af";
-const CARD = "#111113";
 const BORDER = "#1f1f23";
 const BRACKET = "rgba(255,255,255,0.28)";
 const FONT = "GeistSans";
@@ -87,19 +86,14 @@ const MONO_FONT = "GeistMono";
 function BrandMark() {
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          width: 28,
-          height: 28,
-          border: `1px solid ${BORDER}`,
-          background: CARD,
-        }}
-      >
-        <div style={{ width: 10, height: 10, background: FG }} />
-      </div>
+      <svg width="30" height="30" viewBox="0 0 64 64" fill="none">
+        <path
+          d="M8 56 26.6 8h10.8L56 56H44.15l-3.6-9.7h-17.1l-3.6 9.7H8Zm20.35-20.2h7.3L32 24.6l-3.65 11.2Z"
+          fill={FG}
+          fillRule="evenodd"
+        />
+        <path d="M21.6 39.2h23.8L41.9 48H18.1l3.5-8.8Z" fill="#e19b40" />
+      </svg>
       <div
         style={{
           display: "flex",

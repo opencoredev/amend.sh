@@ -100,7 +100,7 @@ export function DashboardOnboardingLauncher({
   return (
     <div ref={containerRef} className="fixed bottom-4 right-4 z-40 flex flex-col items-end">
       {open ? (
-        <div className="mb-2 w-[20rem] origin-bottom-right overflow-hidden rounded-2xl bg-[#151518] shadow-[0_24px_80px_rgb(0_0_0/0.5)] ring-1 ring-white/[0.08] motion-safe:animate-in motion-safe:fade-in-0 motion-safe:zoom-in-95 motion-safe:slide-in-from-bottom-2 motion-safe:duration-200">
+        <div className="mb-2 w-[20rem] origin-bottom-right overflow-hidden rounded-2xl bg-amend-inset shadow-[0_24px_80px_rgb(0_0_0/0.5)] ring-1 ring-white/[0.08] motion-safe:animate-in motion-safe:fade-in-0 motion-safe:zoom-in-95 motion-safe:slide-in-from-bottom-2 motion-safe:duration-200">
           <header className="flex items-start justify-between gap-3 border-b border-white/[0.05] px-4 py-3">
             <div className="min-w-0">
               <p className="text-[0.6rem] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
@@ -139,7 +139,7 @@ export function DashboardOnboardingLauncher({
         type="button"
         aria-expanded={open}
         onClick={() => setOpen((value) => !value)}
-        className="inline-flex h-9 items-center gap-2.5 rounded-full bg-[#151518] pl-2.5 pr-3.5 text-xs font-medium text-foreground shadow-[0_8px_30px_rgb(0_0_0/0.4)] ring-1 ring-white/[0.08] transition-colors duration-150 ease-linear hover:bg-[#1a1a1d]"
+        className="inline-flex h-9 items-center gap-2.5 rounded-full bg-amend-inset pl-2.5 pr-3.5 text-xs font-medium text-foreground shadow-[0_8px_30px_rgb(0_0_0/0.4)] ring-1 ring-white/[0.08] transition-colors duration-150 ease-linear hover:bg-[#1a1a1d]"
       >
         <ProgressRing progress={progress} />
         Finish setup

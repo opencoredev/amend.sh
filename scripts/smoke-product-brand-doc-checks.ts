@@ -15,7 +15,7 @@ export async function runSmokeProductBrandAndDocsChecks() {
     const lockup = await read("apps/web/public/brand/amend-lockup.svg");
     const favicon = await read("apps/web/public/favicon.svg");
 
-    assertIncludes(brand, "Source to shipped story", "brand docs");
+    assertIncludes(brand, "Noise in, receipts out", "brand docs");
     assertIncludes(brand, "Implementation Sources", "brand docs");
     assertIncludes(brand, "amend-brand-board.svg", "brand docs");
     assertIncludes(board, "AMEND.SH / SOURCE TO STORY", "brand board");

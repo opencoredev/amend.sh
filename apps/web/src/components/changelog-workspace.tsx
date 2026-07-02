@@ -2,7 +2,7 @@ import { Megaphone } from "@/lib/icons";
 
 import { EmptyModule } from "@/components/amend-dashboard-shared";
 import type { DashboardChangelog } from "@/components/amend-dashboard-types";
-import { formatDate, formatState } from "@/components/amend-dashboard-utils";
+import { formatDate, formatState } from "@/components/amend-dashboard-format";
 import { DashboardWorkspaceSurface } from "@/components/dashboard-workspace-surface";
 
 export function ChangelogWorkspace({

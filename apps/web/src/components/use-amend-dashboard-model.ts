@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 
+import { fallbackRoadmapView, fallbackWorkspace } from "@/components/amend-dashboard-constants";
 import { feedbackBoard } from "@/components/amend-dashboard-data";
 import type {
   ChangelogStatusFilter,
@@ -13,16 +14,14 @@ import {
   buildRoadmapViews,
   buildSyncedPosts,
   buildSyncedRoadmapEntries,
-  fallbackRoadmapView,
-  fallbackWorkspace,
   filterChangelogEntries,
   filterPosts,
   filterRoadmapEntries,
   optimisticProjectMenuItem,
   projectsToMenuItems,
-  roadmapStatusToRoadmapStatus,
   workspaceFromDashboard,
-} from "@/components/amend-dashboard-utils";
+} from "@/components/amend-dashboard-data-mappers";
+import { roadmapStatusToRoadmapStatus } from "@/components/amend-dashboard-status-utils";
 import { BLANK_CHANGELOG } from "@/components/changelog-editor-types";
 
 export function useAmendDashboardModel({

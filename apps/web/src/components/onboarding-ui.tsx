@@ -6,7 +6,7 @@ import { settingsSecondaryButtonClass } from "@/components/settings-workspace-pa
 
 /**
  * Onboarding reuses the dashboard's settings design system (airy, hairline,
- * `#151518` inset controls) so first-run feels like the product, not a separate
+ * `bg-amend-inset` inset controls) so first-run feels like the product, not a separate
  * marketing surface. These are the few extra pieces the settings kit doesn't
  * already provide.
  */
@@ -63,7 +63,7 @@ export function OnboardingFooter({
   );
 }
 
-/** Selectable option row — the dashboard's `#151518` inset surface with a radio. */
+/** Selectable option row — the dashboard's `bg-amend-inset` inset surface with a radio. */
 export function SelectableRow({
   description,
   icon: Icon,
@@ -83,7 +83,7 @@ export function SelectableRow({
       aria-pressed={selected}
       onClick={onClick}
       className={cn(
-        "flex w-full items-center gap-3 rounded-xl bg-[#151518] px-3.5 py-3 text-left outline-none ring-1 ring-inset transition-[box-shadow] duration-150 ease-linear focus-visible:ring-2 focus-visible:ring-white/25",
+        "flex w-full items-center gap-3 rounded-xl bg-amend-inset px-3.5 py-3 text-left outline-none ring-1 ring-inset transition-[box-shadow] duration-150 ease-linear focus-visible:ring-2 focus-visible:ring-white/25",
         selected ? "ring-white/[0.22]" : "ring-white/[0.055] hover:ring-white/[0.12]",
       )}
     >

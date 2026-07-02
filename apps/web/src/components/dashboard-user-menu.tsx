@@ -31,7 +31,7 @@ export default function DashboardUserMenu({
         render={
           <button
             type="button"
-            className="flex w-full items-center gap-2.5 rounded-xl bg-[#151518] px-2 py-2 text-left outline-none ring-1 ring-white/[0.055] transition-colors duration-150 ease-linear hover:bg-[#1a1a1d] focus-visible:ring-2 focus-visible:ring-white/25 active:opacity-75 data-[popup-open]:bg-[#1a1a1d] data-[popup-open]:ring-white/15"
+            className="flex w-full items-center gap-2.5 rounded-xl bg-amend-inset px-2 py-2 text-left outline-none ring-1 ring-white/[0.055] transition-colors duration-150 ease-linear hover:bg-[#1a1a1d] focus-visible:ring-2 focus-visible:ring-white/25 active:opacity-75 data-[popup-open]:bg-[#1a1a1d] data-[popup-open]:ring-white/15"
           />
         }
       >

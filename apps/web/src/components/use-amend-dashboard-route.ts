@@ -14,7 +14,7 @@ import {
   normalizeStatus,
   normalizeView,
   normalizeWorkspace,
-} from "@/components/amend-dashboard-utils";
+} from "@/components/amend-dashboard-status-utils";
 
 export type DashboardRoutePatch = Partial<{
   board: BoardId;

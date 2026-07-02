@@ -1,12 +1,12 @@
 import { Button } from "@amend/ui/components/button";
 
 import type { DashboardRoadmap } from "@/components/amend-dashboard-types";
+import { sourceFeedbackKey } from "@/components/amend-dashboard-data-mappers";
+import { formatDate } from "@/components/amend-dashboard-format";
 import {
-  formatDate,
   priorityLabel,
   roadmapStatusToRoadmapStatus,
-  sourceFeedbackKey,
-} from "@/components/amend-dashboard-utils";
+} from "@/components/amend-dashboard-status-utils";
 import { DetailSectionLabel, SourceEvidenceList } from "@/components/dashboard-detail-shared";
 import { DashboardWorkspaceSurface } from "@/components/dashboard-workspace-surface";
 import { StatusPill } from "@/components/status-pill";

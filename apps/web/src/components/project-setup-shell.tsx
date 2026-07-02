@@ -4,7 +4,7 @@ import { OnboardingFlow } from "@/components/onboarding-flow";
 /**
  * Full-screen first-run surface. Forced into dark mode so onboarding matches the
  * always-dark dashboard (the rest of the app pins `.dark` the same way) and the
- * elevated `#151518` / white-ring surfaces render as intended regardless of the
+ * elevated `bg-amend-inset` / white-ring surfaces render as intended regardless of the
  * visitor's system theme.
  */
 export function ProjectSetupShell({

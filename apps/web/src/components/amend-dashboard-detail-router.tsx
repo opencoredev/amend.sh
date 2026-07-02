@@ -7,7 +7,7 @@ import {
   RoadmapDetailWorkspace,
 } from "@/components/amend-dashboard-workspaces";
 import type { DashboardContentProps } from "@/components/amend-dashboard-content-types";
-import { roadmapSourceFeedbackKey } from "@/components/amend-dashboard-utils";
+import { roadmapSourceFeedbackKey } from "@/components/amend-dashboard-data-mappers";
 
 export function getDashboardDetailView({
   activeView,

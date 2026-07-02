@@ -54,8 +54,7 @@ The request must include `X-GitHub-Event`, `X-GitHub-Delivery`, and
 
 Legacy ingest routes under `/ingest/*` are fail-closed in production too:
 `/ingest/githubWebhook` requires the same GitHub signature verification, while
-`/ingest/discordWebhook` and `/ingest/sourceEvent` require
-`Authorization: Bearer <AMEND_API_TOKEN>`.
+`/ingest/sourceEvent` requires `Authorization: Bearer <AMEND_API_TOKEN>`.
 
 ## CLI Imports
 

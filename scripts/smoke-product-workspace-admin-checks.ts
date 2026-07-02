@@ -2,7 +2,7 @@ import { assertIncludes, check, read, readIntegrationDocs, readSdkSource } from 
 
 export async function runSmokeProductWorkspaceAdminChecks() {
   await check("workspace members are manageable through backend, SDK, and docs", async () => {
-    const http = await read("packages/backend/convex/httpRestPostWorkspace.ts");
+    const http = await read("packages/backend/convex/lib/httpRestPostWorkspace.ts");
     const backend = await read("packages/backend/convex/amend.ts");
     const sdk = await readSdkSource();
     const docs = await readIntegrationDocs();
@@ -13,7 +13,7 @@ export async function runSmokeProductWorkspaceAdminChecks() {
   });
 
   await check("integrations are manageable through backend, SDK, and docs", async () => {
-    const http = await read("packages/backend/convex/httpRestPostWorkspace.ts");
+    const http = await read("packages/backend/convex/lib/httpRestPostWorkspace.ts");
     const backend = await read("packages/backend/convex/amend.ts");
     const sdk = await readSdkSource();
     const docs = await readIntegrationDocs();
@@ -27,7 +27,7 @@ export async function runSmokeProductWorkspaceAdminChecks() {
     const http = [
       await read("packages/backend/convex/httpRestGet.ts"),
       await read("packages/backend/convex/httpRestPost.ts"),
-      await read("packages/backend/convex/httpRestPostWorkspace.ts"),
+      await read("packages/backend/convex/lib/httpRestPostWorkspace.ts"),
     ].join("\n");
     const backend = await read("packages/backend/convex/amend.ts");
     const sdk = await readSdkSource();

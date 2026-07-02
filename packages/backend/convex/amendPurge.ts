@@ -1,6 +1,6 @@
 import { v } from "convex/values";
 import { internalMutation } from "./_generated/server";
-import { requireExistingWorkspace } from "./amendWorkspace";
+import { requireExistingWorkspace } from "./workspace/amendWorkspace";
 
 // One-off admin purge: wipe all signal/product data for a workspace so the
 // dashboard shows only real, connection-sourced signal. Configuration is kept
@@ -11,7 +11,6 @@ import { requireExistingWorkspace } from "./amendWorkspace";
 const SIGNAL_TABLES = [
   "needs",
   "evidence",
-  "needVectors",
   "persons",
   "identityHandles",
   "proactivePipelineEvents",

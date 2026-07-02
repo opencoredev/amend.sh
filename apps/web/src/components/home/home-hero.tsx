@@ -1,8 +1,6 @@
-import { Link } from "@tanstack/react-router";
-
 import { BrandIcon } from "./brand-icons";
 import { heroListens } from "./home-content";
-import { ctaGhost, ctaPrimary } from "./home-cta";
+import { HomeWaitlist } from "./home-waitlist";
 
 export function HomeHero() {
   return (
@@ -20,26 +18,7 @@ export function HomeHero() {
           and tells everyone who asked the moment you ship.
         </p>
 
-        <div className="mt-9 flex flex-col items-center gap-x-7 gap-y-4 sm:flex-row">
-          <Link
-            to="/sign-up"
-            className={`${ctaPrimary} inline-flex h-11 px-6 text-sm`}
-          >
-            Request access
-            <span className="amend-link-arrow" aria-hidden>
-              &rarr;
-            </span>
-          </Link>
-          <a
-            href="#workflow"
-            className={`${ctaGhost} inline-flex h-11 px-3 text-sm`}
-          >
-            How it works
-            <span className="transition-transform group-hover:translate-x-0.5" aria-hidden>
-              &rarr;
-            </span>
-          </a>
-        </div>
+        <HomeWaitlist />
 
         <div className="mt-20 flex flex-col items-center gap-4">
           <span className="amend-eyebrow text-[0.6rem]">Works with</span>

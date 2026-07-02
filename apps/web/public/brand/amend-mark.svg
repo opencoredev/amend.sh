@@ -1,8 +1,5 @@
 <svg fill="none" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
   <title>Amend.sh mark</title>
-  <path d="M22 16H42M48 22V31H39M25 33H16V42" stroke="currentColor" stroke-linecap="square" stroke-width="4" opacity=".55"/>
-  <rect x="8" y="8" width="16" height="16" rx="2" fill="currentColor"/>
-  <rect x="40" y="8" width="16" height="16" rx="2" stroke="currentColor" stroke-width="4"/>
-  <rect x="24" y="24" width="16" height="16" rx="2" fill="currentColor" opacity=".8"/>
-  <rect x="8" y="40" width="16" height="16" rx="2" stroke="currentColor" stroke-width="4"/>
+  <path clip-rule="evenodd" d="M8 56 26.6 8h10.8L56 56H44.15l-3.6-9.7h-17.1l-3.6 9.7H8Zm20.35-20.2h7.3L32 24.6l-3.65 11.2Z" fill="currentColor" fill-rule="evenodd"/>
+  <path d="M21.6 39.2h23.8L41.9 48H18.1l3.5-8.8Z" fill="#e19b40"/>
 </svg>

@@ -1,8 +1,8 @@
 import { action, internalMutation, internalQuery, mutation, query } from "./_generated/server";
-import * as agent from "./amendAgentFunctionDefinitions";
-import * as dev from "./amendDevFunctionDefinitions";
-import * as mutations from "./amendMutationFunctionDefinitions";
-import * as reads from "./amendReadFunctionDefinitions";
+import * as agent from "./agent/amendAgentFunctionDefinitions";
+import * as dev from "./lib/amendDevFunctionDefinitions";
+import * as mutations from "./lib/amendMutationFunctionDefinitions";
+import * as reads from "./dashboard/amendReadFunctionDefinitions";
 
 export const getDashboardOverview = query(agent.getDashboardOverviewDefinition);
 export const getAgentRunContext = query(agent.getAgentRunContextDefinition);
@@ -31,7 +31,6 @@ export const resolveCustomDomain = query(reads.resolveCustomDomainDefinition);
 export const getProjects = query(reads.getProjectsDefinition);
 export const getProjectsForApi = internalQuery(reads.getProjectsForApiDefinition);
 export const getPlanCatalog = query(reads.getPlanCatalogDefinition);
-export const getWorkspace = query(reads.getWorkspaceDefinition);
 
 export const getGitHubInstallContext = query(dev.getGitHubInstallContextDefinition);
 export const listGitHubAppRepositories = action(dev.listGitHubAppRepositoriesDefinition);
@@ -75,7 +74,6 @@ export const trustedUpdateCustomDomainStatus = internalMutation(
 export const identifyExternalUser = mutation(mutations.identifyExternalUserDefinition);
 export const trackEvent = mutation(mutations.trackEventDefinition);
 export const recordFeedbackInteraction = mutation(mutations.recordFeedbackInteractionDefinition);
-export const ingestSourceEvent = mutation(mutations.ingestSourceEventDefinition);
 export const trustedIngestSourceEvent = internalMutation(
   mutations.trustedIngestSourceEventDefinition,
 );

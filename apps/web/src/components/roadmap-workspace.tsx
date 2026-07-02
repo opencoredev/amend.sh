@@ -13,7 +13,7 @@ import { createPortal } from "react-dom";
 
 import { statusMeta } from "@/components/amend-dashboard-status";
 import type { DashboardRoadmap, RoadmapStatus } from "@/components/amend-dashboard-types";
-import { roadmapStatusToRoadmapStatus } from "@/components/amend-dashboard-utils";
+import { roadmapStatusToRoadmapStatus } from "@/components/amend-dashboard-status-utils";
 import { DashboardWorkspaceSurface } from "@/components/dashboard-workspace-surface";
 import { RoadmapCardOverlay } from "@/components/roadmap-card";
 import { RoadmapColumn } from "@/components/roadmap-column";

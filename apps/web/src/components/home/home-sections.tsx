@@ -1,12 +1,18 @@
 import { Link } from "@tanstack/react-router";
 
 import { navItems } from "./home-content";
+import { useSignedIn } from "./home-cta";
+
+const mobileCta =
+  "flex h-10 items-center justify-center rounded-lg bg-amend-warm px-4 text-[13px] font-medium text-amend-warm-foreground transition-colors hover:bg-amend-warm/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amend-warm focus-visible:ring-offset-2 focus-visible:ring-offset-background";
 
 export function MobileActionBar() {
+  const signedIn = useSignedIn();
+
   return (
     <div className="fixed inset-x-0 bottom-0 z-50 border-t border-border bg-background/90 px-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-3 backdrop-blur-md md:hidden">
       <div className="mx-auto grid max-w-md gap-2">
-        <nav aria-label="Page sections" className="grid grid-cols-3 gap-2">
+        <nav aria-label="Page sections" className="grid grid-cols-2 gap-2">
           {navItems.map(([, label, href]) => (
             <a
               key={label}
@@ -17,12 +23,15 @@ export function MobileActionBar() {
             </a>
           ))}
         </nav>
-        <Link
-          to="/sign-up"
-          className="flex h-10 items-center justify-center rounded-lg bg-amend-warm px-4 text-[13px] font-medium text-amend-warm-foreground transition-colors hover:bg-amend-warm/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amend-warm focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-        >
-          Request access
-        </Link>
+        {signedIn ? (
+          <Link to="/dashboard" className={mobileCta}>
+            Go to dashboard
+          </Link>
+        ) : (
+          <Link to="/sign-up" className={mobileCta}>
+            Request access
+          </Link>
+        )}
       </div>
     </div>
   );

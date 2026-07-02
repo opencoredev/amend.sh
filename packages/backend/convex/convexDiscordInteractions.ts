@@ -1,7 +1,7 @@
 import { httpAction } from "./_generated/server";
 import { internal } from "./_generated/api";
-import { json, readBody } from "./httpRuntimeRouting";
-import { optionalString, record } from "./httpRuntimeScalars";
+import { json, readBody } from "./lib/httpRuntimeRouting";
+import { optionalString, record } from "./lib/httpRuntimeScalars";
 
 declare const process: {
   env: {

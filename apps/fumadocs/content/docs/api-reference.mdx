@@ -90,9 +90,9 @@ signed provider webhooks remain callable without the owner token where appropria
 | `POST` | `/api/v1/:workspace/github` | `X-Hub-Signature-256` with `GITHUB_WEBHOOK_SECRET` |
 | `POST` | `/api/v1/:workspace/stripe` | Stripe webhook secret and raw body                 |
 
-Legacy `/ingest/githubWebhook`, `/ingest/discordWebhook`, and `/ingest/sourceEvent` routes are
-kept for compatibility. GitHub uses the same `X-Hub-Signature-256` verification, and the Discord
-and generic source-event routes require the owner bearer token.
+Legacy `/ingest/githubWebhook` and `/ingest/sourceEvent` routes are kept for compatibility.
+GitHub uses the same `X-Hub-Signature-256` verification, and the generic source-event route
+requires the owner bearer token.
 
 Use the OpenAPI file for schema-level details and generated client types. Use this page for the
 route/auth map when wiring product surfaces.

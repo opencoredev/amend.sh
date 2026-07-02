@@ -4,8 +4,9 @@ import type { MutationCtx } from "./_generated/server";
 import { v } from "convex/values";
 
 import { internal } from "./_generated/api";
-import { channelFromProvider, classifySignal, facetsCompatible } from "./proactiveClassifier";
-import { recomputeNeedProof, resolvePersonForEvidence } from "./proactiveProof";
+import { channelFromProvider, classifySignal, facetsCompatible } from "./pipeline/proactiveClassifier";
+import { recomputeNeedProof, resolvePersonForEvidence } from "./pipeline/proactiveProof";
+import { PROACTIVE_SOURCE_CHANNELS } from "./pipeline/proactiveValidators";
 
 export const processEvent = internalAction({
   args: {
@@ -20,6 +21,9 @@ export const processEvent = internalAction({
     labels: v.optional(v.array(v.string())),
     email: v.optional(v.string()),
     accountId: v.optional(v.string()),
+    handle: v.optional(v.string()),
+    avatarUrl: v.optional(v.string()),
+    body: v.optional(v.string()),
   },
   returns: v.object({ ok: v.literal(true) }),
   handler: async (ctx, args) => {
@@ -45,6 +49,9 @@ export const commitProcessedEvent = internalMutation({
     labels: v.optional(v.array(v.string())),
     email: v.optional(v.string()),
     accountId: v.optional(v.string()),
+    handle: v.optional(v.string()),
+    avatarUrl: v.optional(v.string()),
+    body: v.optional(v.string()),
   },
   returns: v.object({ ok: v.literal(true), state: v.string() }),
   handler: async (ctx, args) => {
@@ -133,8 +140,10 @@ export const commitProcessedEvent = internalMutation({
         personId,
         sourceChannel: channel,
         author: args.author ?? "Unknown",
-        handle: args.author,
-        text: args.text,
+        handle: args.handle ?? args.author,
+        ...(args.avatarUrl ? { authorAvatarUrl: args.avatarUrl } : {}),
+        // Prefer the original message ("what they said") over the agent's summary.
+        text: args.body ?? args.text,
         url: args.url ?? "",
         confidenceBucket: classification.confidenceBucket,
         promotedBy: "agent",
@@ -156,7 +165,7 @@ async function isSuppressedByMemory(
     .withIndex("by_workspace_and_enabled", (q) =>
       q.eq("workspaceId", args.workspaceId).eq("enabled", true),
     )
-    .collect();
+    .take(500);
   return enabledRules.some((rule) => {
     if (rule.kind !== "noise" && rule.kind !== "addressed") return false;
     const normalizedRule = rule.text.toLowerCase().trim();
@@ -208,7 +217,7 @@ function facetsFromClusterKey(clusterKey: string) {
 }
 
 function isSourceChannel(value: string | undefined): value is Doc<"evidence">["sourceChannel"] {
-  return value === "github" || value === "discord" || value === "support" || value === "embed";
+  return (PROACTIVE_SOURCE_CHANNELS as readonly string[]).includes(value ?? "");
 }
 
 function titleFromText(text: string) {

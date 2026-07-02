@@ -31,7 +31,7 @@ export function SortMenu({
         render={
           <button
             type="button"
-            className="inline-flex h-10 items-center gap-2 rounded-xl bg-[#151518] px-3 text-sm font-semibold text-muted-foreground outline-none ring-1 ring-white/[0.055] transition-colors duration-150 ease-linear hover:bg-[#1a1a1d] hover:text-foreground focus-visible:ring-2 focus-visible:ring-white/25 active:opacity-75 data-[popup-open]:bg-[#1a1a1d] data-[popup-open]:text-foreground"
+            className="inline-flex h-10 items-center gap-2 rounded-xl bg-amend-inset px-3 text-sm font-semibold text-muted-foreground outline-none ring-1 ring-white/[0.055] transition-colors duration-150 ease-linear hover:bg-[#1a1a1d] hover:text-foreground focus-visible:ring-2 focus-visible:ring-white/25 active:opacity-75 data-[popup-open]:bg-[#1a1a1d] data-[popup-open]:text-foreground"
           />
         }
       >

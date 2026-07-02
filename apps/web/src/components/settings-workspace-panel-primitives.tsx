@@ -11,7 +11,7 @@ import type { ComponentProps, ReactNode } from "react";
 
 /** Inset field surface used by every editable settings input. */
 export const settingsFieldClass =
-  "h-9 rounded-lg border-transparent bg-[#151518] text-sm text-foreground ring-1 ring-white/[0.055] transition-[box-shadow,background-color] duration-150 ease-linear placeholder:text-muted-foreground/70 focus-visible:ring-white/[0.18]";
+  "h-9 rounded-lg border-transparent bg-amend-inset text-sm text-foreground ring-1 ring-white/[0.055] transition-[box-shadow,background-color] duration-150 ease-linear placeholder:text-muted-foreground/70 focus-visible:ring-white/[0.18]";
 
 /** Dark, ring-bordered secondary action (upload, load, open…). */
 export const settingsSecondaryButtonClass =

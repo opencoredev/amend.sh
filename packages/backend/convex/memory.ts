@@ -1,9 +1,9 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 
-import { memoryRuleIdArgs, proactiveWorkspaceArgs, toggleMemoryRuleArgs } from "./proactiveArgs";
-import { okResult, proactiveMemoryRule } from "./proactiveValidators";
-import { requireProactiveWorkspace } from "./proactiveShared";
+import { memoryRuleIdArgs, proactiveWorkspaceArgs, toggleMemoryRuleArgs } from "./pipeline/proactiveArgs";
+import { okResult, proactiveMemoryRule } from "./pipeline/proactiveValidators";
+import { requireProactiveWorkspace } from "./pipeline/proactiveShared";
 
 function toMemoryRule(rule: {
   _id: string;

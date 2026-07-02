@@ -9,7 +9,7 @@ import type {
 } from "@/components/amend-dashboard-types";
 import { statusMeta } from "@/components/amend-dashboard-status";
 import { useDisclosureTransition } from "@/components/use-disclosure-transition";
-import { formatState } from "@/components/amend-dashboard-utils";
+import { formatState } from "@/components/amend-dashboard-format";
 
 export function FilterMenu({
   activeChangelogCategory,

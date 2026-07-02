@@ -7,8 +7,8 @@ import { v } from "convex/values";
 import { components } from "./_generated/api";
 import type { DataModel } from "./_generated/dataModel";
 import { mutation, query } from "./_generated/server";
-import { isLocalAuthSiteUrl } from "./amendBackendUtils";
-import { sendPasswordResetEmail } from "./amendTransactionalEmails";
+import { isLocalAuthSiteUrl } from "./lib/amendBackendUtils";
+import { sendPasswordResetEmail } from "./delivery/amendTransactionalEmails";
 import authConfig from "./auth.config";
 
 declare const process: {

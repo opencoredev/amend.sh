@@ -2,8 +2,7 @@ import type { BrandName } from "./brand-icons";
 
 export const navItems = [
   ["01", "Product", "#features"],
-  ["02", "Workflow", "#workflow"],
-  ["03", "Pricing", "#pricing"],
+  ["02", "Pricing", "#pricing"],
 ] as const;
 
 /** Sources shown in the hero "listens to" strip. */

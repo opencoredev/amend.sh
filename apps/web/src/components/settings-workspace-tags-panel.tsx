@@ -1,5 +1,7 @@
 import { cn } from "@amend/ui/lib/utils";
-import { useMutation, useQuery } from "convex/react";
+import { useMutation } from "convex/react";
+
+import { useAuthedQuery } from "@/lib/convex-utils";
 import { useEffect, useRef, useState } from "react";
 
 import {
@@ -146,9 +148,7 @@ function TagRow({
 
 export function TagsSettingsPanel({ workspaceSlug }: { workspaceSlug?: string }) {
   const queryArgs = workspaceSlug ? { workspaceSlug } : {};
-  const tags = (useQuery(listWorkspaceTagsQuery, queryArgs) ?? undefined) as
-    | WorkspaceTag[]
-    | undefined;
+  const tags: WorkspaceTag[] | undefined = useAuthedQuery(listWorkspaceTagsQuery, queryArgs);
   const createTag = useMutation(createWorkspaceTagMutation);
   const updateTag = useMutation(updateWorkspaceTagMutation);
   const removeTag = useMutation(removeWorkspaceTagMutation);
@@ -192,7 +192,7 @@ export function TagsSettingsPanel({ workspaceSlug }: { workspaceSlug?: string })
       </div>
 
       {/* Create */}
-      <div className="flex items-center gap-2.5 rounded-xl bg-[#151518] p-2.5 ring-1 ring-white/[0.06]">
+      <div className="flex items-center gap-2.5 rounded-xl bg-amend-inset p-2.5 ring-1 ring-white/[0.06]">
         <SwatchRow selected={draftColor} onSelect={setDraftColor} />
         <input
           ref={draftRef}

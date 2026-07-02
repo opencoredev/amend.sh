@@ -1,17 +1,14 @@
 import { useAction } from "convex/react";
-import { makeFunctionReference } from "convex/server";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
+import { listGitHubAppRepositoriesAction } from "@/components/amend-dashboard-data";
 import type {
   GitHubInstallationDirectory,
   GitHubInstalledRepository,
   Workspace,
 } from "@/components/amend-dashboard-types";
-import { fallbackWorkspace, parseRepositoryInput } from "@/components/amend-dashboard-utils";
-
-const listGitHubAppRepositoriesAction = makeFunctionReference<"action">(
-  "amend:listGitHubAppRepositories",
-);
+import { fallbackWorkspace } from "@/components/amend-dashboard-constants";
+import { parseRepositoryInput } from "@/components/amend-dashboard-data-mappers";
 
 export type ProjectConnectionMode = "feedback" | "github";
 
@@ -69,7 +66,7 @@ export function useProjectSetupGithub({
     const args = workspace.id === fallbackWorkspace.id ? {} : { workspaceSlug: workspace.id };
     return listGitHubRepositories(args)
       .then((directory) => {
-        setGithubDirectory(directory as GitHubInstallationDirectory);
+        setGithubDirectory(directory);
       })
       .catch((error: unknown) => {
         const text = error instanceof Error ? error.message : "Could not load GitHub installs.";

@@ -1,72 +1,59 @@
 <svg width="1600" height="1000" viewBox="0 0 1600 1000" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="1600" height="1000" fill="#111111"/>
+  <title>Amend.sh A-splice logo system</title>
+  <rect width="1600" height="1000" fill="#0d0c0a"/>
   <g font-family="Geist Mono, SFMono-Regular, Menlo, monospace">
-    <text x="80" y="92" fill="#f5f5f5" font-size="32" font-weight="700">Amend.sh mark study</text>
-    <text x="80" y="126" fill="#8a8a8a" font-size="18">pixel transfer / source evidence / customer update</text>
-    <text x="1320" y="92" fill="#8a8a8a" font-size="16">brandkit pass 01</text>
+    <text x="80" y="92" fill="#f7f4ef" font-size="32" font-weight="700">Amend.sh logo system</text>
+    <text x="80" y="126" fill="#9d9488" font-size="18">A-splice / source-native / hero-orange amendment patch</text>
+    <text x="1270" y="92" fill="#9d9488" font-size="16">brandkit pass 02</text>
   </g>
-
-  <g stroke="#272727">
+  <g stroke="#24201b">
     <rect x="80" y="170" width="680" height="330"/>
     <rect x="840" y="170" width="680" height="330"/>
     <rect x="80" y="560" width="440" height="300"/>
     <rect x="580" y="560" width="440" height="300"/>
     <rect x="1080" y="560" width="440" height="300"/>
   </g>
-
-  <g transform="translate(332 242) scale(3.2)" color="#f5f5f5">
-    <path d="M22 16H42M48 22V31H39M25 33H16V42" stroke="currentColor" stroke-linecap="square" stroke-width="4" opacity=".55"/>
-    <rect x="8" y="8" width="16" height="16" rx="2" fill="currentColor"/>
-    <rect x="40" y="8" width="16" height="16" rx="2" stroke="currentColor" stroke-width="4"/>
-    <rect x="24" y="24" width="16" height="16" rx="2" fill="currentColor" opacity=".8"/>
-    <rect x="8" y="40" width="16" height="16" rx="2" stroke="currentColor" stroke-width="4"/>
+  <g transform="translate(332 232) scale(3.4)">
+    <path clip-rule="evenodd" d="M8 56 26.6 8h10.8L56 56H44.15l-3.6-9.7h-17.1l-3.6 9.7H8Zm20.35-20.2h7.3L32 24.6l-3.65 11.2Z" fill="#f7f4ef" fill-rule="evenodd"/>
+    <path d="M21.6 39.2h23.8L41.9 48H18.1l3.5-8.8Z" fill="#e19b40"/>
   </g>
   <g font-family="Geist Mono, SFMono-Regular, Menlo, monospace">
-    <text x="112" y="458" fill="#f5f5f5" font-size="18" font-weight="700">Selected: transfer grid</text>
-    <text x="112" y="482" fill="#8a8a8a" font-size="14">Ownable, compact, no outer container, matches the landing theme.</text>
+    <text x="112" y="458" fill="#f7f4ef" font-size="18" font-weight="700">Selected: A-splice mark</text>
+    <text x="112" y="482" fill="#9d9488" font-size="14">Brand letter first. The orange splice carries the amendment idea without a workflow diagram.</text>
   </g>
-
-  <g transform="translate(1008 242) scale(3.2)" color="#f5f5f5">
-    <path d="M16 18H44V46H18" stroke="currentColor" stroke-linecap="square" stroke-width="4" opacity=".45"/>
-    <rect x="8" y="10" width="16" height="16" rx="1" fill="currentColor"/>
-    <rect x="40" y="10" width="16" height="16" rx="1" stroke="currentColor" stroke-width="4"/>
-    <rect x="8" y="38" width="16" height="16" rx="1" stroke="currentColor" stroke-width="4"/>
-  </g>
-  <g font-family="Geist Mono, SFMono-Regular, Menlo, monospace">
-    <text x="872" y="458" fill="#f5f5f5" font-size="18" font-weight="700">Alternate: source bracket</text>
-    <text x="872" y="482" fill="#8a8a8a" font-size="14">Rejected: too close to a generic file/tree icon at small sizes.</text>
-  </g>
-
-  <g transform="translate(218 630) scale(2)" color="#f5f5f5">
-    <path d="M18 16H46M46 16V48M46 48H18" stroke="currentColor" stroke-linecap="square" stroke-width="4" opacity=".4"/>
-    <rect x="8" y="8" width="18" height="18" rx="2" fill="currentColor"/>
-    <rect x="38" y="8" width="18" height="18" rx="2" stroke="currentColor" stroke-width="4"/>
-    <rect x="8" y="38" width="18" height="18" rx="2" stroke="currentColor" stroke-width="4"/>
+  <g transform="translate(930 300)">
+    <path clip-rule="evenodd" d="M8 56 26.6 8h10.8L56 56H44.15l-3.6-9.7h-17.1l-3.6 9.7H8Zm20.35-20.2h7.3L32 24.6l-3.65 11.2Z" fill="#f7f4ef" fill-rule="evenodd"/>
+    <path d="M21.6 39.2h23.8L41.9 48H18.1l3.5-8.8Z" fill="#e19b40"/>
+    <text x="76" y="40" fill="#f7f4ef" font-family="Geist Mono, SFMono-Regular, Menlo, monospace" font-size="24" font-weight="700" letter-spacing=".2">amend</text>
+    <text x="162" y="40" fill="#9d9488" font-family="Geist Mono, SFMono-Regular, Menlo, monospace" font-size="24" font-weight="700" letter-spacing=".2">.sh</text>
   </g>
   <g font-family="Geist Mono, SFMono-Regular, Menlo, monospace">
-    <text x="112" y="812" fill="#f5f5f5" font-size="17" font-weight="700">Loop corner</text>
-    <text x="112" y="836" fill="#8a8a8a" font-size="13">Too circular conceptually.</text>
+    <text x="872" y="458" fill="#f7f4ef" font-size="18" font-weight="700">Primary logo</text>
+    <text x="872" y="482" fill="#9d9488" font-size="14">Use the lockup in nav, decks, press, and brand guidelines.</text>
   </g>
-
-  <g transform="translate(720 630) scale(2)" color="#f5f5f5">
-    <path d="M16 46H30V18H48" stroke="currentColor" stroke-linecap="square" stroke-width="4" opacity=".45"/>
-    <rect x="8" y="38" width="16" height="16" rx="2" fill="currentColor"/>
-    <rect x="24" y="10" width="16" height="16" rx="2" stroke="currentColor" stroke-width="4"/>
-    <rect x="40" y="10" width="16" height="16" rx="2" fill="currentColor" opacity=".8"/>
+  <g transform="translate(218 630) scale(2)">
+    <path clip-rule="evenodd" d="M8 56 26.6 8h10.8L56 56H44.15l-3.6-9.7h-17.1l-3.6 9.7H8Zm20.35-20.2h7.3L32 24.6l-3.65 11.2Z" fill="#0d0c0a" fill-rule="evenodd"/>
+    <path d="M21.6 39.2h23.8L41.9 48H18.1l3.5-8.8Z" fill="#e19b40"/>
   </g>
   <g font-family="Geist Mono, SFMono-Regular, Menlo, monospace">
-    <text x="612" y="812" fill="#f5f5f5" font-size="17" font-weight="700">Merge stair</text>
-    <text x="612" y="836" fill="#8a8a8a" font-size="13">Good motion, weaker balance.</text>
+    <text x="112" y="812" fill="#f7f4ef" font-size="17" font-weight="700">Light surface</text>
+    <text x="112" y="836" fill="#9d9488" font-size="13">Use logo-light.svg or logo-mark-light.svg.</text>
   </g>
-
-  <g transform="translate(1218 630) scale(2)" color="#f5f5f5">
-    <path d="M18 18H46M32 18V46" stroke="currentColor" stroke-linecap="square" stroke-width="4" opacity=".45"/>
-    <rect x="8" y="8" width="16" height="16" rx="2" fill="currentColor"/>
-    <rect x="40" y="8" width="16" height="16" rx="2" fill="currentColor" opacity=".65"/>
-    <rect x="24" y="38" width="16" height="16" rx="2" stroke="currentColor" stroke-width="4"/>
+  <g transform="translate(720 630) scale(2)">
+    <path clip-rule="evenodd" d="M8 56 26.6 8h10.8L56 56H44.15l-3.6-9.7h-17.1l-3.6 9.7H8Zm20.35-20.2h7.3L32 24.6l-3.65 11.2Z" fill="#f7f4ef" fill-rule="evenodd"/>
+    <path d="M21.6 39.2h23.8L41.9 48H18.1l3.5-8.8Z" fill="#e19b40"/>
   </g>
   <g font-family="Geist Mono, SFMono-Regular, Menlo, monospace">
-    <text x="1112" y="812" fill="#f5f5f5" font-size="17" font-weight="700">Decision fork</text>
-    <text x="1112" y="836" fill="#8a8a8a" font-size="13">Too static for Amend.</text>
+    <text x="612" y="812" fill="#f7f4ef" font-size="17" font-weight="700">Dark surface</text>
+    <text x="612" y="836" fill="#9d9488" font-size="13">Use logo-dark.svg or logo-mark-dark.svg.</text>
+  </g>
+  <g transform="translate(1218 630) scale(2)">
+    <rect width="64" height="64" fill="#0d0c0a"/>
+    <path clip-rule="evenodd" d="M9 57 27.2 10h9.6L55 57H44.1l-3.5-9.4H23.4L19.9 57H9Zm19.7-20.4h6.6L32 26.3l-3.3 10.3Z" fill="#f7f4ef" fill-rule="evenodd"/>
+    <path d="M21.9 40.1h22.3L40.9 48H18.7l3.2-7.9Z" fill="#e19b40"/>
+  </g>
+  <g font-family="Geist Mono, SFMono-Regular, Menlo, monospace">
+    <text x="1112" y="812" fill="#f7f4ef" font-size="17" font-weight="700">Favicon / app icon</text>
+    <text x="1112" y="836" fill="#9d9488" font-size="13">Use the square tile only where the platform needs a container.</text>
   </g>
 </svg>

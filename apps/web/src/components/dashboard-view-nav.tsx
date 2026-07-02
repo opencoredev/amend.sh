@@ -1,6 +1,7 @@
 import { cn } from "@amend/ui/lib/utils";
 import {
   Brain,
+  ChartNoAxesCombined,
   GitPullRequestArrow,
   Inbox,
   Map,
@@ -77,6 +78,7 @@ export function MobileViewNav({
       ["posts", <MessageSquareText />, "Feedback"],
       ["roadmap", <Map />, "Roadmap"],
       ["changelog", <Newspaper />, "Changelog"],
+      ["insights", <ChartNoAxesCombined />, "Insights"],
       ["memory", <Brain />, "Memory"],
       ["connections", <PlugSocket />, "Connections"],
       ["settings", <Settings />, "Settings"],

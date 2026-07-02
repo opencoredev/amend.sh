@@ -1,6 +1,6 @@
+import { api } from "@amend/backend/convex/_generated/api";
 import { cn } from "@amend/ui/lib/utils";
 import { useMutation } from "convex/react";
-import { makeFunctionReference } from "convex/server";
 import type { ReactNode } from "react";
 
 import { usePortalVoter } from "@/lib/use-portal-voter";
@@ -35,12 +35,10 @@ export function PortalSurface({
   );
 }
 
-const interactionMutation = makeFunctionReference<"mutation">("amend:recordFeedbackInteraction");
-
 /** Shared feedback-vote wiring: anonymous voter id + the public toggle mutation. */
 export function useFeedbackVote(workspaceSlug: string) {
   const voter = usePortalVoter(workspaceSlug);
-  const recordInteraction = useMutation(interactionMutation);
+  const recordInteraction = useMutation(api.amend.recordFeedbackInteraction);
   const vote = async (stableKey: string) => {
     const next = !voter.hasVoted(stableKey);
     await recordInteraction({

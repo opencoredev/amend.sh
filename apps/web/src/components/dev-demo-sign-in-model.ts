@@ -1,14 +1,12 @@
-import { makeFunctionReference } from "convex/server";
+import { api } from "@amend/backend/convex/_generated/api";
 
 import { authErrorMessage } from "@/lib/auth-errors";
 import { demoWorkspaceSlug } from "@/lib/demo-workspace";
 import { authClient } from "@/lib/auth-client";
 
 export const localDemoWorkspaceSlug = demoWorkspaceSlug;
-export const seedDemoDataMutation = makeFunctionReference<"mutation">("amend:seedDemoData");
-export const joinSeededDemoWorkspaceMutation = makeFunctionReference<"mutation">(
-  "amend:joinSeededDemoWorkspace",
-);
+export const seedDemoDataMutation = api.amend.seedDemoData;
+export const joinSeededDemoWorkspaceMutation = api.amend.joinSeededDemoWorkspace;
 
 // Convex mutations queue indefinitely while the client cannot reach the
 // deployment (for example when a per-worktree dev deployment expired), so

@@ -63,7 +63,7 @@ export function DashboardHeader({
                 <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
                   placeholder="Search…"
-                  className="h-10 w-56 rounded-xl border-transparent bg-[#151518] pl-9 text-sm ring-1 ring-white/[0.055] focus-visible:ring-white/[0.16]"
+                  className="h-10 w-56 rounded-xl border-transparent bg-amend-inset pl-9 text-sm ring-1 ring-white/[0.055] focus-visible:ring-white/[0.16]"
                   value={searchQuery}
                   onChange={(event) => onSearchChange(event.target.value)}
                 />

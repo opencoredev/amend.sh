@@ -155,7 +155,7 @@ function LogoField({
         title="Upload a logo"
         disabled={!canSave || busy}
         onClick={() => logoFileInputRef.current?.click()}
-        className="group relative grid size-12 shrink-0 place-items-center overflow-hidden rounded-xl bg-[#151518] ring-1 ring-white/[0.06] ring-inset transition-[box-shadow] duration-150 ease-linear hover:ring-white/[0.2] disabled:cursor-not-allowed disabled:opacity-60"
+        className="group relative grid size-12 shrink-0 place-items-center overflow-hidden rounded-xl bg-amend-inset ring-1 ring-white/[0.06] ring-inset transition-[box-shadow] duration-150 ease-linear hover:ring-white/[0.2] disabled:cursor-not-allowed disabled:opacity-60"
       >
         <ProjectLogo
           className="size-full"

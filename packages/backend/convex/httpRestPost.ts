@@ -1,7 +1,7 @@
 import { httpAction } from "./_generated/server";
-import { handleAutomationRestPost } from "./httpRestPostAutomation";
-import { handleSignalRestPost } from "./httpRestPostSignals";
-import { handleWorkspaceRestPost } from "./httpRestPostWorkspace";
+import { handleAutomationRestPost } from "./lib/httpRestPostAutomation";
+import { handleSignalRestPost } from "./lib/httpRestPostSignals";
+import { handleWorkspaceRestPost } from "./lib/httpRestPostWorkspace";
 import {
   handleStripeWebhook,
   json,
@@ -10,7 +10,7 @@ import {
   restRoute,
   verifyApiToken,
   verifyStripeSignature,
-} from "./httpRuntime";
+} from "./lib/httpRuntime";
 
 export const restPost = httpAction(async (ctx, request) => {
   const route = restRoute(request);

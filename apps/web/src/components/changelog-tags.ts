@@ -9,8 +9,10 @@
 // backend list in packages/backend/convex/tags.ts.
 // ─────────────────────────────────────────────────────────────────────────────
 
+import type { Id } from "@amend/backend/convex/_generated/dataModel";
+
 /** A persisted, workspace-scoped tag definition (from `tags:list`). */
-export type WorkspaceTag = { id: string; name: string; color: string };
+export type WorkspaceTag = { id: Id<"workspaceTags">; name: string; color: string };
 
 export type TagColor = {
   /** Solid swatch — the dot in pickers/chips and the swatch in settings. */

@@ -1,0 +1,15 @@
+<svg width="512" height="512" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <title>Amend source grid alternate concept</title>
+  <path
+    d="M22 16H42M48 22V31H39M42 48H22M25 33H16V42"
+    stroke="#111113"
+    stroke-width="4"
+    stroke-linecap="square"
+    opacity="0.5"
+  />
+  <rect x="8" y="8" width="16" height="16" rx="2" fill="#111113" />
+  <rect x="40" y="8" width="16" height="16" rx="2" stroke="#111113" stroke-width="4" />
+  <rect x="24" y="24" width="16" height="16" rx="2" fill="#EF9836" />
+  <rect x="8" y="40" width="16" height="16" rx="2" stroke="#111113" stroke-width="4" />
+  <rect x="42" y="42" width="12" height="12" rx="2" fill="#111113" opacity="0.8" />
+</svg>

@@ -1,18 +1,18 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 
-import { ghostIdArgs, killGhostArgs, needIdArgs, proactiveWorkspaceArgs } from "./proactiveArgs";
+import { ghostIdArgs, killGhostArgs, needIdArgs, proactiveWorkspaceArgs } from "./pipeline/proactiveArgs";
 import {
   okResult,
   proactiveGhost,
   proactiveNeed,
-} from "./proactiveValidators";
+} from "./pipeline/proactiveValidators";
 import {
   ghostSortValue,
   needToAcceptedNeed,
   needToGhost,
   requireProactiveWorkspace,
-} from "./proactiveShared";
+} from "./pipeline/proactiveShared";
 
 export const listGhosts = query({
   args: proactiveWorkspaceArgs,
@@ -157,9 +157,11 @@ export const restoreGhost = mutation({
     // loop is reversible from the teaching receipt).
     const rules = await ctx.db
       .query("memoryRules")
-      .withIndex("by_workspace", (q) => q.eq("workspaceId", workspace._id))
+      .withIndex("by_workspace_and_sourceNeedId", (q) =>
+        q.eq("workspaceId", workspace._id).eq("sourceNeedId", ghost._id),
+      )
       .collect();
-    for (const rule of rules.filter((rule) => rule.sourceNeedId === ghost._id)) {
+    for (const rule of rules) {
       await ctx.db.delete(rule._id);
     }
     return { ok: true as const };

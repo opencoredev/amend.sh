@@ -1,0 +1,31 @@
+<svg width="1296" height="384" viewBox="0 0 216 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <title>Amend closure lockup concept</title>
+  <g>
+    <path
+      d="M19 14.4H35C45.82 14.4 54.6 23.18 54.6 34C54.6 44.82 45.82 53.6 35 53.6H19V42.4H35C39.64 42.4 43.4 38.64 43.4 34C43.4 29.36 39.64 25.6 35 25.6H19V14.4Z"
+      fill="#F1F1F0"
+    />
+    <rect x="24.2" y="38" width="20" height="6" rx="3" fill="#EF9836" transform="rotate(-45 24.2 38)" />
+    <circle cx="19" cy="20" r="5.6" fill="#F1F1F0" />
+    <circle cx="19" cy="48" r="5.6" fill="#EF9836" />
+    <circle cx="49" cy="34" r="4.9" fill="#EF9836" />
+  </g>
+  <text
+    x="76"
+    y="39"
+    fill="#F1F1F0"
+    font-family="Geist, Inter, ui-sans-serif, system-ui, sans-serif"
+    font-size="25"
+    font-weight="700"
+    letter-spacing="-0.4"
+  >amend</text>
+  <text
+    x="140"
+    y="39"
+    fill="#A7A7AF"
+    font-family="Geist, Inter, ui-sans-serif, system-ui, sans-serif"
+    font-size="25"
+    font-weight="700"
+    letter-spacing="-0.4"
+  >.sh</text>
+</svg>

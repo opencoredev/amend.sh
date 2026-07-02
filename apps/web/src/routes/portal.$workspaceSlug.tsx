@@ -1,6 +1,6 @@
+import { api } from "@amend/backend/convex/_generated/api";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "convex/react";
-import { makeFunctionReference } from "convex/server";
 
 import { PublicPortalView } from "@/components/public-portal-view";
 import { PortalSkeleton } from "@/components/public-portal-shared";
@@ -48,12 +48,10 @@ export const Route = createFileRoute("/portal/$workspaceSlug")({
   component: PortalRoute,
 });
 
-const portalQuery = makeFunctionReference<"query">("amend:getPublicPortal");
-
 function PortalRoute() {
   const { workspaceSlug } = Route.useParams();
   const search = Route.useSearch();
-  const portal = useQuery(portalQuery, { workspaceSlug }) as PortalData | undefined;
+  const portal: PortalData | undefined = useQuery(api.amend.getPublicPortal, { workspaceSlug });
 
   if (!portal) {
     return <PortalSkeleton workspaceSlug={workspaceSlug} />;

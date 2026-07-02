@@ -1,0 +1,14 @@
+{
+  "name": "@amend/gateway",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Always-on gateway worker: connector modules (Discord today) read allowlisted sources, ask the Amend backend's AI judge if a message is signal, and ack the ones that become needs.",
+  "type": "module",
+  "scripts": {
+    "start": "bun index.mjs",
+    "dev": "bun index.mjs"
+  },
+  "dependencies": {
+    "discord.js": "^14.16.3"
+  }
+}

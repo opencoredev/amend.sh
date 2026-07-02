@@ -2,7 +2,7 @@ import { ClipboardList } from "@/lib/icons";
 
 import type { RoadmapStatus } from "@/components/amend-dashboard-types";
 import { statusMeta } from "@/components/amend-dashboard-status";
-import { roadmapStatusToRoadmapStatus } from "@/components/amend-dashboard-utils";
+import { roadmapStatusToRoadmapStatus } from "@/components/amend-dashboard-status-utils";
 import {
   SidebarDivider,
   SidebarFrame,

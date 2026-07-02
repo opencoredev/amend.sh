@@ -1,9 +1,9 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 
-import { changelogEntryIdArgs, proactiveWorkspaceArgs } from "./proactiveArgs";
-import { okResult, proactiveChangelogEntry } from "./proactiveValidators";
-import { requireProactiveWorkspace } from "./proactiveShared";
+import { changelogEntryIdArgs, proactiveWorkspaceArgs } from "./pipeline/proactiveArgs";
+import { okResult, proactiveChangelogEntry } from "./pipeline/proactiveValidators";
+import { requireProactiveWorkspace } from "./pipeline/proactiveShared";
 
 function fallbackShip(entry: { publishedAt?: number; sourceLinks: { number?: number; url: string }[] }) {
   const source = entry.sourceLinks[0];

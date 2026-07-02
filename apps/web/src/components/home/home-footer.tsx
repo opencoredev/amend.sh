@@ -4,6 +4,10 @@ import AmendLogo from "@/components/amend-logo";
 import { docsUrl } from "@/lib/docs-url";
 
 import { BrandIcon, type BrandName } from "./brand-icons";
+import { useSignedIn } from "./home-cta";
+
+const closingCta =
+  "group inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-lg bg-foreground px-6 text-sm font-medium text-background shadow-sm transition-colors hover:bg-foreground/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amend-warm focus-visible:ring-offset-2 focus-visible:ring-offset-background";
 
 // TODO(amend): confirm these point at the real handles before launch.
 const SOCIAL: { name: BrandName; label: string; href: string }[] = [
@@ -13,32 +17,20 @@ const SOCIAL: { name: BrandName; label: string; href: string }[] = [
 ];
 
 export function Footer() {
+  const signedIn = useSignedIn();
+
   return (
     <section className="relative z-10 overflow-hidden border-t border-border">
-      {/* warm signal echo behind the closing call to action */}
-      <div
+      {/* warm ember→gold glow rising from the very bottom edge — the closing
+          bookend to the hero's top glow. Full-bleed, pinned to the base, held
+          behind all content and kept soft so the columns and bottom bar stay
+          legible over it. */}
+      <img
+        src="/images/footer-gradient.webp"
+        alt=""
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 h-72 opacity-80"
-        style={{
-          background:
-            "radial-gradient(46% 100% at 30% 0%, rgb(245 200 107 / 0.12) 0%, transparent 66%)",
-        }}
+        className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 w-full select-none opacity-50"
       />
-      {/* oversized loop mark, the brand signature, fading into the corner */}
-      <svg
-        aria-hidden
-        viewBox="0 0 64 64"
-        fill="none"
-        className="pointer-events-none absolute -right-20 -top-24 hidden h-96 w-96 text-border/50 lg:block"
-      >
-        <path
-          d="M50.5 39.5A20 20 0 1 1 50.5 24.5"
-          stroke="currentColor"
-          strokeLinecap="round"
-          strokeWidth="1.6"
-        />
-        <circle cx="52" cy="32" r="2.4" className="fill-amend-warm/40" />
-      </svg>
 
       <div className="relative mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
         {/* Closing CTA */}
@@ -55,15 +47,21 @@ export function Footer() {
               back the moment it ships.
             </p>
           </div>
-          <Link
-            to="/sign-up"
-            className="group inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-lg bg-foreground px-6 text-sm font-medium text-background shadow-sm transition-colors hover:bg-foreground/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amend-warm focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-          >
-            Request access
-            <span className="amend-link-arrow" aria-hidden>
-              &rarr;
-            </span>
-          </Link>
+          {signedIn ? (
+            <Link to="/dashboard" className={closingCta}>
+              Go to dashboard
+              <span className="amend-link-arrow" aria-hidden>
+                &rarr;
+              </span>
+            </Link>
+          ) : (
+            <Link to="/sign-up" className={closingCta}>
+              Request access
+              <span className="amend-link-arrow" aria-hidden>
+                &rarr;
+              </span>
+            </Link>
+          )}
         </div>
 
         {/* Footer body */}
@@ -92,7 +90,6 @@ export function Footer() {
           <FooterColumn
             title="Explore"
             links={[
-              { label: "Workflow", href: "#workflow" },
               { label: "Product", href: "#features" },
               { label: "Pricing", href: "#pricing" },
             ]}

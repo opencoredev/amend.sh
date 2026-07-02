@@ -64,7 +64,6 @@ export function useAmendDashboardController() {
     projectsReady,
   } = useAmendDashboardData({
     activeProjectSlug,
-    hasSession,
     workspaceId,
   });
   const uiState = useAmendDashboardUiState();

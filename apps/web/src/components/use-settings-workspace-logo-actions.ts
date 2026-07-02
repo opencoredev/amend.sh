@@ -1,6 +1,9 @@
+import type { Id } from "@amend/backend/convex/_generated/dataModel";
+import type { FunctionArgs } from "convex/server";
 import { useState } from "react";
 import type { RefObject } from "react";
 
+import type { updateProjectMutation } from "@/components/amend-dashboard-data";
 import type {
   ProjectMenuItem,
   ProjectSuggestion,
@@ -10,7 +13,9 @@ import type { SettingsWorkspaceFormState } from "@/components/settings-workspace
 import type { LogoActionState } from "@/components/settings-workspace-panel-types";
 import { errorMessage, toast } from "@/lib/toast";
 
-type SaveProject = (overrides?: Record<string, unknown>) => Promise<unknown>;
+type SaveProject = (
+  overrides?: Partial<FunctionArgs<typeof updateProjectMutation>>,
+) => Promise<unknown>;
 
 export function useSettingsWorkspaceLogoActions({
   activeProject,
@@ -68,7 +73,8 @@ export function useSettingsWorkspaceLogoActions({
       if (!response.ok) {
         throw new Error("Convex storage rejected the uploaded image.");
       }
-      const { storageId } = (await response.json()) as { storageId: string };
+      // Convex storage upload responses return the new file's branded storage id.
+      const { storageId } = (await response.json()) as { storageId: Id<"_storage"> };
       const saved = (await saveProject({ logoStorageId: storageId })) as { logoUrl?: string };
       if (saved.logoUrl) formState.setLogoUrl(saved.logoUrl);
       toast.success("Logo uploaded");

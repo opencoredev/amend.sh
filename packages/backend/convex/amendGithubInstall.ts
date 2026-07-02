@@ -3,7 +3,7 @@ import { v } from "convex/values";
 import type { Doc, Id } from "./_generated/dataModel";
 import type { MutationCtx } from "./_generated/server";
 import { mutation } from "./_generated/server";
-import { requireProactiveWorkspace } from "./proactiveShared";
+import { requireProactiveWorkspace } from "./pipeline/proactiveShared";
 
 /**
  * Persist the GitHub App `installation_id` for a workspace after the user is

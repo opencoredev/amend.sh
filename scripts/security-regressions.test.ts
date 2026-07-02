@@ -4,7 +4,7 @@ import {
   requiresApiToken,
   requiresGetApiToken,
   verifyApiToken,
-} from "../packages/backend/convex/httpRuntimeAuth";
+} from "../packages/backend/convex/lib/httpRuntimeAuth";
 
 const originalEnv = {
   AMEND_API_TOKEN: process.env.AMEND_API_TOKEN,

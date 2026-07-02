@@ -10,9 +10,9 @@ import {
   proactiveWorkspaceArgs,
   rejectDraftArgs,
   updateDraftTextArgs,
-} from "./proactiveArgs";
-import { okResult, proactiveDraftProposal } from "./proactiveValidators";
-import { requireProactiveWorkspace } from "./proactiveShared";
+} from "./pipeline/proactiveArgs";
+import { okResult, proactiveDraftProposal } from "./pipeline/proactiveValidators";
+import { requireProactiveWorkspace } from "./pipeline/proactiveShared";
 
 function toDraftProposal(draft: {
   _id: string;
@@ -179,5 +179,5 @@ function safetyStrip(value: string) {
     .replace(/\bAKIA[A-Z0-9]{16}\b/g, "[secret]")
     .replace(/\bxox[baprs]-[A-Za-z0-9-]{10,}\b/g, "[secret]")
     .replace(/\beyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\b/g, "[secret]")
-    .replace(/\b(?:sk|pk|ghp|gho|github_pat)_[A-Za-z0-9_\-]{16,}\b/g, "[secret]");
+    .replace(/\b(?:sk|pk|ghp|gho|github_pat)_[A-Za-z0-9_-]{16,}\b/g, "[secret]");
 }

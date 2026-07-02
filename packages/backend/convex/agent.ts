@@ -1,7 +1,7 @@
 import { internalMutation } from "./_generated/server";
 import { v } from "convex/values";
 
-import { proactiveShipLink } from "./proactiveValidators";
+import { proactiveShipLink } from "./pipeline/proactiveValidators";
 
 export const linkShipsToNeeds = internalMutation({
   args: {

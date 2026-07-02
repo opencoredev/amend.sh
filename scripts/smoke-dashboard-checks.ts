@@ -10,7 +10,7 @@ import {
 
 export async function runSmokeDashboardChecks() {
   await check(
-    "dashboard exposes proactive agent, channels, setup, and review workflow",
+    "dashboard exposes agent views, channels, setup, and review workflow",
     async () => {
       const dashboard = await read("apps/web/src/components/amend-dashboard.tsx");
       const dashboardContent = [
@@ -21,85 +21,39 @@ export async function runSmokeDashboardChecks() {
       ].join("\n");
       const dashboardTypes = [
         await read("apps/web/src/components/amend-dashboard-types.ts"),
-        await read("apps/web/src/components/amend-dashboard-core-types.ts"),
         await read("apps/web/src/components/amend-dashboard-constants.ts"),
       ].join("\n");
       const dashboardRedirects = await read(
         "apps/web/src/components/use-amend-dashboard-redirects.ts",
       );
-      const proactivationController = [
-        await read("apps/web/src/components/use-proactivation-controller.ts"),
-        await read("apps/web/src/components/use-proactivation-actions.ts"),
-      ].join("\n");
-      const proactivationInspector = [
-        await read("apps/web/src/components/proactivation-inspector.tsx"),
-        await read("apps/web/src/components/proactivation-inspector-block.tsx"),
-        await read("apps/web/src/components/proactivation-inspector-control-panels.tsx"),
-        await read("apps/web/src/components/proactivation-inspector-evidence-panels.tsx"),
-      ].join("\n");
-      const proactivationMain = [
-        await read("apps/web/src/components/proactivation-main-panel.tsx"),
-        await read("apps/web/src/components/proactivation-activity-feed.tsx"),
-        await read("apps/web/src/components/proactivation-agent-metrics.tsx"),
-        await read("apps/web/src/components/proactivation-channel-list.tsx"),
-      ].join("\n");
-      const analyticsWorkspace = [
-        await read("apps/web/src/components/analytics-workspace.tsx"),
-        await read("apps/web/src/components/analytics-workspace-panels.tsx"),
-      ].join("\n");
       const projectSetupShell = await read("apps/web/src/components/project-setup-shell.tsx");
       const dashboardRoute = await read("apps/web/src/routes/dashboard.tsx");
       const backend = await read("packages/backend/convex/amend.ts");
-      const backendAgent = [
-        await read("packages/backend/convex/amendAgent.ts"),
-        await read("packages/backend/convex/amendAgentDecisionNormalizer.ts"),
-        await read("packages/backend/convex/amendAgentFallback.ts"),
-        await read("packages/backend/convex/amendAgentProvider.ts"),
-        await read("packages/backend/convex/amendAgentTypes.ts"),
-      ].join("\n");
-      const backendWorkspace = await read("packages/backend/convex/amendWorkspace.ts");
-      assertIncludes(dashboardTypes, '"proactivation"', "dashboard proactivation view");
-      assertIncludes(dashboardTypes, '"analytics"', "dashboard analytics view");
-      assertIncludes(dashboardContent, "ProactivationWorkspace", "dashboard proactivation view");
-      assertIncludes(dashboardContent, "AnalyticsWorkspace", "dashboard analytics view");
-      assertIncludes(analyticsWorkspace, "Analytics command center", "dashboard analytics view");
-      assertIncludes(analyticsWorkspace, "Top events", "dashboard analytics top events");
-      assertIncludes(analyticsWorkspace, "Recent analytics events", "dashboard analytics ledger");
-      assertIncludes(analyticsWorkspace, "Event categories", "dashboard analytics categories");
-      assertIncludes(analyticsWorkspace, "Channel health", "dashboard analytics source health");
-      assertIncludes(analyticsWorkspace, "Agent output", "dashboard analytics agent output");
-      assertIncludes(
-        proactivationMain,
-        "Agent operations and automation control",
-        "dashboard proactivation view",
-      );
-      assertIncludes(proactivationMain, "Channels and integrations", "dashboard channels view");
-      assertIncludes(
-        proactivationInspector,
-        "Automation controls",
-        "dashboard automation configuration",
-      );
-      assertIncludes(
-        proactivationInspector,
-        "Runtime status",
-        "dashboard automation runtime state",
-      );
-      assertIncludes(
-        proactivationController,
-        "runProactiveAgentForWorkspace",
-        "dashboard agent action",
-      );
-      assertIncludes(dashboardRedirects, "requiresProjectSetup", "dashboard first project gate");
+      const backendAgent = await read("packages/backend/convex/agent/amendAgentProvider.ts");
+      const backendWorkspace = await read("packages/backend/convex/workspace/amendWorkspace.ts");
+      // Agent console views (Board/Drafts/Memory era is gone; these are current).
+      for (const view of ["inbox", "posts", "roadmap", "changelog", "insights", "memory", "connections", "settings"]) {
+        assertIncludes(dashboardTypes, `"${view}"`, `dashboard ${view} view`);
+      }
+      assertIncludes(dashboardContent, "AmendInboxScreen", "dashboard inbox view");
+      assertIncludes(dashboardContent, "AmendInsightsScreen", "dashboard insights view");
+      assertIncludes(dashboardContent, "AmendMemoryScreen", "dashboard memory view");
+      assertIncludes(dashboardContent, "AmendConnectionsScreen", "dashboard connections view");
+      assertIncludes(dashboardContent, "PostsWorkspace", "dashboard posts view");
+      assertIncludes(dashboardContent, "RoadmapWorkspace", "dashboard roadmap view");
+      assertIncludes(dashboardContent, "ChangelogWorkspace", "dashboard changelog view");
+      assertIncludes(dashboard, "requiresProjectSetup", "dashboard first project gate");
+      assertIncludes(dashboardRedirects, '"setup"', "dashboard setup-view redirect guard");
       assertIncludes(dashboard, "ProjectSetupShell", "dashboard first project setup shell");
       assertIncludes(
         projectSetupShell,
-        'surface="first-run"',
-        "dashboard first project auth-style setup",
+        '"dark min-h-svh',
+        "dashboard first project forced-dark first-run surface",
       );
       assertIncludes(
         projectSetupShell,
-        "/images/project-setup-dashboard.webp",
-        "dashboard setup image",
+        "export function ProjectSetupShell",
+        "dashboard setup shell export",
       );
       assertIncludes(dashboardRoute, "AmendDashboard", "dashboard route");
       assertIncludes(
@@ -116,14 +70,6 @@ export async function runSmokeDashboardChecks() {
         "dashboard exposes Crof provider secret names",
       );
       assertIncludes(backend, "updateReviewStatus", "dashboard review mutation");
-      assertIncludes(proactivationInspector, "SDK install", "dashboard setup view");
-      assertIncludes(proactivationInspector, "Side panel", "dashboard setup view");
-      assertIncludes(proactivationInspector, "Launch gate", "dashboard setup view");
-      assertIncludes(proactivationInspector, "GitHub source channel", "dashboard channel setup");
-      assertIncludes(proactivationInspector, "Crof / Kimi", "dashboard provider setup");
-      assertIncludes(proactivationInspector, "Email delivery", "dashboard connections view");
-      assertIncludes(proactivationInspector, "Custom domains", "dashboard connections view");
-      assertIncludes(proactivationInspector, "API security", "dashboard connections view");
     },
   );
 
@@ -143,10 +89,9 @@ export async function runSmokeDashboardChecks() {
   await check("public portal and embed use Amend brand system", async () => {
     const portalView = [
       await read("apps/web/src/components/public-portal-view.tsx"),
-      await read("apps/web/src/components/public-portal-feedback-section.tsx"),
-      await read("apps/web/src/components/public-portal-header.tsx"),
-      await read("apps/web/src/components/public-portal-hero.tsx"),
-      await read("apps/web/src/components/public-portal-roadmap-updates.tsx"),
+      await read("apps/web/src/components/public-portal-feedback.tsx"),
+      await read("apps/web/src/components/public-portal-roadmap.tsx"),
+      await read("apps/web/src/components/public-portal-changelog.tsx"),
     ].join("\n");
     const embed = await readSdkEmbedSource();
 
@@ -162,7 +107,7 @@ export async function runSmokeDashboardChecks() {
     "SDK exposes contact-specific updates for portal and app identity linking",
     async () => {
       const sdk = await readSdkSource();
-      const readHandlers = await read("packages/backend/convex/amendUserUpdateReadHandlers.ts");
+      const readHandlers = await read("packages/backend/convex/content/amendUserUpdateReadHandlers.ts");
       const docs = await readIntegrationDocs();
       assertIncludes(sdk, "updatesForContact", "SDK contact updates");
       assertIncludes(sdk, "email: input.email", "SDK contact updates");

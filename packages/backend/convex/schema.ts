@@ -1,7 +1,7 @@
 import { defineSchema } from "convex/server";
 
-import { productSchemaTables } from "./schemaProductTables";
-import { workspaceSchemaTables } from "./schemaWorkspaceTables";
+import { productSchemaTables } from "./schema/schemaProductTables";
+import { workspaceSchemaTables } from "./schema/schemaWorkspaceTables";
 
 export default defineSchema({
   ...workspaceSchemaTables,

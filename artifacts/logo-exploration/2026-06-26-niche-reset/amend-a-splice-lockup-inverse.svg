@@ -1,0 +1,30 @@
+<svg fill="none" viewBox="0 0 264 64" xmlns="http://www.w3.org/2000/svg">
+  <title>Amend A-splice lockup inverse</title>
+  <path
+    clip-rule="evenodd"
+    d="M8 56 26.6 8h10.8L56 56H44.15l-3.6-9.7h-17.1l-3.6 9.7H8Zm20.35-20.2h7.3L32 24.6l-3.65 11.2Z"
+    fill="#f7f4ef"
+    fill-rule="evenodd"
+  />
+  <path d="M21.6 39.2h23.8L41.9 48H18.1l3.5-8.8Z" fill="#e19b40" />
+  <text
+    fill="#f7f4ef"
+    font-family="Geist Mono, SFMono-Regular, Menlo, Monaco, Consolas, monospace"
+    font-size="24"
+    font-weight="700"
+    letter-spacing="3"
+    x="78"
+    y="40"
+  >AMEND</text>
+  <rect fill="#e19b40" height="4" width="4" x="179" y="36" />
+  <text
+    fill="#f7f4ef"
+    font-family="Geist Mono, SFMono-Regular, Menlo, Monaco, Consolas, monospace"
+    font-size="18"
+    font-weight="700"
+    letter-spacing="2.4"
+    opacity=".7"
+    x="190"
+    y="40"
+  >SH</text>
+</svg>

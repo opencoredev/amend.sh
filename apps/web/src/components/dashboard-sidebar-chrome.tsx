@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import {
   BookOpen,
   Brain,
+  ChartNoAxesCombined,
   Globe,
   Inbox,
   Map,
@@ -14,7 +15,7 @@ import {
 } from "@/lib/icons";
 import type { ReactElement, RefObject } from "react";
 
-import { useInboxReviewCount } from "@/lib/mock-amend";
+import { useInboxReviewCount } from "@/lib/amend-data";
 import { agentDocsUrl } from "@/lib/seo";
 
 import { BETA_DISABLED_VIEWS } from "@/components/amend-dashboard-constants";
@@ -78,7 +79,7 @@ function ComposeButton({ label, onCompose }: { label: string; onCompose: () => v
     <button
       type="button"
       onClick={onCompose}
-      className="flex min-h-10 w-full items-center gap-2.5 rounded-xl bg-amend-warm/[0.12] px-3 text-sm font-semibold text-amend-warm outline-none ring-1 ring-amend-warm/25 transition-colors duration-150 ease-linear hover:bg-amend-warm/[0.18] focus-visible:ring-2 focus-visible:ring-amend-warm/40 active:opacity-75 [&_svg]:size-4 [&_svg]:shrink-0"
+      className="flex min-h-10 w-full items-center gap-2.5 rounded-xl bg-foreground/[0.06] px-3 text-sm font-semibold text-foreground outline-none ring-1 ring-white/[0.08] transition-colors duration-150 ease-linear hover:bg-foreground/[0.09] focus-visible:ring-2 focus-visible:ring-white/25 active:opacity-75 [&_svg]:size-4 [&_svg]:shrink-0"
     >
       <Plus />
       {label}
@@ -116,6 +117,7 @@ const NAV_GROUPS: Array<Array<[DashboardView, ReactElement, string]>> = [
     ["changelog", <Newspaper />, "Changelog"],
   ],
   [
+    ["insights", <ChartNoAxesCombined />, "Insights"],
     ["memory", <Brain />, "Memory"],
     ["connections", <PlugSocket />, "Connections"],
   ],
@@ -223,7 +225,7 @@ export function DashboardSidebarChrome({
       {/* Desktop single sidebar */}
       <aside
         className={cn(
-          "amend-sidebar-warm hidden bg-background lg:flex lg:flex-col",
+          "hidden bg-background lg:flex lg:flex-col",
           focusChangelogEditor && "lg:hidden",
         )}
       >

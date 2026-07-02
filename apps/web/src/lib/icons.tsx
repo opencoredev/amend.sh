@@ -69,6 +69,7 @@ import {
   Message02Icon,
   MoreHorizontalIcon,
   News01Icon,
+  NewTwitterIcon,
   Notification01Icon,
   PencilEdit02Icon,
   PlugSocketIcon,
@@ -84,12 +85,14 @@ import {
   Settings01Icon,
   Settings02Icon,
   SidebarRight01Icon,
+  SlackIcon,
   SlidersHorizontalIcon,
   SmileIcon,
   SourceCodeIcon,
   SparklesIcon,
   Tag01Icon,
   Task01Icon,
+  TelegramIcon,
   TextBoldIcon,
   TextFontIcon,
   TextItalicIcon,
@@ -211,7 +214,10 @@ export const Kanban = icon(KanbanIcon, "Kanban");
 export const LayoutGrid = icon(LayoutGridIcon, "LayoutGrid");
 export const LifeBuoy = icon(LifebuoyIcon, "LifeBuoy");
 export const ShieldCheck = icon(SecurityCheckIcon, "ShieldCheck");
+export const Slack = icon(SlackIcon, "Slack");
 export const SlidersHorizontal = icon(SlidersHorizontalIcon, "SlidersHorizontal");
 export const SquarePen = icon(PencilEdit02Icon, "SquarePen");
+export const Telegram = icon(TelegramIcon, "Telegram");
 export const TrendingUp = icon(ChartUpIcon, "TrendingUp");
+export const TwitterX = icon(NewTwitterIcon, "TwitterX");
 export const Undo2 = icon(Undo02Icon, "Undo2");

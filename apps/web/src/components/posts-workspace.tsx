@@ -2,7 +2,7 @@ import { ChevronRight, Inbox, Link2, Map, Megaphone, MessageSquare } from "@/lib
 
 import { EmptyModule } from "@/components/amend-dashboard-shared";
 import type { Board, Post, RoadmapStatus } from "@/components/amend-dashboard-types";
-import { statusTitle } from "@/components/amend-dashboard-utils";
+import { statusTitle } from "@/components/amend-dashboard-status-utils";
 import { DashboardWorkspaceSurface } from "@/components/dashboard-workspace-surface";
 import { StatusPill } from "@/components/status-pill";
 import { VoteButton } from "@/components/vote-button";

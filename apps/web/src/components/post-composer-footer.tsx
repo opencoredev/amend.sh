@@ -1,11 +1,17 @@
 import { Button } from "@amend/ui/components/button";
 import { cn } from "@amend/ui/lib/utils";
-import { CalendarDays, Radio, Tag, UserRound } from "@/lib/icons";
+import { CalendarDays, Tag, UserRound } from "@/lib/icons";
 import type { RefObject } from "react";
 
 import { FooterControl, IconControl } from "./post-composer-controls";
 import type { ComposerPanel, StatusItem, TagItem } from "./post-composer-model";
-import { AssigneePopover, DatePopover, StatusPopover, TagPopover } from "./post-composer-popovers";
+import {
+  AssigneePopover,
+  DatePopover,
+  StatusPopover,
+  TagPopover,
+  statusIcon,
+} from "./post-composer-popovers";
 
 export function PostComposerFooter({
   assignee,
@@ -40,6 +46,7 @@ export function PostComposerFooter({
   submitting: boolean;
   tag: TagItem | null;
 }) {
+  const StatusIcon = statusIcon(status);
   return (
     <footer className="relative z-20 grid min-w-0 gap-3 border-t border-white/[0.06] px-5 py-3.5 md:grid-cols-[minmax(0,1fr)_auto] md:items-center">
       <div className="grid min-w-0 grid-cols-[minmax(8.5rem,1fr)_repeat(3,2.25rem)] gap-2 sm:flex sm:flex-wrap">
@@ -60,7 +67,7 @@ export function PostComposerFooter({
           }
           panelRef={panel === "status" ? panelRef : undefined}
         >
-          <Radio className="size-4" />
+          <StatusIcon className="size-4" />
         </FooterControl>
         <IconControl
           active={panel === "tag"}
@@ -131,7 +138,7 @@ export function PostComposerFooter({
         >
           <span
             className={cn(
-              "relative h-5 w-9 shrink-0 rounded-full bg-[#151518] ring-1 ring-white/[0.08] transition-colors duration-200",
+              "relative h-5 w-9 shrink-0 rounded-full bg-amend-inset ring-1 ring-white/[0.08] transition-colors duration-200",
               createMore && "bg-foreground ring-transparent",
             )}
           >

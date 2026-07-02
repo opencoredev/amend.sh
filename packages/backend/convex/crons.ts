@@ -18,4 +18,11 @@ crons.interval(
   {},
 );
 
+crons.interval(
+  "drain queued delivery outbox",
+  { minutes: 1 },
+  internal.deliveryScheduler.drainQueuedDeliveries,
+  {},
+);
+
 export default crons;

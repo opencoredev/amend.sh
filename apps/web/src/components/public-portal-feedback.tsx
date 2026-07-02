@@ -1,11 +1,12 @@
+import { api } from "@amend/backend/convex/_generated/api";
 import { cn } from "@amend/ui/lib/utils";
 import { useMutation } from "convex/react";
-import { makeFunctionReference } from "convex/server";
 import { useMemo, useState, type FormEvent } from "react";
 
 import { statusMeta } from "@/components/amend-dashboard-status";
 import type { RoadmapStatus } from "@/components/amend-dashboard-types";
-import { feedbackStatusToRoadmapStatus, formatDate } from "@/components/amend-dashboard-utils";
+import { formatDate } from "@/components/amend-dashboard-format";
+import { feedbackStatusToRoadmapStatus } from "@/components/amend-dashboard-status-utils";
 import { DetailSectionLabel, SourceEvidenceList } from "@/components/dashboard-detail-shared";
 import { ToolbarPill } from "@/components/dashboard-toolbar";
 import { PortalSurface, useFeedbackVote } from "@/components/public-portal-shared";
@@ -14,8 +15,6 @@ import { StatusPill } from "@/components/status-pill";
 import { VoteButton } from "@/components/vote-button";
 import { ArrowLeft, Inbox, Search } from "@/lib/icons";
 import { authClient } from "@/lib/auth-client";
-
-const interactionMutation = makeFunctionReference<"mutation">("amend:recordFeedbackInteraction");
 
 type SortKey = "new" | "top";
 const STATUS_TABS = Object.keys(statusMeta) as RoadmapStatus[];
@@ -77,10 +76,10 @@ export function PortalFeedbackView({
               onChange={(event) => setQuery(event.target.value)}
               placeholder="Search…"
               aria-label="Search feedback"
-              className="h-9 w-56 rounded-lg border-transparent bg-[#151518] pl-9 pr-3 text-sm ring-1 ring-white/[0.055] outline-none transition-[box-shadow] duration-150 ease-linear placeholder:text-muted-foreground focus-visible:ring-white/[0.16]"
+              className="h-9 w-56 rounded-lg border-transparent bg-amend-inset pl-9 pr-3 text-sm ring-1 ring-white/[0.055] outline-none transition-[box-shadow] duration-150 ease-linear placeholder:text-muted-foreground focus-visible:ring-white/[0.16]"
             />
           </label>
-          <div className="inline-flex rounded-lg bg-[#151518] p-0.5 ring-1 ring-white/[0.055]">
+          <div className="inline-flex rounded-lg bg-amend-inset p-0.5 ring-1 ring-white/[0.055]">
             {(["top", "new"] as const).map((option) => (
               <button
                 key={option}
@@ -184,7 +183,7 @@ export function PortalFeedbackDetail({
   workspaceSlug: string;
 }) {
   const { vote, voter } = useFeedbackVote(workspaceSlug);
-  const recordInteraction = useMutation(interactionMutation);
+  const recordInteraction = useMutation(api.amend.recordFeedbackInteraction);
   const session = authClient.useSession();
   const [comment, setComment] = useState("");
   const [commentState, setCommentState] = useState<"idle" | "sending" | "sent">("idle");
@@ -292,7 +291,7 @@ export function PortalFeedbackDetail({
                     value={comment}
                     onChange={(event) => setComment(event.target.value)}
                     placeholder="Share your thoughts…"
-                    className="min-h-20 w-full resize-y rounded-lg border-transparent bg-[#151518] px-3 py-2 text-sm ring-1 ring-white/[0.055] outline-none transition-[box-shadow] duration-150 ease-linear placeholder:text-muted-foreground focus-visible:ring-white/[0.16]"
+                    className="min-h-20 w-full resize-y rounded-lg border-transparent bg-amend-inset px-3 py-2 text-sm ring-1 ring-white/[0.055] outline-none transition-[box-shadow] duration-150 ease-linear placeholder:text-muted-foreground focus-visible:ring-white/[0.16]"
                   />
                   <div className="flex justify-end">
                     <button

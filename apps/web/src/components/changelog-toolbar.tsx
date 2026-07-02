@@ -1,5 +1,6 @@
 import type { ChangelogStatusFilter, DashboardChangelog } from "@/components/amend-dashboard-types";
-import { changelogCategories, stateValue } from "@/components/amend-dashboard-utils";
+import { changelogCategories } from "@/components/amend-dashboard-data-mappers";
+import { stateValue } from "@/components/amend-dashboard-format";
 import {
   ToolbarBar,
   ToolbarDivider,

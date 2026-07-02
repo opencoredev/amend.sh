@@ -18,8 +18,8 @@ describe("external send gate", () => {
       const source = readFileSync(file, "utf8");
       return (
         source.includes("sendTransactionalEmail(") &&
-        !file.endsWith("amendTransactionalEmails.ts") &&
-        !file.endsWith("httpRuntimeDeliveries.ts") &&
+        !file.endsWith("delivery/amendTransactionalEmails.ts") &&
+        !file.endsWith("delivery/httpRuntimeDeliveries.ts") &&
         !file.endsWith("draftSendGate.test.ts")
       );
     });

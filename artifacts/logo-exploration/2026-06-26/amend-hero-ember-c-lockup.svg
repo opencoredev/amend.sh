@@ -1,0 +1,23 @@
+<svg width="1296" height="384" viewBox="0 0 216 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <title>Amend hero ember C-loop lockup concept</title>
+  <path
+    fill="#DB8E34"
+    fill-rule="evenodd"
+    d="M30 7C16.19 7 5 18.19 5 32S16.19 57 30 57C41.06 57 50.43 49.82 53.74 39.86L47.56 37.8C45.11 45.16 38.17 50.46 30 50.46C19.8 50.46 11.54 42.2 11.54 32S19.8 13.54 30 13.54C38.08 13.54 44.96 18.73 47.48 25.96L53.66 23.82C50.27 13.97 40.96 7 30 7Z"
+  />
+  <path
+    fill="#F3C366"
+    d="M48.2 24.8C49.7 28.9 49.76 34.9 48.25 39L54.25 39C56.02 34.48 56 29.44 54.18 24.88L48.2 24.8Z"
+    opacity="0.42"
+  />
+  <circle cx="52" cy="32" r="5.3" fill="#F3C366" />
+  <text
+    x="76"
+    y="39"
+    fill="#F1F1F0"
+    font-family="Geist, Inter, ui-sans-serif, system-ui, sans-serif"
+    font-size="25"
+    font-weight="700"
+    letter-spacing="-0.4"
+  >amend.sh</text>
+</svg>

@@ -1,5 +1,5 @@
 import type { Post } from "@/components/amend-dashboard-types";
-import { formatDate } from "@/components/amend-dashboard-utils";
+import { formatDate } from "@/components/amend-dashboard-format";
 import { DetailSectionLabel, SourceEvidenceList } from "@/components/dashboard-detail-shared";
 import { DashboardWorkspaceSurface } from "@/components/dashboard-workspace-surface";
 import { FeedbackDetailCommentsPanel } from "@/components/feedback-detail-comments-panel";

@@ -17,25 +17,25 @@ export async function runAuthRouteSmokeCheck() {
     const signUpForm = await read("apps/web/src/components/sign-up-form.tsx");
     const backend = await read("packages/backend/convex/amend.ts");
     const devBackendDefinitions = await read(
-      "packages/backend/convex/amendDevFunctionDefinitions.ts",
+      "packages/backend/convex/lib/amendDevFunctionDefinitions.ts",
     );
-    const devAndGithubHandlers = await read("packages/backend/convex/amendDevAndGithubHandlers.ts");
-    const backendUtils = await read("packages/backend/convex/amendBackendUtils.ts");
+    const devAndGithubHandlers = await read("packages/backend/convex/lib/amendDevAndGithubHandlers.ts");
+    const backendUtils = await read("packages/backend/convex/lib/amendBackendUtils.ts");
     const operationalReadHandlers = await read(
-      "packages/backend/convex/amendOperationalReadHandlers.ts",
+      "packages/backend/convex/dashboard/amendOperationalReadHandlers.ts",
     );
     const workspaceAdminMutationHandlers = [
-      await read("packages/backend/convex/amendWorkspaceAdminMutationHandlers.ts"),
-      await read("packages/backend/convex/amendAutomationRulesMutationHandlers.ts"),
-      await read("packages/backend/convex/amendIntegrationMutationHandlers.ts"),
-      await read("packages/backend/convex/amendPlanMutationHandlers.ts"),
-      await read("packages/backend/convex/amendWorkspaceMemberMutationHandlers.ts"),
-      await read("packages/backend/convex/amendWorkspaceSettingsMutationHandlers.ts"),
+      await read("packages/backend/convex/workspace/amendWorkspaceAdminMutationHandlers.ts"),
+      await read("packages/backend/convex/agent/amendAutomationRulesMutationHandlers.ts"),
+      await read("packages/backend/convex/workspace/amendIntegrationMutationHandlers.ts"),
+      await read("packages/backend/convex/workspace/amendPlanMutationHandlers.ts"),
+      await read("packages/backend/convex/workspace/amendWorkspaceMemberMutationHandlers.ts"),
+      await read("packages/backend/convex/workspace/amendWorkspaceSettingsMutationHandlers.ts"),
     ].join("\n");
     const schemaWorkspaceCoreTables = await read(
-      "packages/backend/convex/schemaWorkspaceCoreTables.ts",
+      "packages/backend/convex/schema/schemaWorkspaceCoreTables.ts",
     );
-    const portalAccountActions = await read("apps/web/src/components/portal-account-actions.tsx");
+    const portalAccountActions = await read("apps/web/src/components/public-portal-topnav.tsx");
     const brandSignInSurface = [
       await read("apps/web/src/routes/brand.tsx"),
       await read("apps/web/src/components/brand-guidelines-page.tsx"),
@@ -55,12 +55,12 @@ export async function runAuthRouteSmokeCheck() {
     assertIncludes(dashboard, "DashboardAuthShell", "dashboard auth boundary");
     assertIncludes(
       dashboardData,
-      'hasSession ? dashboardQueryArgs : "skip"',
+      "useAuthedQuery",
       "dashboard protected query gate",
     );
     assertIncludes(
       dashboardData,
-      'hasSession ? workspaceQueryArgs : "skip"',
+      "useAuthedQuery(",
       "dashboard protected query gate",
     );
     assertIncludes(authShell, "grid min-h-svh", "shadcn login-02 shell");
@@ -75,7 +75,7 @@ export async function runAuthRouteSmokeCheck() {
     assertIncludes(signInRoute, "context.isAuthenticated", "sign-in authenticated redirect");
     assertIncludes(
       signInRoute,
-      'params: { view: "proactivation" }',
+      'params: { view: "inbox" }',
       "sign-in authenticated redirect",
     );
     assertIncludes(signUpRoute, "context.isAuthenticated", "sign-up authenticated redirect");
@@ -84,21 +84,21 @@ export async function runAuthRouteSmokeCheck() {
       !authShell.includes("Active session"),
       "auth page should not show an active-session panel",
     );
-    assertIncludes(signInForm, 'params: { view: "proactivation" }', "sign-in success route");
+    assertIncludes(signInForm, 'params: { view: "setup" }', "sign-in success route");
     assertIncludes(signInForm, "demoWorkspaceSlug", "sign-in success default workspace");
     assertIncludes(demoWorkspace, 'demoWorkspaceSlug = "amend-labs"', "public demo workspace slug");
     assertIncludes(signInForm, "authClient.signIn.email", "real sign-in form");
-    assertIncludes(devDemoSignInButton, "Continue with local demo", "development seeded sign-in");
+    assertIncludes(devDemoSignInButton, "Open seeded demo workspace", "development seeded sign-in");
     assertIncludes(signInForm, "import.meta.env.DEV", "development seeded sign-in guard");
     assertIncludes(signInForm, "lazy(async ()", "development seeded sign-in dynamic import");
     assert(
       !signInForm.includes("import { DevDemoSignInButton }"),
       "sign-in form should not statically import dev seeded auth",
     );
-    assertIncludes(devDemoSignInSurface, "amend:seedDemoData", "development seeded sign-in");
+    assertIncludes(devDemoSignInSurface, "api.amend.seedDemoData", "development seeded sign-in");
     assertIncludes(
       devDemoSignInSurface,
-      "amend:joinSeededDemoWorkspace",
+      "api.amend.joinSeededDemoWorkspace",
       "development seeded sign-in",
     );
     assertIncludes(

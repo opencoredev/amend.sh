@@ -15,7 +15,6 @@ import {
   ActionButton,
   Avatar,
   ChannelGlyph,
-  ConfidenceTag,
   EmptyState,
   ErrorState,
   IconButton,
@@ -27,7 +26,7 @@ import {
   channelMeta,
 } from "@/components/amend-agent-shared";
 import { PageScroll } from "@/components/amend-agent-chrome";
-import type { Evidence, Need, SourceChannel } from "@/lib/amend-contract";
+import type { Evidence, Need, ProofStrength, SourceChannel } from "@/lib/amend-contract";
 import { activityPhrase, formatDayMonth, formatFullDate } from "@/lib/amend-agent-format";
 import {
   useAcceptGhost,
@@ -35,7 +34,7 @@ import {
   useKillGhost,
   useNeed,
   useRestoreGhost,
-} from "@/lib/mock-amend";
+} from "@/lib/amend-data";
 import {
   ArrowLeft,
   ChevronDown,
@@ -62,63 +61,92 @@ function synthesis(need: Need): string {
   )}, ${activityPhrase(need.lastSeen)}.`;
 }
 
-function groupEvidence(evidence: Evidence[]): { channel: SourceChannel; items: Evidence[] }[] {
-  const map = new Map<SourceChannel, Evidence[]>();
+type PersonGroup = {
+  key: string;
+  author: string;
+  handle?: string;
+  avatarUrl?: string;
+  channels: SourceChannel[];
+  items: Evidence[];
+};
+
+// Dedupe one person across all their mentions (by stable handle, falling back to
+// display name) so the trail reads person-first: who asked, and everything each
+// of them actually said — most-engaged first.
+function groupByPerson(evidence: Evidence[]): PersonGroup[] {
+  const map = new Map<string, PersonGroup>();
   for (const e of evidence) {
-    const list = map.get(e.sourceChannel) ?? [];
-    list.push(e);
-    map.set(e.sourceChannel, list);
+    const key = (e.authorHandle || e.author).toLowerCase();
+    const group =
+      map.get(key) ??
+      ({ key, author: e.author, handle: e.authorHandle, channels: [], items: [] } as PersonGroup);
+    group.items.push(e);
+    if (!group.channels.includes(e.sourceChannel)) group.channels.push(e.sourceChannel);
+    if (!group.avatarUrl && e.authorAvatarUrl) group.avatarUrl = e.authorAvatarUrl;
+    map.set(key, group);
   }
-  return [...map.entries()]
-    .map(([channel, items]) => ({ channel, items }))
-    .sort((a, b) => b.items.length - a.items.length);
+  return [...map.values()].sort((a, b) => b.items.length - a.items.length);
 }
 
-function EvidenceRow({ item }: { item: Evidence }) {
-  return (
-    <div className="flex gap-3 py-3">
-      <Avatar name={item.author} size="md" />
-      <div className="min-w-0 flex-1">
-        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
-          <span className="font-medium text-foreground">{item.author}</span>
-          <ConfidenceTag bucket={item.confidenceBucket} />
-          <span className="text-[0.66rem] text-muted-foreground/70">
-            · {item.promotedBy === "human" ? "added by you" : "promoted by the agent"}
-          </span>
-          <a
-            href={item.url}
-            target="_blank"
-            rel="noreferrer"
-            className="ml-auto inline-flex items-center text-muted-foreground/50 transition-colors hover:text-foreground"
-            aria-label="Open original"
-          >
-            <ExternalLink className="size-3.5" />
-          </a>
-        </div>
-        <p className="mt-1 text-[0.83rem] leading-relaxed text-foreground/80">“{item.text}”</p>
-      </div>
-    </div>
-  );
-}
+// Color the demand by how much signal backs it — grey while still gathering,
+// warming to gold as more (and paying) people ask.
+const strengthTone: Record<ProofStrength, { dot: string; text: string; label: string }> = {
+  thin: { dot: "bg-muted-foreground/40", text: "text-muted-foreground", label: "Still gathering" },
+  building: { dot: "bg-amber-400", text: "text-amber-300", label: "Building" },
+  strong: { dot: "bg-amend-warm", text: "text-amend-warm", label: "Strong demand" },
+};
 
-function EvidenceGroup({ channel, items }: { channel: SourceChannel; items: Evidence[] }) {
+function PersonCard({ group }: { group: PersonGroup }) {
   const [expanded, setExpanded] = useState(false);
-  const shown = expanded ? items : items.slice(0, 2);
-  const rest = items.length - shown.length;
+  const shown = expanded ? group.items : group.items.slice(0, 3);
+  const rest = group.items.length - shown.length;
   return (
     <section className="overflow-hidden rounded-2xl bg-white/[0.015] ring-1 ring-white/[0.05] ring-inset">
-      <header className="flex items-center gap-2 border-b border-white/[0.05] px-4 py-2.5">
-        <ChannelGlyph channel={channel} className="text-muted-foreground" />
-        <span className="text-xs font-semibold text-foreground">{channelMeta[channel].label}</span>
-        <span className="font-mono text-[0.7rem] tabular-nums text-muted-foreground/50">
-          {items.length}
-        </span>
+      <header className="flex items-center gap-3 border-b border-white/[0.05] px-4 py-3">
+        <Avatar name={group.author} src={group.avatarUrl} size="md" />
+        <div className="min-w-0 flex-1">
+          <div className="flex min-w-0 items-center gap-2">
+            <span className="truncate text-sm font-semibold text-foreground">{group.author}</span>
+            {group.handle ? (
+              <span className="truncate text-[0.7rem] text-muted-foreground">@{group.handle}</span>
+            ) : null}
+          </div>
+          <div className="mt-1 flex items-center gap-2 text-[0.68rem] text-muted-foreground">
+            <span className="flex items-center gap-1">
+              {group.channels.map((channel) => (
+                <ChannelGlyph
+                  key={channel}
+                  channel={channel}
+                  className="size-3 text-muted-foreground/70"
+                />
+              ))}
+            </span>
+            <span>
+              {group.items.length} {group.items.length === 1 ? "mention" : "mentions"}
+            </span>
+          </div>
+        </div>
       </header>
-      <div className="divide-y divide-white/[0.04] px-4">
+      <ul className="divide-y divide-white/[0.04]">
         {shown.map((item) => (
-          <EvidenceRow key={item.id} item={item} />
+          <li key={item.id} className="flex items-start gap-2 px-4 py-2.5">
+            <p className="min-w-0 flex-1 text-[0.83rem] leading-relaxed text-foreground/85">
+              <span className="select-none text-muted-foreground/40">“</span>
+              {item.text}
+              <span className="select-none text-muted-foreground/40">”</span>
+            </p>
+            <a
+              href={item.url}
+              target="_blank"
+              rel="noreferrer"
+              className="mt-0.5 inline-flex shrink-0 text-muted-foreground/40 transition-colors hover:text-foreground"
+              aria-label="Open original"
+            >
+              <ExternalLink className="size-3.5" />
+            </a>
+          </li>
         ))}
-      </div>
+      </ul>
       {rest > 0 || expanded ? (
         <button
           type="button"
@@ -126,7 +154,7 @@ function EvidenceGroup({ channel, items }: { channel: SourceChannel; items: Evid
           className="flex w-full items-center justify-center gap-1.5 border-t border-white/[0.05] py-2 text-[0.72rem] font-medium text-muted-foreground transition-colors hover:bg-white/[0.02] hover:text-foreground"
         >
           <ChevronDown className={cn("size-3.5 transition-transform", expanded && "rotate-180")} />
-          {expanded ? "Show less" : `Show ${rest} more`}
+          {expanded ? "Show less" : `Show ${rest} more from ${group.author}`}
         </button>
       ) : null}
     </section>
@@ -310,8 +338,8 @@ function DetailSkeleton() {
 
 export function AmendNeedDetailScreen({ needId, onBack }: { needId: string; onBack: () => void }) {
   const { data: need, isLoading, isError } = useNeed(needId);
-  const groups = need ? groupEvidence(need.evidence) : [];
-  const people = need ? Array.from(new Set(need.evidence.map((e) => e.author))) : [];
+  const groups = need ? groupByPerson(need.evidence) : [];
+  const tone = need ? strengthTone[need.proof.strength] : strengthTone.thin;
 
   const statusLabel = need
     ? need.status === "accepted"
@@ -362,39 +390,29 @@ export function AmendNeedDetailScreen({ needId, onBack }: { needId: string; onBa
           />
         ) : (
           <>
-            <h1 className="text-xl font-semibold tracking-tight text-foreground sm:text-[1.4rem]">
-              {need.title}
-            </h1>
+            <div className="flex items-start justify-between gap-4">
+              <h1 className="text-xl font-semibold tracking-tight text-foreground sm:text-[1.4rem]">
+                {need.title}
+              </h1>
+              <span
+                className={cn(
+                  "mt-1 inline-flex shrink-0 items-center gap-1.5 rounded-full bg-white/[0.04] px-2.5 py-1 text-[0.7rem] font-medium ring-1 ring-white/[0.06] ring-inset",
+                  tone.text,
+                )}
+              >
+                <span className={cn("size-1.5 rounded-full", tone.dot)} />
+                {tone.label}
+              </span>
+            </div>
             <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
               {synthesis(need)}
             </p>
 
-            {/* People spine */}
-            <div className="mt-5 flex flex-wrap items-center gap-x-2 gap-y-3 rounded-2xl bg-white/[0.02] p-4 ring-1 ring-white/[0.05] ring-inset">
-              <span className="mr-1 text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-muted-foreground/55">
-                Who's asking
-              </span>
-              {people.slice(0, 10).map((name) => (
-                <span
-                  key={name}
-                  className="inline-flex items-center gap-1.5 rounded-full bg-white/[0.03] py-1 pl-1 pr-2.5 ring-1 ring-white/[0.06] ring-inset"
-                >
-                  <Avatar name={name} size="sm" />
-                  <span className="text-[0.72rem] text-foreground/80">{name}</span>
-                </span>
-              ))}
-              {people.length > 10 ? (
-                <span className="text-[0.72rem] text-muted-foreground">
-                  +{people.length - 10} more
-                </span>
-              ) : null}
-            </div>
-
             <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_18rem]">
               <div className="space-y-3">
-                <SectionLabel count={need.evidence.length}>Evidence by source</SectionLabel>
-                {groups.map((g) => (
-                  <EvidenceGroup key={g.channel} channel={g.channel} items={g.items} />
+                <SectionLabel count={groups.length}>Who's asking</SectionLabel>
+                {groups.map((group) => (
+                  <PersonCard key={group.key} group={group} />
                 ))}
                 {groups.length === 0 ? (
                   <p className="rounded-xl border border-dashed border-white/[0.08] px-4 py-5 text-center text-xs text-muted-foreground">

@@ -1,6 +1,7 @@
 export const siteUrl = "https://amend.sh";
 export const agentDocsUrl = "https://docs.amend.sh";
 export const defaultOgImage = `${siteUrl}/og-image.png`;
+export const defaultLogoImage = `${siteUrl}/logo.png`;
 
 export const defaultTitle = "Amend.sh - close the loop when users ask and you ship";
 export const defaultDescription =
@@ -105,6 +106,7 @@ export const productJsonLd = {
   applicationCategory: "BusinessApplication",
   operatingSystem: "Web",
   url: siteUrl,
+  image: defaultLogoImage,
   description: defaultDescription,
   offers: [
     {
@@ -155,6 +157,7 @@ export const organizationJsonLd = {
   "@type": "Organization",
   name: "Amend.sh",
   url: siteUrl,
+  logo: defaultLogoImage,
   description: defaultDescription,
   sameAs: [],
 };

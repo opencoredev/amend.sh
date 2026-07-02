@@ -7,7 +7,7 @@ import {
   getDashboardWorkspace,
   requireDashboardUser,
   requireDashboardWorkspace,
-} from "./amendWorkspaceAccess";
+} from "./workspace/amendWorkspaceAccess";
 
 // Palette keys. Keep in sync with TAG_COLOR_KEYS in
 // apps/web/src/components/changelog-tags.ts — the web app maps each key to its

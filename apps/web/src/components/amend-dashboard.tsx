@@ -1,7 +1,7 @@
 import { cn } from "@amend/ui/lib/utils";
 
 import { AmendDashboardContent } from "@/components/amend-dashboard-content";
-import { roadmapStatusToComposerStatus } from "@/components/amend-dashboard-utils";
+import { roadmapStatusToComposerStatus } from "@/components/amend-dashboard-status-utils";
 import { AppToaster } from "@/components/app-toaster";
 import DashboardAuthShell from "@/components/dashboard-auth-shell";
 import { DashboardSidebarChrome } from "@/components/dashboard-sidebar-chrome";

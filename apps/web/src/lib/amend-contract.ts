@@ -1,16 +1,26 @@
 /**
- * AMEND — PROACTIVE AGENT · CONTRACT (the typed seam)
+ * AMEND — PROACTIVE AGENT · UI CONTRACT
  *
- * These interfaces are copied verbatim from the CONTRACT block that lives in
- * BOTH FRONTEND_PLAN.txt and BACKEND_PLAN.txt. They are the single source the
- * components render against — the only shared shape between the UI and the
- * Convex API. Do NOT add fields the CONTRACT doesn't define without updating
- * BACKEND_PLAN.txt in the same commit (FRONTEND_PLAN rule 4).
+ * UI-level shapes the console screens render against. Server shapes flow from
+ * the generated Convex types (`@amend/backend/convex/_generated/api`) via the
+ * typed references in `amend-dashboard-data.tsx`; the data layer
+ * (`lib/amend-data.ts`) assigns those returns into these types, so any drift
+ * between the backend validators and this file is a compile error at that
+ * seam rather than a silent runtime mismatch.
  *
  * Timestamps are epoch milliseconds (number). Ids are opaque strings.
  */
 
-export type SourceChannel = "discord" | "support" | "github" | "embed";
+/** Mirrors the backend's `PROACTIVE_SOURCE_CHANNELS`; the amend-data seam breaks the build if they diverge. */
+export type SourceChannel =
+  | "discord"
+  | "support"
+  | "github"
+  | "embed"
+  | "slack"
+  | "email"
+  | "x"
+  | "telegram";
 
 export type GhostStatus = "ghost" | "accepted" | "killed";
 
@@ -57,6 +67,10 @@ export interface Evidence {
   id: string;
   sourceChannel: SourceChannel;
   author: string;
+  /** Stable identity handle (e.g. Discord username) — used to dedupe one person across mentions. */
+  authorHandle?: string;
+  /** Real profile picture for the author, when the source provides one. */
+  authorAvatarUrl?: string;
   text: string;
   url: string;
   confidenceBucket: ConfidenceBucket;
@@ -82,7 +96,12 @@ export type DraftStatus = "pending" | "approved" | "rejected";
 
 export interface DraftRecipient {
   handle: string;
-  channel: SourceChannel;
+  /**
+   * Free-form on the wire — the backend validates recipients with a plain
+   * string, not the channel union. Narrow with `isSourceChannel` before
+   * keying channel-specific UI.
+   */
+  channel: string;
 }
 
 export interface DraftProposal {
@@ -93,15 +112,6 @@ export interface DraftProposal {
   draftText: string;
   recipients?: DraftRecipient[];
   status: DraftStatus;
-}
-
-export interface ChangelogEntry {
-  id: string;
-  title: string;
-  body: string;
-  shippedAt: number;
-  ship: ShipLink;
-  published: boolean;
 }
 
 export type MemoryRuleKind = "noise" | "dedupe" | "addressed" | "allowlist" | "pattern";
@@ -130,14 +140,54 @@ export interface DigestPreview {
   handledSilently: number;
 }
 
-export interface SourcesStatus {
-  github: {
-    connected: boolean;
-    repo?: string;
-    lastSync?: number;
-  };
-  feedback: {
-    connected: boolean;
-    channels: { channel: SourceChannel; connected: boolean; lastSignal?: number }[];
+/** One weekly bucket of the Insights timeline — demand captured vs work shipped. */
+export interface InsightsPoint {
+  /** Epoch ms at the start of the week bucket. */
+  ts: number;
+  /** Short axis label, e.g. "May 12". */
+  label: string;
+  signal: number;
+  shipped: number;
+}
+
+export interface InsightsChannelSlice {
+  channel: SourceChannel;
+  count: number;
+}
+
+export interface InsightsDemandItem {
+  id: string;
+  title: string;
+  people: number;
+  strength: ProofStrength;
+  status: GhostStatus;
+}
+
+/**
+ * Aggregate signal for the Insights view. Every field is derived from the same
+ * needs/changelog/memory the rest of the console renders, so the numbers tie out
+ * across screens. When the analytics view goes live, `api.insights.summary`
+ * should return this exact shape.
+ */
+export interface InsightsSummary {
+  /** Total inbound mentions: surfaced evidence + noise the agent handled silently. */
+  signalCaptured: number;
+  /** Releases tied back to demand. */
+  shipped: number;
+  /** People notified when the thing they asked for shipped. */
+  peopleReached: number;
+  /** Items hidden per month by enabled noise/dedupe/addressed memory rules. */
+  noiseFiltered: number;
+  /** % change in captured signal, recent half vs prior half of the timeline. */
+  signalTrendPct: number;
+  timeline: InsightsPoint[];
+  channels: InsightsChannelSlice[];
+  topDemand: InsightsDemandItem[];
+  /** 12-point trend glyphs per KPI, for the dithered sparklines. */
+  sparks: {
+    signal: number[];
+    shipped: number[];
+    reached: number[];
+    noise: number[];
   };
 }

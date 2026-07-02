@@ -2,8 +2,11 @@ import { cn } from "@amend/ui/lib/utils";
 import { useState } from "react";
 
 import { statusMeta } from "@/components/amend-dashboard-status";
+import {
+  priorityLabel,
+  roadmapStatusToRoadmapStatus,
+} from "@/components/amend-dashboard-status-utils";
 import type { RoadmapStatus } from "@/components/amend-dashboard-types";
-import { priorityLabel, roadmapStatusToRoadmapStatus } from "@/components/amend-dashboard-utils";
 import { ToolbarPill } from "@/components/dashboard-toolbar";
 import { PortalSurface } from "@/components/public-portal-shared";
 import type { PortalRoadmap } from "@/components/public-portal-types";
@@ -23,7 +26,7 @@ function RoadmapScore({ count }: { count: number }) {
 function RoadmapCard({ item }: { item: PortalRoadmap }) {
   const primarySource = item.sourceLinks[0];
   return (
-    <article className="rounded-xl bg-[#151518] p-3 shadow-[inset_0_1px_0_rgb(255_255_255/0.035)] ring-1 ring-white/[0.045]">
+    <article className="rounded-xl bg-amend-inset p-3 shadow-[inset_0_1px_0_rgb(255_255_255/0.035)] ring-1 ring-white/[0.045]">
       <div className="flex items-start justify-between gap-2">
         <h3 className="min-w-0 text-sm font-semibold leading-5">{item.title}</h3>
         <RoadmapScore count={item.feedbackCount} />

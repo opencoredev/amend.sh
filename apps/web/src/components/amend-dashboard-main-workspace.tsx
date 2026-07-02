@@ -5,6 +5,7 @@ import { ArrowLeft, Map, MessageSquareText } from "@/lib/icons";
 import { AccountWorkspace } from "@/components/account-workspace";
 import { AmendConnectionsScreen } from "@/components/amend-connections-screen";
 import { AmendInboxScreen } from "@/components/amend-inbox-screen";
+import { AmendInsightsScreen } from "@/components/amend-insights-screen";
 import { AmendMemoryScreen } from "@/components/amend-memory-screen";
 import {
   ChangelogWorkspace,
@@ -73,6 +74,7 @@ export function AmendDashboardMainWorkspace({
   // The proactive-agent views are self-contained (their own header + scroll) and
   // render on the mock layer, so they bypass the CRUD DashboardHeader entirely.
   if (activeView === "inbox") return <AmendInboxScreen />;
+  if (activeView === "insights") return <AmendInsightsScreen />;
   if (activeView === "memory") return <AmendMemoryScreen />;
   if (activeView === "connections") return <AmendConnectionsScreen workspaceId={workspace.id} />;
   if (activeView === "account") return <AccountWorkspace />;
