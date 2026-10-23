@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 
 import AmendLogo from "@/components/amend-logo";
 import { docsUrl } from "@/lib/docs-url";
+import { otherOpenCoreSites } from "@/lib/opencore-sites";
 
 import { BrandIcon, type BrandName } from "./brand-icons";
 
@@ -11,6 +12,9 @@ const SOCIAL: { name: BrandName; label: string; href: string }[] = [
   { name: "discord", label: "Discord", href: "https://discord.gg/amend" },
   { name: "x", label: "X", href: "https://x.com/amend_sh" },
 ];
+
+// Plain followed links on purpose: they share authority between our sites.
+const OPENCORE_LINKS = otherOpenCoreSites("https://amend.sh");
 
 export function Footer() {
   return (
@@ -114,6 +118,30 @@ export function Footer() {
             ]}
           />
         </div>
+
+        <nav
+          aria-labelledby="footer-opencore-label"
+          className="grid gap-5 border-t border-border py-10"
+        >
+          <span
+            id="footer-opencore-label"
+            className="amend-mono text-xs uppercase tracking-[0.16em] text-foreground"
+          >
+            More from OpenCore
+          </span>
+          <ul className="grid gap-x-8 gap-y-3 sm:grid-cols-2 lg:grid-cols-4">
+            {OPENCORE_LINKS.map((site) => (
+              <li key={site.url}>
+                <a
+                  href={site.url}
+                  className="text-sm text-muted-foreground transition-colors duration-150 ease-linear hover:text-foreground"
+                >
+                  <span className="text-foreground/90">{site.name}</span> {site.description}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
 
         {/* Bottom bar */}
         <div className="flex flex-col gap-3 border-t border-border py-7 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
