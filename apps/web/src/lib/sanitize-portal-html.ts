@@ -103,6 +103,7 @@ function isAllowedAttribute(tag: string, name: string): boolean {
 type ParsedTag = {
   name: string;
   closing: boolean;
+  selfClosing: boolean;
   attributes: Array<[string, string]>;
   end: number;
 };
@@ -119,7 +120,8 @@ function readTag(html: string, start: number): ParsedTag | null {
   while (index < html.length) {
     const char = html[index];
     if (char === ">") {
-      return { name: name.toLowerCase(), closing, attributes, end: index + 1 };
+      const selfClosing = html[index - 1] === "/";
+      return { name: name.toLowerCase(), closing, selfClosing, attributes, end: index + 1 };
     }
     if (WHITESPACE.test(char) || char === "/") {
       index++;
@@ -211,7 +213,8 @@ export function sanitizePortalHtml(html: string | null | undefined): string {
       continue;
     }
     index = tag.end;
-    if (!tag.closing && DROPPED_WITH_CONTENT.has(tag.name)) {
+    // A self-closing tag has no content to skip; whatever follows is sanitized as usual.
+    if (!tag.closing && !tag.selfClosing && DROPPED_WITH_CONTENT.has(tag.name)) {
       index = skipElement(html, tag.name, index);
       continue;
     }

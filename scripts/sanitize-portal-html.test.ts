@@ -89,6 +89,10 @@ describe("sanitizePortalHtml", () => {
       "<ul><li>kept</li></ul>",
     );
     expect(sanitizePortalHtml('<input value="x"><p>kept</p>')).toBe("<p>kept</p>");
+    expect(sanitizePortalHtml("<svg/><p>Release details</p><math />")).toBe(
+      "<p>Release details</p>",
+    );
+    expect(sanitizePortalHtml("<svg/><script>alert(1)</script>ok")).toBe("ok");
   });
 
   test("escapes quotes in kept attribute values and drops unterminated tags", () => {
