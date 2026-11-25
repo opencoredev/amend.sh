@@ -61,6 +61,7 @@ const DROPPED_WITH_CONTENT = new Set([
   "title",
   "xmp",
 ]);
+const FOREIGN_ROOTS = new Set(["math", "svg"]);
 const GLOBAL_ATTRIBUTES = new Set(["class", "title"]);
 const TAG_ATTRIBUTES: Record<string, ReadonlySet<string>> = {
   a: new Set(["href", "target"]),
@@ -117,13 +118,14 @@ function readTag(html: string, start: number): ParsedTag | null {
   if (!name) return null;
   index += name.length;
   const attributes: Array<[string, string]> = [];
+  let selfClosing = false;
   while (index < html.length) {
     const char = html[index];
     if (char === ">") {
-      const selfClosing = html[index - 1] === "/";
       return { name: name.toLowerCase(), closing, selfClosing, attributes, end: index + 1 };
     }
     if (WHITESPACE.test(char) || char === "/") {
+      selfClosing = char === "/" && html[index + 1] === ">";
       index++;
       continue;
     }
@@ -213,8 +215,9 @@ export function sanitizePortalHtml(html: string | null | undefined): string {
       continue;
     }
     index = tag.end;
-    // A self-closing tag has no content to skip; whatever follows is sanitized as usual.
-    if (!tag.closing && !tag.selfClosing && DROPPED_WITH_CONTENT.has(tag.name)) {
+    // Browsers honor "/>" only on SVG and MathML roots here; those have no content to skip.
+    const empty = tag.selfClosing && FOREIGN_ROOTS.has(tag.name);
+    if (!tag.closing && !empty && DROPPED_WITH_CONTENT.has(tag.name)) {
       index = skipElement(html, tag.name, index);
       continue;
     }
