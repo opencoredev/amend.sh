@@ -4,10 +4,14 @@ import { sanitizePortalHtml } from "../apps/web/src/lib/sanitize-portal-html";
 
 describe("sanitizePortalHtml", () => {
   test("keeps the composer's formatting, links and code blocks", () => {
+    const composerLink =
+      '<p>See <a href="https://amend.sh/docs" target="_blank" rel="noreferrer">docs</a>.</p>';
+    expect(sanitizePortalHtml(composerLink)).toBe(
+      '<p>See <a href="https://amend.sh/docs" target="_blank" rel="noopener noreferrer">docs</a>.</p>',
+    );
     const html = [
       "<h1>Release</h1>",
       "<h2>Fixes</h2>",
-      '<p>See <a href="https://amend.sh/docs" target="_blank" rel="noreferrer">docs</a>.</p>',
       "<ul><li><b>bold</b> <i>italic</i> <u>under</u> <strike>gone</strike></li></ul>",
       "<ol><li>one</li></ol>",
       "<blockquote>quote</blockquote>",
@@ -71,6 +75,20 @@ describe("sanitizePortalHtml", () => {
       sanitizePortalHtml('<video poster="javascript:x"></video><iframe src="/x"></iframe>z'),
     ).toBe("z");
     expect(sanitizePortalHtml("<p>a<!-- <img src=x onerror=y> --></p>")).toBe("<p>a</p>");
+  });
+
+  test("forces noopener on links that open a new tab", () => {
+    expect(sanitizePortalHtml('<a href="/x" target="_blank" rel="opener">x</a>')).toBe(
+      '<a href="/x" target="_blank" rel="noopener noreferrer">x</a>',
+    );
+    expect(sanitizePortalHtml('<a href="/x" rel="opener">x</a>')).toBe('<a href="/x">x</a>');
+  });
+
+  test("keeps content after void elements it drops", () => {
+    expect(sanitizePortalHtml('<embed src="/a.pdf"><ul><li>kept</li></ul>')).toBe(
+      "<ul><li>kept</li></ul>",
+    );
+    expect(sanitizePortalHtml('<input value="x"><p>kept</p>')).toBe("<p>kept</p>");
   });
 
   test("escapes quotes in kept attribute values and drops unterminated tags", () => {

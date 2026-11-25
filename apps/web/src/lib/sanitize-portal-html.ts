@@ -45,7 +45,6 @@ const ALLOWED_TAGS = new Set([
 const VOID_TAGS = new Set(["br", "hr", "img"]);
 // Dropped together with everything inside them.
 const DROPPED_WITH_CONTENT = new Set([
-  "embed",
   "form",
   "iframe",
   "math",
@@ -64,7 +63,7 @@ const DROPPED_WITH_CONTENT = new Set([
 ]);
 const GLOBAL_ATTRIBUTES = new Set(["class", "title"]);
 const TAG_ATTRIBUTES: Record<string, ReadonlySet<string>> = {
-  a: new Set(["href", "rel", "target"]),
+  a: new Set(["href", "target"]),
   img: new Set(["alt", "height", "src", "width"]),
   ol: new Set(["start"]),
   pre: new Set(["data-language"]),
@@ -159,7 +158,12 @@ function renderTag(tag: ParsedTag): string {
     )
     .map(([name, value]) => ` ${name}="${value.replaceAll('"', "&quot;").replaceAll("<", "&lt;")}"`)
     .join("");
-  return `<${tag.name}${attributes}>`;
+  // A link that opens a new tab never gets a handle back to the portal.
+  const rel =
+    tag.name === "a" && tag.attributes.some(([name]) => name === "target")
+      ? ' rel="noopener noreferrer"'
+      : "";
+  return `<${tag.name}${attributes}${rel}>`;
 }
 
 /** Index just past the closing tag of a dropped element, or the end of the input. */
