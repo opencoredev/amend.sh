@@ -77,7 +77,7 @@ export function PublicPortalView({
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@graph": changelogJsonLd(changelog, workspaceSlug),
-            }).replace(/</g, "\u003c"),
+            }).replace(/</g, "\\u003c"),
           }}
         />
       ) : null}
