@@ -60,7 +60,12 @@ jobs:
           AMEND_PREVIEW_ENV_SYNC_PHASE=bootstrap bun scripts/sync-convex-preview-env.ts
           bun scripts/assert-convex-preview-http.ts
 
+      - name: Skip Vercel preview without token
+        if: env.VERCEL_TOKEN == ''
+        run: echo "::notice::VERCEL_TOKEN is not configured; skipping the Vercel preview deploy."
+
       - name: Deploy Vercel preview
+        if: env.VERCEL_TOKEN != ''
         run: |
           DEPLOYMENT_URL="$(bunx vercel deploy \
             --prebuilt \
@@ -101,4 +106,5 @@ jobs:
         run: bun scripts/delete-convex-preview.ts
 
       - name: Delete Vercel preview deployments
+        if: env.VERCEL_TOKEN != ''
         run: bun scripts/delete-vercel-preview.ts
