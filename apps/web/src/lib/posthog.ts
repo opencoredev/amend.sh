@@ -2,6 +2,7 @@ import type posthog from "posthog-js";
 import type { PostHogConfig } from "posthog-js";
 
 import { optionalClientEnv } from "@/lib/client-env";
+import { isThirdPartyExtensionException } from "@/lib/posthog-exception-filter";
 
 const defaultPostHogHost = "https://a.amend.sh";
 const defaultPostHogProjectId = "441195";
@@ -56,6 +57,12 @@ export function getPostHogOptions(): Partial<PostHogConfig> {
     ui_host: "https://us.posthog.com",
     autocapture: false,
     capture_exceptions: true,
+    before_send: (event) => {
+      if (event?.event === "$exception" && isThirdPartyExtensionException(event.properties)) {
+        return null;
+      }
+      return event;
+    },
     capture_pageleave: false,
     capture_pageview: false,
     defaults: "2026-01-30",
